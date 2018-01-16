@@ -462,6 +462,7 @@ TestIrpHandler(
         if (!skip(Fcb != NULL, "Fcb is NULL!\n"))
         {
 
+        // if (RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InvalidInit, FALSE) == 0)
         if (IoStack->FileObject->SectionObjectPointer == NULL)
         {
             ok(!CcIsFileCached(IoStack->FileObject), "File is cached\n");
