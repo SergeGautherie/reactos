@@ -47,7 +47,7 @@ const KMT_TEST TestList[] =
     { "IoDeviceObject",               Test_IoDeviceObject },
     { "IoReadWrite",                  Test_IoReadWrite },
     { "MmMapLockedPagesSpecifyCache", Test_MmMapLockedPagesSpecifyCache },
-    { "NtCreateSection",              Test_NtCreateSection },
+    { "-NtCreateSection",              Test_NtCreateSection }, // [XP/S03/Vista] ROSTESTS-266.
     { "PoIrp",                        Test_PoIrp },
     { "RtlAvlTree",                   Test_RtlAvlTree },
     { "RtlException",                 Test_RtlException },
