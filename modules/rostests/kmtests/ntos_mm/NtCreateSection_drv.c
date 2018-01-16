@@ -487,6 +487,7 @@ TestIrpHandler(
             ok(CcIsFileCached(IoStack->FileObject), "File is not cached\n");
 
             trace("CcFlushCache, CcPurgeCacheSection, CcUninitializeCacheMap(NULL)\n");
+            // Triggers IRP_MJ_WRITE.
             CcFlushCache(&Fcb->SectionObjectPointers, NULL, 0, NULL);
             CcPurgeCacheSection(&Fcb->SectionObjectPointers, NULL, 0, FALSE);
             KeInitializeEvent(&CacheUninitEvent.Event, NotificationEvent, FALSE);
