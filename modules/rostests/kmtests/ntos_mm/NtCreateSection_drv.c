@@ -202,7 +202,7 @@ TestIrpHandler(
 
     PAGED_CODE();
 
-    DPRINT("IRP %x/%x\n", IoStack->MajorFunction, IoStack->MinorFunction);
+    trace("IRP %x/%x\n", IoStack->MajorFunction, IoStack->MinorFunction);
     ASSERT(IoStack->MajorFunction == IRP_MJ_CLEANUP ||
            IoStack->MajorFunction == IRP_MJ_CREATE ||
            IoStack->MajorFunction == IRP_MJ_READ ||
@@ -243,7 +243,7 @@ TestIrpHandler(
         }
         Fcb->Header.IsFastIoPossible = FastIoIsNotPossible;
 
-        DPRINT1("File: %wZ\n", &IoStack->FileObject->FileName);
+        trace("File: %wZ\n", &IoStack->FileObject->FileName);
 
         IoStack->FileObject->FsContext = Fcb;
         if (RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InvalidInit, FALSE) != 0)
@@ -254,8 +254,7 @@ TestIrpHandler(
         if (IoStack->FileObject->FileName.Length == 0 ||
             RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InitOnCreate, FALSE) == 0)
         {
-            DPRINT1("Init\n");
-
+            trace("IRP_MJ_CREATE, CcInitializeCacheMap\n");
             CcInitializeCacheMap(IoStack->FileObject, 
                                  (PCC_FILE_SIZES)&Fcb->Header.AllocationSize,
                                  FALSE, &Callbacks, NULL);
@@ -297,8 +296,8 @@ TestIrpHandler(
                 {
                     if (IoStack->FileObject->PrivateCacheMap == NULL)
                     {
-                        DPRINT1("Init\n");
                         ok_eq_ulong(RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InitOnRW, FALSE), 0);
+                        trace("IRP_MJ_READ, CcInitializeCacheMap\n");
                         CcInitializeCacheMap(IoStack->FileObject, 
                                              (PCC_FILE_SIZES)&Fcb->Header.AllocationSize,
                                              FALSE, &Callbacks, Fcb);
@@ -363,6 +362,7 @@ TestIrpHandler(
                     if (IoStack->FileObject->PrivateCacheMap == NULL)
                     {
                         ok_eq_ulong(RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InitOnRW, FALSE), 0);
+                        trace("IRP_MJ_WRITE, CcInitializeCacheMap\n");
                         CcInitializeCacheMap(IoStack->FileObject,
                                              (PCC_FILE_SIZES)&Fcb->Header.AllocationSize,
                                              FALSE, &Callbacks, Fcb);
@@ -413,6 +413,10 @@ TestIrpHandler(
     {
         Fcb = IoStack->FileObject->FsContext;
         ok(Fcb != NULL, "Null pointer!\n");
+
+        if (!skip(Fcb != NULL, "Fcb is NULL!\n"))
+        {
+
         if (IoStack->FileObject->SectionObjectPointer != NULL &&
             IoStack->FileObject->SectionObjectPointer->SharedCacheMap != NULL)
         {
@@ -424,8 +428,11 @@ TestIrpHandler(
             CcUninitializeCacheMap(IoStack->FileObject, &Zero, &CacheUninitEvent);
             KeWaitForSingleObject(&CacheUninitEvent.Event, Executive, KernelMode, FALSE, NULL);
         }
-        ExFreePoolWithTag(Fcb, 'FwrI');
         IoStack->FileObject->FsContext = NULL;
+        ExFreePoolWithTag(Fcb, 'FwrI');
+
+        } // if (!skip(Fcb != NULL, "Fcb is NULL!\n"))
+
         Status = STATUS_SUCCESS;
     }
     else if (IoStack->MajorFunction == IRP_MJ_QUERY_INFORMATION)
@@ -490,6 +497,8 @@ TestIrpHandler(
                 ok(Fcb != NULL, "Null pointer!\n");
                 ok_bool_false(IoStack->Parameters.SetFile.AdvanceOnly, "AdvanceOnly set!\n");
                 ok(EOFInfo->EndOfFile.QuadPart > Fcb->Header.AllocationSize.QuadPart, "New size smaller\n");
+
+/* Ajouter un if-4 ! */
 
                 if (Fcb->Header.AllocationSize.QuadPart != 0)
                 {
