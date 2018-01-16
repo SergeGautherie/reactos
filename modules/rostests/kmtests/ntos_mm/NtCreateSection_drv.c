@@ -3,6 +3,7 @@
  * LICENSE:         LGPLv2.1+ - See COPYING.LIB in the top level directory
  * PURPOSE:         Test driver for NtCreateSection function
  * PROGRAMMER:      Pierre Schweitzer <pierre@reactos.org>
+ * + SG
  */
 
 #include <kmt_test.h>
@@ -461,20 +462,37 @@ TestIrpHandler(
         if (!skip(Fcb != NULL, "Fcb is NULL!\n"))
         {
 
-        if (IoStack->FileObject->SectionObjectPointer != NULL &&
-            IoStack->FileObject->SectionObjectPointer->SharedCacheMap != NULL)
+        if (IoStack->FileObject->SectionObjectPointer == NULL)
+        {
+            ok(!CcIsFileCached(IoStack->FileObject), "File is cached\n");
+
+            trace("No cache to clean up\n");
+        }
+        else if (IoStack->FileObject->SectionObjectPointer->SharedCacheMap == NULL)
         {
             LARGE_INTEGER Zero = RTL_CONSTANT_LARGE_INTEGER(0LL);
 
-//            trace("Calling CcFlushCache\n");
-            CcFlushCache(&Fcb->SectionObjectPointers, NULL, 0, NULL);
-//            trace("Calling CcPurgeCacheSection\n");
-            CcPurgeCacheSection(&Fcb->SectionObjectPointers, NULL, 0, FALSE);
-//            trace("Calling KeInitializeEvent\n");
+            ok(!CcIsFileCached(IoStack->FileObject), "File is cached\n");
+
+            // CcUninitializeCacheMap must always be called,
+            // even when CcInitializeCacheMap has not been called.
+            trace("CcUninitializeCacheMap(Zero)\n");
             KeInitializeEvent(&CacheUninitEvent.Event, NotificationEvent, FALSE);
             CcUninitializeCacheMap(IoStack->FileObject, &Zero, &CacheUninitEvent);
             KeWaitForSingleObject(&CacheUninitEvent.Event, Executive, KernelMode, FALSE, NULL);
         }
+        else
+        {
+            ok(CcIsFileCached(IoStack->FileObject), "File is not cached\n");
+
+            trace("CcFlushCache, CcPurgeCacheSection, CcUninitializeCacheMap(NULL)\n");
+            CcFlushCache(&Fcb->SectionObjectPointers, NULL, 0, NULL);
+            CcPurgeCacheSection(&Fcb->SectionObjectPointers, NULL, 0, FALSE);
+            KeInitializeEvent(&CacheUninitEvent.Event, NotificationEvent, FALSE);
+            CcUninitializeCacheMap(IoStack->FileObject, NULL, &CacheUninitEvent);
+            KeWaitForSingleObject(&CacheUninitEvent.Event, Executive, KernelMode, FALSE, NULL);
+        }
+
         IoStack->FileObject->FsContext = NULL;
         ExFreePoolWithTag(Fcb, 'FwrI');
 
