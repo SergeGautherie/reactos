@@ -202,7 +202,7 @@ TestIrpHandler(
 
     PAGED_CODE();
 
-    trace("IRP %x/%x\n", IoStack->MajorFunction, IoStack->MinorFunction);
+//    trace("IRP %x/%x\n", IoStack->MajorFunction, IoStack->MinorFunction);
     ASSERT(IoStack->MajorFunction == IRP_MJ_CLEANUP ||
            IoStack->MajorFunction == IRP_MJ_CREATE ||
            IoStack->MajorFunction == IRP_MJ_READ ||
@@ -216,6 +216,9 @@ TestIrpHandler(
     if (IoStack->MajorFunction == IRP_MJ_CREATE)
     {
         ULONG RequestedDisposition = ((IoStack->Parameters.Create.Options >> 24) & 0xff);
+
+        trace("IRP_MJ_CREATE\n");
+
         ok(RequestedDisposition == FILE_CREATE || RequestedDisposition == FILE_OPEN, "Invalid disposition: %lu\n", RequestedDisposition);
 
         if (IoStack->FileObject->FileName.Length >= 2 * sizeof(WCHAR))
@@ -270,6 +273,8 @@ TestIrpHandler(
         PVOID Buffer;
         LARGE_INTEGER Offset;
 
+//        trace("IRP_MJ_READ\n");
+
         Offset = IoStack->Parameters.Read.ByteOffset;
         Length = IoStack->Parameters.Read.Length;
         Fcb = IoStack->FileObject->FsContext;
@@ -279,36 +284,46 @@ TestIrpHandler(
 
         if (Offset.QuadPart + Length > Fcb->Header.FileSize.QuadPart)
         {
+// lu            trace("IRP_MJ_READ: STATUS_END_OF_FILE, %llu + %lu > %llu\n", Offset.QuadPart, Length, Fcb->Header.FileSize.QuadPart);
+// ?            trace("IRP_MJ_READ: STATUS_END_OF_FILE, %lld + %lu > %lld\n", Offset.QuadPart, Length, Fcb->Header.FileSize.QuadPart);
+            trace("IRP_MJ_READ: STATUS_END_OF_FILE, %I64u + %lu > %I64u\n", Offset.QuadPart, Length, Fcb->Header.FileSize.QuadPart);
             Status = STATUS_END_OF_FILE;
         }
         else if (Length == 0)
         {
+            trace("IRP_MJ_READ: Length == 0\n");
             Status = STATUS_SUCCESS;
         }
         else
         {
             if (!FlagOn(Irp->Flags, IRP_NOCACHE))
             {
+                trace("IRP_MJ_READ: not IRP_NOCACHE\n");
                 Buffer = Irp->AssociatedIrp.SystemBuffer;
                 ok(Buffer != NULL, "Null pointer!\n");
 
                 _SEH2_TRY
                 {
+                    trace("IRP_MJ_READ: _SEH2_TRY, PrivateCacheMap=%p\n", IoStack->FileObject->PrivateCacheMap);
                     if (IoStack->FileObject->PrivateCacheMap == NULL)
                     {
                         ok_eq_ulong(RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InitOnRW, FALSE), 0);
-                        trace("IRP_MJ_READ, CcInitializeCacheMap\n");
+                        trace("IRP_MJ_READ, CcInitializeCacheMap, before\n");
                         CcInitializeCacheMap(IoStack->FileObject, 
                                              (PCC_FILE_SIZES)&Fcb->Header.AllocationSize,
                                              FALSE, &Callbacks, Fcb);
+                        trace("IRP_MJ_READ, CcInitializeCacheMap, after\n");
                     }
 
+                    trace("IRP_MJ_READ, CcCopyRead, before\n");
                     Ret = CcCopyRead(IoStack->FileObject, &Offset, Length, TRUE, Buffer,
                                      &Irp->IoStatus);
+                    trace("IRP_MJ_READ, CcCopyRead, after\n");
                     ok_bool_true(Ret, "CcCopyRead");
                 }
                 _SEH2_EXCEPT(EXCEPTION_EXECUTE_HANDLER)
                 {
+                    trace("IRP_MJ_READ: _SEH2_EXCEPT(EXCEPTION_EXECUTE_HANDLER)\n");
                     Irp->IoStatus.Status = _SEH2_GetExceptionCode();
                 }
                 _SEH2_END;
@@ -317,6 +332,7 @@ TestIrpHandler(
             }
             else
             {
+                trace("IRP_MJ_READ: IRP_NOCACHE\n");
                 ok(Irp->AssociatedIrp.SystemBuffer == NULL, "A SystemBuffer was allocated!\n");
                 Buffer = MapAndLockUserBuffer(Irp, Length);
                 ok(Buffer != NULL, "Null pointer!\n");
@@ -328,8 +344,13 @@ TestIrpHandler(
 
         if (NT_SUCCESS(Status))
         {
+            trace("IRP_MJ_READ: NT_SUCCESS(Status)\n");
             Irp->IoStatus.Information = Length;
             IoStack->FileObject->CurrentByteOffset.QuadPart = Offset.QuadPart + Length;
+        }
+        else
+        {
+            trace("IRP_MJ_READ: not NT_SUCCESS(Status)\n");
         }
     }
     else if (IoStack->MajorFunction == IRP_MJ_WRITE)
@@ -338,6 +359,8 @@ TestIrpHandler(
         ULONG Length;
         PVOID Buffer;
         LARGE_INTEGER Offset;
+
+//        trace("IRP_MJ_WRITE\n");
 
         Offset = IoStack->Parameters.Write.ByteOffset;
         Length = IoStack->Parameters.Write.Length;
@@ -348,31 +371,38 @@ TestIrpHandler(
 
         if (Length == 0)
         {
+            trace("IRP_MJ_WRITE: Length == 0\n");
             Status = STATUS_SUCCESS;
         }
         else
         {
             if (!FlagOn(Irp->Flags, IRP_NOCACHE))
             {
+                trace("IRP_MJ_WRITE: not IRP_NOCACHE\n");
                 Buffer = Irp->AssociatedIrp.SystemBuffer;
                 ok(Buffer != NULL, "Null pointer!\n");
 
                 _SEH2_TRY
                 {
+                    trace("IRP_MJ_WRITE: _SEH2_TRY, PrivateCacheMap=%p\n", IoStack->FileObject->PrivateCacheMap);
                     if (IoStack->FileObject->PrivateCacheMap == NULL)
                     {
                         ok_eq_ulong(RtlCompareUnicodeString(&IoStack->FileObject->FileName, &InitOnRW, FALSE), 0);
-                        trace("IRP_MJ_WRITE, CcInitializeCacheMap\n");
+                        trace("IRP_MJ_WRITE, CcInitializeCacheMap, before\n");
                         CcInitializeCacheMap(IoStack->FileObject,
                                              (PCC_FILE_SIZES)&Fcb->Header.AllocationSize,
                                              FALSE, &Callbacks, Fcb);
+                        trace("IRP_MJ_WRITE, CcInitializeCacheMap, after\n");
                     }
 
+                    trace("IRP_MJ_WRITE, CcCopyWrite, before\n");
                     Ret = CcCopyWrite(IoStack->FileObject, &Offset, Length, TRUE, Buffer);
+                    trace("IRP_MJ_WRITE, CcCopyWrite, after\n");
                     ok_bool_true(Ret, "CcCopyWrite");
                 }
                 _SEH2_EXCEPT(EXCEPTION_EXECUTE_HANDLER)
                 {
+                    trace("IRP_MJ_WRITE: _SEH2_EXCEPT(EXCEPTION_EXECUTE_HANDLER)\n");
                     Irp->IoStatus.Status = _SEH2_GetExceptionCode();
                 }
                 _SEH2_END;
@@ -383,6 +413,7 @@ TestIrpHandler(
             {
                 PMDL Mdl;
 
+                trace("IRP_MJ_WRITE: IRP_NOCACHE\n");
                 Mdl = Irp->MdlAddress;
                 ok(Mdl != NULL, "Null pointer for MDL!\n");
                 ok((Mdl->MdlFlags & MDL_PAGES_LOCKED) != 0, "MDL not locked\n");
@@ -395,22 +426,35 @@ TestIrpHandler(
 
             if (NT_SUCCESS(Status))
             {
+                trace("IRP_MJ_WRITE: NT_SUCCESS(Status)\n");
                 if (Length + Offset.QuadPart > Fcb->Header.FileSize.QuadPart)
                 {
+                    trace("IRP_MJ_WRITE: Length + Offset.QuadPart > Fcb->Header.FileSize.QuadPart\n");
                     Fcb->Header.AllocationSize.QuadPart = Length + Offset.QuadPart;
                     Fcb->Header.FileSize.QuadPart = Length + Offset.QuadPart;
                     Fcb->Header.ValidDataLength.QuadPart = Length + Offset.QuadPart;
 
                     if (CcIsFileCached(IoStack->FileObject))
                     {
+                        trace("IRP_MJ_WRITE: CcIsFileCached()=TRUE\n");
                         CcSetFileSizes(IoStack->FileObject, (PCC_FILE_SIZES)(&(Fcb->Header.AllocationSize)));
                     }
+                    else
+                    {
+                        trace("IRP_MJ_WRITE: CcIsFileCached()=FALSE\n");
+                    }
                 }
+            }
+            else
+            {
+                trace("IRP_MJ_WRITE: not NT_SUCCESS(Status)\n");
             }
         }
     }
     else if (IoStack->MajorFunction == IRP_MJ_CLEANUP)
     {
+//        trace("IRP_MJ_CLEANUP\n");
+
         Fcb = IoStack->FileObject->FsContext;
         ok(Fcb != NULL, "Null pointer!\n");
 
@@ -422,8 +466,11 @@ TestIrpHandler(
         {
             LARGE_INTEGER Zero = RTL_CONSTANT_LARGE_INTEGER(0LL);
 
+//            trace("Calling CcFlushCache\n");
             CcFlushCache(&Fcb->SectionObjectPointers, NULL, 0, NULL);
+//            trace("Calling CcPurgeCacheSection\n");
             CcPurgeCacheSection(&Fcb->SectionObjectPointers, NULL, 0, FALSE);
+//            trace("Calling KeInitializeEvent\n");
             KeInitializeEvent(&CacheUninitEvent.Event, NotificationEvent, FALSE);
             CcUninitializeCacheMap(IoStack->FileObject, &Zero, &CacheUninitEvent);
             KeWaitForSingleObject(&CacheUninitEvent.Event, Executive, KernelMode, FALSE, NULL);
@@ -437,6 +484,8 @@ TestIrpHandler(
     }
     else if (IoStack->MajorFunction == IRP_MJ_QUERY_INFORMATION)
     {
+        trace("IRP_MJ_QUERY_INFORMATION\n");
+
         Fcb = IoStack->FileObject->FsContext;
 
         ok_eq_pointer(DeviceObject, TestDeviceObject);
@@ -474,6 +523,8 @@ TestIrpHandler(
     }
     else if (IoStack->MajorFunction == IRP_MJ_SET_INFORMATION)
     {
+        trace("IRP_MJ_SET_INFORMATION\n");
+
         Fcb = IoStack->FileObject->FsContext;
 
         ok_eq_pointer(DeviceObject, TestDeviceObject);
@@ -511,7 +562,12 @@ TestIrpHandler(
 
                 if (CcIsFileCached(IoStack->FileObject))
                 {
+                    trace("IRP_MJ_SET_INFORMATION: CcIsFileCached()=TRUE\n");
                     CcSetFileSizes(IoStack->FileObject, (PCC_FILE_SIZES)(&(Fcb->Header.AllocationSize)));
+                }
+                else
+                {
+                    trace("IRP_MJ_SET_INFORMATION: CcIsFileCached()=FALSE\n");
                 }
 
                 ok_eq_ulong(Fcb->Header.FileSize.QuadPart, TestSize);
