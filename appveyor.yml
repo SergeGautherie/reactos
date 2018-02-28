@@ -1,8 +1,8 @@
 environment:
   matrix:
-    - BuildType: "msvc-x64"
+#     - BuildType: "msvc-x64"
     - BuildType: "msvc"
-    - BuildType: "clang-cl"
+#     - BuildType: "clang-cl"
 
 version: reactos.appveyor.{build}
 skip_branch_with_pr: true
@@ -35,7 +35,10 @@ build_script:
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+
+after_build:
+  - appveyor PushArtifact ..\ros_build\bootcdregtest.iso
 
 test: off
 deploy: off
