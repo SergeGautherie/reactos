@@ -27,6 +27,10 @@
 
 /* Basic definitions */
 #define UNIMPLEMENTED { printf("%s unimplemented\n", __FUNCTION__); exit(1); }
+/*
+#define UNIMPLEMENTED_ONCE  UNIMPLEMENTED
+// #define UNIMPLEMENTED_ONCE  do { static int bWarnedOnce = 0; if (!bWarnedOnce) { bWarnedOnce++; UNIMPLEMENTED; } } while (0)
+*/
 #define ASSERT(x) assert(x)
 #define ASSERTMSG(m, x) assert(x)
 #define DPRINT if (0) printf
