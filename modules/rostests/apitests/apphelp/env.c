@@ -23,6 +23,8 @@
 #include "wine/test.h"
 
 #include "apphelp_apitest.h"
+// On 2k3, results are casted to SDBQUERYRESULT_2k3 from SDBQUERYRESULT_VISTA.
+C_ASSERT(sizeof(SDBQUERYRESULT_2k3) <= sizeof(SDBQUERYRESULT_VISTA));
 
 typedef void* HSDB;
 typedef void* PDB;
@@ -727,6 +729,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
                "Expected input->rgGuidDB[0] to be %s, was %s for %s\n",
                wine_dbgstr_guid(&rgGuidDB0), wine_dbgstr_guid(&input->rgGuidDB[0]), wine_dbgstr_w(szLayer));
 
+// En réalité output est (almost_)empty !!?
             // Check missing data.
             ok(output->dwLayerCount == 0,
                "Expected output->dwLayerCount to be 0, was %u for %s\n",
@@ -742,8 +745,15 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             output->dwLayerCount = input->dwLayerCount;
             output->dwCustomSDBMap = input->dwCustomSDBMap;
             output->rgGuidDB[0] = input->rgGuidDB[0];
+
+            ok(!memcmp(output, input, sizeof(*input)),
+               "Expected output to equal input for %s\n", wine_dbgstr_w(szLayer));
         }
-        ok(!memcmp(&result2, result, sizeof(*result)), "Expected result2 to equal result for %s\n", wine_dbgstr_w(szLayer));
+        else
+        {
+            ok(!memcmp(&result2, result, sizeof(*result)),
+               "Expected result2 to equal result for %s\n", wine_dbgstr_w(szLayer));
+        }
 
         RtlFreeHeap(GetProcessHeap(), 0, pData);
     }
