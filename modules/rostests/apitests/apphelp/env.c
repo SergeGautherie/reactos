@@ -75,7 +75,6 @@ typedef struct ShimData_Win2k3
     WCHAR szModule[34];
     DWORD dwSize;
     DWORD dwMagic;
-
     TAGREF atrExes[SDB_MAX_EXES_2k3];
     TAGREF atrLayers[SDB_MAX_LAYERS];
     DWORD dwUnk0;
@@ -84,7 +83,13 @@ typedef struct ShimData_Win2k3
     GUID rgGuidDB[SDB_MAX_SDBS];
 } ShimData_Win2k3;
 
-
+typedef struct ShimData_WinVista
+{
+    WCHAR szModule[MAX_PATH];
+    DWORD dwSize;
+    DWORD dwMagic;
+    SDBQUERYRESULT_VISTA Query;
+} ShimData_WinVista;
 
 typedef struct ShimData_Win7
 {
@@ -95,6 +100,18 @@ typedef struct ShimData_Win7
     WCHAR szLayer[MAX_LAYER_LENGTH];
     DWORD unknown;  // 0x14c
 } ShimData_Win7;
+
+typedef struct ShimData_Win8
+{
+    WCHAR szModule[MAX_PATH];
+    DWORD dwSize;
+    DWORD dwMagic;
+    DWORD unk1;
+    SDBQUERYRESULT_VISTA Query;
+    WCHAR szLayer[MAX_LAYER_LENGTH];
+/* == !?? */
+    char padding4[3204];
+} ShimData_Win8;
 
 typedef struct ShimData_Win10_v1
 {
@@ -150,26 +167,34 @@ typedef struct ShimData_QueryOffset
 
 
 C_ASSERT(sizeof(ShimData_Win2k3) == 392);
+C_ASSERT(sizeof(ShimData_WinVista) == 984);
 C_ASSERT(sizeof(ShimData_Win7) == 1500);
+C_ASSERT(sizeof(ShimData_Win8) == 4704);
 C_ASSERT(sizeof(ShimData_Win10_v1) == 4712);
 C_ASSERT(sizeof(ShimData_Win10_v2) == 3976);
 
 C_ASSERT(offsetof(ShimData_Win10_v2, dwSize) == 0);
 C_ASSERT(offsetof(ShimData_Win2k3, dwSize) == 68);
+C_ASSERT(offsetof(ShimData_WinVista, dwSize) == 520);
 C_ASSERT(offsetof(ShimData_Win7, dwSize) == 520);
+C_ASSERT(offsetof(ShimData_Win8, dwSize) == 520);
 C_ASSERT(offsetof(ShimData_Win10_v1, dwSize) == 520);
 
 C_ASSERT(offsetof(ShimData_Win10_v2, dwMagic) == 4);
 C_ASSERT(offsetof(ShimData_Win2k3, dwMagic) == 72);
+C_ASSERT(offsetof(ShimData_WinVista, dwMagic) == 524);
 C_ASSERT(offsetof(ShimData_Win7, dwMagic) == 524);
+C_ASSERT(offsetof(ShimData_Win8, dwMagic) == 524);
 C_ASSERT(offsetof(ShimData_Win10_v1, dwMagic) == 524);
 
 C_ASSERT(offsetof(ShimData_QueryOffset, dwSize_10_v2) == 0);
 C_ASSERT(offsetof(ShimData_QueryOffset, dwSize_2k3) == 68);
+// C_ASSERT(offsetof(ShimData_QueryOffset, dwSize_Vista) == 520); // Use dwSize_7_10, for the time being.
 C_ASSERT(offsetof(ShimData_QueryOffset, dwSize_7_10) == 520);
 
 C_ASSERT(offsetof(ShimData_QueryOffset, dwMagic_10_v2) == 4);
 C_ASSERT(offsetof(ShimData_QueryOffset, dwMagic_2k3) == 72);
+// C_ASSERT(offsetof(ShimData_QueryOffset, dwMagic_Vista) == 524); // Use dwMagic_7_10, for the time being.
 C_ASSERT(offsetof(ShimData_QueryOffset, dwMagic_7_10) == 524);
 
 
@@ -314,6 +339,35 @@ static void Validate_ShimData_Win2k3(PVOID data, size_t count, const char* layer
     ok(pShimData->dwMagic == SHIMDATA_MAGIC, "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n", SHIMDATA_MAGIC, pShimData->dwMagic);
     ok(pShimData->dwSize == sizeof(ShimData_Win2k3), "Expected pShimData->dwSize to be %u, was %u\n", sizeof(ShimData_Win2k3), pShimData->dwSize);
     ok(pShimData->dwCustomSDBMap == 1, "Expected pShimData->dwCustomSDBMap to be 1, was %u\n", pShimData->dwCustomSDBMap);
+    skip("FixMe: Parameters 'count' and 'layers' are unused\n");
+}
+
+static void Validate_ShimData_WinVista(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
+{
+    ShimData_WinVista* pShimData = (ShimData_WinVista*)data;
+    WCHAR szApphelp_Vista[MAX_PATH];
+    WCHAR* DllName;
+
+    // Vista and Server 2008 have a special case: overwrite dll name.
+    wcscpy(szApphelp_Vista, szApphelp);
+    DllName = wcsstr(szApphelp_Vista, L"apphelp.dll");
+    ok(DllName != NULL, "Expected DllName not to be NULL, but it was\n");
+    if (DllName != NULL)
+    {
+        wcscpy(DllName, L"ShimEng.dll");
+    }
+
+    ok(!lstrcmpW(pShimData->szModule, szApphelp_Vista),
+       "Expected pShimData->szModule to be %s, was %s\n",
+       wine_dbgstr_w(szApphelp_Vista), wine_dbgstr_w(pShimData->szModule));
+    ok(pShimData->dwSize == sizeof(ShimData_WinVista),
+       "Expected pShimData->dwSize to be %u, was %u\n",
+       sizeof(ShimData_WinVista), pShimData->dwSize);
+    ok(pShimData->dwMagic == SHIMDATA_MAGIC,
+       "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n",
+       SHIMDATA_MAGIC, pShimData->dwMagic);
+// pShimData->Query unused
+    skip("FixMe: Parameters 'count' and 'layers' are unused\n");
 }
 
 static void Validate_ShimData_Win7(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
@@ -349,6 +403,23 @@ static void Validate_ShimData_Win7(PVOID data, WCHAR szApphelp[MAX_PATH], size_t
     ok(pShimData->unknown == 0x14c, "Expected pShimData->unknown to be 0x14c, was 0x%x\n", pShimData->unknown);
 }
 
+static void Validate_ShimData_Win8(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
+{
+    ShimData_Win8* pShimData = (ShimData_Win8*)data;
+
+    ok(!lstrcmpW(pShimData->szModule, szApphelp),
+       "Expected pShimData->szModule to be %s, was %s\n",
+       wine_dbgstr_w(szApphelp), wine_dbgstr_w(pShimData->szModule));
+    ok(pShimData->dwSize == sizeof(ShimData_Win8),
+       "Expected pShimData->dwSize to be %u, was %u\n",
+       sizeof(ShimData_Win8), pShimData->dwSize);
+    ok(pShimData->dwMagic == SHIMDATA_MAGIC,
+       "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n",
+       SHIMDATA_MAGIC, pShimData->dwMagic);
+// pShimData->Query and pShimData->szLayer unused
+    skip("FixMe: Parameters 'count' and 'layers' are unused\n");
+}
+
 static void Validate_ShimData_Win10_v2(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
 {
     size_t n;
@@ -380,7 +451,7 @@ static void Validate_ShimData_Win10_v2(PVOID data, WCHAR szApphelp[MAX_PATH], si
         else
             ok(pShimData->Query.atrLayers[n] == 0, "Expected to find an empty layer in index %u / %u\n", n, count);
     }
-
+    skip("FixMe: Parameter 'szApphelp' is unused\n");
 }
 
 static void Validate_ShimData_Win10(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
@@ -417,6 +488,25 @@ static void Validate_ShimData_Win10(PVOID data, WCHAR szApphelp[MAX_PATH], size_
         else
             ok(pShimData->Query.atrLayers[n] == 0, "Expected to find an empty layer in index %u / %u\n", n, count);
     }
+}
+
+static void Validate_EmptyShimData_Win8(PVOID data)
+{
+    ShimData_Win8* pShimData = (ShimData_Win8*)data;
+
+    ok(!lstrcmpiW(pShimData->szModule, L""),
+       "Expected pShimData->szModule to be empty, was %s\n",
+       wine_dbgstr_w(pShimData->szModule));
+    ok(pShimData->dwSize == sizeof(ShimData_Win8),
+       "Expected pShimData->dwSize to be %u, was %u\n",
+       sizeof(ShimData_Win8), pShimData->dwSize);
+    ok(pShimData->dwMagic == SHIMDATA_MAGIC,
+       "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n",
+       SHIMDATA_MAGIC, pShimData->dwMagic);
+    ok(!memcmp(&pShimData->Query, &empty_result, sizeof(empty_result)), "Expected result to be empty\n");
+    ok(!lstrcmpiW(pShimData->szLayer, L""),
+       "Expected pShimData->szLayer to be empty, was %s\n",
+       wine_dbgstr_w(pShimData->szLayer));
 }
 
 static void Validate_EmptyShimData_Win10(PVOID data)
@@ -483,7 +573,7 @@ static void Test_layers(WCHAR szApphelp[MAX_PATH])
             ok(info.AppCompatFlags.QuadPart == 0, "Expected AppCompatFlags to be 0, was: %s\n", wine_dbgstr_longlong(info.AppCompatFlags.QuadPart));
             ok(info.AppCompatFlagsUser.QuadPart == 0, "Expected AppCompatFlagsUser to be 0, was: %s\n", wine_dbgstr_longlong(info.AppCompatFlagsUser.QuadPart));
             ok(info.AppCompatInfo == NULL, "Expected AppCompatInfo to be NULL, was: %p\n", info.AppCompatInfo);
-            if (g_WinVersion < WINVER_WIN10)
+            if (g_WinVersion < WINVER_WIN8)
             {
                 ok(info.pShimData == NULL, "Expected pShimData to be NULL, was: %p\n", info.pShimData);
             }
@@ -492,7 +582,14 @@ static void Test_layers(WCHAR szApphelp[MAX_PATH])
                 ok(info.pShimData != NULL, "Expected pShimData to be valid, was NULL\n");
                 if (info.pShimData != NULL)
                 {
-                    Validate_EmptyShimData_Win10(info.pShimData);
+                    if (g_WinVersion < WINVER_WIN10)
+                    {
+                        Validate_EmptyShimData_Win8(info.pShimData);
+                    }
+                    else
+                    {
+                        Validate_EmptyShimData_Win10(info.pShimData);
+                    }
                 }
             }
         }
@@ -507,8 +604,12 @@ static void Test_layers(WCHAR szApphelp[MAX_PATH])
             {
                 if (g_WinVersion < WINVER_VISTA)
                     Validate_ShimData_Win2k3(info.pShimData, n, layers);
-                else if (g_WinVersion < WINVER_WIN10)
+                else if (g_WinVersion < WINVER_WIN7)
+                    Validate_ShimData_WinVista(info.pShimData, szApphelp, n, layers);
+                else if (g_WinVersion < WINVER_WIN8)
                     Validate_ShimData_Win7(info.pShimData, szApphelp, n, layers);
+                else if (g_WinVersion < WINVER_WIN10)
+                    Validate_ShimData_Win8(info.pShimData, szApphelp, n, layers);
                 else
                     Validate_ShimData_Win10(info.pShimData, szApphelp, n, layers);
             }
@@ -557,8 +658,12 @@ static void Test_repeatlayer(WCHAR szApphelp[MAX_PATH])
             /* Win10 only 'loads' one layer */
             if (g_WinVersion < WINVER_VISTA)
                 Validate_ShimData_Win2k3(info.pShimData, SDB_MAX_LAYERS, layers);
-            else if (g_WinVersion < WINVER_WIN10)
+            else if (g_WinVersion < WINVER_WIN7)
+                Validate_ShimData_WinVista(info.pShimData, szApphelp, SDB_MAX_LAYERS, layers);
+            else if (g_WinVersion < WINVER_WIN8)
                 Validate_ShimData_Win7(info.pShimData, szApphelp, SDB_MAX_LAYERS, layers);
+            else if (g_WinVersion < WINVER_WIN10)
+                Validate_ShimData_Win8(info.pShimData, szApphelp, SDB_MAX_LAYERS, layers);
             else
                 Validate_ShimData_Win10(info.pShimData, szApphelp, 1, layers);
         }
@@ -663,7 +768,9 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
     else
     {
         ShimData_Win2k3* pWin2k3;
+        ShimData_WinVista* pWinVista;
         ShimData_Win7* pWin7;
+        ShimData_Win8* pWin8;
         ShimData_Win10_v1* pWin10;
         ShimData_Win10_v2* pWin10_v2;
         SDBQUERYRESULT_VISTA result2 = { { 0 } };
@@ -680,12 +787,25 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             //ok(!memcmp(&pWin2k3->Query, result, sizeof(SDBQUERYRESULT_2k3)), "Expected pWin2k3->Query to equal result\n");
             //ok_wstr(pWin2k3->szLayer, szLayer);
             break;
+        case sizeof(ShimData_WinVista):
+            pWinVista = (ShimData_WinVista*)pData;
+            ok_int(pWinVista->dwSize, dwSize);
+            ok_hex(pWinVista->dwMagic, SHIMDATA_MAGIC);
+            ok(!memcmp(&pWinVista->Query, result, sizeof(*result)), "Expected pWinVista->Query to equal result\n");
+            break;
         case sizeof(ShimData_Win7):
             pWin7 = (ShimData_Win7*)pData;
             ok_hex(pWin7->dwMagic, SHIMDATA_MAGIC);
             ok_int(pWin7->dwSize, dwSize);
             ok(!memcmp(&pWin7->Query, result, sizeof(*result)), "Expected pWin7->Query to equal result\n");
             ok_wstr(pWin7->szLayer, szLayer);
+            break;
+        case sizeof(ShimData_Win8):
+            pWin8 = (ShimData_Win8*)pData;
+            ok_int(pWin8->dwSize, dwSize);
+            ok_hex(pWin8->dwMagic, SHIMDATA_MAGIC);
+            ok(!memcmp(&pWin8->Query, result, sizeof(*result)), "Expected pWin8->Query to equal result\n");
+            ok_wstr(pWin8->szLayer, L"");
             break;
         case sizeof(ShimData_Win10_v1):
             pWin10 = (ShimData_Win10_v1*)pData;
@@ -768,7 +888,7 @@ static void Test_GetMatchingExe(void)
     BOOL ret;
     SDBQUERYRESULT_VISTA result = { { 0 } };
     WCHAR self[MAX_PATH];
-    DWORD flags = (g_WinVersion < WINVER_VISTA) ? 0 : ((g_WinVersion < WINVER_WIN10) ? 1 : 0x21);
+    DWORD flags = (g_WinVersion < WINVER_WIN7) ? 0 : ((g_WinVersion < WINVER_WIN10) ? 1 : 0x21);
 
     GetModuleFileNameW(NULL, self, MAX_PATH);
     SetEnvironmentVariableA("__COMPAT_LAYER", NULL);
@@ -1331,7 +1451,7 @@ START_TEST(env)
     QueryOffset.dwSize_7_10 = 2;
     QueryOffset.dwSize_10_v2 = 3;
 
-    g_ShimDataSize = g_WinVersion < WINVER_WIN10 ? 4096 : 8192;
+    g_ShimDataSize = g_WinVersion < WINVER_WIN8 ? 4096 : 8192;
     _SEH2_TRY
     {
         ShimDataType = pSdbGetAppCompatDataSize(&QueryOffset);
