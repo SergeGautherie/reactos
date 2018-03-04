@@ -378,6 +378,7 @@ static void Validate_ShimData_Win2k3(PVOID data, size_t count, const char* layer
     skip("FixMe: Parameters 'count' and 'layers' are unused\n");
 }
 
+// Remplacer MAX_PATH par 'const *' !!?
 static void Validate_ShimData_WinVista(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
 {
     ShimData_WinVista* pShimData = (ShimData_WinVista*)data;
