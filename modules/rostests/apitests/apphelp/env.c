@@ -85,7 +85,7 @@ typedef struct ShimData_Win2k3
 
 typedef struct ShimData_Win7
 {
-    WCHAR szModule[260];
+    WCHAR szModule[MAX_PATH];
     DWORD dwSize;
     DWORD dwMagic;
     SDBQUERYRESULT_VISTA Query;
@@ -95,7 +95,7 @@ typedef struct ShimData_Win7
 
 typedef struct ShimData_Win10_v1
 {
-    WCHAR szModule[260];
+    WCHAR szModule[MAX_PATH];
     DWORD dwSize;
     DWORD dwMagic;
     DWORD unk1;
@@ -306,7 +306,7 @@ static void Validate_ShimData_Win2k3(PVOID data, size_t count, const char* layer
     ok(pShimData->dwCustomSDBMap == 1, "Expected pShimData->dwCustomSDBMap to be 1, was %u\n", pShimData->dwCustomSDBMap);
 }
 
-static void Validate_ShimData_Win7(PVOID data, WCHAR szApphelp[256], size_t count, const char* layers[])
+static void Validate_ShimData_Win7(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
 {
     size_t n;
     ShimData_Win7* pShimData = (ShimData_Win7*)data;
@@ -338,7 +338,7 @@ static void Validate_ShimData_Win7(PVOID data, WCHAR szApphelp[256], size_t coun
     ok(pShimData->unknown == 0x14c, "Expected pShimData->unknown to be 0x14c, was 0x%x\n", pShimData->unknown);
 }
 
-static void Validate_ShimData_Win10_v2(PVOID data, WCHAR szApphelp[256], size_t count, const char* layers[])
+static void Validate_ShimData_Win10_v2(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
 {
     size_t n;
     ShimData_Win10_v2* pShimData = (ShimData_Win10_v2*)data;
@@ -372,7 +372,7 @@ static void Validate_ShimData_Win10_v2(PVOID data, WCHAR szApphelp[256], size_t 
 
 }
 
-static void Validate_ShimData_Win10(PVOID data, WCHAR szApphelp[256], size_t count, const char* layers[])
+static void Validate_ShimData_Win10(PVOID data, WCHAR szApphelp[MAX_PATH], size_t count, const char* layers[])
 {
     size_t n;
     ShimData_Win10_v1* pShimData = (ShimData_Win10_v1*)data;
@@ -437,7 +437,7 @@ static void Validate_EmptyShimData_Win10(PVOID data)
     }
 }
 
-static void Test_layers(WCHAR szApphelp[256])
+static void Test_layers(WCHAR szApphelp[MAX_PATH])
 {
     static const char* layers[] = {
         "256Color", "NT4SP5", "DisableNXHideUI", "DisableNXShowUI",
@@ -506,7 +506,7 @@ static void Test_layers(WCHAR szApphelp[256])
 [Info][SdbpGetPermLayersInternal] Failed to read value info from Key "\REGISTRY\USER\S-1-5-21-4051718696-421402927-393408651-2638\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" Status 0xc0000034
 [Warn][SdbpEnumUserSdb     ] Failed to open key "\Registry\Machine\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Custom\NotepadReplacer.exe" Status 0xc0000034
 */
-static void Test_repeatlayer(WCHAR szApphelp[256])
+static void Test_repeatlayer(WCHAR szApphelp[MAX_PATH])
 {
     static const char* layers[] = {
         "256Color", "256Color", "256Color", "256Color",
@@ -888,7 +888,7 @@ static BOOL call_ApphelpCheckRunApp(HANDLE FileHandle, PWCHAR ApplicationName, P
 
 
 
-static void Test_ApphelpCheckRunApp(WCHAR szApphelp[256])
+static void Test_ApphelpCheckRunApp(WCHAR szApphelp[MAX_PATH])
 {
     BOOL ret;
     HANDLE FileHandle = NULL;
