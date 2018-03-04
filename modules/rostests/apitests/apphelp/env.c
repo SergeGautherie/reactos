@@ -791,6 +791,20 @@ static void expect_layeronly_imp(SDBQUERYRESULT_VISTA* result, const char* layer
     }
 }
 
+static void DumpSQR(const WCHAR* szLayer, char* name, PVOID pData, size_t size)
+{
+    char str[2 * sizeof(SDBQUERYRESULT_VISTA) + 1];
+    unsigned int i;
+
+    for (i = 0; i < size; ++i)
+    {
+        sprintf(&str[2 * i], "%02x", ((char*)pData)[i]);
+    }
+    str[2 * i] = '\0';
+
+    trace("DumpSQR: %s, %s = 0x%s\n", wine_dbgstr_w(szLayer), name, str);
+}
+
 static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
 {
     BOOL ret;
@@ -907,6 +921,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             ok(IsEqualGUID(&input->rgGuidDB[0], &rgGuidDB0),
                "Expected input->rgGuidDB[0] to be %s, was %s for %s\n",
                wine_dbgstr_guid(&rgGuidDB0), wine_dbgstr_guid(&input->rgGuidDB[0]), wine_dbgstr_w(szLayer));
+            DumpSQR(szLayer, "0 input  ", input, sizeof(*input));
 
 // En réalité output est (almost_)empty !!?
             // Check missing data.
@@ -919,17 +934,22 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             ok(IsEqualGUID(&output->rgGuidDB[0], &empty_result.rgGuidDB[0]),
                "Expected output->rgGuidDB[0] to be empty, was %s for %s\n",
                wine_dbgstr_guid(&output->rgGuidDB[0]), wine_dbgstr_w(szLayer));
+            DumpSQR(szLayer, "1 output ", output, sizeof(*output));
 
             // Fake it for now, so the memcmp works.
             output->dwLayerCount = input->dwLayerCount;
             output->dwCustomSDBMap = input->dwCustomSDBMap;
             output->rgGuidDB[0] = input->rgGuidDB[0];
+            DumpSQR(szLayer, "2 output ", output, sizeof(*output));
 
             ok(!memcmp(output, input, sizeof(*input)),
                "Expected output to equal input for %s\n", wine_dbgstr_w(szLayer));
         }
         else
         {
+            DumpSQR(szLayer, "0 result ", result, sizeof(*result));
+            DumpSQR(szLayer, "2 result2", &result2, sizeof(result2));
+
             ok(!memcmp(&result2, result, sizeof(*result)),
                "Expected result2 to equal result for %s\n", wine_dbgstr_w(szLayer));
         }
