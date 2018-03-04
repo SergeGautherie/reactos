@@ -221,14 +221,19 @@ static BOOL get_shiminfo(HANDLE proc, test_RemoteShimInfo* info)
 
             dwRead = VirtualQueryEx(proc, (LPCVOID)peb.pShimData, &mbi, sizeof(mbi));
             ok(dwRead == sizeof(mbi), "Expected VQE to return %u, got %lu\n", sizeof(mbi), dwRead);
-            if (dwRead == sizeof(mbi) || peb.pShimData == NULL)
+            if (dwRead == sizeof(mbi))
             {
                 info->ShimDataSize = mbi.RegionSize;
                 info->pShimData = malloc(mbi.RegionSize);
-                if (readproc(proc, peb.pShimData, info->pShimData, mbi.RegionSize))
-                    return TRUE;
-                free(info->pShimData);
-                info->pShimData = NULL;
+                if (info->pShimData != NULL)
+                {
+                    if (readproc(proc, peb.pShimData, info->pShimData, mbi.RegionSize))
+                    {
+                        return TRUE;
+                    }
+                    free(info->pShimData);
+                    info->pShimData = NULL;
+                }
             }
         }
     }
@@ -414,9 +419,6 @@ static void Validate_ShimData_Win10(PVOID data, WCHAR szApphelp[MAX_PATH], size_
 static void Validate_EmptyShimData_Win10(PVOID data)
 {
     ShimData_Win10_v1* pShimData = (ShimData_Win10_v1*)data;
-    ok(pShimData != NULL, "Expected pShimData\n");
-    if (!pShimData)
-        return;
 
     if (pShimData->dwMagic != SHIMDATA_MAGIC)
     {
@@ -484,7 +486,11 @@ static void Test_layers(WCHAR szApphelp[MAX_PATH])
             }
             else
             {
-                Validate_EmptyShimData_Win10(info.pShimData);
+                ok(info.pShimData != NULL, "Expected pShimData to be valid, was NULL\n");
+                if (info.pShimData != NULL)
+                {
+                    Validate_EmptyShimData_Win10(info.pShimData);
+                }
             }
         }
         else
@@ -494,7 +500,7 @@ static void Test_layers(WCHAR szApphelp[MAX_PATH])
             ok(info.AppCompatInfo == NULL, "Expected AppCompatInfo to be NULL, was: %p\n", info.AppCompatInfo);
             ok(info.pShimData != NULL, "Expected pShimData to be valid, was NULL\n");
             ok(info.ShimDataSize == g_ShimDataSize, "Expected ShimDataSize to be %u, was: %u\n", g_ShimDataSize, info.ShimDataSize);
-            if (info.pShimData)
+            if (info.pShimData != NULL)
             {
                 if (g_WinVersion < WINVER_VISTA)
                     Validate_ShimData_Win2k3(info.pShimData, n, layers);
@@ -504,7 +510,10 @@ static void Test_layers(WCHAR szApphelp[MAX_PATH])
                     Validate_ShimData_Win10(info.pShimData, szApphelp, n, layers);
             }
         }
-        free(info.pShimData);
+        if (info.pShimData != NULL)
+        {
+            free(info.pShimData);
+        }
     }
 }
 
@@ -540,7 +549,7 @@ static void Test_repeatlayer(WCHAR szApphelp[MAX_PATH])
         ok(info.AppCompatInfo == NULL, "Expected AppCompatInfo to be NULL, was: %p\n", info.AppCompatInfo);
         ok(info.pShimData != NULL, "Expected pShimData to be valid, was NULL\n");
         ok(info.ShimDataSize == g_ShimDataSize, "Expected ShimDataSize to be %u, was: %u\n", g_ShimDataSize, info.ShimDataSize);
-        if (info.pShimData)
+        if (info.pShimData != NULL)
         {
             /* Win10 only 'loads' one layer */
             if (g_WinVersion < WINVER_VISTA)
@@ -644,7 +653,11 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
     ret = pSdbPackAppCompatData(g_LayerDB, result, &pData, &dwSize);
     ok(ret == TRUE, "Expected ret to be TRUE\n");
 
-    if (pData)
+    if (pData == NULL)
+    {
+        skip("SdbPackAppCompatData returned no data\n");
+    }
+    else
     {
         ShimData_Win2k3* pWin2k3;
         ShimData_Win7* pWin7;
