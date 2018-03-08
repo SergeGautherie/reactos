@@ -263,7 +263,10 @@ static BOOL get_shiminfo(HANDLE proc, test_RemoteShimInfo* info)
             info->AppCompatFlagsUser = peb.AppCompatFlagsUser;
             info->AppCompatInfo = peb.AppCompatInfo;
             if (peb.pShimData == NULL)
+            {
+                trace("peb.pShimData is NULL\n");
                 return TRUE;
+            }
 
             dwRead = VirtualQueryEx(proc, (LPCVOID)peb.pShimData, &mbi, sizeof(mbi));
             ok(dwRead == sizeof(mbi), "Expected VQE to return %u, got %lu\n", sizeof(mbi), dwRead);
@@ -283,6 +286,7 @@ static BOOL get_shiminfo(HANDLE proc, test_RemoteShimInfo* info)
             }
         }
     }
+    trace("get_shiminfo failed\n");
     return FALSE;
 }
 
@@ -818,6 +822,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
         {
 /* // Not 5.1
         case sizeof(ShimData_WinXP):
+            trace("Test_Shimdata, case WinXP\n");
             pWinXP = (ShimData_WinXP*)pData;
             ok_int(pWinXP->dwSize, dwSize);
             ok_hex(pWinXP->dwMagic, SHIMDATA_MAGIC);
@@ -827,6 +832,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             break;
 */
         case sizeof(ShimData_Win2k3):
+            trace("Test_Shimdata, case Win2k3\n");
             pWin2k3 = (ShimData_Win2k3*)pData;
             ok_hex(pWin2k3->dwMagic, SHIMDATA_MAGIC);
             ok_int(pWin2k3->dwSize, dwSize);
@@ -835,12 +841,14 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             //ok_wstr(pWin2k3->szLayer, szLayer);
             break;
         case sizeof(ShimData_WinVista):
+            trace("Test_Shimdata, case WinVista\n");
             pWinVista = (ShimData_WinVista*)pData;
             ok_int(pWinVista->dwSize, dwSize);
             ok_hex(pWinVista->dwMagic, SHIMDATA_MAGIC);
             ok(!memcmp(&pWinVista->Query, result, sizeof(*result)), "Expected pWinVista->Query to equal result\n");
             break;
         case sizeof(ShimData_Win7):
+            trace("Test_Shimdata, case Win7\n");
             pWin7 = (ShimData_Win7*)pData;
             ok_hex(pWin7->dwMagic, SHIMDATA_MAGIC);
             ok_int(pWin7->dwSize, dwSize);
@@ -848,6 +856,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             ok_wstr(pWin7->szLayer, szLayer);
             break;
         case sizeof(ShimData_Win8):
+            trace("Test_Shimdata, case Win8\n");
             pWin8 = (ShimData_Win8*)pData;
             ok_int(pWin8->dwSize, dwSize);
             ok_hex(pWin8->dwMagic, SHIMDATA_MAGIC);
@@ -855,6 +864,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             ok_wstr(pWin8->szLayer, L"");
             break;
         case sizeof(ShimData_Win10_v1):
+            trace("Test_Shimdata, case Win10_v1\n");
             pWin10 = (ShimData_Win10_v1*)pData;
             ok_hex(pWin10->dwMagic, SHIMDATA_MAGIC);
             ok_int(pWin10->dwSize, dwSize);
@@ -863,6 +873,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
             ok_wstr(pWin10->szLayer, L"");
             break;
         case sizeof(ShimData_Win10_v2):
+            trace("Test_Shimdata, case Win10_v2\n");
             pWin10_v2 = (ShimData_Win10_v2*)pData;
             ok_hex(pWin10_v2->dwMagic, SHIMDATA_MAGIC);
             ok_int(pWin10_v2->dwSize, dwSize);
