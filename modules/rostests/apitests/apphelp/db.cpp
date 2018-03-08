@@ -322,6 +322,10 @@ static void test_Sdb(void)
             pSdbCloseDatabase(pdb);
         }
     }
+    else
+    {
+        DeleteFileW(path2);
+    }
     DeleteFileW(path1);
 }
 
@@ -1380,7 +1384,10 @@ static void test_match_ex(const WCHAR* workdir, HSDB hsdb)
             continue;
         Succeed = !wcsicmp(Vendor, L"Succeed");
         if (!Succeed && wcsicmp(Vendor, L"Fail"))
+        {
+            ok(FALSE, "Expected \"Succeed\" or \"Fail\", got %s", wine_dbgstr_w(Vendor));
             continue;
+        }
         tagid = pSdbFindFirstTag(pdb, exetag, TAG_APP_NAME);
         AppName = pSdbGetStringTagPtr(pdb, tagid);
         if (!AppName)
@@ -1684,6 +1691,7 @@ static void test_IndexKeyFromString(void)
 #endif
 }
 
+C_ASSERT(sizeof(SDBQUERYRESULT_2k3) <= sizeof(SDBQUERYRESULT_VISTA));
 static int validate_SDBQUERYRESULT_size()
 {
     unsigned char buffer[SDBQUERYRESULT_EXPECTED_SIZE_VISTA * 2];
@@ -1696,8 +1704,8 @@ static int validate_SDBQUERYRESULT_size()
     pSdbGetMatchingExe(NULL, path, NULL, NULL, 0, (SDBQUERYRESULT_VISTA*)buffer);
     if (buffer[0] == 0xab)
     {
-        trace("SdbGetMatchingExe didnt do anything, cannot determine SDBQUERYRESULT size\n");
-        return 0;
+        trace("SdbGetMatchingExe didn't do anything, cannot determine SDBQUERYRESULT size\n");
+        return -1;
     }
 
     if (buffer[SDBQUERYRESULT_EXPECTED_SIZE_2k3] == 0xab && buffer[SDBQUERYRESULT_EXPECTED_SIZE_2k3-1] != 0xab)
@@ -1712,11 +1720,15 @@ static int validate_SDBQUERYRESULT_size()
 
     for (n = 0; n < _countof(buffer); ++n)
     {
-        if (buffer[n] != 0xab)
+        if (buffer[n] == 0xab)
         {
             trace("Unknown size: %i\n", n);
             break;
         }
+    }
+    if (n == _countof(buffer))
+    {
+        trace("Unknown size: %i (or more)\n", n);
     }
 
     return 0;
@@ -1795,6 +1807,6 @@ START_TEST(db)
         break;
     }
     test_TagRef();
-    skip("test_SecondaryDB()\n");
+    skip("test_SecondaryDB() UNIMPLEMENTED\n");
     test_IndexKeyFromString();
 }
