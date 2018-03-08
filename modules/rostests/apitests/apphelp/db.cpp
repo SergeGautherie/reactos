@@ -612,6 +612,9 @@ static void check_db_properties(PDB pdb, TAGID root)
         ok(result, "expected SdbReadBinaryTag not to fail.\n");
         if (result)
         {
+            if (g_WinVersion >= WINVER_2003)
+            {
+
             WCHAR guid_wstr[50];
             result = pSdbGUIDToString(&guid, guid_wstr, 50);
             ok(result, "expected SdbGUIDToString not to fail.\n");
@@ -621,6 +624,9 @@ static void check_db_properties(PDB pdb, TAGID root)
                 WideCharToMultiByte(CP_ACP, 0, guid_wstr, -1, guid_str, sizeof(guid_str), NULL, NULL);
                 ok_str(guid_str, "{e39b0eb0-55db-450b-9bd4-d20c9484260f}");
             }
+
+            } // if (g_WinVersion >= WINVER_2003)
+
             ok(pSdbGetDatabaseID(pdb, &guid2), "expected SdbGetDatabaseID not to fail.\n");
             ok(IsEqualGUID(guid, guid2), "expected guids to be equal(%s:%s)\n", wine_dbgstr_guid(&guid), wine_dbgstr_guid(&guid2));
         }
@@ -1402,6 +1408,9 @@ static void test_match_ex(const WCHAR* workdir, HSDB hsdb)
         if (!TestName)
             continue;
 
+        if (g_WinVersion >= WINVER_2003)
+        {
+
         swprintf(exename, L"%s\\%s", workdir, AppName);
         test_create_exe(exename, 0);
 
@@ -1415,6 +1424,8 @@ static void test_match_ex(const WCHAR* workdir, HSDB hsdb)
 
         ok(query.dwExeCount == exe_count, "Expected dwExeCount to be %d, was %d for %s\n", exe_count, query.dwExeCount, wine_dbgstr_w(TestName));
         DeleteFileW(exename);
+
+        } // if (g_WinVersion >= WINVER_2003)
     }
 }
 
@@ -1545,7 +1556,20 @@ static void test_TagRef(void)
     pdb = (PDB)&db;
     db = 12345;
     ret = pSdbTagRefToTagID(hsdb, 0x10000000, &pdb, &db);
+
+    if (g_WinVersion == WINVER_WINXP)
+    {
+
+    ok(ret == TRUE, "Expected ret to be TRUE, was: %d\n", ret);
+
+    }
+    else
+    {
+
     ok(ret == FALSE, "Expected ret to be FALSE, was: %d\n", ret);
+
+    } // else, if (g_WinVersion == WINVER_WINXP)
+
     ok(pdb == NULL, "Expected no result, got: %p\n", pdb);
     ok(db == 0, "Expected no result, got: 0x%x\n", db);
 
@@ -1594,6 +1618,9 @@ static void test_TagRef(void)
         }
     }
 
+    if (g_WinVersion >= WINVER_2003)
+    {
+
     /* Get a tagref for our own layer */
     tr = pSdbGetLayerTagRef(hsdb, L"TestNewMode");
     ok_hex(tr, 0x18e);
@@ -1601,6 +1628,8 @@ static void test_TagRef(void)
     /* We cannot find a tagref from the main database. */
     tr = pSdbGetLayerTagRef(hsdb, L"256Color");
     ok_hex(tr, 0);
+
+    } // if (g_WinVersion >= WINVER_2003)
 
     pSdbReleaseDatabase(hsdb);
 
@@ -1741,6 +1770,8 @@ static int validate_SDBQUERYRESULT_size()
 
 START_TEST(db)
 {
+    int SQRsize;
+
     //SetEnvironmentVariable("SHIM_DEBUG_LEVEL", "4");
     //SetEnvironmentVariable("SHIMENG_DEBUG_LEVEL", "4");
     //SetEnvironmentVariable("DEBUGCHANNEL", "+apphelp");
@@ -1755,10 +1786,13 @@ START_TEST(db)
 
     *(void**)&pSdbTagToString = (void *)GetProcAddress(hdll, "SdbTagToString");
     *(void**)&pSdbOpenDatabase = (void *)GetProcAddress(hdll, "SdbOpenDatabase");
+/* 5.2sp1 */
     *(void**)&pSdbCreateDatabase = (void *)GetProcAddress(hdll, "SdbCreateDatabase");
     *(void**)&pSdbGetDatabaseVersion = (void *)GetProcAddress(hdll, "SdbGetDatabaseVersion");
     *(void**)&pSdbCloseDatabase = (void *)GetProcAddress(hdll, "SdbCloseDatabase");
+/* 5.2sp1 */
     *(void**)&pSdbCloseDatabaseWrite = (void *)GetProcAddress(hdll, "SdbCloseDatabaseWrite");
+/* 5.2sp1 start */
     *(void**)&pSdbGetTagFromTagID = (void *)GetProcAddress(hdll, "SdbGetTagFromTagID");
     *(void**)&pSdbWriteNULLTag = (void *)GetProcAddress(hdll, "SdbWriteNULLTag");
     *(void**)&pSdbWriteWORDTag = (void *)GetProcAddress(hdll, "SdbWriteWORDTag");
@@ -1769,6 +1803,7 @@ START_TEST(db)
     *(void**)&pSdbWriteStringRefTag = (void *)GetProcAddress(hdll, "SdbWriteStringRefTag");
     *(void**)&pSdbBeginWriteListTag = (void *)GetProcAddress(hdll, "SdbBeginWriteListTag");
     *(void**)&pSdbEndWriteListTag = (void *)GetProcAddress(hdll, "SdbEndWriteListTag");
+/* 5.2sp1 end */
     *(void**)&pSdbFindFirstTag = (void *)GetProcAddress(hdll, "SdbFindFirstTag");
     *(void**)&pSdbFindNextTag = (void *)GetProcAddress(hdll, "SdbFindNextTag");
     *(void**)&pSdbFindFirstNamedTag = (void *)GetProcAddress(hdll, "SdbFindFirstNamedTag");
@@ -1783,23 +1818,40 @@ START_TEST(db)
     *(void**)&pSdbGetFirstChild = (void *)GetProcAddress(hdll, "SdbGetFirstChild");
     *(void**)&pSdbGetNextChild = (void *)GetProcAddress(hdll, "SdbGetNextChild");
     *(void**)&pSdbGetDatabaseID = (void *)GetProcAddress(hdll, "SdbGetDatabaseID");
+/* 5.2sp1 */
     *(void**)&pSdbGUIDToString = (void *)GetProcAddress(hdll, "SdbGUIDToString");
     *(void**)&pSdbInitDatabase = (void *)GetProcAddress(hdll, "SdbInitDatabase");
     *(void**)&pSdbReleaseDatabase = (void *)GetProcAddress(hdll, "SdbReleaseDatabase");
+/* 5.2sp1 */
     *(void**)&pSdbGetMatchingExe = (void *)GetProcAddress(hdll, "SdbGetMatchingExe");
     *(void**)&pSdbTagRefToTagID = (void *)GetProcAddress(hdll, "SdbTagRefToTagID");
     *(void**)&pSdbTagIDToTagRef = (void *)GetProcAddress(hdll, "SdbTagIDToTagRef");
+/* 5.2sp1 */
     *(void**)&pSdbMakeIndexKeyFromString = (void *)GetProcAddress(hdll, "SdbMakeIndexKeyFromString");
+/* 5.2sp1 */
     *(void**)&pSdbGetLayerTagRef = (void *)GetProcAddress(hdll, "SdbGetLayerTagRef");
 
+    if (g_WinVersion >= WINVER_2003)
+    {
+
+    trace("Calling test_Sdb()\n");
     test_Sdb();
     test_write_ex();
     test_stringtable();
+
+    } // if (g_WinVersion >= WINVER_2003)
+
+    trace("Calling test_CheckDatabaseManually()\n");
     test_CheckDatabaseManually();
-    switch (validate_SDBQUERYRESULT_size())
+    trace("Calling validate_SDBQUERYRESULT_size()\n");
+    SQRsize = (g_WinVersion < WINVER_2003 ? 1 : validate_SDBQUERYRESULT_size());
+    switch (SQRsize)
     {
     case 1:
+        if (g_WinVersion >= WINVER_2003)
+        {
         test_MatchApplications<SDBQUERYRESULT_2k3>();
+        }
         test_MatchApplicationsEx<SDBQUERYRESULT_2k3>();
         break;
     case 2:
@@ -1807,10 +1859,17 @@ START_TEST(db)
         test_MatchApplicationsEx<SDBQUERYRESULT_VISTA>();
         break;
     default:
-        skip("Skipping tests with SDBQUERYRESULT due to a wrong size reported\n");
+        skip("Skipping tests with SDBQUERYRESULT due to a wrong size (%d) reported\n", SQRsize);
         break;
     }
     test_TagRef();
     skip("test_SecondaryDB() UNIMPLEMENTED\n");
+
+    if (g_WinVersion >= WINVER_2003)
+    {
+
+    trace("Calling test_IndexKeyFromString()\n");
     test_IndexKeyFromString();
+
+    } // if (g_WinVersion >= WINVER_2003)
 }
