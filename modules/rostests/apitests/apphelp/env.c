@@ -244,6 +244,20 @@ static BOOL readproc(HANDLE proc, LPVOID address, PVOID target, DWORD size)
     return FALSE;
 }
 
+static void DumpShimData(PVOID pShimData)
+{
+    char str[2 * 8192 + 1];
+    DWORD i;
+
+    for (i = 0; i < g_ShimDataSize; ++i)
+    {
+        sprintf(&str[2 * i], "%02x", ((char*)pShimData)[i]);
+    }
+    str[2 * i] = '\0';
+
+    trace("DumpShimData: 0x%s\n", str);
+}
+
 static BOOL get_shiminfo(HANDLE proc, test_RemoteShimInfo* info)
 {
     PROCESS_BASIC_INFORMATION pbi = { 0 };
@@ -278,6 +292,7 @@ static BOOL get_shiminfo(HANDLE proc, test_RemoteShimInfo* info)
                 {
                     if (readproc(proc, peb.pShimData, info->pShimData, mbi.RegionSize))
                     {
+                        DumpShimData(info->pShimData);
                         return TRUE;
                     }
                     free(info->pShimData);
