@@ -1092,15 +1092,19 @@ static BOOL IsUserAdmin()
 template<typename SDBQUERYRESULT_T>
 static void check_adwExeFlags(DWORD adwExeFlags_0, SDBQUERYRESULT_T& query, const char* file, int line, size_t cur)
 {
+    trace("check_adwExeFlags(SDBQUERYRESULT_T)\n");
     ok_(file, line)(query.adwExeFlags[0] == adwExeFlags_0, "Expected adwExeFlags[0] to be 0x%x, was: 0x%x for %d\n", adwExeFlags_0, query.adwExeFlags[0], cur);
     for (size_t n = 1; n < _countof(query.atrExes); ++n)
         ok_(file, line)(query.adwExeFlags[n] == 0, "Expected adwExeFlags[%d] to be 0, was: %x for %d\n", n, query.adwExeFlags[0], cur);
 }
 
+/*!?*/
 template<>
 void check_adwExeFlags(DWORD, SDBQUERYRESULT_2k3&, const char*, int, size_t)
 {
+    trace("check_adwExeFlags(SDBQUERYRESULT_2k3)\n");
 }
+/**/
 
 
 template<typename SDBQUERYRESULT_T>
@@ -1184,7 +1188,9 @@ static void test_mode_generic(const WCHAR* workdir, HSDB hsdb, size_t cur)
         ok(query.atrExes[n] == 0, "Expected atrExes[%d] to be 0, was: %x for %d\n", n, query.atrExes[n], cur);
 
     adwExeFlags_0 = (g_WinVersion < WINVER_WIN10) ? 0 : test_exedata[cur].adwExeFlags_0;
+/*!?*/
     check_adwExeFlags(adwExeFlags_0, query, __FILE__, __LINE__, cur);
+/**/
 
     ok(query.atrLayers[0] == test_exedata[cur].atrLayers_0, "Expected atrLayers[0] to be 0x%x, was: %x for %d\n", test_exedata[cur].atrLayers_0, query.atrLayers[0], cur);
     for (size_t n = 1; n < _countof(query.atrLayers); ++n)
@@ -1417,6 +1423,8 @@ static void test_match_ex(const WCHAR* workdir, HSDB hsdb)
         ret = pSdbGetMatchingExe(hsdb, exename, NULL, NULL, 0, (SDBQUERYRESULT_VISTA*)&query);
         DWORD exe_count = Succeed ? 1 : 0;
 
+// Failing on 2003 as "empty result" !??
+        trace("test_match_ex: TestName = %s, exename = %s\n", wine_dbgstr_w(TestName), wine_dbgstr_w(exename));
         if (Succeed)
             ok(ret, "SdbGetMatchingExe should not fail for %s.\n", wine_dbgstr_w(TestName));
         else
@@ -1836,7 +1844,9 @@ START_TEST(db)
 
     trace("Calling test_Sdb()\n");
     test_Sdb();
+    trace("Calling test_write_ex()\n");
     test_write_ex();
+    trace("Calling test_stringtable()\n");
     test_stringtable();
 
     } // if (g_WinVersion >= WINVER_2003)
@@ -1862,6 +1872,7 @@ START_TEST(db)
         skip("Skipping tests with SDBQUERYRESULT due to a wrong size (%d) reported\n", SQRsize);
         break;
     }
+    trace("Calling test_TagRef()\n");
     test_TagRef();
     skip("test_SecondaryDB() UNIMPLEMENTED\n");
 
