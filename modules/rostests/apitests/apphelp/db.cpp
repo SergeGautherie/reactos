@@ -1262,7 +1262,11 @@ static void test_mode_generic(const WCHAR* workdir, HSDB hsdb, size_t cur)
         ERROR,AslPathBuildSignatureLongpath,1086,AslPathGetLongFileNameLongpath failed for \??\C:\Users\MARK~1.DEV\AppData\Local\Temp\apphelp_test\test_allow.exe [c0000001]
         */
         ret = pSdbGetMatchingExe(hsdb, exenameNT.Buffer, NULL, NULL, 0, (SDBQUERYRESULT_VISTA*)&query);
-        ok(!ret, "SdbGetMatchingExe should not succeed for %d.\n", cur);
+// 10v1 vs 10v2 !? Something really wrong ?
+        if (g_WinVersion < WINVER_WIN10)
+            ok(!ret, "SdbGetMatchingExe should not succeed for %d.\n", cur);
+        else
+            ok(ret, "SdbGetMatchingExe should succeed for %d.\n", cur);
 
         RtlFreeUnicodeString(&exenameNT);
     }
