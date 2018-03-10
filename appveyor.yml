@@ -38,15 +38,16 @@ build_script:
 #       & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
 
 after_build:
-  - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
+  - cmd: set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
+#
   - cmd: appveyor PushArtifact ..\ros_build\modules\rostests\apitests\apphelp\apphelp_apitest.exe -FileName apphelp_apitest-%SGVER%.exe
 #
 #   - appveyor PushArtifact ..\ros_build\bootcdregtest.iso
 # 500_avant
-#   - appveyor PushArtifact ..\ros_build\bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
-#   - ren ..\ros_build\bootcdregtest.iso bootcdregtest-E-%SGVER%.iso
+#   - cmd: appveyor PushArtifact ..\ros_build\bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
+#   - cmd: ren ..\ros_build\bootcdregtest.iso bootcdregtest-E-%SGVER%.iso
 # 500_avant
-#   - appveyor PushArtifact ..\ros_build\bootcdregtest-E-%SGVER%.iso
+#   - cmd: appveyor PushArtifact ..\ros_build\bootcdregtest-E-%SGVER%.iso
 
 test: off
 deploy: off
