@@ -43,6 +43,7 @@ init:
 
 build_script:
 #   - cmd: dir "C:\Program Files (x86)"
+#   - cmd: dir C:\RosCMakeNinja
 #
   - set PATH=C:\RosCMakeNinja\bin;%PATH%
   - if "%BuildType%" == "msvc-x64" (
