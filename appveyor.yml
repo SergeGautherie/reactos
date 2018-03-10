@@ -75,6 +75,8 @@ after_build:
 test: off
 
 test_script:
+# S2012 == 8.1
+#   - cmd: ver
   - cmd: cd modules\rostests\apitests\apphelp
   - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
