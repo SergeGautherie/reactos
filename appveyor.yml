@@ -1,8 +1,23 @@
 environment:
   matrix:
 #     - BuildType: "msvc-x64"
+# 
     - BuildType: "msvc"
 #     - BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+#       BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#       BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+#       BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+#       BuildType: "msvc"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#       BuildType: "msvc"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+#       BuildType: "msvc"
+# Tout refaire/fusionner
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
 #
 #   APPVEYOR_RDP_PASSWORD:
 #     secure: amQ18PhcGpzi95VrjdE94A==
