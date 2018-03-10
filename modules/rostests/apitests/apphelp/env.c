@@ -1526,6 +1526,9 @@ START_TEST(env)
     switch (g_ModuleVersion)
     {
 /*
+    case WINVER_WINXP:
+        pApphelpCheckRunApp_wXP = (void*)GetProcAddress(hdll, "ApphelpCheckRunApp");
+        break;
     case WINVER_2003:
         pApphelpCheckRunApp_w2k3 = (void*)GetProcAddress(hdll, "ApphelpCheckRunApp");
         break;
