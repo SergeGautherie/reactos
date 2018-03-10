@@ -75,8 +75,12 @@ after_build:
 test: off
 
 test_script:
+# Sans/Avec '"', affiche l'aide de CALL :-/
+# De toute facon, plus aucun parametre n'est supporte.
+#   - cmd: "ver /?"
 # S2012 == 8.1
 #   - cmd: ver
+#
   - cmd: cd modules\rostests\apitests\apphelp
   - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
