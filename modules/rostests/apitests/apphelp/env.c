@@ -76,11 +76,11 @@ typedef struct ShimData_WinXP
     WCHAR szModule[34];
     DWORD dwSize;
     DWORD dwMagic;
-    TAGREF atrExes[SDB_MAX_EXES_2k3];
-    TAGREF atrLayers[SDB_MAX_LAYERS];
-    DWORD dwUnk1;
-    DWORD dwCustomSDBMap;
-    GUID rgGuidDB[SDB_MAX_SDBS];
+/**/    TAGREF atrExes[SDB_MAX_EXES_2k3];
+/**/    TAGREF atrLayers[SDB_MAX_LAYERS];
+/**/    DWORD dwUnk1;
+/**/    DWORD dwCustomSDBMap;
+/**/    GUID rgGuidDB[SDB_MAX_SDBS];
 } ShimData_WinXP;
 
 typedef struct ShimData_Win2k3
@@ -88,12 +88,12 @@ typedef struct ShimData_Win2k3
     WCHAR szModule[34];
     DWORD dwSize;
     DWORD dwMagic;
-    TAGREF atrExes[SDB_MAX_EXES_2k3];
-    TAGREF atrLayers[SDB_MAX_LAYERS];
-    DWORD dwUnk0;
-    DWORD dwUnk1;
-    DWORD dwCustomSDBMap;
-    GUID rgGuidDB[SDB_MAX_SDBS];
+/**/    TAGREF atrExes[SDB_MAX_EXES_2k3];
+/**/    TAGREF atrLayers[SDB_MAX_LAYERS];
+/**/    DWORD dwUnk0;
+/**/    DWORD dwUnk1;
+/**/    DWORD dwCustomSDBMap;
+/**/    GUID rgGuidDB[SDB_MAX_SDBS];
 } ShimData_Win2k3;
 
 typedef struct ShimData_WinVista
@@ -101,7 +101,7 @@ typedef struct ShimData_WinVista
     WCHAR szModule[MAX_PATH];
     DWORD dwSize;
     DWORD dwMagic;
-    SDBQUERYRESULT_VISTA Query;
+/**/    SDBQUERYRESULT_VISTA Query;
 } ShimData_WinVista;
 
 typedef struct ShimData_Win7
@@ -109,9 +109,9 @@ typedef struct ShimData_Win7
     WCHAR szModule[MAX_PATH];
     DWORD dwSize;
     DWORD dwMagic;
-    SDBQUERYRESULT_VISTA Query;
-    WCHAR szLayer[MAX_LAYER_LENGTH];
-    DWORD unknown;  // 0x14c
+/**/    SDBQUERYRESULT_VISTA Query;
+/**/    WCHAR szLayer[MAX_LAYER_LENGTH];
+/**/    DWORD unknown;  // 0x14c
 } ShimData_Win7;
 
 typedef struct ShimData_Win8
@@ -119,11 +119,11 @@ typedef struct ShimData_Win8
     WCHAR szModule[MAX_PATH];
     DWORD dwSize;
     DWORD dwMagic;
-    DWORD unk1;
-    SDBQUERYRESULT_VISTA Query;
-    WCHAR szLayer[MAX_LAYER_LENGTH];
+/**/    DWORD unk1;
+/**/    SDBQUERYRESULT_VISTA Query;
+/**/    WCHAR szLayer[MAX_LAYER_LENGTH];
 /* == !?? */
-    char padding4[3204];
+/**/    char padding4[3204];
 } ShimData_Win8;
 
 typedef struct ShimData_Win10_v1
@@ -131,35 +131,35 @@ typedef struct ShimData_Win10_v1
     WCHAR szModule[MAX_PATH];
     DWORD dwSize;
     DWORD dwMagic;
-    DWORD unk1;
-    SDBQUERYRESULT_VISTA Query;
-    WCHAR szLayer[MAX_LAYER_LENGTH];
-    char padding1[0x200];
-    char padding2[0x404];   // Contains some data at the start
-    DWORD unk2;
-    DWORD unk3;
-    WCHAR processname[MAX_PATH];
-    WCHAR szLayerEnv[MAX_LAYER_LENGTH];
-    WCHAR unk4[MAX_LAYER_LENGTH];
-    char padding4[120];
+/**/    DWORD unk1;
+/**/    SDBQUERYRESULT_VISTA Query;
+/**/    WCHAR szLayer[MAX_LAYER_LENGTH];
+/**/    char padding1[0x200];
+/**/    char padding2[0x404];   // Contains some data at the start
+/**/    DWORD unk2;
+/**/    DWORD unk3;
+/**/    WCHAR processname[MAX_PATH];
+/**/    WCHAR szLayerEnv[MAX_LAYER_LENGTH];
+/**/    WCHAR unk4[MAX_LAYER_LENGTH];
+/**/    char padding4[120];
 } ShimData_Win10_v1;
 
 typedef struct ShimData_Win10_v2
 {
     DWORD dwSize;
     DWORD dwMagic;
-    DWORD unk1;
-    DWORD unk2;
-    SDBQUERYRESULT_VISTA Query;
-    WCHAR szLayer[MAX_LAYER_LENGTH];
-    char padding1[0x200];
-    char padding2[0x2ae + 0x54 + 0x2a + 0x16 + 0x16];
-    DWORD unk3;
-    DWORD unk4;
-    WCHAR processname[MAX_PATH-2];
-    WCHAR szLayerEnv[MAX_LAYER_LENGTH];
-    WCHAR unk5[MAX_LAYER_LENGTH];
-    char padding4[76];
+/**/    DWORD unk1;
+/**/    DWORD unk2;
+/**/    SDBQUERYRESULT_VISTA Query;
+/**/    WCHAR szLayer[MAX_LAYER_LENGTH];
+/**/    char padding1[0x200];
+/**/    char padding2[0x2ae + 0x54 + 0x2a + 0x16 + 0x16];
+/**/    DWORD unk3;
+/**/    DWORD unk4;
+/**/    WCHAR processname[MAX_PATH - 2];
+/**/    WCHAR szLayerEnv[MAX_LAYER_LENGTH];
+/**/    WCHAR unk5[MAX_LAYER_LENGTH];
+/**/    char padding4[76];
 } ShimData_Win10_v2;
 
 typedef struct ShimData_QueryOffset
@@ -375,6 +375,7 @@ static void Validate_ShimData_WinXP(PVOID data, size_t count, const char* layers
        wine_dbgstr_w(pShimData->szModule));
     ok(pShimData->dwSize == sizeof(ShimData_WinXP), "Expected pShimData->dwSize to be %u, was %u\n", sizeof(ShimData_WinXP), pShimData->dwSize);
     ok(pShimData->dwMagic == SHIMDATA_MAGIC, "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n", SHIMDATA_MAGIC, pShimData->dwMagic);
+
     ok(pShimData->dwCustomSDBMap == 1, "Expected pShimData->dwCustomSDBMap to be 1, was %u\n", pShimData->dwCustomSDBMap);
     skip("FixMe: Parameters 'count' and 'layers' are unused\n");
 }
@@ -389,6 +390,7 @@ static void Validate_ShimData_Win2k3(PVOID data, size_t count, const char* layer
        wine_dbgstr_w(pShimData->szModule));
     ok(pShimData->dwMagic == SHIMDATA_MAGIC, "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n", SHIMDATA_MAGIC, pShimData->dwMagic);
     ok(pShimData->dwSize == sizeof(ShimData_Win2k3), "Expected pShimData->dwSize to be %u, was %u\n", sizeof(ShimData_Win2k3), pShimData->dwSize);
+
     ok(pShimData->dwCustomSDBMap == 1, "Expected pShimData->dwCustomSDBMap to be 1, was %u\n", pShimData->dwCustomSDBMap);
     skip("FixMe: Parameters 'count' and 'layers' are unused\n");
 }
@@ -418,6 +420,7 @@ static void Validate_ShimData_WinVista(PVOID data, WCHAR szApphelp[MAX_PATH], si
     ok(pShimData->dwMagic == SHIMDATA_MAGIC,
        "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n",
        SHIMDATA_MAGIC, pShimData->dwMagic);
+
 // pShimData->Query unused
     skip("FixMe: Parameters 'count' and 'layers' are unused\n");
 }
@@ -434,6 +437,7 @@ static void Validate_ShimData_Win7(PVOID data, WCHAR szApphelp[MAX_PATH], size_t
         SHIMDATA_MAGIC, pShimData->dwMagic);
     ok(pShimData->dwSize == sizeof(ShimData_Win7), "Expected pShimData->dwSize to be %u, was %u\n",
         sizeof(ShimData_Win7), pShimData->dwSize);
+
     if (pShimData->Query.dwLayerCount != min(count, SDB_MAX_LAYERS))
     {
         char buf[250] = {0};
@@ -468,6 +472,7 @@ static void Validate_ShimData_Win8(PVOID data, WCHAR szApphelp[MAX_PATH], size_t
     ok(pShimData->dwMagic == SHIMDATA_MAGIC,
        "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n",
        SHIMDATA_MAGIC, pShimData->dwMagic);
+
 // pShimData->Query and pShimData->szLayer unused
     skip("FixMe: Parameters 'count' and 'layers' are unused\n");
 }
@@ -483,8 +488,10 @@ static void Validate_ShimData_Win10_v2(PVOID data, WCHAR szApphelp[MAX_PATH], si
         return;
     }
 
+    // No more pShimData->szModule.
     ok(pShimData->dwSize == sizeof(ShimData_Win10_v2), "Expected pShimData->dwSize to be %u, was %u\n",
        sizeof(ShimData_Win10_v2), pShimData->dwSize);
+
     if (pShimData->Query.dwLayerCount != min(count, SDB_MAX_LAYERS))
     {
         char buf[250] = {0};
@@ -522,6 +529,7 @@ static void Validate_ShimData_Win10(PVOID data, WCHAR szApphelp[MAX_PATH], size_
        wine_dbgstr_w(szApphelp), wine_dbgstr_w(pShimData->szModule));
     ok(pShimData->dwSize == sizeof(ShimData_Win10_v1), "Expected pShimData->dwSize to be %u, was %u\n",
         sizeof(ShimData_Win10_v1), pShimData->dwSize);
+
     if (pShimData->Query.dwLayerCount != min(count, SDB_MAX_LAYERS))
     {
         char buf[250] = {0};
@@ -555,6 +563,7 @@ static void Validate_EmptyShimData_Win8(PVOID data)
     ok(pShimData->dwMagic == SHIMDATA_MAGIC,
        "Expected pShimData->dwMagic to be 0x%x, was 0x%x\n",
        SHIMDATA_MAGIC, pShimData->dwMagic);
+
     ok(!memcmp(&pShimData->Query, &empty_result, sizeof(empty_result)), "Expected result to be empty\n");
     ok(!lstrcmpiW(pShimData->szLayer, L""),
        "Expected pShimData->szLayer to be empty, was %s\n",
@@ -573,6 +582,8 @@ static void Validate_EmptyShimData_Win10(PVOID data)
             skip("Unknown shimdata (win10)\n");
             return;
         }
+
+        // No more pShimData2->szModule.
 
         ok(!lstrcmpiW(pShimData2->szLayer, L""),
            "Expected pShimData2->szLayer to be empty, was %s\n",
@@ -850,6 +861,7 @@ static void Test_Shimdata(SDBQUERYRESULT_VISTA* result, const WCHAR* szLayer)
         ok_int(dwSize, res);
         switch(dwSize)
         {
+        // Not checking pWin___->szModule here !!?
 /* // Not 5.1
         case sizeof(ShimData_WinXP):
             trace("Test_Shimdata, case WinXP\n");
