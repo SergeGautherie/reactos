@@ -54,6 +54,7 @@ build_script:
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
+  - cmd: set ROSTESTS_INSTALL=C:\ros_tests
   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
   - ps: >-
       & ninja -k0 rostests 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
@@ -63,27 +64,38 @@ build_script:
 after_build:
   - cmd: set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
 #
-  - cmd: appveyor PushArtifact ..\ros_build\modules\rostests\apitests\apphelp\apphelp_apitest.exe -FileName apphelp_apitest-%SGVER%.exe
+  - cmd: appveyor PushArtifact modules\rostests\apitests\apphelp\apphelp_apitest.exe -FileName apphelp_apitest-%SGVER%.exe
 #
-#   - appveyor PushArtifact ..\ros_build\bootcdregtest.iso
+#   - cmd: appveyor PushArtifact bootcdregtest.iso
 # 500_avant
-#   - cmd: appveyor PushArtifact ..\ros_build\bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
-#   - cmd: ren ..\ros_build\bootcdregtest.iso bootcdregtest-E-%SGVER%.iso
+#   - cmd: appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
+#   - cmd: ren bootcdregtest.iso bootcdregtest-E-%SGVER%.iso
 # 500_avant
-#   - cmd: appveyor PushArtifact ..\ros_build\bootcdregtest-E-%SGVER%.iso
+#   - cmd: appveyor PushArtifact bootcdregtest-E-%SGVER%.iso
 
 test: off
 
-test_script:
+before_test:
 # Sans/Avec '"', affiche l'aide de CALL :-/
 # De toute facon, plus aucun parametre n'est supporte.
 #   - cmd: "ver /?"
 # S2012 == 8.1
 #   - cmd: ver
 #
+  - cmd: ninja rostests_install
+#   - cmd: dir %ROSTESTS_INSTALL%
+  - cmd: copy modules\rostests\rosautotest\rosautotest.exe %ROSTESTS_INSTALL%\
+
+test_script:
   - cmd: cd modules\rostests\apitests\apphelp
   - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
+#
+#   - cmd: set ROSAUTOTEST_DIR=%ROSTESTS_INSTALL%
+  - cmd: cd %ROSTESTS_INSTALL%
+#   - cmd: rosautotest
+# Interdit si je ne suis pas admin ?? Ou simplement parce que pas installe !?
+#   - cmd: rosautotest kmtest
 
 deploy: off
 
