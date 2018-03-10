@@ -73,6 +73,12 @@ after_build:
 #   - cmd: appveyor PushArtifact ..\ros_build\bootcdregtest-E-%SGVER%.iso
 
 test: off
+
+test_script:
+  - cmd: cd modules\rostests\apitests\apphelp
+  - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
+  - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
+
 deploy: off
 
 # on_finish:
