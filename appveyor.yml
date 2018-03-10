@@ -42,6 +42,8 @@ init:
       }
 
 build_script:
+#   - cmd: dir "C:\Program Files (x86)"
+#
   - set PATH=C:\RosCMakeNinja\bin;%PATH%
   - if "%BuildType%" == "msvc-x64" (
         call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
