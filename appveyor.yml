@@ -73,7 +73,7 @@ build_script:
 after_build:
   - cmd: set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
 #
-  - cmd: appveyor PushArtifact modules\rostests\apitests\apphelp\apphelp_apitest.exe -FileName apphelp_apitest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact modules\rostests\apitests\apphelp\apphelp_apitest.exe -FileName apphelp_apitest-%SGVER%.exe
 #
 #   - cmd: appveyor PushArtifact bootcdregtest.iso
 # 500_avant
@@ -119,9 +119,9 @@ before_test:
 #   - cmd: md C:\ros_workdir
 
 test_script:
-  - cmd: cd modules\rostests\apitests\apphelp
-  - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
-  - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
+#   - cmd: cd modules\rostests\apitests\apphelp
+#   - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
+#   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
 #
 #   - cmd: set ROSAUTOTEST_DIR=%ROSTESTS_INSTALL%
 # Inutile
