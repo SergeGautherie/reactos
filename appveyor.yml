@@ -132,6 +132,8 @@ test_script:
 # Optional/Cleaner.
 #   - cmd: cd C:\ros_workdir
 # Interdit si je ne suis pas admin ?? Ou simplement parce que pas installe !?
+# "An exception occurred trying to list tests for: kmtest_.exe
+#  The --list command did not return any data for kmtest_.exe"
 #   - cmd: rosautotest kmtest
 #   - cmd: rosautotest
 
