@@ -93,7 +93,9 @@ before_test:
 #
   - cmd: ninja rostests_install
 #   - cmd: dir %ROSTESTS_INSTALL%
-  - cmd: copy modules\rostests\rosautotest\rosautotest.exe %ROSTESTS_INSTALL%\
+#
+#   - cmd: copy modules\rostests\rosautotest\rosautotest.exe C:\RosCMakeNinja\bin\
+#   - cmd: md C:\ros_workdir
 
 test_script:
   - cmd: cd modules\rostests\apitests\apphelp
@@ -101,10 +103,13 @@ test_script:
   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
 #
 #   - cmd: set ROSAUTOTEST_DIR=%ROSTESTS_INSTALL%
-  - cmd: cd %ROSTESTS_INSTALL%
-#   - cmd: rosautotest
+# Inutile
+#   - cmd: cd %ROSTESTS_INSTALL%
+# Optional/Cleaner.
+#   - cmd: cd C:\ros_workdir
 # Interdit si je ne suis pas admin ?? Ou simplement parce que pas installe !?
 #   - cmd: rosautotest kmtest
+#   - cmd: rosautotest
 
 deploy: off
 
