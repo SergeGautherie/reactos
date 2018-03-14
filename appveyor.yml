@@ -92,7 +92,28 @@ before_test:
 #   - cmd: ver
 #
   - cmd: ninja rostests_install
-#   - cmd: dir %ROSTESTS_INSTALL%
+#
+# 173 = 43 + 1 + 120 + 2 + 7.
+# suppl/evtlogtest.exe
+# suppl/notificationtest.exe
+# suppl/paintdesktop.exe
+# suppl/sysicon.exe
+# testdata/CmdLineUtil.exe
+# testdata/ntdll_apitest.exe
+# testdata/ntdll_apitest.exe.local
+#   - cmd: dir /s %ROSTESTS_INSTALL%
+# 43 apitest.
+#   - cmd: dir %ROSTESTS_INSTALL%\*_apitest.exe
+#   - cmd: del %ROSTESTS_INSTALL%\*_apitest.exe
+# (0 ou) kmtest_.exe.
+#   - cmd: dir %ROSTESTS_INSTALL%\kmtest_*.exe  & exit 0
+#   - cmd: del %ROSTESTS_INSTALL%\kmtest_*.exe  & exit 0
+# 120 winetest.
+#   - cmd: dir %ROSTESTS_INSTALL%\*_winetest.exe
+#   - cmd: del %ROSTESTS_INSTALL%\*_winetest.exe
+# cmd_rostest.exe
+# tcpip_drvtest.exe
+#   - cmd: dir %ROSTESTS_INSTALL%\*.exe  & exit 0
 #
 #   - cmd: copy modules\rostests\rosautotest\rosautotest.exe C:\RosCMakeNinja\bin\
 #   - cmd: md C:\ros_workdir
