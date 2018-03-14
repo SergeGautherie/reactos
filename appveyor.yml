@@ -27,6 +27,15 @@ skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
 
+# C:\ : download dir
+#   \RosCMakeNinja : CMake and Ninja
+#     \bin : + optional clang-cl, (+ rosautotest)
+#     \share
+#   \reactos-cov : repository clone. See APPVEYOR_BUILD_FOLDER
+#   \ros_build : build output dir, actual output files
+#   \ros_tests : See ROSTESTS_INSTALL and ROSAUTOTEST_DIR
+#   \ros_workdir : working directory
+
 init:
 #   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 #
