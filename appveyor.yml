@@ -134,6 +134,7 @@ test_script:
 # Interdit si je ne suis pas admin ?? Ou simplement parce que pas installe !?
 # "An exception occurred trying to list tests for: kmtest_.exe
 #  The --list command did not return any data for kmtest_.exe"
+# Tester manuellement sur WXP ! (Mais XP-32 != S12-64 !!?)
 # Tester manuellement en RDP ! (Cf local W10 !!?)
 #   - cmd: rosautotest kmtest
 #   - cmd: rosautotest
