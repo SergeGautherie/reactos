@@ -111,6 +111,9 @@ test_script:
 #   - cmd: rosautotest kmtest
 #   - cmd: rosautotest
 
+# Plus rien !!? # Futur essai:
+# after_test:
+
 deploy: off
 
 # on_finish:
