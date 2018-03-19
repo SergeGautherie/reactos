@@ -119,6 +119,9 @@ before_test:
 #   - cmd: md C:\ros_workdir
 
 test_script:
+# 
+  - echo NoOp. Only to enable "test_script", thus "before_test".
+#
 #   - cmd: cd modules\rostests\apitests\apphelp
 #   - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
 #   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
