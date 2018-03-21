@@ -114,10 +114,14 @@ before_test:
 # cmd_rostest.exe
 # tcpip_drvtest.exe
 #   - cmd: dir %ROSTESTS_INSTALL%\*.exe  & exit 0
-#
-  - cmd: appveyor PushArtifact modules\rostests\rosautotest\rosautotest.exe -FileName rosautotest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact modules\rostests\rosautotest\rosautotest.exe -FileName rosautotest-%SGVER%.exe
 # 40 MiB. zip: 10 003 KiB. 7z: 5 822 KiB.
-  - cmd: 7z a ros_tests.7z %ROSTESTS_INSTALL%
+#   - cmd: 7z a ros_tests.7z %ROSTESTS_INSTALL%
+  - cmd: cd %ROSTESTS_INSTALL%
+#   - cmd: copy c:\ros_build\modules\rostests\rosautotest\rosautotest.exe .
+#   - cmd: 7z a c:\ros_build\ros_tests.7z  apphelp_apitest.exe  ntdll_apitest.exe  rosautotest.exe kmtest_.exe *_drv.sys
+  - cmd: 7z a c:\ros_build\ros_tests.7z  apphelp_apitest.exe  ntdll_apitest.exe  kmtest_.exe *_drv.sys
+  - cmd: cd c:\ros_build
   - cmd: appveyor PushArtifact ros_tests.7z -FileName ros_tests-%SGVER%.7z
 #
 #   - cmd: copy modules\rostests\rosautotest\rosautotest.exe C:\RosCMakeNinja\bin\
