@@ -99,9 +99,15 @@ START_TEST(NtCreateSection)
     // IRP_MJ_CREATE: init.
     KmtOpenDriver();
 
+//    // 37094
+//    // IRP_MJ_CREATE: no init. NtCreateSection: STATUS_INVALID_FILE_FOR_SECTION. IRP_MJ_CLEANUP only: skip uninit.
     TestN( 0, FILE_CREATE, &InvalidInit ,  512);
+////    // 193 37087
+////    // IRP_MJ_CREATE: init. IRP_MJ_READ: STATUS_END_OF_FILE (0 + 4096 > 0). IRP_MJ_CLEANUP + IRP_MJ_WRITE: uninit.
     TestN( 1, FILE_CREATE, &InitOnCreate,  512);
     TestN( 2, FILE_CREATE, &InitOnCreate, 4096);
+//    // 190 37084
+//    // IRP_MJ_CREATE: no init. IRP_MJ_READ: STATUS_END_OF_FILE (0 + 4096 > 0). IRP_MJ_CLEANUP only: force uninit.
     TestN( 3, FILE_CREATE, &InitOnRW    ,  512);
     TestN( 4, FILE_CREATE, &InitOnRW    , 4096);
     TestN(10, FILE_OPEN  , &InvalidInit ,  512);
