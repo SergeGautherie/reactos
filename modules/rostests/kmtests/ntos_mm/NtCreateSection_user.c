@@ -3,6 +3,7 @@
  * LICENSE:         GPLv2+ - See COPYING in the top level directory
  * PURPOSE:         Kernel-Mode Test Suite NtCreateSection test user-mode part
  * PROGRAMMER:      Pierre Schweitzer <pierre@reactos.org>
+ * + SG
  */
 
 #include <kmt_test.h>
