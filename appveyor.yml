@@ -1,14 +1,43 @@
 environment:
   matrix:
-    - BuildType: "clang-cl"
+#     - BuildType: "clang-cl"
+# 
     - BuildType: "msvc"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+#       BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#       BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+#       BuildType: "clang-cl"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2013
+#       BuildType: "msvc"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#       BuildType: "msvc"
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+#       BuildType: "msvc"
+# Tout refaire/fusionner
+#     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+#
+#   APPVEYOR_RDP_PASSWORD:
+#     secure: amQ18PhcGpzi95VrjdE94A==
 
 version: reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
 
+# C:\ : download dir
+#   \RosCMakeNinja : CMake and Ninja
+#     \bin : + optional clang-cl, (+ rosautotest)
+#     \share
+#   \reactos-cov : repository clone. See APPVEYOR_BUILD_FOLDER
+#   \ros_build : build output dir, actual output files
+#   \ros_tests : See ROSTESTS_INSTALL and ROSAUTOTEST_DIR
+#   \ros_workdir : working directory
+
 init:
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
   - ps: >-
@@ -21,14 +50,102 @@ init:
       }
 
 build_script:
+#   - cmd: dir "C:\Program Files (x86)"
+#   - cmd: dir C:\RosCMakeNinja
+#
   - set PATH=C:\RosCMakeNinja\bin;%PATH%
   - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
+  - cmd: set ROSTESTS_INSTALL=C:\ros_tests
   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
-  - ninja -k0
-  - ninja bootcd
+  - ninja -k0 rostests
+#   - ninja -k0
+#   - ninja bootcdregtest
+
+after_build:
+  - cmd: set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
+#
+#   - cmd: appveyor PushArtifact modules\rostests\apitests\apphelp\apphelp_apitest.exe -FileName apphelp_apitest-%SGVER%.exe
+#
+#   - cmd: appveyor PushArtifact bootcdregtest.iso
+# 500_avant
+#   - cmd: appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
+#   - cmd: ren bootcdregtest.iso bootcdregtest-E-%SGVER%.iso
+# 500_avant
+#   - cmd: appveyor PushArtifact bootcdregtest-E-%SGVER%.iso
 
 test: off
+
+before_test:
+# Sans/Avec '"', affiche l'aide de CALL :-/
+# De toute facon, plus aucun parametre n'est supporte.
+#   - cmd: "ver /?"
+# S2012 == 8.1
+#   - cmd: ver
+#
+  - cmd: ninja rostests_install
+#
+# 173 = 43 + 1 + 120 + 2 + 7.
+# suppl/evtlogtest.exe
+# suppl/notificationtest.exe
+# suppl/paintdesktop.exe
+# suppl/sysicon.exe
+# testdata/CmdLineUtil.exe
+# testdata/ntdll_apitest.exe
+# testdata/ntdll_apitest.exe.local
+#   - cmd: dir /s %ROSTESTS_INSTALL%
+# 43 apitest.
+#   - cmd: dir %ROSTESTS_INSTALL%\*_apitest.exe
+#   - cmd: del %ROSTESTS_INSTALL%\*_apitest.exe
+# (0 ou) kmtest_.exe.
+#   - cmd: dir %ROSTESTS_INSTALL%\kmtest_*.exe  & exit 0
+#   - cmd: del %ROSTESTS_INSTALL%\kmtest_*.exe  & exit 0
+# 120 winetest.
+#   - cmd: dir %ROSTESTS_INSTALL%\*_winetest.exe
+#   - cmd: del %ROSTESTS_INSTALL%\*_winetest.exe
+# cmd_rostest.exe
+# tcpip_drvtest.exe
+#   - cmd: dir %ROSTESTS_INSTALL%\*.exe  & exit 0
+#  - cmd: appveyor PushArtifact modules\rostests\rosautotest\rosautotest.exe -FileName rosautotest-%SGVER%.exe
+# 40 MiB. zip: 10 003 KiB. 7z: 5 822 KiB.
+#   - cmd: 7z a ros_tests.7z %ROSTESTS_INSTALL%
+  - cmd: cd %ROSTESTS_INSTALL%
+#   - cmd: copy c:\ros_build\modules\rostests\rosautotest\rosautotest.exe .
+#   - cmd: 7z a c:\ros_build\ros_tests.7z  apphelp_apitest.exe  ntdll_apitest.exe  rosautotest.exe kmtest_.exe *_drv.sys
+  - cmd: 7z a c:\ros_build\ros_tests.7z  apphelp_apitest.exe  ntdll_apitest.exe  kmtest_.exe *_drv.sys
+  - cmd: cd c:\ros_build
+  - cmd: appveyor PushArtifact ros_tests.7z -FileName ros_tests-%SGVER%.7z
+#
+#   - cmd: copy modules\rostests\rosautotest\rosautotest.exe C:\RosCMakeNinja\bin\
+#   - cmd: md C:\ros_workdir
+
+test_script:
+# 
+  - echo NoOp. Only to enable "test_script", thus "before_test".
+#
+#   - cmd: cd modules\rostests\apitests\apphelp
+#   - cmd: cmd /V:ON /C "apphelp_apitest db  & echo ErrorLevel=!errorlevel!"
+#   - cmd: cmd /V:ON /C "apphelp_apitest env  & echo ErrorLevel=!errorlevel!"
+#
+#   - cmd: set ROSAUTOTEST_DIR=%ROSTESTS_INSTALL%
+# Inutile
+#   - cmd: cd %ROSTESTS_INSTALL%
+# Optional/Cleaner.
+#   - cmd: cd C:\ros_workdir
+# Interdit si je ne suis pas admin ?? Ou simplement parce que pas installe !?
+# "An exception occurred trying to list tests for: kmtest_.exe
+#  The --list command did not return any data for kmtest_.exe"
+# Tester manuellement sur WXP ! (Mais XP-32 != S12-64 !!?)
+# Tester manuellement en RDP ! (Cf local W10 !!?)
+#   - cmd: rosautotest kmtest
+#   - cmd: rosautotest
+
+# Plus rien !!? # Futur essai:
+# after_test:
+
 deploy: off
+
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
