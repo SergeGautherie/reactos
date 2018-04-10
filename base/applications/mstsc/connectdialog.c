@@ -1020,7 +1020,6 @@ OnMainCreate(HWND hwnd,
              PRDPSETTINGS pRdpSettings)
 {
     PINFO pInfo;
-    TCITEMW item;
     BOOL bRet = FALSE;
 
     pInfo = HeapAlloc(GetProcessHeap(),
@@ -1082,6 +1081,8 @@ OnMainCreate(HWND hwnd,
         pInfo->hTab = GetDlgItem(hwnd, IDC_TAB);
         if (pInfo->hTab)
         {
+            TCITEMW item;
+
             if (CreateDialogParamW(hInst,
                                    MAKEINTRESOURCEW(IDD_GENERAL),
                                    pInfo->hTab,
@@ -1089,11 +1090,12 @@ OnMainCreate(HWND hwnd,
                                    (LPARAM)pInfo))
             {
                 WCHAR str[256];
-                ZeroMemory(&item, sizeof(TCITEM));
+                ZeroMemory(&item, sizeof(item));
+// Is mask+NULL supported? Or rather, either mask+pszText or none?
                 item.mask = TCIF_TEXT;
                 if (LoadStringW(hInst, IDS_TAB_GENERAL, str, 256))
                     item.pszText = str;
-                item.cchTextMax = 256;
+// Useless !?                item.cchTextMax = 256;
                 (void)TabCtrl_InsertItem(pInfo->hTab, 0, &item);
             }
 
@@ -1104,11 +1106,11 @@ OnMainCreate(HWND hwnd,
                                    (LPARAM)pInfo))
             {
                 WCHAR str[256];
-                ZeroMemory(&item, sizeof(TCITEM));
+                ZeroMemory(&item, sizeof(item));
                 item.mask = TCIF_TEXT;
                 if (LoadStringW(hInst, IDS_TAB_DISPLAY, str, 256))
                     item.pszText = str;
-                item.cchTextMax = 256;
+// Useless !?                item.cchTextMax = 256;
                 (void)TabCtrl_InsertItem(pInfo->hTab, 1, &item);
             }
 

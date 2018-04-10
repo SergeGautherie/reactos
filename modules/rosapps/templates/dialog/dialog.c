@@ -69,18 +69,21 @@ static BOOL OnCreate(HWND hWnd, LONG lData)
     hPage3 = CreateDialog(hInst, MAKEINTRESOURCE(IDD_PAGE3), hWnd, (DLGPROC)PageWndProc3);
 
     // Insert tabs
+// Shouldn't _tcscpy() result (if any?) be accounted for?
     _tcscpy(szTemp, _T("Page One"));
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     TabCtrl_InsertItem(hTabWnd, 0, &item);
+
     _tcscpy(szTemp, _T("Page Two"));
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     TabCtrl_InsertItem(hTabWnd, 1, &item);
+
     _tcscpy(szTemp, _T("Page Three"));
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     TabCtrl_InsertItem(hTabWnd, 2, &item);

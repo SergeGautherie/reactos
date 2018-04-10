@@ -96,38 +96,39 @@ BOOL OnCreate(HWND hWnd)
     SetWindowText(hWnd, szTemp);
 
     // Insert Tab Pages
+// Shouldn't LoadString() result be accounted for?
     LoadString(hInst, IDS_TAB_GENERAL, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 0, &item);
 
     LoadString(hInst, IDS_TAB_SYSTEM, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 1, &item);
 
     LoadString(hInst, IDS_TAB_FREELDR, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 2, &item);
 
     LoadString(hInst, IDS_TAB_SERVICES, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 3, &item);
 
     LoadString(hInst, IDS_TAB_STARTUP, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 4, &item);
 
     LoadString(hInst, IDS_TAB_TOOLS, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 5, &item);

@@ -2328,7 +2328,7 @@ static void SPY_DumpStructure(const SPY_INSTANCE *sp_e, BOOL enter)
             {
                 TCITEMA *item = (TCITEMA *) sp_e->lParam;
                 if (item) {
-                    SPY_DumpMem ("TCITEM", (UINT*)item, sizeof(TCITEMA));
+                    SPY_DumpMem ("TCITEM", (UINT*)item, sizeof(*item));
                 }
                 break;
             }

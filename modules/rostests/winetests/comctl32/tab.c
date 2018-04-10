@@ -710,7 +710,7 @@ static void test_cursel(void)
 
     /* selected item should have TCIS_BUTTONPRESSED state
        It doesn't depend on button state */
-    memset(&tcItem, 0, sizeof(TCITEMA));
+    memset(&tcItem, 0, sizeof(tcItem));
     tcItem.mask = TCIF_STATE;
     tcItem.dwStateMask = TCIS_BUTTONPRESSED;
     selectionIndex = SendMessageA(hTab, TCM_GETCURSEL, 0, 0);
@@ -725,7 +725,7 @@ static void test_cursel(void)
     selectionIndex = SendMessageA(hTab, TCM_SETCURSEL, -1, 0);
     ok(selectionIndex == 1, "got %d\n", selectionIndex);
 
-    memset(&tcItem, 0, sizeof(TCITEMA));
+    memset(&tcItem, 0, sizeof(tcItem));
 
     /* focus is reset too */
     focusIndex = SendMessageA(hTab, TCM_GETCURFOCUS, 0, 0);
@@ -1129,7 +1129,7 @@ static void test_removeimage(void)
     hwTab = create_tabcontrol(TCS_FIXEDWIDTH, TCIF_TEXT|TCIF_IMAGE);
     SendMessageA(hwTab, TCM_SETIMAGELIST, 0, (LPARAM)himl);
 
-    memset(&item, 0, sizeof(TCITEMA));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_IMAGE;
 
     for(i = 0; i < 3; i++) {

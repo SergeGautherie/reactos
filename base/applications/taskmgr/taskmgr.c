@@ -588,7 +588,7 @@ BOOL OnCreate(HWND hWnd)
     WCHAR   szTemp[256];
     WCHAR   szLogOffItem[MAX_PATH];
     LPWSTR  lpUserName;
-    TCITEM  item;
+    TCITEMW item;
     DWORD   len = 0;
 
     SendMessageW(hMainWnd, WM_SETICON, ICON_BIG, (LPARAM)LoadIconW(hInst, MAKEINTRESOURCEW(IDI_TASKMANAGER)));
@@ -625,18 +625,21 @@ BOOL OnCreate(HWND hWnd)
 #endif
 
     /* Insert tabs */
+// Shouldn't LoadString() result be accounted for?
     LoadStringW(hInst, IDS_TAB_APPS, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 0, &item);
+
     LoadStringW(hInst, IDS_TAB_PROCESSES, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 1, &item);
+
     LoadStringW(hInst, IDS_TAB_PERFORMANCE, szTemp, 256);
-    memset(&item, 0, sizeof(TCITEM));
+    memset(&item, 0, sizeof(item));
     item.mask = TCIF_TEXT;
     item.pszText = szTemp;
     (void)TabCtrl_InsertItem(hTabWnd, 2, &item);
