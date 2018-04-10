@@ -90,6 +90,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define IDC_URL1                                506
 #define IDC_URL2                                507
 
-char* tabsName[]     = { "Analog", "Digital", "Formats", "About" };
-int   tabsResource[] = { IDD_TAB1, IDD_TAB2, IDD_TAB3, IDD_TAB4 };
+// *Ajout de 'const', sans autre modif. : comme prévu, mieux, mais insuffisant.
+//   c:\reactos-cov\drivers\wdm\audio\drivers\CMIDriver\cmicontrol\main.cpp(685,16) : error: assigning to 'LPSTR' (aka 'char *') from incompatible type 'const char *'
+//   tci.pszText = tabsName[i];
+const char *tabsName[]     = { "Analog", "Digital", "Formats", "About"  };
+int         tabsResource[] = { IDD_TAB1, IDD_TAB2 , IDD_TAB3 , IDD_TAB4 };
 #define NUM_TABS   4

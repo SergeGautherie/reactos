@@ -1,8 +1,9 @@
 environment:
   matrix:
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
+#     - BuildType: "msvc-x64"
+#     - BuildType: "msvc"
     - BuildType: "clang-cl"
+# A compiler aussi sur AV/Ubuntu...
 
 version: reactos.appveyor.{build}
 skip_branch_with_pr: true
