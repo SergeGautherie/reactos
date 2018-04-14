@@ -1,41 +1,36 @@
-environment:
-  matrix:
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
-    - BuildType: "clang-cl"
+image: Ubuntu
+
+# environment:
+#   APPVEYOR_RDP_PASSWORD:
+#     secure: amQ18PhcGpzi95VrjdE94A==
 
 version: reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
-clone_folder: c:\reactos-cov
+clone_folder: /home/appveyor/ros_workdir/reactos-cov
 
 init:
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-  - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
-  - ps: >-
-      If ($env:BuildType -Match "clang-cl") {
-        $env:clang_configure_option="clang"
-        (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
-        7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
-      } Else {
-        $env:clang_configure_option=""
-      }
+#   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#
+  - sh: cd ~/ros_workdir
+  - wget https://svn.reactos.org/amine/RosBEBinFull.tar.gz -O RosBE.tar.gz
+  - tar -xzf RosBE.tar.gz
+  - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh && cd reactos && ninja -k0 && ninja bootcd && ninja livecd' > tmp_file
+  - sh: cd $APPVEYOR_BUILD_FOLDER
 
 build_script:
-  - set PATH=C:\RosCMakeNinja\bin;%PATH%
-  - if "%BuildType%" == "msvc-x64" (
-        call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-      ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-      )
-  - cmake --version
-  - md c:\ros_build
-  - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
-  - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-  - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - sh: cd ~/ros_workdir
+  - ./RosBEBinFull/RosBE.sh < tmp_file
+
+after_build:
+  - sh: export BuildType=gcc
+  - sh: export SGVER=$APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-$BuildType
+  - sh: cd ~/ros_workdir/Build/reactos
+  - sh: appveyor PushArtifact bootcd.iso -FileName bootcd-$SGVER.iso
+  - sh: appveyor PushArtifact livecd.iso -FileName livecd-$SGVER.iso
 
 test: off
 deploy: off
+
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
