@@ -1,16 +1,16 @@
 environment:
   matrix:
-    - BuildType: "msvc-x64"
     - BuildType: "msvc"
+    - BuildType: vssolution
     - BuildType: "clang-cl"
-#     - BuildType: vssolution
+    - BuildType: "msvc-x64"
 
-version: reactos.appveyor.{build}
+version: CORE-14546.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
-matrix:
-  fast_finish: true
+# matrix:
+#   fast_finish: true
 
 init:
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
@@ -39,6 +39,13 @@ build_script:
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
       & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - ps: >-
+      & ninja livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+
+after_build:
+  - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
+  - appveyor PushArtifact bootcd.iso -FileName bootcd-%SGVER%.iso
+  - appveyor PushArtifact livecd.iso -FileName livecd-%SGVER%.iso
 
 test: off
 deploy: off
