@@ -927,6 +927,7 @@ IntDefWindowProc(
 
       case WM_MOUSEACTIVATE:
          FIXME("CORE-14306 PR492 Debug: Wnd=0x%p\n", Wnd);
+         ERR("CORE-14306 PR492 Debug: Wnd=0x%p\n", Wnd);
          if (Wnd->style & WS_CHILD)
          {
              LONG Ret;
@@ -934,6 +935,7 @@ IntDefWindowProc(
              PWND pwndParent = IntGetParent(Wnd);
              hwndParent = pwndParent ? UserHMGetHandle(pwndParent) : NULL;
              FIXME("CORE-14306 PR492 Debug: pwndParent=0x%p, hwndParent=0x%p\n", pwndParent, hwndParent);
+             ERR("CORE-14306 PR492 Debug: pwndParent=0x%p, hwndParent=0x%p\n", pwndParent, hwndParent);
              ASSERT(hwndParent != NULL);
              if (hwndParent)
              {
