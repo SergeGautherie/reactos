@@ -2896,7 +2896,10 @@ MmMapViewOfArm3Section(IN PVOID SectionObject,
         *ViewSize = (SIZE_T)(Section->SizeOfSection.QuadPart - SectionOffset->QuadPart);
 
         /* Check if it's larger than 4GB or overflows into kernel-mode */
-        if ((*ViewSize > 0xFFFFFFFF) ||
+        if (
+#ifdef _WIN64
+            (*ViewSize > 0xFFFFFFFF) ||
+#endif
             (((ULONG_PTR)MM_HIGHEST_VAD_ADDRESS - (ULONG_PTR)*BaseAddress) < *ViewSize))
         {
             DPRINT1("Section view won't fit\n");
