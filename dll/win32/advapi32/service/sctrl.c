@@ -1009,11 +1009,15 @@ StartServiceCtrlDispatcherA(const SERVICE_TABLE_ENTRYA *lpServiceStartTable)
     TRACE("StartServiceCtrlDispatcherA(%p)\n",
           lpServiceStartTable);
 
+    // !? ASSERT(lpServiceStartTable); or if (lpServiceStartTable)
+
     i = 0;
     while (lpServiceStartTable[i].lpServiceProc != NULL)
     {
         i++;
     }
+
+    // !? if (i != 0)
 
     /* Allocate the service table */
     lpActiveServices = RtlAllocateHeap(RtlGetProcessHeap(),
