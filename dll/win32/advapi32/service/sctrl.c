@@ -523,7 +523,10 @@ ScControlService(PACTIVE_SERVICE lpService,
           lpService, ControlPacket);
 
     if (lpService == NULL || ControlPacket == NULL)
-        return ERROR_INVALID_PARAMETER;
+    {
+        dwError = ERROR_INVALID_PARAMETER;
+        goto done;
+    }
 
     TRACE("Size: %lu\n", ControlPacket->dwSize);
     TRACE("Service: %S\n", (PWSTR)((ULONG_PTR)ControlPacket + ControlPacket->dwServiceNameOffset));
@@ -560,6 +563,7 @@ ScControlService(PACTIVE_SERVICE lpService,
         dwError = ERROR_SERVICE_CANNOT_ACCEPT_CTRL;
     }
 
+done:
     TRACE("ScControlService() done (Error %lu)\n", dwError);
 
     return dwError;
