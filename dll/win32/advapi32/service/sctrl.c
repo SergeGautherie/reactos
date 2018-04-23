@@ -726,6 +726,7 @@ RegisterServiceCtrlHandlerW(LPCWSTR lpServiceName,
 
     Service->HandlerFunction = lpHandlerProc;
     Service->HandlerFunctionEx = NULL;
+    Service->HandlerContext = NULL;
 
     TRACE("RegisterServiceCtrlHandler returning %p\n", Service->hServiceStatus);
 
@@ -842,6 +843,7 @@ I_ScPnPGetServiceName(IN SERVICE_STATUS_HANDLE hServiceStatus,
     {
         if (lpActiveServices[i].hServiceStatus == hServiceStatus)
         {
+            /* FIXME: Use cchServiceName too? */
             wcscpy(lpServiceName, lpActiveServices[i].ServiceName.Buffer);
             return ERROR_SUCCESS;
         }
@@ -1013,25 +1015,24 @@ StartServiceCtrlDispatcherA(const SERVICE_TABLE_ENTRYA *lpServiceStartTable)
         i++;
     }
 
-    dwActiveServiceCount = i;
-
     /* Allocate the service table */
     lpActiveServices = RtlAllocateHeap(RtlGetProcessHeap(),
                                        HEAP_ZERO_MEMORY,
-                                       dwActiveServiceCount * sizeof(ACTIVE_SERVICE));
+                                       i * sizeof(ACTIVE_SERVICE));
     if (lpActiveServices == NULL)
     {
         SetLastError(ERROR_NOT_ENOUGH_MEMORY);
         return FALSE;
     }
 
-    /* Copy service names and start procedure */
+    dwActiveServiceCount = i;
+
+    /* Copy service names and start procedures. Set non-NULL values */
     for (i = 0; i < dwActiveServiceCount; i++)
     {
         RtlCreateUnicodeStringFromAsciiz(&lpActiveServices[i].ServiceName,
                                          lpServiceStartTable[i].lpServiceName);
         lpActiveServices[i].ServiceMain.A = lpServiceStartTable[i].lpServiceProc;
-        lpActiveServices[i].hServiceStatus = NULL;
         lpActiveServices[i].bUnicode = FALSE;
         lpActiveServices[i].bOwnProcess = FALSE;
     }
@@ -1112,25 +1113,24 @@ StartServiceCtrlDispatcherW(const SERVICE_TABLE_ENTRYW *lpServiceStartTable)
         i++;
     }
 
-    dwActiveServiceCount = i;
-
     /* Allocate the service table */
     lpActiveServices = RtlAllocateHeap(RtlGetProcessHeap(),
                                        HEAP_ZERO_MEMORY,
-                                       dwActiveServiceCount * sizeof(ACTIVE_SERVICE));
+                                       i * sizeof(ACTIVE_SERVICE));
     if (lpActiveServices == NULL)
     {
         SetLastError(ERROR_NOT_ENOUGH_MEMORY);
         return FALSE;
     }
 
-    /* Copy service names and start procedure */
+    dwActiveServiceCount = i;
+
+    /* Copy service names and start procedures. Set non-NULL values */
     for (i = 0; i < dwActiveServiceCount; i++)
     {
         RtlCreateUnicodeString(&lpActiveServices[i].ServiceName,
                                lpServiceStartTable[i].lpServiceName);
         lpActiveServices[i].ServiceMain.W = lpServiceStartTable[i].lpServiceProc;
-        lpActiveServices[i].hServiceStatus = NULL;
         lpActiveServices[i].bUnicode = TRUE;
         lpActiveServices[i].bOwnProcess = FALSE;
     }
