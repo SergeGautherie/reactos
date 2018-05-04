@@ -46,3 +46,7 @@ add_pch(rapps include/rapps.h SOURCE)
 add_dependencies(rapps rappsmsg)
 add_message_headers(ANSI rappsmsg.mc)
 add_cd_file(TARGET rapps DESTINATION reactos/system32 FOR all)
+
+if(USE_CLANG_CL)
+    add_target_compile_flags(rapps "-Wno-logical-not-parentheses -Wno-sometimes-uninitialized")
+endif()
