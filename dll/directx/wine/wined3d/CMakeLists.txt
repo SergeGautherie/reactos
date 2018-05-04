@@ -51,3 +51,7 @@ target_link_libraries(d3dwine wine)
 add_importlibs(d3dwine user32 opengl32 gdi32 advapi32 msvcrt kernel32 ntdll)
 add_pch(d3dwine precomp.h SOURCE)
 add_cd_file(TARGET d3dwine DESTINATION reactos/system32 FOR all)
+
+if(USE_CLANG_CL)
+    add_target_compile_flags(d3dwine "-Wno-bitfield-constant-conversion")
+endif()
