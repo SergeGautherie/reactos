@@ -5112,7 +5112,7 @@ static DWORD HTTP_HttpSendRequestW(http_request_t *request, LPCWSTR lpszHeaders,
                                                  request->session->password, host))
                         {
                             heap_free(requestString);
-                            if(!drain_content(request, TRUE) == ERROR_SUCCESS) {
+                            if (drain_content(request, TRUE) != ERROR_SUCCESS) {
                                 FIXME("Could not drain content\n");
                                 http_release_netconn(request, FALSE);
                             }
@@ -5140,7 +5140,7 @@ static DWORD HTTP_HttpSendRequestW(http_request_t *request, LPCWSTR lpszHeaders,
                                                  NULL))
                         {
                             heap_free(requestString);
-                            if(!drain_content(request, TRUE) == ERROR_SUCCESS) {
+                            if (drain_content(request, TRUE) != ERROR_SUCCESS) {
                                 FIXME("Could not drain content\n");
                                 http_release_netconn(request, FALSE);
                             }
