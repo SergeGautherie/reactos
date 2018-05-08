@@ -101,8 +101,8 @@ if(USE_CLANG_CL)
     add_compile_flags_language("-nostdinc -Wno-multichar -Wno-char-subscripts -Wno-microsoft-enum-forward-reference -Wno-pragma-pack -Wno-microsoft-anon-tag -Wno-parentheses-equality -Wno-unknown-pragmas" "CXX")
 
     # Already fixed by CORE-14306, until it is simpler to switch to a few "-Werror -Wno-error=...".
-    add_compile_flags_language("-Werror=sizeof-pointer-memaccess" "C")
-    add_compile_flags_language("-Werror=sizeof-pointer-memaccess" "CXX")
+    add_compile_flags_language("-Werror=logical-not-parentheses -Werror=sizeof-pointer-memaccess" "C")
+    add_compile_flags_language("-Werror=logical-not-parentheses -Werror=sizeof-pointer-memaccess" "CXX")
 endif()
 
 # Debugging
