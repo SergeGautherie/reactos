@@ -980,7 +980,7 @@ OslpMain (
     )
 {
     CPU_INFO CpuInfo;
-    BOOLEAN NxEnabled;
+    BOOLEAN NxEnabled = FALSE;
     NTSTATUS Status;
     BOOLEAN ExecuteJump;
     LARGE_INTEGER MiscMsr;
