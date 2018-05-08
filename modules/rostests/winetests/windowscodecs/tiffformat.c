@@ -1015,7 +1015,7 @@ static void test_color_formats(void)
         hr = create_decoder(buf, sizeof(buf), &decoder);
         if (!td[i].data)
         {
-            ok(hr == WINCODEC_ERR_UNSUPPORTEDPIXELFORMAT || hr == WINCODEC_ERR_COMPONENTNOTFOUND /* win8+ */ || WINCODEC_ERR_BADIMAGE /* XP */,
+            ok(hr == WINCODEC_ERR_UNSUPPORTEDPIXELFORMAT || hr == WINCODEC_ERR_COMPONENTNOTFOUND /* win8+ */ || hr == WINCODEC_ERR_BADIMAGE /* XP */,
                "%u: (%d,%d,%d) wrong error %#x\n", i, td[i].photometric, td[i].samples, td[i].bps, hr);
             if (hr == S_OK)
             {
