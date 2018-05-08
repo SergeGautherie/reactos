@@ -997,7 +997,6 @@ OslpMain (
             MiscMsr.QuadPart = __readmsr(MSR_IA32_MISC_ENABLE);
             EfiPrintf(L"NX being turned on: %llx\r\n", MiscMsr.QuadPart);
             MiscMsr.HighPart &= MSR_XD_ENABLE_MASK;
-            MiscMsr.QuadPart = __readmsr(MSR_IA32_MISC_ENABLE);
             __writemsr(MSR_IA32_MISC_ENABLE, MiscMsr.QuadPart);
             NxEnabled = TRUE;
         }
@@ -1014,8 +1013,8 @@ OslpMain (
         Status = OslExecuteTransition();
     }
 
-    /* Retore NX support */
-    __writemsr(MSR_EFER, __readmsr(MSR_EFER) ^ MSR_NXE);
+    /* Restore NX support */
+    __writemsr(MSR_EFER, __readmsr(MSR_EFER) & ~MSR_NXE);
 
     /* Did we manually enable NX? */
     if (NxEnabled)
