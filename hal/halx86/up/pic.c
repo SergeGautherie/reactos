@@ -405,7 +405,8 @@ PHAL_SW_INTERRUPT_HANDLER SWInterruptHandlerTable[20] =
 /* Handlers for pending software interrupts when we already have a trap frame*/
 PHAL_SW_INTERRUPT_HANDLER_2ND_ENTRY SWInterruptHandlerTable2[3] =
 {
-    (PHAL_SW_INTERRUPT_HANDLER_2ND_ENTRY)KiUnexpectedInterrupt,
+    /* Re-use KiUnexpectedInterrupt, which is a PHAL_SW_INTERRUPT_HANDLER */
+    (PHAL_SW_INTERRUPT_HANDLER_2ND_ENTRY)(PVOID)KiUnexpectedInterrupt,
     HalpApcInterrupt2ndEntry,
     HalpDispatchInterrupt2ndEntry
 };
@@ -1338,7 +1339,7 @@ HalpDispatchInterrupt2(VOID)
     return NULL;
 }
 
-#else
+#else /* _MINIHAL_ */
 
 KIRQL
 NTAPI
