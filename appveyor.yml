@@ -1,9 +1,9 @@
 environment:
   matrix:
-#     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
-    - BuildType: "clang-cl"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+#     - BuildType: "msvc-x64"
+#     - BuildType: "msvc"
+#     - BuildType: "clang-cl"
 #     - BuildType: vssolution
 
 version: reactos.appveyor.{build}
