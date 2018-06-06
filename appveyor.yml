@@ -1,57 +1,126 @@
+image: Ubuntu
+
 environment:
-  matrix:
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
-    - BuildType: "clang-cl"
-#     - BuildType: vssolution
+# SSH:   APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDgGIoNKEMMl4zlT1qUCZtW4Zk5CgHMFzn0ZszB6vyWn19Dc64yrhCU8AgtdOa2wEoBMRyKHPktkVEn7r7yRBpAF9UjyfWEaMWSLzfPJxOdtmjFDJKx8AYV2bk6o6KWX+jH1qtz+7zqELYdV8UzHgEe1MUpqCI4kJDTSpU6q92MJCiazda0VeFlyYwet9lXrT7pzM0I2tBHQzdD1pvY/vTwAfKw/+ZF0StswIPZfsmM2JeajH94BIYhX1DjhGHWLmqpW6QPTjBGFu1mtFF4P50fhz5JIx57K1Sd7GDtNR+Q3+ICG5nF99I7g+XFoWGjCGZ+LWYdAEu9lEezft8+cQ91
+# PuTTY: 
+  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAtPJhVrHblWPjguvbjz4bhzO0QgvogHs8nxXFhXKpr6htEinjuaLSn2acctY/aIv9SMDiAwORisZtZ7HltUvBL0Bl3Zn+bOtqbqkcgTXj2uQJpebCT+FNaHMogbcpu+hZvztoj/59F1e9VnJDz9X32SVJwaO7F/TP7Z32Vcx9Ui+GQ3RnmmnlQI/V8NoQw0sOibnJou3MdZW6fBLIGdZ6WkWsz4SNvymXK6CA+uelVpUWa4z2GHfFSdQP4oIItYwln2FHELwTPiJLP76AyCO3VMDoHMEAjhGkGusnRHQg5oj8tLbmyO+kjW0XVC0W8AXJnkWxWbnHN83O1f+gMqM8zw==
+#     secure: ...
+#   APPVEYOR_SSH_BLOCK: true
 
 version: reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
-clone_folder: c:\reactos-cov
+clone_folder: ~/ros_workdir/reactos-cov
+
+# /home/appveyor : user home
+#   /ros_workdir : working directory
+#     /RosBEBinFull : RosBE
+#     /reactos-cov : repository clone. See APPVEYOR_BUILD_FOLDER
+#     /Build : build output dir
+#       /reactos : actual output files
 
 init:
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-  - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
-  - ps: >-
-      If ($env:BuildType -Match "clang-cl") {
-        $env:clang_configure_option="clang"
-        (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
-        7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
-      } Else {
-        $env:clang_configure_option=""
-      }
+#   - sh: export APPVEYOR_SSH_BLOCK=true
+# 
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+#
+# /home/appveyor/ros_workdir/reactos-cov
+#   - sh: echo $APPVEYOR_BUILD_FOLDER
+# /home/appveyor/ros_workdir/reactos-cov
+#   - sh: pwd
+# appveyor
+#   - sh: whoami
+# Linux av-1103-034324-y6wysdd3wghdokk0 4.13.0-1011-gcp #15-Ubuntu SMP Mon Feb 12 16:29:04 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+#   - sh: uname -a
+# Cf log.
+#   - sh: env | sort
+#
+ # "cmake version 3.11.0-rc3"
+#   - cmake --version
+#
+  - sh: cd ~/ros_workdir
+#
+# Inutile, car "p7zip-full is already the newest version (9.20.1~dfsg.1-4.2)."
+#   - sh: sudo apt install p7zip-full
+# /usr/local/bin/7za
+#   - sh: which 7za
+# /usr/bin/7z
+#   - sh: which 7z
+# 7-Zip (a) [64] 16.02 / p7zip Version 16.02
+#   - sh: 7za -h
+# 7-Zip [64] 9.20 / p7zip Version 9.20
+#   - sh: 7z -h
+# Tentative  de resoudre "The program 'p7zip' is currently not installed.". Mais inutile.
+# p7zip_9.20.1~dfsg.1-4.2_amd64.deb
+#  - sh: sudo apt install p7zip
+# ?
+#  - sh: p7zip -h
+#
+ # "RosBE/Unix, Version 2.1.2"
+  - sh: wget --no-verbose -O RosBE.tar.gz https://svn.reactos.org/amine/RosBEBinFull.tar.gz
+  - sh: ll RosBE.tar.gz
+  - tar -xzf RosBE.tar.gz
+#   - sh: ls -la
+  - sh: export ROSTESTS_INSTALL=~/ros_workdir/ros_tests
+ # cmake --version && : "cmake version 3.2.1-ReactOS"
+#   - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && cd reactos && ninja -k0 rostests' > tmp_file
+#   - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && cd reactos && ninja -k0' > tmp_file
+  - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && cd reactos && ninja -k0 && ninja bootcdregtest' > tmp_file
+# ("git clone" explicite fctne, mais) Necessaire pour "git checkout" implicite.
+  - sh: pushd $APPVEYOR_BUILD_FOLDER
 
 build_script:
-  - set PATH=C:\RosCMakeNinja\bin;%PATH%
-  - if "%BuildType%" == "msvc-x64" (
-        call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-      ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-      )
-  - cmake --version
-  - md c:\ros_build
-  - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
-  - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-  - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - sh: popd
+  - ./RosBEBinFull/RosBE.sh < tmp_file
+
+after_build:
+  - sh: export BuildType=gcc
+  - sh: export SGVER=$APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-$BuildType
+#   - sh: echo $SGVER
+#   - sh: pwd
+#
+# 
+  - sh: cd ~/ros_workdir/Build/reactos
+#   - sh: ls -la
+#
+#   - sh: appveyor PushArtifact modules/rostests/apitests/apphelp/apphelp_apitest.exe -FileName apphelp_apitest-$SGVER.exe
+#
+# 
+  - sh: appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-$SGVER.iso
+#
+# 
+  - sh: appveyor PushArtifact host-tools/log2lines -FileName log2lines-$SGVER
+# 
+  - sh: appveyor PushArtifact host-tools/raddr2line -FileName raddr2line-$SGVER
 
 test: off
+
+before_test:
+  - sh: cd ~/ros_workdir
+  - sh: echo 'cd ../Build && cd reactos && ninja rostests_install' > tmp_fileT
+  - sh: ./RosBEBinFull/RosBE.sh < tmp_fileT
+#
+# As msvc, plus
+# pseh2_test_cpp.exe
+# pseh2_test.exe
+# Pas de "  & exit 0", sinon "Build exited with code 0" immediat :-/
+#   - sh: ll -R $ROSTESTS_INSTALL
+#   - sh: ll $ROSTESTS_INSTALL/*_apitest.exe
+#   - sh: ll $ROSTESTS_INSTALL/kmtest_*.exe  & ??
+#   - sh: ll $ROSTESTS_INSTALL/*_winetest.exe
+#   - sh: ll $ROSTESTS_INSTALL/*.exe
+#
+  - sh: cd ~/ros_workdir/Build/reactos
+  - sh: appveyor PushArtifact modules/rostests/rosautotest/rosautotest.exe -FileName rosautotest-$SGVER.exe
+# 44 MiB. zip: 13 MiB. 7z: 6 659 KiB.
+  - sh: 7za a ros_tests.7z $ROSTESTS_INSTALL
+  - sh: appveyor PushArtifact ros_tests.7z -FileName ros_tests-$SGVER.7z
+
+# test_script:
+#   - echo NoOp. Only to enable "test_script", thus "before_test".
+
 deploy: off
 
-for:
--
-  matrix:
-    only:
-      - BuildType: vssolution
-
-  build_script:
-    - set PATH=C:\RosCMakeNinja\bin;%PATH%
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-    - cmake --version
-    - md C:\ros_build
-    - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1
-    - msbuild /verbosity:quiet /target:bootcd REACTOS.sln
+on_finish:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
