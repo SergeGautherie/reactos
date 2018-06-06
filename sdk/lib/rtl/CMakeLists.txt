@@ -5,6 +5,10 @@ add_definitions(
     -D_NTSYSTEM_
     -D_NTDLLBUILD_)
 
+if(ENABLE_SYSTEMWIDE_DPH)
+    add_definitions(-DENABLE_SYSTEMWIDE_DPH)
+endif()
+
 list(APPEND SOURCE
     access.c
     acl.c
