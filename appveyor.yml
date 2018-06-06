@@ -1,12 +1,24 @@
 image: Ubuntu
 
 environment:
+# SSH:   APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDgGIoNKEMMl4zlT1qUCZtW4Zk5CgHMFzn0ZszB6vyWn19Dc64yrhCU8AgtdOa2wEoBMRyKHPktkVEn7r7yRBpAF9UjyfWEaMWSLzfPJxOdtmjFDJKx8AYV2bk6o6KWX+jH1qtz+7zqELYdV8UzHgEe1MUpqCI4kJDTSpU6q92MJCiazda0VeFlyYwet9lXrT7pzM0I2tBHQzdD1pvY/vTwAfKw/+ZF0StswIPZfsmM2JeajH94BIYhX1DjhGHWLmqpW6QPTjBGFu1mtFF4P50fhz5JIx57K1Sd7GDtNR+Q3+ICG5nF99I7g+XFoWGjCGZ+LWYdAEu9lEezft8+cQ91
+# PuTTY: 
+  APPVEYOR_SSH_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAtPJhVrHblWPjguvbjz4bhzO0QgvogHs8nxXFhXKpr6htEinjuaLSn2acctY/aIv9SMDiAwORisZtZ7HltUvBL0Bl3Zn+bOtqbqkcgTXj2uQJpebCT+FNaHMogbcpu+hZvztoj/59F1e9VnJDz9X32SVJwaO7F/TP7Z32Vcx9Ui+GQ3RnmmnlQI/V8NoQw0sOibnJou3MdZW6fBLIGdZ6WkWsz4SNvymXK6CA+uelVpUWa4z2GHfFSdQP4oIItYwln2FHELwTPiJLP76AyCO3VMDoHMEAjhGkGusnRHQg5oj8tLbmyO+kjW0XVC0W8AXJnkWxWbnHN83O1f+gMqM8zw==
+#     secure: ...
+#   APPVEYOR_SSH_BLOCK: true
+#
   BuildVersion: $APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-gcc
 
 version: Host-Tools.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: ~/ros_workdir/reactos-cov
+
+init:
+#   - sh: export APPVEYOR_SSH_BLOCK=true
+# 
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+#
 
 install:
   - sh: cd ~/ros_workdir
@@ -29,3 +41,7 @@ after_build:
 test: off
 
 deploy: off
+
+on_finish:
+  - sh: export APPVEYOR_SSH_BLOCK=true
+  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
