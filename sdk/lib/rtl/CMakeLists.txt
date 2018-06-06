@@ -112,6 +112,9 @@ endif()
 
 add_asm_files(rtl_asm ${ASM_SOURCE})
 add_library(rtl ${SOURCE} ${rtl_asm})
+if(ENABLE_SYSTEMWIDE_DPH)
+    target_compile_definitions(rtl PRIVATE ENABLE_SYSTEMWIDE_DPH)
+endif()
 add_pch(rtl rtl.h SOURCE)
 add_dependencies(rtl psdk asm)
 
