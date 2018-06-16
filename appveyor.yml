@@ -7,6 +7,7 @@ environment:
 #     secure: ...
 #   APPVEYOR_SSH_BLOCK: true
 #
+  ROS_WGET_BOOTCDREGTEST: https://iso.reactos.org/bootcdregtest/reactos-bootcdregtest-0.4.10-dev-231-ge4f0670-x86-gcc-lin-dbg.iso
   BuildVersion: $APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-gcc
 
 version: Host-Tools.reactos.appveyor.{build}
@@ -18,7 +19,6 @@ init:
 #   - sh: export APPVEYOR_SSH_BLOCK=true
 # 
   - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
-#
 
 install:
   - sh: cd ~/ros_workdir
@@ -26,7 +26,9 @@ install:
   - sh: chmod u-w RosBEBinFull.tar.gz
   - sh: ll RosBEBinFull.tar.gz
   - sh: tar -xzf RosBEBinFull.tar.gz
+#
   - sh: mkdir Build
+  - sh: mkdir ~/ros_workdir/TestRun
 
 build_script:
   - sh: cd Build
@@ -37,8 +39,19 @@ after_build:
   - sh: cd reactos/host-tools
   - sh: appveyor PushArtifact log2lines -FileName log2lines-$BuildVersion
   - sh: appveyor PushArtifact raddr2line -FileName raddr2line-$BuildVersion
+#
+  - sh: chmod go-x log2lines
+  - sh: ll log2lines
 
-test: off
+test_script:
+  - sh: cd ~/ros_workdir/TestRun
+#
+  - sh: wget --no-verbose --output-document=bootcdregtest.iso "$ROS_WGET_BOOTCDREGTEST"
+  - sh: chmod u-w bootcdregtest.iso
+  - sh: ll bootcdregtest.iso
+#
+  - sh: ln ~/ros_workdir/Build/reactos/host-tools/log2lines
+  - sh: ./log2lines -d bootcdregtest.iso -F
 
 deploy: off
 
