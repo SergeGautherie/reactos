@@ -425,7 +425,10 @@ translate_files(FILE *inFile, FILE *outFile)
     {
         while ((c = fgetc(inFile)) != EOF)
         {
-            if (opt_quit)break;
+            if (opt_quit)
+            {
+                break;
+            }
 
             ch = (unsigned char)c;
             if (!opt_raw)
@@ -523,7 +526,10 @@ translate_files(FILE *inFile, FILE *outFile)
     {   // Line by line, slightly faster but less interactive
         while (fgets(Line, LINESIZE, inFile) != NULL)
         {
-            if (opt_quit)break;
+            if (opt_quit)
+            {
+                break;
+            }
 
             if (!opt_raw)
             {
