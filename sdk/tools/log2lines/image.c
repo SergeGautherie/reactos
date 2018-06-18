@@ -44,7 +44,7 @@ find_offset(void *data, size_t offset)
 
     for (i = 0; i < symbols; i++)
     {
-        if (Entries[i].Address > offset)
+        if (Entries[i].Address > (unsigned int)offset)
         {
             if (!i--)
                 return NULL;
