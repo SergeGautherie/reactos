@@ -35,7 +35,10 @@
 #define l2l_dbg(level, ...)                     \
     {                                           \
         if (opt_verbose >= level)               \
+        {                                       \
+            fprintf(stderr, "%u: ", level);     \
             fprintf(stderr, ##__VA_ARGS__);     \
+        }                                       \
     }
 
 int file_exists(char *name);
