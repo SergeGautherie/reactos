@@ -97,20 +97,14 @@ endfunction()
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcd.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcd.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
-add_custom_target(bootcd
-    COMMAND rem bootcd.iso
-    DEPENDS isombr native-isohybrid
-    VERBATIM)
+add_custom_target(bootcd)
 
 ## BootCDRegTest
 # Create the file list
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcdregtest.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcdregtest.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
-add_custom_target(bootcdregtest
-    COMMAND rem bootcdregtest.iso
-    DEPENDS isombr native-isohybrid
-    VERBATIM)
+add_custom_target(bootcdregtest)
 
 ## LiveCD
 # Create the file list
@@ -121,10 +115,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "${CMAKE_CURRENT_BINARY_
 add_allusers_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "Profiles")
 add_user_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "Profiles" "Default User")
 
-add_custom_target(livecd
-    COMMAND rem livecd.iso
-    DEPENDS isombr native-isohybrid
-    VERBATIM)
+add_custom_target(livecd)
 
 ## HybridCD
 # Create the file list
@@ -135,10 +126,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "${CMAKE_CURRENT_BINAR
 add_allusers_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/Profiles")
 add_user_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/Profiles" "Default User")
 
-add_custom_target(hybridcd
-    COMMAND rem hybridcd.iso
-    DEPENDS bootcd livecd
-    VERBATIM)
+add_custom_target(hybridcd)
 
 add_cd_file(TARGET efisys FILE ${CMAKE_CURRENT_BINARY_DIR}/efisys.bin DESTINATION loader NO_CAB NOT_IN_HYBRIDCD FOR bootcd regtest livecd hybridcd)
 
