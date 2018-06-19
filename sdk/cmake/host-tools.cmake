@@ -6,9 +6,9 @@ endif()
 string(TOUPPER ${CMAKE_BUILD_TYPE} _build_type)
 
 # List of host tools
-list(APPEND host_tools_list bin2c hpp widl gendib cabman fatten isohybrid mkhive mkisofs obj2bin spec2def geninc mkshelllink utf16le xml2sdb)
+list(APPEND host_tools_list bin2c hpp widl gendib cabman fatten isohybrid mkhive obj2bin spec2def geninc mkshelllink utf16le xml2sdb)
 if(NOT MSVC)
-    list(APPEND host_tools_list rsym)
+    list(APPEND host_tools_list mkisofs rsym)
 endif()
 
 foreach(_host_tool ${host_tools_list})

@@ -109,7 +109,7 @@ if(NOT CMAKE_CROSSCOMPILING)
         if(NOT MSVC)
             export(TARGETS bin2c widl gendib cabman fatten hpp isohybrid mkhive mkisofs obj2bin spec2def geninc rsym mkshelllink utf16le xml2sdb FILE ${CMAKE_BINARY_DIR}/ImportExecutables.cmake NAMESPACE native- )
         else()
-            export(TARGETS bin2c widl gendib cabman fatten hpp isohybrid mkhive mkisofs obj2bin spec2def geninc mkshelllink utf16le xml2sdb FILE ${CMAKE_BINARY_DIR}/ImportExecutables.cmake NAMESPACE native- )
+            export(TARGETS bin2c widl gendib cabman fatten hpp isohybrid mkhive obj2bin spec2def geninc mkshelllink utf16le xml2sdb FILE ${CMAKE_BINARY_DIR}/ImportExecutables.cmake NAMESPACE native- )
         endif()
     endif()
 
