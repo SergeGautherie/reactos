@@ -1,16 +1,17 @@
 environment:
   matrix:
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
-#    - BuildType: "clang-cl"
-#    - BuildType: vssolution
+#     - BuildType: "msvc-x64"
+# TODO: Check for (known) workaround...
+#     - BuildType: "msvc"
+#     - BuildType: "clang-cl"
+    - BuildType: vssolution
 
-version: reactos.appveyor.{build}
+version: ARM-build-revival.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
-clone_folder: c:\reactos-cov
-matrix:
-  fast_finish: true
+clone_folder: C:\reactos-cov
+# matrix:
+#   fast_finish: true
 
 init:
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
@@ -29,12 +30,12 @@ build_script:
   - if "%BuildType%" == "msvc-x64" (
         call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+        call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x86_arm
       )
   - cmake --version
-  - md c:\ros_build
-  - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
+  - md C:\ros_build
+  - cd C:\ros_build
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=0
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
@@ -51,9 +52,9 @@ for:
 
   build_script:
     - set PATH=C:\RosCMakeNinja\bin;%PATH%
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+    - call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x86_arm
     - cmake --version
     - md C:\ros_build
     - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1
-    - msbuild /verbosity:quiet /target:bootcd REACTOS.sln
+    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=0
+    - C:\Windows\Microsoft.NET\Framework\v4.0.30319\msbuild /verbosity:quiet REACTOS.sln
