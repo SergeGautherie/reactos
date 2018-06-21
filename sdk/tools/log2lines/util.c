@@ -127,12 +127,12 @@ getFmt(const char *a)
         switch (*++a)
         {
         case 'x':
-            fmt = "%x";
-            ++a;
+            // Default format.
+// A Tester sans.            ++a;
             break;
         case 'd':
             fmt = "%d";
-            ++a;
+// A Tester sans.            ++a;
             break;
         default:
             fmt = "%o";
@@ -145,6 +145,7 @@ getFmt(const char *a)
 long
 my_atoi(const char *a)
 {
+// A Tester avec "0xnnn" et "-nn"...
     int i = 0;
     sscanf(a, getFmt(a), &i);
     return i;
