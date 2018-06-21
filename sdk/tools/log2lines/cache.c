@@ -54,7 +54,7 @@ unpack_iso(char *dir, char *iso)
     }
     else
     {
-        l2l_dbg(2, "\nUnpacking reactos.cab in %s\n", dir);
+        l2l_dbg(2, "Unpacking reactos.cab in %s\n", dir);
         sprintf(Line, UNZIP_FMT_CAB, opt_7z, dir, dir);
         if (system(Line) < 0)
         {
@@ -130,9 +130,9 @@ check_directory(int force)
             sprintf(freeldr_path, "%s" PATH_STR "freeldr.ini", opt_dir);
             if (!file_exists(freeldr_path) || force)
             {
-                l2l_dbg(0, "Unpacking %s to: %s ...", iso_path, opt_dir);
+                l2l_dbg(0, "Unpacking %s to: %s ...\n", iso_path, opt_dir);
                 unpack_iso(opt_dir, iso_path);
-                l2l_dbg(0, "... done\n");
+                l2l_dbg(0, "Unpacking %s to: %s - done\n", iso_path, opt_dir);
             }
             else
                 l2l_dbg(2, "%s already unpacked in: %s\n", iso_path, opt_dir);
@@ -209,7 +209,7 @@ create_cache(int force, int skipImageBase)
 
     if (force)
     {
-        l2l_dbg(3, "Removing %s ...\n", cache_name);
+        l2l_dbg(3, "Removing %s\n", cache_name);
         remove(cache_name);
     }
     else
@@ -229,13 +229,14 @@ create_cache(int force, int skipImageBase)
     l2l_dbg(1, "Executing: %s\n", Line);
     if (system(Line) != 0)
     {
-        l2l_dbg(0, "Cannot list directory %s\n", opt_dir);
+        l2l_dbg(0, "\nScanning - Cannot list directory %s\n", opt_dir);
         l2l_dbg(1, "Failed to execute: '%s'\n", Line);
         remove(tmp_name);
         return 2;
     }
-    l2l_dbg(0, "Creating cache ...");
+    l2l_dbg(0, "Scanning %s - done\n", opt_dir);
 
+    l2l_dbg(0, "Creating cache ...\n");
     if ((fr = fopen(tmp_name, "r")) != NULL)
     {
         if ((fw = fopen(cache_name, "w")) != NULL)
@@ -262,11 +263,27 @@ create_cache(int force, int skipImageBase)
                         l2l_dbg(3, "%s|%s|%0x, ERR=%d\n", Fname, Line, (unsigned int)ImageBase, err);
                 }
             }
+
             fclose(fw);
+
+            l2l_dbg(0, "Creating cache - done\n");
         }
-        l2l_dbg(0, "... done\n");
+        else
+        {
+            l2l_dbg(0, "Creating cache - failed\n");
+            l2l_dbg(1, "'fopen(\"%s\", \"w\")' returned NULL\n", cache_name);
+// ToDo: And (early) return an error?
+        }
+
         fclose(fr);
     }
+    else
+    {
+        l2l_dbg(0, "Creating cache - failed\n");
+        l2l_dbg(1, "'fopen(\"%s\", \"r\")' returned NULL\n", tmp_name);
+// ToDo: And (early) return an error?
+    }
+
     remove(tmp_name);
     return 0;
 }
