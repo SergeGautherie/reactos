@@ -44,10 +44,13 @@ unpack_iso(char *dir, char *iso)
         strcat(iso_tmp, "~");
         if (copy_file(iso, iso_tmp))
             return 3;
+
         iso_copied = 1;
     }
     else
+    {
         fclose(fiso);
+    }
 
     sprintf(Line, UNZIP_FMT_2_ISO, opt_7z, iso_tmp, dir);
     if (system(Line) < 0)
@@ -104,6 +107,7 @@ unpack_iso(char *dir, char *iso)
 
     if (iso_copied)
         remove(iso_tmp);
+
     return res;
 }
 
