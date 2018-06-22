@@ -87,6 +87,21 @@ unpack_iso(char *dir, char *iso)
         }
     }
 
+/*
+    // Workaround: Copy ntdll.dll, which is not in .cab, from .iso itself.
+    if (res == 0)
+    {
+        l2l_dbg(2, "Copying ntdll.dll in %s\n", dir);
+        sprintf(Line, CP_CMD "%s" PATH_STR "reactos" PATH_STR "system32" PATH_STR "ntdll.dll %s" PATH_STR "reactos" PATH_STR "reactos" PATH_STR " > " DEV_NULL, dir, dir);
+        if (system(Line) < 0)
+        {
+            l2l_dbg(0, "\nCannot copy ntdll.dll in %s\n", dir);
+            l2l_dbg(1, "Failed to execute: '%s'\n", Line);
+            res = 5;
+        }
+    }
+*/
+
     if (iso_copied)
         remove(iso_tmp);
     return res;
