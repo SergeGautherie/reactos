@@ -45,7 +45,7 @@ unpack_iso(char *dir, char *iso)
     else
         fclose(fiso);
 
-    sprintf(Line, UNZIP_FMT, opt_7z, iso_tmp, dir);
+    sprintf(Line, UNZIP_FMT_2_ISO, opt_7z, iso_tmp, dir);
     if (system(Line) < 0)
     {
         l2l_dbg(0, "\nCannot unpack %s (check 7z path!)\n", iso_tmp);
@@ -55,7 +55,7 @@ unpack_iso(char *dir, char *iso)
     else
     {
         l2l_dbg(2, "Unpacking reactos.cab in %s\n", dir);
-        sprintf(Line, UNZIP_FMT_CAB, opt_7z, dir, dir);
+        sprintf(Line, UNZIP_FMT_3_CAB, opt_7z, dir, dir);
         if (system(Line) < 0)
         {
             l2l_dbg(0, "\nCannot unpack reactos.cab in %s\n", dir);
@@ -99,7 +99,7 @@ check_directory(int force)
         else
             strcpy(compressed_7z_path, "."); // default to current dir
 
-        sprintf(Line, UNZIP_FMT_7Z, opt_7z, opt_dir, compressed_7z_path);
+        sprintf(Line, UNZIP_FMT_1_7Z, opt_7z, opt_dir, compressed_7z_path);
 
         /* This of course only works if the .7z and .iso basenames are identical
          * which is normally true for ReactOS trunk builds:

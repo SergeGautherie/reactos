@@ -19,11 +19,13 @@
 
 #define CP_FMT          CP_CMD "%s %s > " DEV_NULL
 
+// ToDo: Move them to options.c!?
 #define CMD_7Z          "7z"
-#define UNZIP_FMT_7Z    "%s e -y %s -o%s > " DEV_NULL
-#define UNZIP_FMT       "%s x -tIso -y -r %s -o%s > " DEV_NULL
-#define UNZIP_FMT_CAB \
-"%s x -y -r %s" PATH_STR "reactos" PATH_STR "reactos.cab -o%s" \
+// ToDo: Move them to cache.c!?
+#define UNZIP_FMT_1_7Z  "%s e -y %s -o%s > " DEV_NULL
+#define UNZIP_FMT_2_ISO "%s x -tIso -y %s -o%s > " DEV_NULL
+#define UNZIP_FMT_3_CAB \
+"%s e -y %s" PATH_STR "reactos" PATH_STR "reactos.cab -o%s" \
 PATH_STR "reactos" PATH_STR "reactos > " DEV_NULL
 
 /* When we can't use a normal path, because it gets cleaned,
