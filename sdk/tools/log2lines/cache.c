@@ -42,8 +42,12 @@ unpack_iso(char *dir, char *iso)
         l2l_dbg(1, "Open of %s failed (locked for writing?), trying to copy first\n", iso);
 
         strcat(iso_tmp, "~");
+        l2l_dbg(2, "Copying %s to %s\n", iso, iso_tmp);
         if (copy_file(iso, iso_tmp))
+        {
+            l2l_dbg(0, "Copying %s to %s failed\n", iso, iso_tmp);
             return 3;
+        }
 
         iso_copied = 1;
     }
@@ -52,10 +56,12 @@ unpack_iso(char *dir, char *iso)
         fclose(fiso);
     }
 
+    l2l_dbg(2, "Unpacking %s to %s\n", iso_tmp, dir);
     sprintf(Line, UNZIP_FMT_2_ISO, opt_7z, iso_tmp, dir);
-    if (system(Line) < 0)
+    l2l_dbg(1, "Executing: %s\n", Line);
+    if (system(Line) != 0)
     {
-        l2l_dbg(0, "\nCannot unpack %s (check 7z path!)\n", iso_tmp);
+        l2l_dbg(0, "\nCannot unpack %s to %s. (Check 7z path!)\n", iso_tmp, dir);
         l2l_dbg(1, "Failed to execute: '%s'\n", Line);
         res = 1;
     }
@@ -64,7 +70,8 @@ unpack_iso(char *dir, char *iso)
     {
         l2l_dbg(2, "Unpacking reactos.cab in %s\n", dir);
         sprintf(Line, UNZIP_FMT_3_CAB, opt_7z, dir, dir);
-        if (system(Line) < 0)
+        l2l_dbg(1, "Executing: %s\n", Line);
+        if (system(Line) != 0)
         {
             l2l_dbg(0, "\nCannot unpack reactos.cab in %s\n", dir);
             l2l_dbg(1, "Failed to execute: '%s'\n", Line);
@@ -77,12 +84,14 @@ unpack_iso(char *dir, char *iso)
     // by second empty test file, if the latter exists.
     if (res == 0)
     {
+        l2l_dbg(2, "Removing %s" PATH_STR "reactos" PATH_STR "reactos" PATH_STR "shell32.dll\n", dir);
         sprintf(Line, "%s" PATH_STR "reactos" PATH_STR "reactos" PATH_STR "shell32.dll", dir);
         remove(Line);
 
         l2l_dbg(2, "Unpacking reactos.cab" PATH_STR "shell32.dll again in %s\n", dir);
         sprintf(Line, UNZIP_FMT_4_CAB_SHELL32, opt_7z, dir, dir);
-        if (system(Line) < 0)
+        l2l_dbg(1, "Executing: %s\n", Line);
+        if (system(Line) != 0)
         {
             l2l_dbg(0, "\nCannot unpack reactos.cab" PATH_STR "shell32.dll again in %s\n", dir);
             l2l_dbg(1, "Failed to execute: '%s'\n", Line);
@@ -96,6 +105,7 @@ unpack_iso(char *dir, char *iso)
     {
         l2l_dbg(2, "Copying ntdll.dll in %s\n", dir);
         sprintf(Line, CP_CMD "%s" PATH_STR "reactos" PATH_STR "system32" PATH_STR "ntdll.dll %s" PATH_STR "reactos" PATH_STR "reactos" PATH_STR " > " DEV_NULL, dir, dir);
+        l2l_dbg(1, "Executing: %s\n", Line);
         if (system(Line) < 0)
         {
             l2l_dbg(0, "\nCannot copy ntdll.dll in %s\n", dir);
@@ -106,7 +116,10 @@ unpack_iso(char *dir, char *iso)
 */
 
     if (iso_copied)
+    {
+        l2l_dbg(3, "Removing %s\n", iso_tmp);
         remove(iso_tmp);
+    }
 
     return res;
 }
@@ -151,7 +164,7 @@ check_directory(int force)
         if (!file_exists(opt_dir) || force)
         {
             l2l_dbg(1, "Decompressing 7z image: %s\n", opt_dir);
-            if (system(Line) < 0)
+            if (system(Line) != 0)
             {
                 l2l_dbg(0, "\nCannot decompress to iso image %s\n", opt_dir);
                 l2l_dbg(1, "Failed to execute: '%s'\n", Line);
@@ -272,7 +285,7 @@ create_cache(int force, int skipImageBase)
     l2l_dbg(1, "Executing: %s\n", Line);
     if (system(Line) != 0)
     {
-        l2l_dbg(0, "\nScanning - Cannot list directory %s\n", opt_dir);
+        l2l_dbg(0, "Scanning - Cannot list directory %s\n", opt_dir);
         l2l_dbg(1, "Failed to execute: '%s'\n", Line);
         remove(tmp_name);
         return 2;
