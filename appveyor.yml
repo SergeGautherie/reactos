@@ -7,7 +7,7 @@ environment:
 #     secure: ...
 #   APPVEYOR_SSH_BLOCK: true
 #
-  ROS_WGET_BOOTCDREGTEST: https://iso.reactos.org/bootcdregtest/reactos-bootcdregtest-0.4.10-dev-231-ge4f0670-x86-gcc-lin-dbg.iso
+  ROS_WGET_BOOTCDREGTEST: https://iso.reactos.org/bootcdregtest/reactos-bootcdregtest-0.4.11-dev-34-g191dceb-x86-gcc-lin-dbg.iso
   BuildVersion: $APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-gcc
 
 version: Host-Tools.reactos.appveyor.{build}
