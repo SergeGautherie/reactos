@@ -7,6 +7,6 @@
 
 #pragma once
 
-#define LOG2LINES_VERSION   "2.2"
+#define LOG2LINES_VERSION   "2.3-dev"
 
 /* EOF */
