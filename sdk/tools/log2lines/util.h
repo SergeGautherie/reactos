@@ -36,7 +36,10 @@
     {                                           \
         if (opt_verbose >= level)               \
         {                                       \
-            fprintf(stderr, "%u: ", level);     \
+            if (level > 0)                      \
+            {                                   \
+                fprintf(stderr, "%u: ", level); \
+            }                                   \
             fprintf(stderr, ##__VA_ARGS__);     \
         }                                       \
     }
