@@ -1,11 +1,11 @@
 environment:
   matrix:
-    - BuildType: "msvc-x64"
+#     - BuildType: "msvc-x64"
     - BuildType: "msvc"
-    - BuildType: "clang-cl"
-#     - BuildType: vssolution
+# 
+    - BuildType: vssolution
 
-version: reactos.appveyor.{build}
+version: CORE-7538.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
@@ -32,7 +32,7 @@ build_script:
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSAPPS=1 -DENABLE_ROSTESTS=1
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
@@ -53,5 +53,5 @@ for:
     - cmake --version
     - md C:\ros_build
     - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1
+    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSAPPS=1 -DENABLE_ROSTESTS=1
     - msbuild /verbosity:quiet /target:bootcd REACTOS.sln
