@@ -73,12 +73,12 @@ add_compile_flags("/wd4018")
 # - C4022: pointer type mismatch for parameter
 # - C4028: formal parameter different from declaration
 # - C4047: different level of indirection
-# - TODO: C4090: different 'modifier' qualifiers (for C programs only;
-#          for C++ programs, the compiler error C2440 is issued)
+# - C4090: different 'modifier' qualifiers (for C programs only;
+#          for C++ programs, the compiler error C2440 is issued, not a warning)
 # - C4098: void function returning a value
 # - C4113: parameter lists differ
 # - C4129: unrecognized escape sequence
-# - TODO: C4133: incompatible types
+# - C4133: incompatible types
 # - C4163: 'identifier': not available as an intrinsic function
 # - C4229: modifiers on data are ignored
 # - C4700: uninitialized variable usage
@@ -87,7 +87,10 @@ add_compile_flags("/wd4018")
 add_compile_flags("/we4013 /we4020 /we4022 /we4047 /we4098 /we4113 /we4129 /we4163 /we4229 /we4700 /we4603 /we4716")
 # TODO: Check and fix other architectures.
 if(ARCH STREQUAL "i386")
-    add_compile_flags("/we4028")
+    # TODO:
+    # "amd64": additional cases to fix first.
+    # "arm": to be checked when build is unbroken.
+    add_compile_flags("/we4028 /we4090 /we4133")
 endif()
 
 # - C4189: local variable initialized but not referenced
