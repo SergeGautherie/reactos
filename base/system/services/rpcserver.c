@@ -5116,7 +5116,7 @@ RChangeServiceConfig2A(
 
     InfoW.dwInfoLevel = Info.dwInfoLevel;
 
-    if (InfoW.dwInfoLevel == SERVICE_CONFIG_DESCRIPTION)
+    if (Info.dwInfoLevel == SERVICE_CONFIG_DESCRIPTION)
     {
         LPSERVICE_DESCRIPTIONW lpServiceDescriptionW;
         LPSERVICE_DESCRIPTIONA lpServiceDescriptionA;
@@ -5130,7 +5130,7 @@ RChangeServiceConfig2A(
 
             lpServiceDescriptionW = HeapAlloc(GetProcessHeap(),
                                               HEAP_ZERO_MEMORY,
-                                              dwLength + sizeof(SERVICE_DESCRIPTIONW));
+                                              sizeof(SERVICE_DESCRIPTIONW) + dwLength);
             if (!lpServiceDescriptionW)
             {
                 return ERROR_NOT_ENOUGH_MEMORY;
@@ -5267,7 +5267,8 @@ RChangeServiceConfig2A(
 
     dwRet = RChangeServiceConfig2W(hService, InfoW);
 
-    HeapFree(GetProcessHeap(), 0, ptr);
+    if (ptr)
+        HeapFree(GetProcessHeap(), 0, ptr);
 
     return dwRet;
 }
