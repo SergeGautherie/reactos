@@ -29,5 +29,5 @@ for:
     - md C:\ros_build
     - cd C:\ros_build
     - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1
-    - msbuild /verbosity:minimal REACTOS.sln
+    - msbuild REACTOS.sln
     - dir
