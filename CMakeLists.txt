@@ -165,7 +165,7 @@ else()
     # Version Options
     add_definitions(-DWINVER=0x502
                     -D_WIN32_IE=0x600
-                    -D_WIN32_WINNT=0x502
+                    -D_WIN32_WINNT=0x600
                     -D_WIN32_WINDOWS=0x502
                     -D_SETUPAPI_VER=0x502
                     -DMINGW_HAS_SECURE_API=1)
