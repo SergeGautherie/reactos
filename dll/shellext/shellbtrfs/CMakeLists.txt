@@ -1,6 +1,6 @@
 set_cpp(WITH_RUNTIME WITH_EXCEPTIONS WITH_STL)
 
-remove_definitions(-D_WIN32_WINNT=0x502)
+remove_definitions(-D_WIN32_WINNT=0x600)
 add_definitions(-D_WIN32_WINNT=0x603)
 
 if(NOT MSVC)
