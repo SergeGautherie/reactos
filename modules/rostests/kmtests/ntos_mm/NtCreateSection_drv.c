@@ -423,15 +423,15 @@ TestIrpHandler(
         }
         else if (IoStack->FileObject->SectionObjectPointer->SharedCacheMap == NULL)
         {
-            LARGE_INTEGER Zero = RTL_CONSTANT_LARGE_INTEGER(0LL);
+            // LARGE_INTEGER Zero = RTL_CONSTANT_LARGE_INTEGER(0LL);
 
             ok(!CcIsFileCached(IoStack->FileObject), "File is cached\n");
 
             // CcUninitializeCacheMap must always be called,
             // even when CcInitializeCacheMap has not been called.
-            trace("CcUninitializeCacheMap(Zero)\n");
+            trace("CcUninitializeCacheMap(NULL)\n");
             KeInitializeEvent(&CacheUninitEvent.Event, NotificationEvent, FALSE);
-            CcUninitializeCacheMap(IoStack->FileObject, &Zero, &CacheUninitEvent);
+            CcUninitializeCacheMap(IoStack->FileObject, NULL, &CacheUninitEvent);
             KeWaitForSingleObject(&CacheUninitEvent.Event, Executive, KernelMode, FALSE, NULL);
         }
         else

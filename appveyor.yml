@@ -21,7 +21,7 @@ environment:
 #   APPVEYOR_RDP_PASSWORD:
 #     secure: amQ18PhcGpzi95VrjdE94A==
 
-version: reactos.appveyor.{build}
+version: ROSTESTS-266.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
