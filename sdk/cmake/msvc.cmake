@@ -78,7 +78,7 @@ add_compile_flags("/wd4018")
 # - C4098: void function returning a value
 # - C4113: parameter lists differ
 # - C4129: unrecognized escape sequence
-# - C4133: incompatible types
+# - TODO: C4133: incompatible types
 # - C4163: 'identifier': not available as an intrinsic function
 # - C4229: modifiers on data are ignored
 # - C4700: uninitialized variable usage
@@ -90,7 +90,7 @@ if(ARCH STREQUAL "i386")
     # TODO:
     # "amd64": additional cases to fix first.
     # "arm": to be checked when build is unbroken.
-    add_compile_flags("/we4028 /we4133")
+    add_compile_flags("/we4028")
 endif()
 
 # - C4189: local variable initialized but not referenced
