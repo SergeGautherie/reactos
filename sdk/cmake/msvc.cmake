@@ -86,7 +86,9 @@ add_compile_flags("/wd4018")
 # - C4716: function must return a value
 add_compile_flags("/we4013 /we4020 /we4022 /we4047 /we4098 /we4113 /we4129 /we4163 /we4229 /we4700 /we4603 /we4716")
 # TODO: Check and fix other architectures.
-if(ARCH STREQUAL "i386")
+# if(ARCH STREQUAL "i386")
+if((ARCH STREQUAL "i386") OR (ARCH STREQUAL "amd64"))
+# if((ARCH STREQUAL "i386") OR (ARCH STREQUAL "amd64") OR (ARCH STREQUAL "arm"))
     # TODO:
     # "amd64": additional cases to fix first.
     # "arm": to be checked when build is unbroken.

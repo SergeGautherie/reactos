@@ -1,6 +1,7 @@
 environment:
   matrix:
-#     - BuildType: "msvc-x64"
+# 
+    - BuildType: "msvc-x64"
     - BuildType: "msvc"
 # 
     - BuildType: vssolution
