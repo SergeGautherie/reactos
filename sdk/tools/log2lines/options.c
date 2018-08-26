@@ -83,7 +83,7 @@ int optionInit(int argc, const char **argv)
 
         if ((argv[i][0] == '-') && (i+1 < argc))
         {
-            //Because these arguments can contain spaces we cant use getopt(), a known bug:
+            // These arguments can contain spaces, so we cannot use getopt(): a known bug.
             switch (argv[i][1])
             {
             case 'd':
