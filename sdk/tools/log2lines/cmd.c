@@ -176,6 +176,8 @@ handle_address_cmd(FILE *outFile, char *arg)
     return 1;
 }
 
+// TODO: Use or remove 'path' param.
+// TODO: Use or remove 'LineOut' param.
 char
 handle_escape_cmd(FILE *outFile, char *Line, char *path, char *LineOut)
 {

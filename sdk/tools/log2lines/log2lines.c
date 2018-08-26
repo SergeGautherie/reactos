@@ -603,6 +603,7 @@ main(int argc, const char **argv)
         goto cleanup;
     }
 
+// FIXME: Check return value.
     create_cache(opt_force, 0);
     if (opt_exit)
     {
@@ -610,6 +611,7 @@ main(int argc, const char **argv)
         goto cleanup;
     }
 
+// FIXME: Check return value.
     read_cache();
     l2l_dbg(4, "Cache read complete\n");
 

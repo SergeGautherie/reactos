@@ -252,6 +252,7 @@ create_cache(int force, int skipImageBase)
 
     if ((fw = fopen(tmp_name, "w")) == NULL)
     {
+        // FIXME: Check that current directory is writable.
         l2l_dbg(1, "Apparently %s is not writable (mounted ISO?), using current dir\n", tmp_name);
         cache_name = basename(cache_name);
         tmp_name = basename(tmp_name);
