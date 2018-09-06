@@ -1,3 +1,6 @@
+# First, status quo. Later, investigate details.
+remove_definitions(-D_WIN32_WINNT=0x600)
+add_definitions(-D_WIN32_WINNT=0x502)
 
 add_definitions(-D__WINESRC__)
 spec2def(fltlib.dll fltlib.spec ADD_IMPORTLIB)
@@ -16,6 +19,7 @@ list(APPEND SOURCE
 add_library(fltlib MODULE ${SOURCE} rsrc.rc)
 set_module_type(fltlib win32dll)
 target_link_libraries(fltlib wine)
+# Remove "NTDDI_VERSION=NTDDI_WS03SP1", which is default (now)?
 add_target_compile_definitions(fltlib NTDDI_VERSION=NTDDI_WS03SP1)
 add_importlibs(fltlib msvcrt kernel32 ntdll)
 add_cd_file(TARGET fltlib DESTINATION reactos/system32 FOR all)
