@@ -1,3 +1,7 @@
+# First, status quo. Later, investigate details.
+# NB: There is an "#if (_WIN32_WINNT >= 0x600)" in PSDK.!.
+remove_definitions(-D_WIN32_WINNT=0x600)
+add_definitions(-D_WIN32_WINNT=0x502)
 
 include_directories(
     src
