@@ -12,6 +12,9 @@
 #define WIN32_NO_STATUS
 #define _INC_WINDOWS
 #define COM_NO_WINDOWS_H
+/* First, continue with 0x502. Later, try to let 0x600 */
+#undef _WIN32_WINNT
+/* Added in r42115, Alex's code */
 #define _WIN32_WINNT 0x502
 #define NTOS_MODE_USER
 #define INCL_WINSOCK_API_TYPEDEFS 1

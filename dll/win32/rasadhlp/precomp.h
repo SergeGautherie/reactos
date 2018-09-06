@@ -1,6 +1,9 @@
 #ifndef _RASADHLP_H
 #define _RASADHLP_H
 
+/* First, continue with 0x502. Later, try to let 0x600 */
+#undef _WIN32_WINNT
+/* Added in r43510, Alex's code */
 #define _WIN32_WINNT 0x502
 #define _CRT_SECURE_NO_DEPRECATE
 #define WIN32_NO_STATUS
