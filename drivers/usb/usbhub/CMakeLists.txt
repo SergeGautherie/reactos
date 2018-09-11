@@ -1,5 +1,9 @@
+# First, status quo. Later, investigate details.
+remove_definitions(-D_WIN32_WINNT=0x600)
+add_definitions(-D_WIN32_WINNT=0x502)
 
 add_definitions(-DDEBUG_MODE)
+# Downgrade/Remove "NTDDI_VERSION=0x05020400"?
 add_definitions(-DNTDDI_VERSION=0x05020400)
 include_directories(${REACTOS_SOURCE_DIR}/ntoskrnl/include)
 
