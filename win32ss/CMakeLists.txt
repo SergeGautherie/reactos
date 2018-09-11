@@ -1,3 +1,6 @@
+# First, status quo. Later, investigate details.
+remove_definitions(-D_WIN32_WINNT=0x600)
+add_definitions(-D_WIN32_WINNT=0x502)
 
 set(USE_DIBLIB FALSE)
 

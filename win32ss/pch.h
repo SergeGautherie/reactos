@@ -15,6 +15,7 @@
 
 /* DDK/NDK/SDK headers */
 #undef NTDDI_VERSION
+/* Remove "NTDDI_VERSION NTDDI_WS03SP1", which is default (now)? */
 #define NTDDI_VERSION NTDDI_WS03SP1
 #include <ntifs.h>
 #include <ntddmou.h>
