@@ -272,6 +272,7 @@ MmSetPageProtect(IN PEPROCESS Process,
     return;
 }
 
+CODE_SEG("INIT")
 VOID
 NTAPI
 MmInitGlobalKernelPageDirectory(VOID)

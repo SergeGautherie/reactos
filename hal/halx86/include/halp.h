@@ -189,7 +189,6 @@ typedef struct _HalAddressUsage
 PADAPTER_OBJECT NTAPI HalpAllocateAdapterEx(ULONG NumberOfMapRegisters,BOOLEAN IsMaster, BOOLEAN Dma32BitAddresses);
 
 /* sysinfo.c */
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpRegisterVector(IN UCHAR Flags,
@@ -197,7 +196,6 @@ HalpRegisterVector(IN UCHAR Flags,
                    IN ULONG SystemVector,
                    IN KIRQL Irql);
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpEnableInterruptHandler(IN UCHAR Flags,
@@ -219,7 +217,7 @@ DECLSPEC_NORETURN VOID FASTCALL HalpDispatchInterrupt2ndEntry(IN PKTRAP_FRAME Tr
 extern BOOLEAN HalpProfilingStopped;
 
 /* timer.c */
-CODE_SEG("INIT") VOID NTAPI HalpInitializeClock(VOID);
+VOID NTAPI HalpInitializeClock(VOID);
 VOID __cdecl HalpClockInterrupt(VOID);
 VOID __cdecl HalpProfileInterrupt(VOID);
 
@@ -237,7 +235,7 @@ HalpCalibrateStallExecution(VOID);
 VOID HalpInitPciBus (VOID);
 
 /* dma.c */
-CODE_SEG("INIT") VOID HalpInitDma (VOID);
+VOID HalpInitDma (VOID);
 
 /* Non-generic initialization */
 VOID HalpInitPhase0 (PLOADER_PARAMETER_BLOCK LoaderBlock);
@@ -256,14 +254,12 @@ HalpCheckPowerButton(
     VOID
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpRegisterKdSupportFunctions(
     VOID
 );
 
-CODE_SEG("INIT")
 NTSTATUS
 NTAPI
 HalpSetupPciDeviceForDebugging(
@@ -271,7 +267,6 @@ HalpSetupPciDeviceForDebugging(
     IN OUT PDEBUG_DEVICE_DESCRIPTOR PciDevice
 );
 
-CODE_SEG("INIT")
 NTSTATUS
 NTAPI
 HalpReleasePciDeviceForDebugging(
@@ -380,7 +375,6 @@ HaliHaltSystem(
 //
 // CMOS Routines
 //
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpInitializeCmos(
@@ -435,42 +429,36 @@ HalpOpenRegistryKey(
     IN BOOLEAN Create
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpGetNMICrashFlag(
     VOID
 );
 
-CODE_SEG("INIT")
 BOOLEAN
 NTAPI
 HalpGetDebugPortTable(
     VOID
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpReportSerialNumber(
     VOID
 );
 
-CODE_SEG("INIT")
 NTSTATUS
 NTAPI
 HalpMarkAcpiHal(
     VOID
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpBuildAddressMap(
     VOID
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpReportResourceUsage(
@@ -478,7 +466,6 @@ HalpReportResourceUsage(
     IN INTERFACE_TYPE InterfaceType
 );
 
-CODE_SEG("INIT")
 ULONG
 NTAPI
 HalpIs16BitPortDecodeSupported(
@@ -499,7 +486,6 @@ KeUpdateSystemTime(
     IN KIRQL OldIrql
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpInitBusHandlers(
@@ -512,7 +498,6 @@ HaliInitPnpDriver(
     VOID
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 HalpDebugPciDumpBus(

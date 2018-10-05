@@ -100,7 +100,6 @@ typedef struct _PARTITION_EXTENSION
     UNICODE_STRING DeviceName;
 } PARTITION_EXTENSION, *PPARTITION_EXTENSION;
 
-CODE_SEG("PAGE")
 NTSTATUS
 PartitionCreateDevice(
     _In_ PDEVICE_OBJECT FDObject,
@@ -109,13 +108,11 @@ PartitionCreateDevice(
     _In_ PARTITION_STYLE PartitionStyle,
     _Out_ PDEVICE_OBJECT *PDO);
 
-CODE_SEG("PAGE")
 NTSTATUS
 PartitionHandleRemove(
     _In_ PPARTITION_EXTENSION PartExt,
     _In_ BOOLEAN FinalRemove);
 
-CODE_SEG("PAGE")
 NTSTATUS
 PartitionHandlePnp(
     _In_ PDEVICE_OBJECT DeviceObject,

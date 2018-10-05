@@ -29,7 +29,6 @@ typedef struct _LDEVOBJ
 
 } LDEVOBJ, *PLDEVOBJ;
 
-CODE_SEG("INIT")
 NTSTATUS
 NTAPI
 InitLDEVImpl(VOID);
@@ -51,7 +50,6 @@ NTAPI
 EngGetLDEV(
     PDEVMODEW pdm);
 
-CODE_SEG("INIT")
 NTSTATUS
 APIENTRY
 DriverEntry (

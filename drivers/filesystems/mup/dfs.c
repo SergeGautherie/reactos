@@ -31,6 +31,10 @@
 #define NDEBUG
 #include <debug.h>
 
+#if defined(ALLOC_PRAGMA)
+#pragma alloc_text(INIT, DfsDriverEntry)
+#endif
+
 /* FUNCTIONS ****************************************************************/
 
 NTSTATUS

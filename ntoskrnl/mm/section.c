@@ -50,7 +50,6 @@
 #define NDEBUG
 #include <debug.h>
 #include <reactos/exeformat.h>
-
 #include "ARM3/miarm.h"
 
 #undef MmSetPageEntrySectionSegment

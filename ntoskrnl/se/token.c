@@ -11,7 +11,6 @@
 #include <ntoskrnl.h>
 #define NDEBUG
 #include <debug.h>
-
 #include <ntlsa.h>
 
 typedef struct _TOKEN_AUDIT_POLICY_INFORMATION
@@ -85,7 +84,7 @@ static const INFORMATION_CLASS_INFO SeTokenInformationClass[] = {
 /**
  * @brief
  * Creates a lock for the token.
- *
+ * 
  * @param[in,out] Token
  * A token which lock has to be created.
  *
@@ -152,7 +151,7 @@ SepDeleteTokenLock(
  *
  * @param[in] CountSidArray2
  * SID count array from the second token.
- *
+ * 
  * @return
  * Returns TRUE if the elements match from either arrays,
  * FALSE otherwise.
@@ -279,7 +278,7 @@ SepComparePrivilegeAndAttributesFromTokens(
  * - If both tokens are restricted, every SID that is restricted in either token is
  *   also restricted in the other one.
  * - Every privilege present in either token is also present in the other one.
- *
+ * 
  * @param[in] FirstToken
  * The first token.
  *

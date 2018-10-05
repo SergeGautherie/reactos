@@ -39,7 +39,6 @@
 /* For MSVC, this is required before using DATA_SEG (used in pcidata) */
 #ifdef _MSC_VER
 # pragma section("INIT", read,execute,discard)
-# pragma section("INITDATA", read,discard)
 #endif
 
 /* Internal shared PCI and ACPI header */

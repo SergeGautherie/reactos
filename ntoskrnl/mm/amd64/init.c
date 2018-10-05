@@ -439,8 +439,8 @@ MiSetupPfnForPageTable(
 }
 
 static
-VOID
 CODE_SEG("INIT")
+VOID
 MiBuildPfnDatabaseFromPageTables(VOID)
 {
     PVOID Address = NULL;
@@ -539,8 +539,8 @@ MiBuildPfnDatabaseFromPageTables(VOID)
 #endif
 }
 
-CODE_SEG("INIT")
 static
+CODE_SEG("INIT")
 VOID
 MiAddDescriptorToDatabase(
     PFN_NUMBER BasePage,

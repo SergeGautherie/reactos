@@ -287,7 +287,6 @@ extern LAZY_WRITER LazyWriter;
 #define NODE_TYPE_PRIVATE_MAP    0x02FE
 #define NODE_TYPE_SHARED_MAP     0x02FF
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 CcPfInitializePrefetcher(
@@ -328,7 +327,6 @@ CcRosEnsureVacbResident(
     _In_ ULONG Length
 );
 
-CODE_SEG("INIT")
 VOID
 NTAPI
 CcInitView(VOID);
@@ -337,7 +335,6 @@ VOID
 NTAPI
 CcShutdownLazyWriter(VOID);
 
-CODE_SEG("INIT")
 BOOLEAN
 CcInitializeCacheManager(VOID);
 

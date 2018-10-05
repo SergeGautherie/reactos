@@ -29,7 +29,6 @@
 /* 10000 in 100-ns model = 0.1 microsecond */
 #define TIME_FRAME 10000
 
-
 /* GLOBALS ****************************************************************/
 
 FAST_MUTEX ExpUuidLock;

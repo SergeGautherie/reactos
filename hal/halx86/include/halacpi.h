@@ -24,7 +24,6 @@ HalpAcpiGetTable(
     IN ULONG Signature
 );
 
-CODE_SEG("INIT")
 NTSTATUS
 NTAPI
 HalpSetupAcpiPhase0(

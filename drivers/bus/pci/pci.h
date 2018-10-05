@@ -173,8 +173,6 @@ PdoPowerControl(
     PDEVICE_OBJECT DeviceObject,
     PIRP Irp);
 
-
-CODE_SEG("INIT")
 NTSTATUS
 NTAPI
 DriverEntry(
