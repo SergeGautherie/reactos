@@ -71,10 +71,11 @@ for:
     - export BuildType=gcc
     - export SGVER=$APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-$BuildType
     - cd ~/projects/ros_workdir/Build
-    - appveyor PushArtifact modules/rostests/rosautotest/rosautotest.exe -FileName rosautotest-$SGVER.exe
+#     - appveyor PushArtifact modules/rostests/rosautotest/rosautotest.exe -FileName rosautotest-$SGVER.exe
+    - appveyor PushArtifact $ROSTESTS_INSTALL/ntdll_apitest.exe -FileName ntdll_apitest-$SGVER.exe
   # 44 MiB. zip: 13 MiB. 7z: 6 659 KiB.
-    - 7za a ros_tests.7z $ROSTESTS_INSTALL
-    - appveyor PushArtifact ros_tests.7z -FileName ros_tests-$SGVER.7z
+#     - 7za a ros_tests.7z $ROSTESTS_INSTALL
+#     - appveyor PushArtifact ros_tests.7z -FileName ros_tests-$SGVER.7z
 
   test_script:
     - echo NoOp. Only to enable "test_script", thus "before_test".
