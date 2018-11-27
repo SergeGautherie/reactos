@@ -56,12 +56,27 @@ for:
     - cd ~/projects/ros_workdir
     - wget https://svn.reactos.org/amine/RosBEBinFull.tar.gz
     - tar -xzf RosBEBinFull.tar.gz
+    - export ROSTESTS_INSTALL=~/projects/ros_workdir/ros_tests
     - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && ninja -k0 rostests' > tmp_build_file
     - cd $APPVEYOR_BUILD_FOLDER
 
   build_script:
     - cd ~/projects/ros_workdir
     - ./RosBEBinFull/RosBE.sh < tmp_build_file
+
+  before_test:
+    - cd ~/projects/ros_workdir
+    - echo 'cd ../Build && cd reactos && ninja rostests_install' > tmp_fileT
+    - ./RosBEBinFull/RosBE.sh < tmp_fileT
+    - cd ~/projects/ros_workdir/Build/reactos
+    - appveyor PushArtifact modules/rostests/rosautotest/rosautotest.exe -FileName rosautotest-$SGVER.exe
+  # 44 MiB. zip: 13 MiB. 7z: 6 659 KiB.
+    - 7za a ros_tests.7z $ROSTESTS_INSTALL
+    - appveyor PushArtifact ros_tests.7z -FileName ros_tests-$SGVER.7z
+
+  test_script:
+    - echo NoOp. Only to enable "test_script", thus "before_test".
+
 -
   matrix:
     only:
