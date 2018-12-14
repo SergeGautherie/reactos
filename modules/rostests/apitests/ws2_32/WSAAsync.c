@@ -10,6 +10,7 @@
 #define SVR_PORT 5000
 #define WAIT_TIMEOUT_ 10000
 #define EXIT_FLAGS (FD_ACCEPT|FD_CONNECT)
+#define MAX_LOOPCOUNT 9u
 
 START_TEST(WSAAsync)
 {
@@ -36,6 +37,7 @@ START_TEST(WSAAsync)
     struct fd_set select_efds;
     struct timeval timeval;
     BOOL ConnectSent = FALSE;
+    unsigned int Addr_con_locLoopCount = 0;
 
     if (WSAStartup(MAKEWORD(2, 2), &WsaData) != 0)
     {
@@ -229,6 +231,22 @@ START_TEST(WSAAsync)
         {
             ok(nSockNameRes == 0, "ERROR: getsockname function failed, expected %d error %d\n", 0, nSockNameRes);
             ok(len == sizeof(addr_con_loc), "ERROR: getsockname function wrong size, expected %d returned %d\n", sizeof(addr_con_loc), len);
+
+            if (addr_con_loc.sin_addr.s_addr == 0ul)
+            {
+                if (++Addr_con_locLoopCount >= MAX_LOOPCOUNT)
+                {
+                    ok(FALSE, "Giving up, on getsockname() (%u/%u), as addr_con_loc is not set yet\n",
+                       Addr_con_locLoopCount, MAX_LOOPCOUNT);
+                    goto done;
+                }
+
+                trace("Looping, for getsockname() (%u/%u), as addr_con_loc is not set yet\n",
+                      Addr_con_locLoopCount, MAX_LOOPCOUNT);
+                Sleep(1);
+                continue;
+            }
+
             ok(addr_con_loc.sin_addr.s_addr == server_addr_in.sin_addr.s_addr, "ERROR: getsockname function wrong addr, expected %lx returned %lx\n", server_addr_in.sin_addr.s_addr, addr_con_loc.sin_addr.s_addr);
         }
         if ((dwFlags & FD_ACCEPT) != 0)
