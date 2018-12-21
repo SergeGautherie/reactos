@@ -3752,6 +3752,19 @@ static nsresult NSAPI nsIOService_ExtractScheme(nsIIOService *iface, const nsACS
     return nsIIOService_ExtractScheme(nsio, urlString, _retval);
 }
 
+#ifdef _REACTOS_
+/*
+ * Needed for CORE-7538 MSVC-x64, until CORE-14829 WineSync is fixed, especially
+ * https://source.winehq.org/git/wine.git/commit/db105f08d247997f0d14b905f31b5b4fa2e083c3
+ * which removes these 2 variables.
+*/
+#ifdef _MSC_VER
+#pragma warning( push )
+/* warning C4028: formal parameter 3 different from declaration */
+#pragma warning( disable : 4028 )
+#endif
+#endif
+
 static const nsIIOServiceVtbl nsIOServiceVtbl = {
     nsIOService_QueryInterface,
     nsIOService_AddRef,
@@ -3776,6 +3789,12 @@ static const nsIIOServiceVtbl nsIOServiceVtbl = {
 };
 
 static nsIIOService nsIOService = { &nsIOServiceVtbl };
+
+#ifdef _REACTOS_
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+#endif
 
 static nsresult NSAPI nsNetUtil_QueryInterface(nsINetUtil *iface, nsIIDRef riid,
         void **result)
