@@ -68,7 +68,7 @@ NTKERNELAPI
 VOID
 NTAPI
 ProbeForRead(
-  __in_data_source(USER_MODE) _In_reads_bytes_(Length) CONST VOID *Address, /* CONST is added */
+  __in_data_source(USER_MODE) _In_reads_bytes_(Length) CONST volatile VOID *Address, /* CONST is added */
   _In_ SIZE_T Length,
   _In_ ULONG Alignment);
 #endif /* defined(_NTDDK_) || defined(_NTIFS_) */
@@ -79,7 +79,7 @@ NTKERNELAPI
 VOID
 NTAPI
 ProbeForWrite(
-  __in_data_source(USER_MODE) _Out_writes_bytes_(Length) PVOID Address,
+  __in_data_source(USER_MODE) _Out_writes_bytes_(Length) volatile VOID *Address,
   _In_ SIZE_T Length,
   _In_ ULONG Alignment);
 
