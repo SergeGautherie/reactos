@@ -103,7 +103,8 @@ ProbeForRead(IN CONST volatile VOID *Address,
              IN SIZE_T Length,
              IN ULONG Alignment)
 {
-    ULONG_PTR Last, Current = (ULONG_PTR)Address;
+    ULONG_PTR Current, Last;
+
     PAGED_CODE();
 
     /* Only probe if we have a valid length */
@@ -111,6 +112,8 @@ ProbeForRead(IN CONST volatile VOID *Address,
     {
         return;
     }
+
+    Current = (ULONG_PTR)Address;
 
     /* Sanity check */
     ASSERT((Alignment == 1) ||
@@ -146,7 +149,8 @@ ProbeForWrite(IN volatile VOID *Address,
               IN SIZE_T Length,
               IN ULONG Alignment)
 {
-    ULONG_PTR Last, Current = (ULONG_PTR)Address;
+    ULONG_PTR Current, AfterLastPage;
+
     PAGED_CODE();
 
     /* Only probe if we have a valid length */
@@ -155,36 +159,21 @@ ProbeForWrite(IN volatile VOID *Address,
         return;
     }
 
-    /* Sanity check */
-    ASSERT((Alignment == 1) ||
-           (Alignment == 2) ||
-           (Alignment == 4) ||
-           (Alignment == 8) ||
-           (Alignment == 16));
+    /* Check address range and alignment */
+    ProbeForRead(Address, Length, Alignment);
 
-    /* Check the alignment */
-    if ((Current & (Alignment - 1)) != 0)
-    {
-        /* Incorrect alignment */
-        ExRaiseDatatypeMisalignment();
-    }
+    Current = (ULONG_PTR)Address;
 
-    /* Get the end address */
-    Last = Current + Length - 1;
-    if ((Last < Current) || (Last >= (ULONG_PTR)MmUserProbeAddress))
-    {
-        /* Raise an access violation */
-        ExRaiseAccessViolation();
-    }
+    /* Get the address after the last page */
+    AfterLastPage = PAGE_ROUND_DOWN(Current + Length - 1) + PAGE_SIZE;
 
-    /* Round down to the last page */
-    Last = PAGE_ROUND_DOWN(Last) + PAGE_SIZE;
+    /* Check pages are writable */
     do
     {
         /* Attempt a write */
         *(volatile CHAR*)Current = *(volatile CHAR*)Current;
 
-        /* Go to the next address */
-        Current = PAGE_ROUND_DOWN(Current) + PAGE_SIZE;
-    } while (Current != Last);
+        /* Go to the next page */
+        Current += PAGE_SIZE;
+    } while (Current < AfterLastPage);
 }
