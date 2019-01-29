@@ -107,32 +107,34 @@ ProbeForRead(IN CONST volatile VOID *Address,
     PAGED_CODE();
 
     /* Only probe if we have a valid length */
-    if (Length != 0)
+    if (Length == 0)
     {
-        /* Sanity check */
-        ASSERT((Alignment == 1) ||
-               (Alignment == 2) ||
-               (Alignment == 4) ||
-               (Alignment == 8) ||
-               (Alignment == 16));
-
-        /* Check the alignment */
-        if ((Current & (Alignment - 1)) != 0)
-        {
-            /* Incorrect alignment */
-            ExRaiseDatatypeMisalignment();
-        }
-        
-        /* Get the end address */
-        Last = Current + Length - 1;
-        if ((Last < Current) || (Last >= (ULONG_PTR)MmUserProbeAddress))
-        {
-            /* Raise an access violation */
-            ExRaiseAccessViolation();
-        }
-
-        /* ProbeForRead doesn't check if memory pages are readable! */
+        return;
     }
+
+    /* Sanity check */
+    ASSERT((Alignment == 1) ||
+           (Alignment == 2) ||
+           (Alignment == 4) ||
+           (Alignment == 8) ||
+           (Alignment == 16));
+
+    /* Check the alignment */
+    if ((Current & (Alignment - 1)) != 0)
+    {
+        /* Incorrect alignment */
+        ExRaiseDatatypeMisalignment();
+    }
+
+    /* Get the end address */
+    Last = Current + Length - 1;
+    if ((Last < Current) || (Last >= (ULONG_PTR)MmUserProbeAddress))
+    {
+        /* Raise an access violation */
+        ExRaiseAccessViolation();
+    }
+
+    /* ProbeForRead doesn't check if memory pages are readable! */
 }
 
 /*
@@ -148,39 +150,41 @@ ProbeForWrite(IN volatile VOID *Address,
     PAGED_CODE();
 
     /* Only probe if we have a valid length */
-    if (Length != 0)
+    if (Length == 0)
     {
-        /* Sanity check */
-        ASSERT((Alignment == 1) ||
-               (Alignment == 2) ||
-               (Alignment == 4) ||
-               (Alignment == 8) ||
-               (Alignment == 16));
-
-        /* Check the alignment */
-        if ((Current & (Alignment - 1)) != 0)
-        {
-            /* Incorrect alignment */
-            ExRaiseDatatypeMisalignment();
-        }
-
-        /* Get the end address */
-        Last = Current + Length - 1;
-        if ((Last < Current) || (Last >= (ULONG_PTR)MmUserProbeAddress))
-        {
-            /* Raise an access violation */
-            ExRaiseAccessViolation();
-        }
-
-        /* Round down to the last page */
-        Last = PAGE_ROUND_DOWN(Last) + PAGE_SIZE;
-        do
-        {
-            /* Attempt a write */
-            *(volatile CHAR*)Current = *(volatile CHAR*)Current;
-
-            /* Go to the next address */
-            Current = PAGE_ROUND_DOWN(Current) + PAGE_SIZE;
-        } while (Current != Last);
+        return;
     }
+
+    /* Sanity check */
+    ASSERT((Alignment == 1) ||
+           (Alignment == 2) ||
+           (Alignment == 4) ||
+           (Alignment == 8) ||
+           (Alignment == 16));
+
+    /* Check the alignment */
+    if ((Current & (Alignment - 1)) != 0)
+    {
+        /* Incorrect alignment */
+        ExRaiseDatatypeMisalignment();
+    }
+
+    /* Get the end address */
+    Last = Current + Length - 1;
+    if ((Last < Current) || (Last >= (ULONG_PTR)MmUserProbeAddress))
+    {
+        /* Raise an access violation */
+        ExRaiseAccessViolation();
+    }
+
+    /* Round down to the last page */
+    Last = PAGE_ROUND_DOWN(Last) + PAGE_SIZE;
+    do
+    {
+        /* Attempt a write */
+        *(volatile CHAR*)Current = *(volatile CHAR*)Current;
+
+        /* Go to the next address */
+        Current = PAGE_ROUND_DOWN(Current) + PAGE_SIZE;
+    } while (Current != Last);
 }
