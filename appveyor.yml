@@ -6,7 +6,7 @@ environment:
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
 
-version: reactos.appveyor.{build}
+version: REACTOS_SOURCE_DIR.CORE-15991.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
