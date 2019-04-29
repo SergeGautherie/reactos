@@ -56,7 +56,7 @@ for:
     - cd ~/projects/ros_workdir
     - wget https://svn.reactos.org/amine/RosBEBinFull.tar.gz
     - tar -xzf RosBEBinFull.tar.gz
-    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && cd reactos && ninja -k0 && ninja bootcd' > tmp_build_file
+    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && ninja -k0 && ninja bootcd' > tmp_build_file
     - cd $APPVEYOR_BUILD_FOLDER
 
   build_script:
