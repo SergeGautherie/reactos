@@ -1,17 +1,17 @@
 environment:
   matrix:
-#     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     - BuildType: "msvc-x64"
     - BuildType: "msvc"
     - BuildType: "clang-cl"
-#     - BuildType: vssolution
+    - BuildType: vssolution
 
 version: reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
-matrix:
-  fast_finish: true
+# matrix:
+#   fast_finish: true
 
 init:
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
