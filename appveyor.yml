@@ -1,10 +1,10 @@
 environment:
   matrix:
-#     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
+    - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
     - BuildType: "msvc-x64"
     - BuildType: "msvc"
-#    - BuildType: "clang-cl"
-#    - BuildType: vssolution
+    - BuildType: "clang-cl"
+    - BuildType: vssolution
 
 version: REACTOS_SOURCE_DIR.CORE-15991.reactos.appveyor.{build}
 skip_branch_with_pr: true
