@@ -102,8 +102,12 @@
 #define PtrOffset(B,O) ((ULONG)((ULONG_PTR)(O) - (ULONG_PTR)(B)))
 #endif
 
-/* Switch for enabling global page support */
-#define _GLOBAL_PAGES_ARE_AWESOME_
+//
+// Switch for enabling global page support
+//
+
+//#define _GLOBAL_PAGES_ARE_AWESOME_
+
 
 /* Internal Headers */
 #include "internal/ntoskrnl.h"
