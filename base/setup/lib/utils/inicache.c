@@ -1030,7 +1030,7 @@ IniCacheSaveByHandle(
                          NULL);
     if (!NT_SUCCESS(Status))
     {
-        DPRINT("NtWriteFile() failed (Status %lx)\n", Status);
+        DPRINT1("NtWriteFile() failed (Status %lx)\n", Status);
         RtlFreeHeap(ProcessHeap, 0, Buffer);
         return Status;
     }

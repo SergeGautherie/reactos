@@ -384,7 +384,7 @@ Quit:
                          NULL);
     if (!NT_SUCCESS(Status))
     {
-        DPRINT("NtWriteFile() failed (Status %lx)\n", Status);
+        DPRINT1("NtWriteFile() failed (Status %lx)\n", Status);
     }
 
     /* Finally, unmap and close the file */

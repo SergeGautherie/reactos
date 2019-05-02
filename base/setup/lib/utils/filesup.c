@@ -429,7 +429,7 @@ SetupCopyFile(
                          NULL);
     if (!NT_SUCCESS(Status))
     {
-        DPRINT1("NtWriteFile failed: %x:%x, iosb: %p src: %p, size: %x\n",
+        DPRINT1("NtWriteFile() failed: %x:%x, iosb: %p src: %p, size: %x\n",
                 Status, IoStatusBlock.Status, &IoStatusBlock, SourceFileMap, RegionSize);
         goto closedest;
     }
