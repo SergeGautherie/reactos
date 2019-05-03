@@ -1,9 +1,6 @@
 environment:
   matrix:
-    - BuildType: "msvc"
     - BuildType: vssolution
-    - BuildType: "clang-cl"
-    - BuildType: "msvc-x64"
 
 version: CORE-14546.reactos.appveyor.{build}
 skip_branch_with_pr: true
