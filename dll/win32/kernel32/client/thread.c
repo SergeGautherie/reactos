@@ -977,7 +977,7 @@ SetThreadStackGuarantee(IN OUT PULONG StackSizeInBytes)
      * If the new stack size is either zero or is less than the current size,
      * the previous stack size is returned and we return success.
      */
-    if ((AllocationSize == 0) || (AllocationSize < GuaranteedStackBytes))
+    if (AllocationSize <= GuaranteedStackBytes)
     {
         return TRUE;
     }
