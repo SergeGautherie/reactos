@@ -66,9 +66,9 @@ for:
 
   before_test:
     - cd ~/projects/ros_workdir
-    - echo 'cd ../Build && cd reactos && ninja rostests_install' > tmp_fileT
+    - echo 'cd ../Build && ninja rostests_install' > tmp_fileT
     - ./RosBEBinFull/RosBE.sh < tmp_fileT
-    - cd ~/projects/ros_workdir/Build/reactos
+    - cd ~/projects/ros_workdir/Build
     - appveyor PushArtifact modules/rostests/rosautotest/rosautotest.exe -FileName rosautotest-$SGVER.exe
   # 44 MiB. zip: 13 MiB. 7z: 6 659 KiB.
     - 7za a ros_tests.7z $ROSTESTS_INSTALL
