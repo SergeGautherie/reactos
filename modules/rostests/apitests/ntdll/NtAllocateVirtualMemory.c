@@ -567,6 +567,90 @@ CheckAdjacentVADs()
 
 static
 VOID
+CheckZeroBits()
+{
+#define NBBITS (sizeof(PVOID) * 8)
+
+    NTSTATUS Status;
+    PVOID BaseAddress;
+    SIZE_T Size;
+    ULONG_PTR ZeroBits, Mask;
+
+#ifdef _WIN64
+    ok(FALSE, "ToDo, 64-bit: Check/Adapt 32-bit code/results\n");
+#endif
+
+    /* 1-32: number of high-order bits */
+
+    Mask = 0;
+    for (ZeroBits = 1; ZeroBits <= 32; ++ZeroBits)
+    {
+        Mask += 1 << (NBBITS - ZeroBits);
+        trace("ZeroBits = %Iu, (Mask = %p)\n", ZeroBits, (PVOID)Mask);
+
+        BaseAddress = NULL;
+        Size = 1;
+        Status = NtAllocateVirtualMemory(NtCurrentProcess(),
+                                         &BaseAddress,
+                                         ZeroBits,
+                                         &Size,
+                                         MEM_RESERVE | MEM_TOP_DOWN,
+                                         PAGE_NOACCESS);
+        ok_ntstatus(Status, STATUS_SUCCESS);
+        if (!NT_SUCCESS(Status))
+        {
+            continue;
+        }
+
+        /**/ trace("BaseAddress = %p\n", BaseAddress); /**/
+        ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
+        ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
+
+        Status = NtFreeVirtualMemory(NtCurrentProcess(), &BaseAddress, &Size, MEM_RELEASE);
+        ok_ntstatus(Status, STATUS_SUCCESS);
+    }
+
+    /* 33+: bitmask */
+
+    Mask = 0;
+    for (ZeroBits = 1; ZeroBits <= 32; ++ZeroBits)
+    {
+        Mask += 1 << (NBBITS - ZeroBits);
+        trace("(ZeroBits = %Iu), Mask = %p\n", ZeroBits, (PVOID)Mask);
+
+        BaseAddress = NULL;
+        Size = 1;
+        Status = NtAllocateVirtualMemory(NtCurrentProcess(),
+                                         &BaseAddress,
+                                         Mask, /* Not ZeroBits */
+                                         &Size,
+                                         MEM_RESERVE | MEM_TOP_DOWN,
+                                         PAGE_NOACCESS);
+        ok_ntstatus(Status, STATUS_SUCCESS);
+        if (!NT_SUCCESS(Status))
+        {
+            continue;
+        }
+
+        /**/ trace("BaseAddress = %p\n", BaseAddress); /**/
+        ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
+        ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
+
+        Status = NtFreeVirtualMemory(NtCurrentProcess(), &BaseAddress, &Size, MEM_RELEASE);
+        ok_ntstatus(Status, STATUS_SUCCESS);
+    }
+
+    /* TODO: Test some random bitmask values: 33, 0x0F0F0F0F, 0x7FFFFFFF, ... */
+
+#ifdef _WIN64
+    skip("ToDo, 64-bit: Add some random 64-bit bitmask values\n");
+#endif
+
+#undef NBBITS
+}
+
+static
+VOID
 CheckSomeDefaultAddresses(VOID)
 {
     NTSTATUS Status;
@@ -752,6 +836,7 @@ START_TEST(NtAllocateVirtualMemory)
 
     CheckAlignment();
     CheckAdjacentVADs();
+    CheckZeroBits();
     CheckSomeDefaultAddresses();
 
     Size1 = 32;
