@@ -644,12 +644,12 @@ CheckZeroBits()
                                      PAGE_NOACCESS);
     if (!gbIs64BitWindows)
     {
-        // 8.1, on 32b/64b: STATUS_SUCCESS.
+//²        // 8.1, on 32b(/64b random!?): STATUS_SUCCESS.
         ok(Status == STATUS_INVALID_PARAMETER_3 /* || Status == STATUS_SUCCESS */,
-           "Unexpected Status: %#08lx\n", Status);
+           "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
         if (NT_SUCCESS(Status))
         { // Unexpected, cleanup.
-            // trace("BaseAddress = %p\n", BaseAddress);
+            trace("BaseAddress = %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
 
@@ -662,8 +662,7 @@ CheckZeroBits()
         ok_ntstatus(Status, STATUS_SUCCESS);
         if (NT_SUCCESS(Status))
         {
-            // 
-            trace("BaseAddress = %p\n", BaseAddress);
+            // trace("BaseAddress = %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
 
@@ -687,14 +686,16 @@ CheckZeroBits()
                                          PAGE_NOACCESS);
         if (ZeroBits >= 11)
         {
-            ok_ntstatus(Status, STATUS_NO_MEMORY);
+//²            // 10v1607, 10v1709, 2 0 (SNM random!?): STATUS_SUCCESS.
+            ok(Status == STATUS_NO_MEMORY /* || Status == STATUS_SUCCESS */,
+               "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
         }
         else if (ZeroBits == 10)
         {
-            // XP, S08 on 64b, 7: STATUS_NO_MEMORY.
-            // 8.1: STATUS_NO_MEMORY or STATUS_SUCCESS.
-            ok(Status == STATUS_SUCCESS /* || Status == STATUS_NO_MEMORY */ ,
-               "Unexpected Status: %#08lx\n", Status);
+//²            // XP, (S08 on 64b random!?), (7 random!?): STATUS_NO_MEMORY.
+//²            // 8.1: STATUS_NO_MEMORY (or STATUS_SUCCESS random!?).
+            ok(Status == STATUS_SUCCESS /* || Status == STATUS_NO_MEMORY */,
+               "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
         }
         else // if (ZeroBits <= 9)
         {
@@ -729,7 +730,7 @@ CheckZeroBits()
         ok_ntstatus(Status, STATUS_INVALID_PARAMETER_3);
         if (NT_SUCCESS(Status))
         { // Unexpected, cleanup.
-            // trace("BaseAddress = %p\n", BaseAddress);
+            trace("BaseAddress = %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
 
@@ -740,11 +741,11 @@ CheckZeroBits()
 
 /*!?*/    /* 33+: bitmask */
 
+/* // A tester/confirmer, sur 10v1809 seulement, (pour Mask < 63 seulement).
     for (ZeroBits = NBBITS + 1; ZeroBits <= 129; ++ZeroBits)
     {
         Mask = ZeroBits;
-        // 
-        trace("(ZeroBits = %2Iu) == Mask = %p\n", ZeroBits, (PVOID)Mask);
+        // trace("(ZeroBits = %2Iu) == Mask = %p\n", ZeroBits, (PVOID)Mask);
 
         BaseAddress = NULL;
         Size = 1;
@@ -754,10 +755,11 @@ CheckZeroBits()
                                          &Size,
                                          MEM_RESERVE | MEM_TOP_DOWN,
                                          PAGE_NOACCESS);
-        ok_ntstatus(Status, STATUS_INVALID_PARAMETER_3);
+//²        // 10v1809, all(?) masks: STATUS_INVALID_PARAMETER.
+        ok(Status == STATUS_INVALID_PARAMETER_3 / * || Status == STATUS_INVALID_PARAMETER * /,
+           "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
         if (NT_SUCCESS(Status))
         { // Unexpected, cleanup.
-            // 
             trace("BaseAddress = %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
@@ -766,11 +768,11 @@ CheckZeroBits()
             ok_ntstatus(Status, STATUS_SUCCESS);
         }
     }
+*/
 
     for (Mask = 32; Mask != 0; Mask <<= 1)
     {
-        // 
-        trace("Mask = %p\n", (PVOID)Mask);
+        // trace("Mask = %p\n", (PVOID)Mask);
 
         BaseAddress = NULL;
         Size = 1;
@@ -785,7 +787,6 @@ CheckZeroBits()
             ok_ntstatus(Status, STATUS_INVALID_PARAMETER_3);
             if (NT_SUCCESS(Status))
             { // Unexpected, cleanup.
-                // 
                 trace("BaseAddress = %p\n", BaseAddress);
                 ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
                 ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
@@ -796,22 +797,35 @@ CheckZeroBits()
         }
         else
         {
-            // 32bOn64b succeeds, enforcing as many high-order 0s as Mask has.
-        if (Mask < 0x00200000 && Status == STATUS_NO_MEMORY)
-//        if (Mask < 0x00200000) // As ZeroBits >= 11.
-        {
-            ok_ntstatus(Status, STATUS_NO_MEMORY);
+            if (Mask <= 0x00100000) // As ZeroBits >= 11.
+            {
+                if (Mask <= 0x00000200)
+                {
+                    // 10v1809, Mask = 0x00000020-0x00000200: STATUS_INVALID_PARAMETER.
+                    ok(Status == STATUS_INVALID_PARAMETER_3 /* || Status == STATUS_INVALID_PARAMETER */,
+                       "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
+                }
+                else
+                {
+//²                    // 10v1607 1-2, 10v1709 2, (0008 et 0010 SS random!?): STATUS_SUCCESS.
+                    // 10v1809, Mask: 0x00000400 STATUS_INVALID_PARAMETER, 0x00000800 STATUS_CONFLICTING_ADDRESSES, 0x00080000 et 0x00100000 STATUS_SUCCESS.
+                    ok(Status == STATUS_NO_MEMORY /* || Status == STATUS_SUCCESS || Status == STATUS_INVALID_PARAMETER || Status == STATUS_CONFLICTING_ADDRESSES */,
+                       "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
+                }
                 continue;
-        }
-        // S08-64, Mask == 0x00200000: STATUS_NO_MEMORY.
-            ok_ntstatus(Status, STATUS_SUCCESS);
+            }
+
+            // 32bOn64b succeeds, enforcing as many high-order 0s as Mask has,
+            // then ignoring the other ones.
+            // S08-64, Mask == 0x00200000: STATUS_SUCCESS or STATUS_NO_MEMORY.
+            ok(Status == STATUS_SUCCESS /* || Status == STATUS_NO_MEMORY */,
+               "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
             if (!NT_SUCCESS(Status))
             {
                 continue;
             }
 
-            // 
-            trace("BaseAddress = %p\n", BaseAddress);
+            // trace("BaseAddress = %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & ~Mask) < Mask, "BaseAddress has non-zero bits: %p\n", BaseAddress);
             ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
 
@@ -820,6 +834,48 @@ CheckZeroBits()
         }
     }
 
+    // Mask = 0x08000000 returns BaseAddress = 0x0FFF0000.
+    Mask = 0x0F0F0F0F;
+    // trace("Mask = %p\n", (PVOID)Mask);
+
+    BaseAddress = NULL;
+    Size = 1;
+    Status = NtAllocateVirtualMemory(NtCurrentProcess(),
+                                     &BaseAddress,
+                                     Mask, // Not ZeroBits.
+                                     &Size,
+                                     MEM_RESERVE | MEM_TOP_DOWN,
+                                     PAGE_NOACCESS);
+    if (!gbIs64BitWindows)
+    {
+        ok_ntstatus(Status, STATUS_INVALID_PARAMETER_3);
+        if (NT_SUCCESS(Status))
+        { // Unexpected, cleanup.
+            trace("BaseAddress = %p\n", BaseAddress);
+            ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
+            ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
+
+            Status = NtFreeVirtualMemory(NtCurrentProcess(), &BaseAddress, &Size, MEM_RELEASE);
+            ok_ntstatus(Status, STATUS_SUCCESS);
+        }
+    }
+    else
+    {
+        // 32bOn64b succeeds, enforcing as many high-order 0s as Mask has,
+        // then ignoring the other ones.
+        ok_ntstatus(Status, STATUS_SUCCESS);
+        if (NT_SUCCESS(Status))
+        {
+            ok(BaseAddress == UlongToPtr(0x0FFF0000),
+               "Mask = %p, unexpected base address: %p", (PVOID)Mask, BaseAddress);
+
+            Status = NtFreeVirtualMemory(NtCurrentProcess(), &BaseAddress, &Size, MEM_RELEASE);
+            ok_ntstatus(Status, STATUS_SUCCESS);
+        }
+    }
+
+#ifdef _WIN64
+    // TODO: Delete this useless/redundant loop, unless _WIN64 behaves differently than "WIN32".
     Mask = 0;
     for (ZeroBits = 1; ZeroBits <= NBBITS; ++ZeroBits)
     {
@@ -839,7 +895,7 @@ CheckZeroBits()
             ok_ntstatus(Status, STATUS_INVALID_PARAMETER_3);
             if (NT_SUCCESS(Status))
             { // Unexpected, cleanup.
-                // trace("BaseAddress = %p\n", BaseAddress);
+                trace("BaseAddress = %p\n", BaseAddress);
                 ok(((ULONG_PTR)BaseAddress & Mask) == 0, "BaseAddress has non-zero bits: %p\n", BaseAddress);
                 ok(((ULONG_PTR)BaseAddress & (ULONG_PTR)0xFFFF) == 0, "BaseAddress is not aligned: %p\n", BaseAddress);
 
@@ -865,9 +921,6 @@ CheckZeroBits()
         }
     }
 
-    /* TODO: Test some random bitmask values: 0x0F0F0F0F, 0x7FFFFFFF, ... */
-
-#ifdef _WIN64
     skip("ToDo, 64-bit: Add some random 64-bit bitmask values\n");
 #endif
 
@@ -889,13 +942,13 @@ CheckZeroBits()
     {
         // 8.1: STATUS_CONFLICTING_ADDRESSES.
         ok(Status == STATUS_SUCCESS /* || Status == STATUS_CONFLICTING_ADDRESSES */,
-           "Unexpected Status: %#08lx\n", Status);
+           "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
     }
     else
     {
-        // S08 and 8.1, on 64b: STATUS_SUCCESS.
+        // S08, 8.1 and 10v1507, on 64b: STATUS_SUCCESS.
         ok(Status == STATUS_CONFLICTING_ADDRESSES /* || Status == STATUS_SUCCESS */,
-           "Unexpected Status: %#08lx\n", Status);
+           "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
     }
     if (NT_SUCCESS(Status))
     {
