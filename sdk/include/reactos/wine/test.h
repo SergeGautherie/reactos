@@ -797,7 +797,15 @@ int main( int argc, char **argv )
 
 #define ok_long(expression, result) ok_hex(expression, result)
 #define ok_int(expression, result) ok_dec(expression, result)
-#define ok_ntstatus(status, expected) ok_hex(status, expected)
+
+// Adapted from ok_hex(), to enforce output format.
+#define ok_ntstatus(status, expected) \
+    do { \
+        NTSTATUS _value = (status); \
+        ok(_value == (expected), "Wrong value for '%s', expected: " #expected " (0x%08lx), got: 0x%08lx\n", \
+           #status, (expected), _value); \
+    } while (0)
+
 #define ok_hdl ok_ptr
 
 #ifdef __cplusplus
