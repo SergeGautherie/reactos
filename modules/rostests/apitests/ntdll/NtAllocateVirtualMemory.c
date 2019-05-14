@@ -767,8 +767,7 @@ CheckZeroBits()
         }
     }
 
-    for (Mask = 1; Mask != 0; Mask <<= 1)
-//    for (Mask = 32; Mask < 0x80000000; Mask <<= 1)
+    for (Mask = 32; Mask != 0; Mask <<= 1)
     {
         // 
         trace("Mask = %p\n", (PVOID)Mask);
@@ -798,6 +797,13 @@ CheckZeroBits()
         else
         {
             // 32bOn64b succeeds, enforcing as many high-order 0s as Mask has.
+        if (Mask < 0x00200000 && Status == STATUS_NO_MEMORY)
+//        if (Mask < 0x00200000) // As ZeroBits >= 11.
+        {
+            ok_ntstatus(Status, STATUS_NO_MEMORY);
+                continue;
+        }
+        // S08-64, Mask == 0x00200000: STATUS_NO_MEMORY.
             ok_ntstatus(Status, STATUS_SUCCESS);
             if (!NT_SUCCESS(Status))
             {
