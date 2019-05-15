@@ -686,14 +686,15 @@ CheckZeroBits()
                                          PAGE_NOACCESS);
         if (ZeroBits >= 11)
         {
-//²            // 10v1607, 10v1709, 2 0 (SNM random!?): STATUS_SUCCESS.
+//²            // 10v1607 ZeroBits=11, 10v1709 ZeroBits=?(SNM or SS) and ZeroBits=11(always SS!?): STATUS_SUCCESS.
+            // 10v1809, ZeroBits: 11 and 12 STATUS_SUCCESS, 20 STATUS_CONFLICTING_ADDRESSES, 21 STATUS_INVALID_PARAMETER.
             ok(Status == STATUS_NO_MEMORY /* || Status == STATUS_SUCCESS */,
                "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
         }
         else if (ZeroBits == 10)
         {
-//²            // XP, (S08 on 64b random!?), (7 random!?): STATUS_NO_MEMORY.
-//²            // 8.1: STATUS_NO_MEMORY (or STATUS_SUCCESS random!?).
+//²            // XP, (S08-64 random!?), (7 random!?): STATUS_NO_MEMORY.
+//²            // Vista-64, 8.1 (SS random!?): STATUS_SUCCESS or STATUS_NO_MEMORY.
             ok(Status == STATUS_SUCCESS /* || Status == STATUS_NO_MEMORY */,
                "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
         }
@@ -727,7 +728,9 @@ CheckZeroBits()
                                          &Size,
                                          MEM_RESERVE | MEM_TOP_DOWN,
                                          PAGE_NOACCESS);
-        ok_ntstatus(Status, STATUS_INVALID_PARAMETER_3);
+        // 10v1809, all ZeroBits: STATUS_INVALID_PARAMETER.
+        ok(Status == STATUS_INVALID_PARAMETER_3 /* || Status == STATUS_INVALID_PARAMETER */,
+           "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
         if (NT_SUCCESS(Status))
         { // Unexpected, cleanup.
             trace("BaseAddress = %p\n", BaseAddress);
@@ -770,6 +773,7 @@ CheckZeroBits()
     }
 */
 
+//² NotFor64!!?AInitAvec<<!?    for (Mask = 0x80000000; Mask >= 32; Mask >>= 1)
     for (Mask = 32; Mask != 0; Mask <<= 1)
     {
         // trace("Mask = %p\n", (PVOID)Mask);
@@ -801,14 +805,15 @@ CheckZeroBits()
             {
                 if (Mask <= 0x00000200)
                 {
-                    // 10v1809, Mask = 0x00000020-0x00000200: STATUS_INVALID_PARAMETER.
+                    // 10v1809, Mask = 0x00000200-0x00000020: STATUS_INVALID_PARAMETER.
                     ok(Status == STATUS_INVALID_PARAMETER_3 /* || Status == STATUS_INVALID_PARAMETER */,
                        "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
                 }
                 else
                 {
-//²                    // 10v1607 1-2, 10v1709 2, (0008 et 0010 SS random!?): STATUS_SUCCESS.
-                    // 10v1809, Mask: 0x00000400 STATUS_INVALID_PARAMETER, 0x00000800 STATUS_CONFLICTING_ADDRESSES, 0x00080000 et 0x00100000 STATUS_SUCCESS.
+//²                    // 10v1607 Mask=0x00100000(always SS!) and Mask=0x00080000(SNM or SS): STATUS_SUCCESS.
+//²                    // 10v1709 Mask=0x00100000(always SS!?) and Mask=0x00080000(SNM or SS): STATUS_SUCCESS.
+                    // 10v1809, Mask: 0x00100000 and 0x00080000 STATUS_SUCCESS, 0x00000800 STATUS_CONFLICTING_ADDRESSES, 0x00000400 STATUS_INVALID_PARAMETER.
                     ok(Status == STATUS_NO_MEMORY /* || Status == STATUS_SUCCESS || Status == STATUS_INVALID_PARAMETER || Status == STATUS_CONFLICTING_ADDRESSES */,
                        "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
                 }
@@ -817,7 +822,7 @@ CheckZeroBits()
 
             // 32bOn64b succeeds, enforcing as many high-order 0s as Mask has,
             // then ignoring the other ones.
-            // S08-64, Mask == 0x00200000: STATUS_SUCCESS or STATUS_NO_MEMORY.
+            // Vista-64 and S08-64, Mask == 0x00200000: STATUS_SUCCESS or STATUS_NO_MEMORY.
             ok(Status == STATUS_SUCCESS /* || Status == STATUS_NO_MEMORY */,
                "Mask = %p, unexpected Status: 0x%08lx\n", (PVOID)Mask, Status);
             if (!NT_SUCCESS(Status))
@@ -946,9 +951,13 @@ CheckZeroBits()
     }
     else
     {
-        // S08, 8.1 and 10v1507, on 64b: STATUS_SUCCESS.
+        // S08-64, 8.1-64 and 10v1507: STATUS_SUCCESS.
         ok(Status == STATUS_CONFLICTING_ADDRESSES /* || Status == STATUS_SUCCESS */,
            "ZeroBits = %Iu, unexpected Status: 0x%08lx\n", ZeroBits, Status);
+        if (NT_SUCCESS(Status))
+        { // Unexpected.
+            trace("BaseAddress = %p\n", BaseAddress);
+        }
     }
     if (NT_SUCCESS(Status))
     {
