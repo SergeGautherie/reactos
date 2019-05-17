@@ -77,8 +77,8 @@ set(_PREFAST_ FALSE CACHE BOOL
 set(_VS_ANALYZE_ FALSE CACHE BOOL
 "Whether to enable static analysis while compiling.")
 else()
-set(STACK_PROTECTOR FALSE CACHE BOOL
-"Whether to enbable the GCC stack checker while compiling")
+    set(STACK_PROTECTOR FALSE CACHE BOOL
+"Whether to enable the GCC stack checker while compiling.")
 endif()
 
 set(USE_DUMMY_PSEH FALSE CACHE BOOL
