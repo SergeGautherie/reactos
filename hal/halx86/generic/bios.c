@@ -254,11 +254,14 @@ HalpBiosCall(VOID)
     ULONG_PTR StackOffset, CodeOffset;
     
     /* Save the context, check for return */
+    DPRINT1("HalpBiosCall: Before if(HalpSavedContext)\n");
     if (_setjmp(HalpSavedContext))
     {
         /* Returned from v86 */
+        DPRINT1("HalpBiosCall: Before return\n");
         return;
     }
+    DPRINT1("HalpBiosCall: After if(HalpSavedContext)\n");
     
     /* Kill alignment faults */
     __writecr0(__readcr0() & ~CR0_AM);
@@ -282,7 +285,9 @@ HalpBiosCall(VOID)
     V86TrapFrame.Eip = CodeOffset;
     
     /* Exit to V86 mode */
+    DPRINT1("HalpBiosCall: Before HalpExitToV86()\n");
     HalpExitToV86((PKTRAP_FRAME)&V86TrapFrame);
+    DPRINT1("HalpBiosCall: After HalpExitToV86()\n");
 }
 #endif
 
@@ -567,18 +572,24 @@ HalpRestoreTrapHandlers(VOID)
     //
     // Keep dummy GPF handler in case we get an NMI during V8086
     //
+    DPRINT1("HalpRestoreTrapHandlers: Before if(HalpNMIInProgress)\n");
     if (!HalpNMIInProgress)
     {
         //
         // Not an NMI -- put back the original handler
         //
+        DPRINT1("HalpRestoreTrapHandlers: Before KeRegisterInterruptHandler(13)\n");
         KeRegisterInterruptHandler(13, HalpGpfHandler);
+        DPRINT1("HalpRestoreTrapHandlers: After KeRegisterInterruptHandler(13)\n");
     }
+    DPRINT1("HalpRestoreTrapHandlers: After if(HalpNMIInProgress)\n");
 
     //
     // Restore invalid opcode handler
     //
+    DPRINT1("HalpRestoreTrapHandlers: Before KeRegisterInterruptHandler(6)\n");
     KeRegisterInterruptHandler(6, HalpBopHandler);
+    DPRINT1("HalpRestoreTrapHandlers: After KeRegisterInterruptHandler(6)\n");
 }
 
 VOID
@@ -683,12 +694,16 @@ HalpBiosDisplayReset(VOID)
     //
     // Now jump to real mode
     //
+    DPRINT1("HalpBiosDisplayReset: Before HalpBiosCall()\n");
     HalpBiosCall();
+    DPRINT1("HalpBiosDisplayReset: After HalpBiosCall()\n");
 
     //
     // Restore kernel trap handlers
     //
+    DPRINT1("HalpBiosDisplayReset: Before HalpRestoreTrapHandlers()\n");
     HalpRestoreTrapHandlers();
+    DPRINT1("HalpBiosDisplayReset: After HalpRestoreTrapHandlers()\n");
 
     //
     // Restore write permission
