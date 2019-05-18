@@ -220,11 +220,8 @@ CreateFreeLoaderReactOSEntries(
     if (IsUnattendedSetup)
     {
         /* DefaultOS=ReactOS */
-#ifndef _WINKD_
-        BootOptions.CurrentBootEntryKey = MAKESTRKEY(L"ReactOS_KdSerial");
-#else
+        // Stage 2+ !??
         BootOptions.CurrentBootEntryKey = MAKESTRKEY(L"ReactOS_Debug");
-#endif
     }
     else
 #endif
