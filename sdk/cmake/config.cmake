@@ -4,10 +4,15 @@ set(SARCH "pc" CACHE STRING
  pc xbox")
 
 if(NOT MSVC)
-set(OARCH "pentium" CACHE STRING
+# Virtual PC 2004 SP1: safe should be "-march=pentiumpro -mtune=pentium3"...
+
+# Rechercher comment activer MMX et SSE(2), si ReactOS les supporte effectivement.
+# "pentium2/pentium3" seem to work well too...
+set(OARCH "pentiumpro" CACHE STRING
 "Generate instructions for this CPU type. Specify one of:
  pentium, pentiumpro")
 
+# CORE-16046: Leave as is, "pentium2/pentium3" compilation fails.
 set(TUNE "i686" CACHE STRING
 "Which CPU ReactOS should be optimized for.")
 endif()
