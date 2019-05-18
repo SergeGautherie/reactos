@@ -3,12 +3,14 @@ set(SARCH "pc" CACHE STRING
 "Sub-architecture to build for. Specify one of:
  pc pc98 xbox")
 
+if(NOT MSVC)
 set(OARCH "pentium" CACHE STRING
 "Generate instructions for this CPU type. Specify one of:
  pentium, pentiumpro")
 
 set(TUNE "i686" CACHE STRING
 "Which CPU ReactOS should be optimized for.")
+endif()
 
 set(OPTIMIZE "4" CACHE STRING
 "What level of optimization to use.
