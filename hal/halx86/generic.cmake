@@ -32,9 +32,9 @@ if(STACK_PROTECTOR)
         # add_target_compile_flags(freeldr_common "-O0")
     endif()
 
-    add_compile_flags("-fno-stack-protector")
+#     add_compile_flags("-fno-stack-protector")
 #     add_compile_flags("-fstack-protector-explicit") # GCC 5.1.0+.
-#     add_compile_flags("-fstack-protector")
+    add_compile_flags("-fstack-protector")
 #     add_compile_flags("-fstack-protector-strong") # GCC 4.9.0+.
 #     add_compile_flags("-fstack-protector-all")
 endif()
