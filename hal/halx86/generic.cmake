@@ -34,9 +34,9 @@ if(STACK_PROTECTOR)
 
 #     add_compile_flags("-fno-stack-protector")
 #     add_compile_flags("-fstack-protector-explicit") # GCC 5.1.0+.
-    add_compile_flags("-fstack-protector")
+#     add_compile_flags("-fstack-protector")
 #     add_compile_flags("-fstack-protector-strong") # GCC 4.9.0+.
-#     add_compile_flags("-fstack-protector-all")
+    add_compile_flags("-fstack-protector-all")
 endif()
 add_object_library(lib_hal_generic ${HAL_GENERIC_SOURCE} ${lib_hal_generic_asm})
 add_dependencies(lib_hal_generic asm)
