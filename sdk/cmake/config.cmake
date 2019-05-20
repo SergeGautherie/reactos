@@ -17,7 +17,10 @@ set(TUNE "i686" CACHE STRING
 "Which CPU ReactOS should be optimized for.")
 endif()
 
-set(OPTIMIZE "4" CACHE STRING
+if(MSVC)
+# A synchroniser avec msvc.cmake !!?
+# Et pour clang!??
+    set(OPTIMIZE "4" CACHE STRING
 "What level of optimization to use.
  0 = Off
  1 = Optimize for size (-Os) with some additional options
@@ -27,6 +30,20 @@ set(OPTIMIZE "4" CACHE STRING
  5 = Optimize even more (-O2)
  6 = Optimize yet more (-O3)
  7 = Disregard strict standards compliance (-Ofast)")
+else()
+    # Release uses 5.
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+        set(OPTIMIZE "2" CACHE STRING
+"What level of optimization to use.
+ 1 = Reduce compilation time and make debugging produce the expected results (-O0)
+ 2 = Optimize (-O1)
+ 3 = Optimize for size (-Os)
+ 4 = Optimize for size (-Os) with some additional options
+ 5 = Optimize even more (-O2)
+ 6 = Optimize yet more (-O3)
+ 7 = Disregard strict standards compliance (-Ofast)")
+    endif()
+endif()
 
 set(LTCG FALSE CACHE BOOL
 "Whether to build with link-time code generation")
