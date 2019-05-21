@@ -18,6 +18,10 @@ void __stack_chk_guard_setup()
 
 void __stack_chk_fail()
 {
+    // Unknown here // __debugbreak();
+    // Unknown here // ASSERTMSG("(SG) Stop in __stack_chk_fail()\n", FALSE);
+    __asm__("int $3"); // == __debugbreak();
+
     /* Like __fastfail */
     __asm__("int $0x29" : : "c"(FAST_FAIL_STACK_COOKIE_CHECK_FAILURE) : "memory");
 }
