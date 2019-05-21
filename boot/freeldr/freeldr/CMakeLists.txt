@@ -192,13 +192,22 @@ add_library(freeldr_common
     ${FREELDR_NTLDR_SOURCE}
     ${FREELDR_BOOTMGR_SOURCE})
 
-if(USE_CLANG_CL)
-    # We need to reduce the binary size
-    add_target_compile_flags(freeldr_common "/Os")
-endif()
-if(NOT MSVC AND ARCH STREQUAL "i386")
-  # Prevent a warning when doing a memcmp with address 0
-  set_source_files_properties(arch/i386/xboxmem.c PROPERTIES COMPILE_FLAGS "-Wno-nonnull")
+if(MSVC)
+    if(USE_CLANG_CL)
+        # We need to reduce the binary size
+        add_target_compile_flags(freeldr_common "/Os")
+    endif()
+else()
+    if(OPTIMIZE STREQUAL "1")
+        # We need to reduce the binary size
+        replace_compile_flags("-O0" "-O1")
+        # add_target_compile_flags(freeldr_common "-O1")
+    endif()
+
+    if(ARCH STREQUAL "i386")
+        # Prevent a warning when doing a memcmp with address 0
+        set_source_files_properties(arch/i386/xboxmem.c PROPERTIES COMPILE_FLAGS "-Wno-nonnull")
+    endif()
 endif()
 
 set(PCH_SOURCE
