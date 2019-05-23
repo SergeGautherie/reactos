@@ -180,7 +180,7 @@ else()
     elseif(ARCH STREQUAL "arm")
         # _M_ARM is already defined by toolchain
         add_definitions(-D_ARM_ -D__arm__ -DWIN32)
-        if(SARCH STREQUAL "omap-zoom2")
+        if(SARCH STREQUAL "omap3-zoom2")
             add_definitions(-D_ZOOM2_)
         endif()
     endif()
