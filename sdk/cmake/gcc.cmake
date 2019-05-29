@@ -102,7 +102,7 @@ endif()
 # Tuning
 if(ARCH STREQUAL "i386")
     add_compile_flags("-march=${OARCH} -mtune=${TUNE}")
-    # add_compile_flags("-mmmx")
+    add_compile_flags("-mmmx")
     # add_compile_flags("-msse")
     # add_compile_flags("-mfpmath=sse")
     # add_compile_flags("-msse2")
