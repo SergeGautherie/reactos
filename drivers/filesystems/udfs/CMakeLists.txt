@@ -56,6 +56,10 @@ else()
     add_target_compile_flags(udfs "-Wno-unused-but-set-variable")
 endif()
 
+if(DBG)
+    add_definitions(-DDEBUG)
+endif()
+
 set_module_type(udfs kernelmodedriver)
 target_link_libraries(udfs ${PSEH_LIB})
 add_importlibs(udfs ntoskrnl hal)

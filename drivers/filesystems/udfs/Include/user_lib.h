@@ -20,6 +20,16 @@
 #ifndef __USER_LIB_H__
 #define __USER_LIB_H__
 
+#ifdef DBG
+#if !DBG
+#error SG user, FAIL DBG == 0
+#else
+#error SG user, FAIL DBG != 0
+#endif
+#else
+#error SG user, FAIL DBG not defined
+#endif
+
 #if defined DBG || defined PRINT_ALWAYS
 #define ODS(sz) OutputDebugString(sz)
 #else

@@ -56,7 +56,22 @@
 #define OS_SUCCESS(a)     NT_SUCCESS(a)
 #define OSSTATUS          NTSTATUS
 
+#ifdef DBG
+#if !DBG
+#error SG w32, FAIL DBG == 0
+#else
+#error SG w32, FAIL DBG != 0
+#endif
+#else
+#error SG w32, FAIL DBG not defined
+#endif
+
 #if defined UDF_DBG || defined DEBUG
+
+#ifdef DBG
+#error SG w32, FAIL DBG already defined
+#endif
+
 #define DBG
 #ifndef CDRW_W32
 #define UDF_DBG
