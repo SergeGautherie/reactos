@@ -367,12 +367,11 @@ endif()
 
 if(NOT _WINKD_)
     if(ARCH STREQUAL "i386")
-        list(APPEND SOURCE
-            ${REACTOS_SOURCE_DIR}/ntoskrnl/kd/i386/kdbg.c
-            ${REACTOS_SOURCE_DIR}/ntoskrnl/kd/i386/kdmemsup.c)
         if(KDBG)
             list(APPEND ASM_SOURCE ${REACTOS_SOURCE_DIR}/ntoskrnl/kdbg/i386/kdb_help.S)
             list(APPEND SOURCE
+                ${REACTOS_SOURCE_DIR}/ntoskrnl/kd/i386/kdbg.c
+                ${REACTOS_SOURCE_DIR}/ntoskrnl/kd/i386/kdmemsup.c
                 ${REACTOS_SOURCE_DIR}/ntoskrnl/kd/wrappers/gdbstub.c
                 ${REACTOS_SOURCE_DIR}/ntoskrnl/kdbg/i386/i386-dis.c)
         endif()
