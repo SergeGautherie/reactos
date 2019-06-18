@@ -8,7 +8,7 @@ if(NOT MSVC)
 
 # Rechercher comment activer MMX et SSE(2), si ReactOS les supporte effectivement.
 # "pentium2/pentium3" seem to work well too...
-set(OARCH "pentiumpro" CACHE STRING
+set(OARCH "pentium3" CACHE STRING
 "Generate instructions for this CPU type. Specify one of:
  pentium, pentiumpro")
 
