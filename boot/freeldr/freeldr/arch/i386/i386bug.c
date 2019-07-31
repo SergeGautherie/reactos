@@ -36,8 +36,8 @@ static const CHAR *i386ExceptionDescriptionText[] =
 #define SCREEN_ATTR 0x1F    // Bright white on blue background
 
 /* Used to store the current X and Y position on the screen */
-static ULONG i386_ScreenPosX = 0;
-static ULONG i386_ScreenPosY = 0;
+static ULONG i386_ScreenPosX;
+static ULONG i386_ScreenPosY;
 
 #if 0
 static void
@@ -235,11 +235,11 @@ FrLdrBugCheckWithMessage(
 
     PrintText("A problem has been detected and FreeLoader boot has been aborted.\n\n");
 
-    PrintText("%ld: %s\n\n", BugCode, BugCodeStrings[BugCode]);
+    PrintText("%lu: %s\n\n", BugCode, BugCodeStrings[BugCode]);
 
     if (File)
     {
-        PrintText("Location: %s:%ld\n\n", File, Line);
+        PrintText("Location: %s:%lu\n\n", File, Line);
     }
 
     va_start(argptr, Format);
@@ -265,11 +265,11 @@ FrLdrBugCheckEx(
 
     PrintText("A problem has been detected and FreeLoader boot has been aborted.\n\n");
 
-    PrintText("%ld: %s\n\n", BugCode, BugCodeStrings[BugCode]);
+    PrintText("%lu: %s\n\n", BugCode, BugCodeStrings[BugCode]);
 
     if (File)
     {
-        PrintText("Location: %s:%ld\n\n", File, Line);
+        PrintText("Location: %s:%lu\n\n", File, Line);
     }
 
     PrintText("Bug Information:\n    %p\n    %p\n    %p\n    %p\n    %p\n\n",
