@@ -217,15 +217,46 @@ PcMemCheckUsableMemorySize(VOID)
        in KB */
     Size = (*(PUSHORT)(ULONG_PTR)0x413) * 1024;
     RequiredSize = FREELDR_BASE + FrLdrImageSize + PAGE_SIZE;
-    if (Size < RequiredSize)
+//    if (Size < RequiredSize)
     {
         FrLdrBugCheckWithMessage(
             MEMORY_INIT_FAILURE,
             __FILE__,
             __LINE__,
-            "The BIOS reported a usable memory range up to 0x%lx, which is too small!\n"
-            "Required size is 0x%lx\n\n"
-            "If you see this, please report to the ReactOS team!",
+/*
+            "D1 The BIOS reported a usable memory range up to 0x%lx, which is too small! "
+            "Required size is 0x%lx  "
+            "If you see this, please report to the ReactOS team! F2",
+*/
+"L 01\n"
+"L 02 0123456798012345678901234567890123456789012345678901234567890123456789\n"
+"L 03\tA\tBC\tDEF\t\tG\n"
+"L 04\r"
+"\tL 05\n"
+"L 06 567980123456789012345678901234567890123456789012345678901234567890123456789abcdefgh\n"
+"L 07\n"
+"L 08\n"
+"L 09\n"
+"L 10\n"
+"L 11\n"
+"L 12\n"
+"L 13\n"
+"L 14\n"
+"L 15\n"
+"L 16\n"
+"L 17\n"
+"L 18 (Next line(s) should trigger off-screen case...)\n"
+"L 19\n"
+"L 20\n"
+"L 21\n"
+"L 22\n"
+"L 23\n"
+"L 24\n"
+"L 25\n"
+"L 26\n"
+"L 27\n"
+"L 28\n"
+"L 29\n",
             Size, RequiredSize);
     }
 }
