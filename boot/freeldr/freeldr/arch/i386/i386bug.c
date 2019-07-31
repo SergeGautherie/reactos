@@ -50,12 +50,23 @@ i386PrintChar(CHAR chr, ULONG x, ULONG y)
 static void
 i386PrintText(CHAR *pszText)
 {
-    ULONG Width, Unused;
+    ULONG Height, Unused, Width;
 
-    MachVideoGetDisplaySize(&Width, &Unused, &Unused);
+    XboxVideoGetDisplaySize(&Width, &Height, &Unused);
 
     for (; *pszText != ANSI_NULL; ++pszText)
     {
+        if (i386_ScreenPosY >= Height)
+        {
+            FIXME("i386_ScreenPosY (%lu) >= Height (%lu). Skipping pszText = '%s'\n",
+                  i386_ScreenPosY, Height, pszText);
+            /* HACK: Check what Windows does. (Ignore character? Scroll the screen?) */
+            MachVideoPutChar('.', SCREEN_ATTR, Width - 3, Height - 1);
+            MachVideoPutChar('.', SCREEN_ATTR, Width - 2, Height - 1);
+            MachVideoPutChar('.', SCREEN_ATTR, Width - 1, Height - 1);
+            return;
+        }
+
         if (*pszText == '\n')
         {
             i386_ScreenPosX = 0;
