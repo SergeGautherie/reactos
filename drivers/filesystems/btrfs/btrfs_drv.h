@@ -88,7 +88,11 @@ C_ASSERT(sizeof(bool) == 1);
 #define BTRFS_NODE_TYPE_CCB 0x2295
 #define BTRFS_NODE_TYPE_FCB 0x2296
 
+// ToDo: Use a specific define, instead? (Both ReactOS and upstream...)
+//       Used = 0-9 A-O.
+#ifndef __REACTOS__
 #define ALLOC_TAG 0x7442484D //'MHBt'
+#endif
 #define ALLOC_TAG_ZLIB 0x7A42484D //'MHBz'
 
 #define UID_NOBODY 65534

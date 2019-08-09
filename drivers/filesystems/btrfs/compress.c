@@ -27,6 +27,9 @@
 // versions are under the LGPL and hence okay to use here.
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG '4BHM' // 'MHB4'.
+#endif
 
 #define Z_SOLO
 #define ZLIB_INTERNAL

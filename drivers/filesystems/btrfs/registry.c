@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG 'EBHM' // 'MHBE'.
+#endif
 #include "zstd/zstd.h"
 
 extern UNICODE_STRING log_device, log_file, registry_path;

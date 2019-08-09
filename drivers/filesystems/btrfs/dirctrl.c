@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG '6BHM' // 'MHB6'.
+#endif
 
 #ifndef __REACTOS__
 // not currently in mingw

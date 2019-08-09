@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG '3BHM' // 'MHB3'.
+#endif
 
 #define SECTOR_BLOCK 16
 

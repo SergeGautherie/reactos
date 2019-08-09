@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG 'KBHM' // 'MHBK'.
+#endif
 
 NTSTATUS load_tree(device_extension* Vcb, uint64_t addr, uint8_t* buf, root* r, tree** pt) {
     tree_header* th;

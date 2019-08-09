@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG 'HBHM' // 'MHBH'.
+#endif
 
 #include <ntddk.h>
 #include <ntifs.h>

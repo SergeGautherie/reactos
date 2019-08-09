@@ -19,6 +19,9 @@
 #include <sys/stat.h>
 #endif /* __REACTOS__ */
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG '5BHM' // 'MHB5'.
+#endif
 #include <ntddstor.h>
 
 extern PDEVICE_OBJECT master_devobj;

@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG '8BHM' // 'MHB8'.
+#endif
 
 #if (NTDDI_VERSION >= NTDDI_WIN10)
 // not currently in mingw - introduced with Windows 10

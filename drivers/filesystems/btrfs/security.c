@@ -16,6 +16,9 @@
  * along with WinBtrfs.  If not, see <http://www.gnu.org/licenses/>. */
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG 'IBHM' // 'MHBI'.
+#endif
 
 #define SEF_DACL_AUTO_INHERIT 0x01
 #define SEF_SACL_AUTO_INHERIT 0x02

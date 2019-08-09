@@ -20,6 +20,9 @@
 #endif
 
 #include "btrfs_drv.h"
+#ifdef __REACTOS__
+#define ALLOC_TAG '0BHM' // 'MHB0'.
+#endif
 #ifndef __REACTOS__
 #ifndef _MSC_VER
 #include <cpuid.h>
