@@ -4436,6 +4436,7 @@ NTSTATUS write_file2(device_extension* Vcb, PIRP Irp, LARGE_INTEGER offset, void
             data = buf;
             no_buf = true;
         } else {
+// This one is leaked... (no_buf == FALSE)
             data = ExAllocatePoolWithTag(PagedPool, (ULONG)(end_data - start_data + bufhead), '75HM');
             if (!data) {
                 ERR("out of memory\n");
