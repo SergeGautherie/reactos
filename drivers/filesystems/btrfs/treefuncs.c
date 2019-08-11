@@ -1040,8 +1040,8 @@ void clear_rollback(LIST_ENTRY* rollback) {
 
 //                RemoveEntryList(&ext->list_entry);
 //                if (ext->csum)
-//                    ExFreePoolWithTag(ext->csum, ALLOC_TAG);
-//                ExFreePoolWithTag(ext, ALLOC_TAG);
+//                    ExFreePoolWithTag(ext->csum, '93HM');
+//                ExFreePoolWithTag(ext, 0);
                 ext->ignore = TRUE;
                 // Fall through.
             }
