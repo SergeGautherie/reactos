@@ -1030,7 +1030,11 @@ NTSTATUS delete_tree_item(_In_ _Requires_exclusive_lock_held_(_Curr_->tree_lock)
 
 void clear_rollback(LIST_ENTRY* rollback) {
     while (!IsListEmpty(rollback)) {
+#ifndef __REACTOS__
         LIST_ENTRY* le = RemoveHeadList(rollback);
+#else
+        LIST_ENTRY* le = RemoveTailList(rollback);
+#endif
         rollback_item* ri = CONTAINING_RECORD(le, rollback_item, list_entry);
 
         switch (ri->type) {
