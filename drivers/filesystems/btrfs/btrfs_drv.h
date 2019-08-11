@@ -75,12 +75,17 @@ C_ASSERT(sizeof(bool) == 1);
 #endif
 
 #ifdef _DEBUG
+#define DEBUG_EXFREEPOOLWITHTAG
 // #define DEBUG_FCB_REFCOUNTS
 // #define DEBUG_LONG_MESSAGES
 // #define DEBUG_FLUSH_TIMES
 // #define DEBUG_CHUNK_LOCKS
 // #define DEBUG_TRIM_EMULATION
 #define DEBUG_PARANOID
+#else
+#ifdef __REACTOS__
+#define DEBUG_EXFREEPOOLWITHTAG
+#endif
 #endif
 
 #define UNUSED(x) (void)(x)
@@ -94,6 +99,10 @@ C_ASSERT(sizeof(bool) == 1);
 #define ALLOC_TAG 0x7442484D //'MHBt'
 #endif
 #define ALLOC_TAG_ZLIB 0x7A42484D //'MHBz'
+
+#ifndef DEBUG_EXFREEPOOLWITHTAG
+#define ExFreePoolWithTag(addr, tag) ExFreePool(addr)
+#endif
 
 #define UID_NOBODY 65534
 #define GID_NOBODY 65534
