@@ -1043,7 +1043,7 @@ void clear_rollback(LIST_ENTRY* rollback) {
                 extent* ext = ((rollback_extent*)ri->ptr)->ext;
 
 // REL (+ EFPWT): (Fix MH36 and MH39 leaks, but) 'Stage 1, Hive, all errors' :-|
-//                FIXME("Calling RemoveEntryList() and ExFreePool() here, needed or not? (ext = %p)\n", ext);
+//                FIXME("Calling RemoveEntryList() and ExFreePool(), needed or not? (ext = %p)\n", ext);
 //                RemoveEntryList(&ext->list_entry);
 //                if (ext->csum)
 //                    ExFreePoolWithTag(ext->csum, '93HM');
@@ -1051,7 +1051,7 @@ void clear_rollback(LIST_ENTRY* rollback) {
 
 // ignore: Better (See flush_fcb()), though same ROS failure...
 //
-                FIXME("Setting 'ext->ignore = TRUE' here, needed or not? (ext = %p)\n", ext);
+                FIXME("Setting 'ext->ignore = TRUE', needed or not? (ext = %p, ext->extent_data.type = %hhu)\n", ext, ext->extent_data.type);
                 ext->ignore = TRUE;
                 // Fall through.
             }
