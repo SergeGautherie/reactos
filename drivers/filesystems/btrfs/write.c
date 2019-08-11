@@ -2731,6 +2731,8 @@ NTSTATUS add_extent_to_fcb(_In_ fcb* fcb, _In_ uint64_t offset, _In_reads_bytes_
         ERR("out of memory\n");
         return STATUS_INSUFFICIENT_RESOURCES;
     }
+//
+    FIXME("ExAllocatePool() succeeded: (ext = %p)\n", ext);
 
     ext->offset = offset;
     ext->datalen = edsize;
