@@ -74,13 +74,22 @@
 C_ASSERT(sizeof(bool) == 1);
 #endif
 
+// Local test only
+#define _DEBUG
+
 #ifdef _DEBUG
 #define DEBUG_EXFREEPOOLWITHTAG
-// #define DEBUG_FCB_REFCOUNTS
-// #define DEBUG_LONG_MESSAGES
-// #define DEBUG_FLUSH_TIMES
-// #define DEBUG_CHUNK_LOCKS
-// #define DEBUG_TRIM_EMULATION
+// 
+#define DEBUG_FCB_REFCOUNTS
+// 
+#define DEBUG_LONG_MESSAGES
+// 
+#define DEBUG_FLUSH_TIMES
+// 
+#define DEBUG_CHUNK_LOCKS
+// TODO: Check this new one.
+// 
+#define DEBUG_TRIM_EMULATION
 #define DEBUG_PARANOID
 #else
 #ifdef __REACTOS__
