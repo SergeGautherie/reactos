@@ -1050,12 +1050,9 @@ void clear_rollback(LIST_ENTRY* rollback) {
 }
 
 void do_rollback(device_extension* Vcb, LIST_ENTRY* rollback) {
-    NTSTATUS Status;
-    rollback_item* ri;
-
     while (!IsListEmpty(rollback)) {
         LIST_ENTRY* le = RemoveTailList(rollback);
-        ri = CONTAINING_RECORD(le, rollback_item, list_entry);
+        rollback_item* ri = CONTAINING_RECORD(le, rollback_item, list_entry);
 
         switch (ri->type) {
             case ROLLBACK_INSERT_EXTENT:
@@ -1071,9 +1068,9 @@ void do_rollback(device_extension* Vcb, LIST_ENTRY* rollback) {
                         chunk* c = get_chunk_from_address(Vcb, ed2->address);
 
                         if (c) {
-                            Status = update_changed_extent_ref(Vcb, c, ed2->address, ed2->size, re->fcb->subvol->id,
-                                                               re->fcb->inode, re->ext->offset - ed2->offset, -1,
-                                                               re->fcb->inode_item.flags & BTRFS_INODE_NODATASUM, false, NULL);
+                            NTSTATUS Status = update_changed_extent_ref(Vcb, c, ed2->address, ed2->size, re->fcb->subvol->id,
+                                                                        re->fcb->inode, re->ext->offset - ed2->offset, -1,
+                                                                        re->fcb->inode_item.flags & BTRFS_INODE_NODATASUM, false, NULL);
 
                             if (!NT_SUCCESS(Status))
                                 ERR("update_changed_extent_ref returned %08x\n", Status);
@@ -1100,9 +1097,9 @@ void do_rollback(device_extension* Vcb, LIST_ENTRY* rollback) {
                         chunk* c = get_chunk_from_address(Vcb, ed2->address);
 
                         if (c) {
-                            Status = update_changed_extent_ref(Vcb, c, ed2->address, ed2->size, re->fcb->subvol->id,
-                                                               re->fcb->inode, re->ext->offset - ed2->offset, 1,
-                                                               re->fcb->inode_item.flags & BTRFS_INODE_NODATASUM, false, NULL);
+                            NTSTATUS Status = update_changed_extent_ref(Vcb, c, ed2->address, ed2->size, re->fcb->subvol->id,
+                                                                        re->fcb->inode, re->ext->offset - ed2->offset, 1,
+                                                                        re->fcb->inode_item.flags & BTRFS_INODE_NODATASUM, false, NULL);
 
                             if (!NT_SUCCESS(Status))
                                 ERR("update_changed_extent_ref returned %08x\n", Status);
