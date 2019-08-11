@@ -2725,6 +2725,7 @@ NTSTATUS add_extent_to_fcb(_In_ fcb* fcb, _In_ uint64_t offset, _In_reads_bytes_
     extent* ext;
     LIST_ENTRY* le;
 
+// This one is leaked (2/2), but free should happen later/elsewhere...
     ext = ExAllocatePoolWithTag(PagedPool, offsetof(extent, extent_data) + edsize, '63HM');
     if (!ext) {
         ERR("out of memory\n");
@@ -2851,6 +2852,7 @@ bool insert_extent_chunk(_In_ device_extension* Vcb, _In_ fcb* fcb, _In_ chunk* 
     if (!prealloc && data && !(fcb->inode_item.flags & BTRFS_INODE_NODATASUM)) {
         ULONG sl = (ULONG)(length / Vcb->superblock.sector_size);
 
+// This one is leaked (1/2), but free should happen later/elsewhere...
         csum = ExAllocatePoolWithTag(PagedPool, sl * sizeof(uint32_t), '93HM');
         if (!csum) {
             ERR("out of memory\n");
