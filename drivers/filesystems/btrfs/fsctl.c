@@ -1871,13 +1871,13 @@ static NTSTATUS zero_data(device_extension* Vcb, fcb* fcb, uint64_t start, uint6
         ed->type = EXTENT_TYPE_INLINE;
 
         Status = add_extent_to_fcb(fcb, 0, ed, edsize, false, NULL, rollback);
+
+        ExFreePoolWithTag(data, ALLOC_TAG);
+
         if (!NT_SUCCESS(Status)) {
             ERR("add_extent_to_fcb returned %08x\n", Status);
-            ExFreePool(data);
             return Status;
         }
-
-        ExFreePool(data);
 
         fcb->inode_item.st_blocks += end_data;
     } else if (compress) {
