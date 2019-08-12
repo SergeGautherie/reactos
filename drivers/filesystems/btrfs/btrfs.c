@@ -231,6 +231,15 @@ void _debug_message(_In_ const char* func, _In_ char* s, ...) {
 
         Irp->UserEvent = &context.Event;
 
+/* // _DEBUG
+/home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs.c: In function '_debug_message':
+/home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs.c:218:9: error: passing argument 2 of 'IoSetCompletionRoutine' from incompatible pointer type [-Werror]
+In file included from sdk/include/ddk/ntddk.h:38:0,
+from sdk/include/ddk/ntifs.h:35,
+from /home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs_drv.h:42,
+from /home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs.c:22:
+sdk/include/ddk/wdm.h:14823:1: note: expected 'PIO_COMPLETION_ROUTINE' but argument is of type 'LONG (*)(struct _DEVICE_OBJECT *, struct _IRP *, void *)'
+*/
         IoSetCompletionRoutine(Irp, dbg_completion, &context, true, true, true);
 
         Status = IoCallDriver(comdo, Irp);
@@ -5521,6 +5530,15 @@ static void init_serial(bool first_time) {
         ERR("IoGetDeviceObjectPointer returned %08x\n", Status);
 
         if (first_time) {
+/* _DEBUG
+/home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs.c: In function 'init_serial':
+/home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs.c:5322:13: error: passing argument 6 of 'PsCreateSystemThread' from incompatible pointer type [-Werror]
+In file included from sdk/include/ddk/ntddk.h:38:0,
+from sdk/include/ddk/ntifs.h:35,
+from /home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs_drv.h:42,
+from /home/appveyor/projects/ros_workdir/reactos-cov/drivers/filesystems/btrfs/btrfs.c:22:
+sdk/include/ddk/wdm.h:16543:1: note: expected 'PKSTART_ROUTINE' but argument is of type 'void (*)(void *)'
+*/
             Status = PsCreateSystemThread(&serial_thread_handle, 0, NULL, NULL, NULL, serial_thread, NULL);
             if (!NT_SUCCESS(Status)) {
                 ERR("PsCreateSystemThread returned %08x\n", Status);
