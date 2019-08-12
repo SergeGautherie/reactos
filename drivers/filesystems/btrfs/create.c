@@ -2901,9 +2901,6 @@ static NTSTATUS file_create(PIRP Irp, _Requires_lock_held_(_Curr_->tree_lock) _R
     POOL_TYPE pool_type = IrpSp->Flags & SL_OPEN_PAGING_FILE ? NonPagedPool : PagedPool;
     ECP_LIST* ecp_list;
     ATOMIC_CREATE_ECP_CONTEXT* acec = NULL;
-#ifdef DEBUG_FCB_REFCOUNTS
-    LONG oc;
-#endif
 
     TRACE("(%p, %p, %p, %.*S, %x, %x)\n", Irp, Vcb, FileObject, fnus->Length / sizeof(WCHAR), fnus->Buffer, disposition, options);
 
@@ -3099,8 +3096,10 @@ static NTSTATUS file_create(PIRP Irp, _Requires_lock_held_(_Curr_->tree_lock) _R
     ccb->lxss = called_from_lxss();
 
 #ifdef DEBUG_FCB_REFCOUNTS
-    oc = InterlockedIncrement(&fileref->open_count);
+    {
+    LONG oc = InterlockedIncrement(&fileref->open_count);
     ERR("fileref %p: open_count now %i\n", fileref, oc);
+    }
 #else
     InterlockedIncrement(&fileref->open_count);
 #endif
@@ -3922,8 +3921,11 @@ static NTSTATUS open_file2(device_extension* Vcb, ULONG RequestedDisposition, PO
     }
 
 #ifdef DEBUG_FCB_REFCOUNTS
+    {
+// ".../create.c:3957:5: error: ISO C90 forbids mixed declarations and code [-Werror=declaration-after-statement]"
     LONG oc = InterlockedIncrement(&fileref->open_count);
     ERR("fileref %p: open_count now %i\n", fileref, oc);
+    }
 #else
     InterlockedIncrement(&fileref->open_count);
 #endif
