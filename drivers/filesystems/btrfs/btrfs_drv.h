@@ -102,10 +102,6 @@ C_ASSERT(sizeof(bool) == 1);
 #endif // DBG
 
 #define _DEBUG
-#define DEBUG_FCB_REFCOUNTS
-#define DEBUG_LONG_MESSAGES
-#define DEBUG_FLUSH_TIMES
-#define DEBUG_CHUNK_LOCKS
 
 #endif // __REACTOS__
 #endif
