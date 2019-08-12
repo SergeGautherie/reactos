@@ -101,7 +101,8 @@ C_ASSERT(sizeof(bool) == 1);
 #define DEBUG_PARANOID
 #endif // DBG
 
-#define _DEBUG
+// Local, Later, to report/fix compile errors!
+// #define _DEBUG
 
 #endif // __REACTOS__
 #endif
