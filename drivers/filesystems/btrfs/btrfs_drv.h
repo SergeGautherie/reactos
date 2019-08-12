@@ -74,27 +74,33 @@
 C_ASSERT(sizeof(bool) == 1);
 #endif
 
-// Local test only
-#define _DEBUG
+// ...
+// #define _DEBUG
 
 #ifdef _DEBUG
+// Enable ExFreePoolWithTag() calls, instead of force-calling ExFreePool() only.
 #define DEBUG_EXFREEPOOLWITHTAG
-// 
-#define DEBUG_FCB_REFCOUNTS
-// 
-#define DEBUG_LONG_MESSAGES
-// 
-#define DEBUG_FLUSH_TIMES
-// 
-#define DEBUG_CHUNK_LOCKS
+// Log some stats: see multiple functions.
+// #define DEBUG_FCB_REFCOUNTS
+// Add file and line to logs.
+// NB: Applies to _DEBUG and DEBUG_FCB_REFCOUNTS increase_fileref_refcount() only.
+// #define DEBUG_LONG_MESSAGES
+// Log some stats: see do_write2().
+// #define DEBUG_FLUSH_TIMES
+// Add and update device_extension.chunk_locks_held.
+// FIXME: That data is not used otherwise.
+// #define DEBUG_CHUNK_LOCKS
+// Mostly add (conditional) int3, plus some more checks++.
 // TODO: Check this new one.
-// 
-#define DEBUG_TRIM_EMULATION
+// #define DEBUG_TRIM_EMULATION
 #define DEBUG_PARANOID
 #else
 #ifdef __REACTOS__
 #define DEBUG_EXFREEPOOLWITHTAG
-#endif
+#if DBG
+#define DEBUG_PARANOID
+#endif // DBG
+#endif // __REACTOS__
 #endif
 
 #define UNUSED(x) (void)(x)
