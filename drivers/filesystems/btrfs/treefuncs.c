@@ -1051,8 +1051,9 @@ void clear_rollback(LIST_ENTRY* rollback) {
 
 // ignore: Better (See flush_fcb()), though same ROS failure...
 //
-                FIXME("Setting 'ext->ignore = TRUE', needed or not? (ext = %p, ext->extent_data.type = %hhu)\n", ext, ext->extent_data.type);
-                ext->ignore = TRUE;
+                FIXME("WOULD BE Setting 'ext->ignore = TRUE', needed or not? (ext = %p, ext->extent_data.type = %hhu)\n", ext, ext->extent_data.type);
+// Postoned, until Stage 1 error is sorted out :-/
+                // ext->ignore = TRUE;
                 // Fall through.
             }
             case ROLLBACK_ADD_SPACE:
