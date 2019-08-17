@@ -1,3 +1,5 @@
+#if (_WIN32_WINNT < _WIN32_WINNT_WIN6)
+
 #include "desk.h"
 
 /******************************************************************************
@@ -142,3 +144,5 @@ cleanup:
     HeapFree(GetProcessHeap(), 0, pwszExpandedBuffer);
     return result;
 }
+
+#endif // (_WIN32_WINNT < _WIN32_WINNT_WIN6)

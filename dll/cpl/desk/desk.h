@@ -122,6 +122,7 @@ HPSXA WINAPI SHCreatePropSheetExtArrayEx(HKEY,LPCWSTR,UINT,IDataObject*);
 INT_PTR CALLBACK
 AdvGeneralPageProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+#if (_WIN32_WINNT < _WIN32_WINNT_WIN6)
 LONG
 RegLoadMUIStringW(IN HKEY hKey,
                   IN LPCWSTR pszValue  OPTIONAL,
@@ -130,5 +131,19 @@ RegLoadMUIStringW(IN HKEY hKey,
                   OUT LPDWORD pcbData OPTIONAL,
                   IN DWORD Flags,
                   IN LPCWSTR pszDirectory  OPTIONAL);
+#else
+/* // Why does it not find it from winreg.h? Or found, but can't link to it!!?
+LSTATUS
+WINAPI
+RegLoadMUIStringW(
+  _In_ HKEY hKey,
+  _In_opt_ LPCWSTR pszValue,
+  _Out_writes_bytes_opt_(cbOutBuf) LPWSTR pszOutBuf,
+  _In_ DWORD cbOutBuf,
+  _Out_opt_ LPDWORD pcbData,
+  _In_ DWORD Flags,
+  _In_opt_ LPCWSTR pszDirectory);
+*/
+#endif
 
 #endif /* _DESK_H */
