@@ -163,7 +163,7 @@ else()
     endif()
 
     # Version Options
-    add_definitions(-DWINVER=0x502
+    add_definitions(-DWINVER=0x600
                     -D_WIN32_IE=0x600
                     -D_WIN32_WINNT=0x600
                     -D_WIN32_WINDOWS=0x502
