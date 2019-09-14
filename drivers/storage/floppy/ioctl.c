@@ -212,14 +212,13 @@ DeviceIoctlPassive(PDRIVE_INFO DriveInfo, PIRP Irp)
             if (OutputLength < sizeof(ULONG))
             {
                 Irp->IoStatus.Status = STATUS_BUFFER_TOO_SMALL;
-                Irp->IoStatus.Information = 0;
             }
             else
             {
                 *((PULONG)OutputBuffer) = DriveInfo->DiskChangeCount;
                 Irp->IoStatus.Status = STATUS_SUCCESS;
-                Irp->IoStatus.Information = sizeof(ULONG);
             }
+            Irp->IoStatus.Information = sizeof(ULONG);
         }
         else
         {
