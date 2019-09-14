@@ -268,7 +268,7 @@ DeviceIoctlPassive(PDRIVE_INFO DriveInfo, PIRP Irp)
 
         if (OutputLength < sizeof(USHORT) + Name->NameLength) {
             Irp->IoStatus.Status = STATUS_BUFFER_OVERFLOW;
-            Irp->IoStatus.Information = sizeof(MOUNTDEV_NAME);
+            Irp->IoStatus.Information = sizeof(USHORT) + Name->NameLength;
             break;
         }
 
