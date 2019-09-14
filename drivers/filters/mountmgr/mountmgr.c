@@ -91,10 +91,12 @@ HasDriveLetter(IN PDEVICE_INFORMATION DeviceInformation)
 
     /* Browse all symlinks to check if there is at least a drive letter */
     NextEntry = DeviceInformation->SymbolicLinksListHead.Flink;
+    DPRINT1("HasDriveLetter() 1: SymbolicLinksListHead %p != Flink %p\n", &(DeviceInformation->SymbolicLinksListHead), DeviceInformation->SymbolicLinksListHead.Flink);
     while (NextEntry != &(DeviceInformation->SymbolicLinksListHead))
     {
         SymlinkInfo = CONTAINING_RECORD(NextEntry, SYMLINK_INFORMATION, SymbolicLinksListEntry);
 
+        DPRINT1("HasDriveLetter() 2: SymlinkInfo %p\n", SymlinkInfo);
         if (IsDriveLetter(&(SymlinkInfo->Name)) && SymlinkInfo->Online)
         {
             return TRUE;

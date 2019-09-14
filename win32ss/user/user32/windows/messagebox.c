@@ -1046,6 +1046,7 @@ SoftModalMessageBox(IN LPMSGBOXDATA lpMsgBoxData)
 
     /* Finally show the message-box */
     ERR("MessageBox: %s\n", wine_dbgstr_wn(lpMsgBoxParams->lpszText, textlen));
+    ASSERTMSG("To debug CORE-16371\n", FALSE);
     ret = DialogBoxIndirectParamW(lpMsgBoxParams->hInstance, tpl,
                                   lpMsgBoxParams->hwndOwner,
                                   MessageBoxProc, (LPARAM)&mbd);
