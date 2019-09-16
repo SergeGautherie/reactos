@@ -67,6 +67,9 @@ i386PrintText(CHAR *pszText)
             return;
         }
 
+        /* Special cases: formatting characters, not to be printed as is. */
+        /* TODO: Should any of the 3 special cases print some spaces? */
+        /* TODO: Check what Windows does. */
         if (*pszText == '\n')
         {
             i386_ScreenPosX = 0;
@@ -74,7 +77,20 @@ i386PrintText(CHAR *pszText)
             continue;
         }
 
-        MachVideoPutChar(*pszText, SCREEN_ATTR, i386_ScreenPosX++, i386_ScreenPosY);
+        if (*pszText == '\r')
+        {
+            i386_ScreenPosX = 0;
+            continue;
+        }
+
+        if (*pszText == '\t')
+        {
+            i386_ScreenPosX = (i386_ScreenPosX + 8) & ~7;
+        }
+        else
+        {
+            MachVideoPutChar(*pszText, SCREEN_ATTR, i386_ScreenPosX++, i386_ScreenPosY);
+        }
 
         if (i386_ScreenPosX >= Width)
         {
