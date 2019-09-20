@@ -29,15 +29,15 @@ PcConsPutChar(int Ch)
 {
   REGS Regs;
 
-  /* If we are displaying a CR '\n' then do a LF also */
+  /* If we are displaying a LF '\n', then do a CR '\r' first */
   if ('\n' == Ch)
     {
-      /* Display the LF */
+      /* Display the CR '\r' */
       PcConsPutChar('\r');
     }
 
   /* If we are displaying a TAB '\t' then display 8 spaces ' ' */
-  if ('\t' == Ch)
+  else if (Ch == '\t')
     {
       /* Display the 8 spaces ' ' */
       PcConsPutChar(' ');
