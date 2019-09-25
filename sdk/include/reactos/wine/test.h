@@ -26,6 +26,9 @@
 #include <windef.h>
 #include <winbase.h>
 
+// For ASSERT().
+// #include <reactos/debug.h>
+
 #ifdef __WINE_CONFIG_H
 #error config.h should not be used in Wine tests
 #endif
@@ -112,7 +115,7 @@ static inline int winetest_strcmpW( const WCHAR *str1, const WCHAR *str2 )
 #endif
 
 extern int broken( int condition );
-extern int winetest_vok( int condition, const char *msg, __winetest_va_list ap );
+extern void winetest_vok( int condition, const char *msg, __winetest_va_list ap );
 extern void winetest_vskip( const char *msg, __winetest_va_list ap );
 
 #ifdef __GNUC__
@@ -340,12 +343,9 @@ int broken( int condition )
  * Parameters:
  *   - condition - condition to check;
  *   - msg test description;
- *   - file - test application source code file name of the check
- *   - line - test application source code file line number of the check
- * Return:
- *   0 if condition does not have the expected value, 1 otherwise
+ *   - args - ...
  */
-int winetest_vok( int condition, const char *msg, __winetest_va_list args )
+void winetest_vok( int condition, const char *msg, __winetest_va_list args )
 {
     tls_data* data=get_tls_data();
 
@@ -357,7 +357,6 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
                      data->current_file, data->current_line );
             vfprintf(stdout, msg, args);
             InterlockedIncrement(&todo_failures);
-            return 0;
         }
         else
         {
@@ -369,7 +368,6 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
                 vfprintf(stdout, msg, args);
             }
             InterlockedIncrement(&todo_successes);
-            return 1;
         }
     }
     else
@@ -380,7 +378,6 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
                      data->current_file, data->current_line );
             vfprintf(stdout, msg, args);
             InterlockedIncrement(&failures);
-            return 0;
         }
         else
         {
@@ -388,7 +385,6 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
                 fprintf( stdout, __winetest_file_line_prefix ": Test succeeded\n",
                          data->current_file, data->current_line);
             InterlockedIncrement(&successes);
-            return 1;
         }
     }
 }
@@ -396,6 +392,16 @@ int winetest_vok( int condition, const char *msg, __winetest_va_list args )
 void __winetest_cdecl winetest_ok( int condition, const char *msg, ... )
 {
     __winetest_va_list valist;
+
+    // Check expected format.
+    // C_ASSERT(), in ok_()!?
+    // ASSERT(*msg && msg[strlen(msg) - 1] == '\n');
+    if (!*msg || msg[strlen(msg) - 1] != '\n')
+    {
+// Use a "todo"!?
+        winetest_ok(FALSE, "WineTest text misses an ending '\\n': '%s'\n", msg);
+        // TODO: Add a '\n'! How?
+    }
 
     __winetest_va_start(valist, msg);
     winetest_vok(condition, msg, valist);
@@ -406,6 +412,15 @@ void __winetest_cdecl winetest_trace( const char *msg, ... )
 {
     __winetest_va_list valist;
     tls_data* data=get_tls_data();
+
+    // Check expected format.
+    // C_ASSERT(), in trace_()!?
+    // ASSERT(*msg && msg[strlen(msg) - 1] == '\n');
+    if (!*msg || msg[strlen(msg) - 1] != '\n')
+    {
+        winetest_ok(FALSE, "WineTest text misses an ending '\\n': '%s'\n", msg);
+        // TODO: Add a '\n'! How?
+    }
 
     if (winetest_debug > 0)
     {
@@ -428,6 +443,16 @@ void winetest_vskip( const char *msg, __winetest_va_list args )
 void __winetest_cdecl winetest_skip( const char *msg, ... )
 {
     __winetest_va_list valist;
+
+    // Check expected format.
+    // C_ASSERT(), in skip_()!?
+    // ASSERT(*msg && msg[strlen(msg) - 1] == '\n');
+    if (!*msg || msg[strlen(msg) - 1] != '\n')
+    {
+        winetest_ok(FALSE, "WineTest text misses an ending '\\n': '%s'\n", msg);
+        // TODO: Add a '\n'! How?
+    }
+
     __winetest_va_start(valist, msg);
     winetest_vskip(msg, valist);
     __winetest_va_end(valist);
@@ -436,6 +461,16 @@ void __winetest_cdecl winetest_skip( const char *msg, ... )
 void __winetest_cdecl winetest_win_skip( const char *msg, ... )
 {
     __winetest_va_list valist;
+
+    // Check expected format.
+    // C_ASSERT(), in win_skip_()!?
+    // ASSERT(*msg && msg[strlen(msg) - 1] == '\n');
+    if (!*msg || msg[strlen(msg) - 1] != '\n')
+    {
+        winetest_ok(FALSE, "WineTest text misses an ending '\\n': '%s'\n", msg);
+        // TODO: Add a '\n'! How?
+    }
+
     __winetest_va_start(valist, msg);
     if ((strcmp(winetest_platform, "windows") == 0)
 #ifndef USE_WINE_TODOS

@@ -204,7 +204,7 @@ extern PKMT_RESULTBUFFER ResultBuffer;
 #ifdef __GNUC__
 /* TODO: GCC doesn't understand %wZ :( */
 #define KMT_FORMAT(type, fmt, first) /*__attribute__((__format__(type, fmt, first)))*/
-#elif !defined __GNUC__
+#else /* if !defined __GNUC__ */
 #define KMT_FORMAT(type, fmt, first)
 #endif /* !defined __GNUC__ */
 
@@ -221,11 +221,15 @@ extern PKMT_RESULTBUFFER ResultBuffer;
 #define trace_(file, line, ...)      KmtTrace(     file ":" KMT_STRINGIZE(line), __VA_ARGS__)
 #define skip_(test, file, line, ...) KmtSkip(test, file ":" KMT_STRINGIZE(line), __VA_ARGS__)
 
-BOOLEAN KmtVOk(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments)   KMT_FORMAT(ms_printf, 3, 0);
+/* And move KMT_FORMAT() to definition? */
+static BOOLEAN KmtVOk(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments)   KMT_FORMAT(ms_printf, 3, 0);
 BOOLEAN KmtOk(INT Condition, PCSTR FileAndLine, PCSTR Format, ...)                  KMT_FORMAT(ms_printf, 3, 4);
-VOID KmtVTrace(PCSTR FileAndLine, PCSTR Format, va_list Arguments)                  KMT_FORMAT(ms_printf, 2, 0);
+/* And move KMT_FORMAT() to definition? */
+static VOID KmtVTrace(PCSTR FileAndLine, PCSTR Format, va_list Arguments)                  KMT_FORMAT(ms_printf, 2, 0);
+/* static : tests = 'declared but not defined' */
 VOID KmtTrace(PCSTR FileAndLine, PCSTR Format, ...)                                 KMT_FORMAT(ms_printf, 2, 3);
-BOOLEAN KmtVSkip(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments) KMT_FORMAT(ms_printf, 3, 0);
+/* And move KMT_FORMAT() to definition? */
+static BOOLEAN KmtVSkip(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments) KMT_FORMAT(ms_printf, 3, 0);
 BOOLEAN KmtSkip(INT Condition, PCSTR FileAndLine, PCSTR Format, ...)                KMT_FORMAT(ms_printf, 3, 4);
 PVOID KmtAllocateGuarded(SIZE_T SizeRequested);
 VOID KmtFreeGuarded(PVOID Pointer);
@@ -308,6 +312,7 @@ VOID KmtFreeGuarded(PVOID Pointer);
 #include "kmt_test_user.h"
 #endif /* defined KMT_USER_MODE */
 
+// A few "non-test" calls.
 PKMT_RESULTBUFFER ResultBuffer = NULL;
 
 static VOID KmtAddToLogBuffer(PKMT_RESULTBUFFER Buffer, PCSTR String, SIZE_T Length)
@@ -335,6 +340,7 @@ static SIZE_T KmtXVSNPrintF(PSTR Buffer, SIZE_T BufferMaxLength, PCSTR FileAndLi
     SIZE_T BufferLength = 0;
     SIZE_T Length;
 
+    // NULL from KmtFinishTest().
     if (FileAndLine)
     {
         PCSTR Slash;
@@ -351,6 +357,7 @@ static SIZE_T KmtXVSNPrintF(PSTR Buffer, SIZE_T BufferMaxLength, PCSTR FileAndLi
         BufferLength += Length;
         BufferMaxLength -= Length;
     }
+    // NULL from KmtFinishTest().
     if (Prepend)
     {
         Length = min(BufferMaxLength, strlen(Prepend));
@@ -359,6 +366,7 @@ static SIZE_T KmtXVSNPrintF(PSTR Buffer, SIZE_T BufferMaxLength, PCSTR FileAndLi
         BufferLength += Length;
         BufferMaxLength -= Length;
     }
+    // NULL from KmtVOk() success case.
     if (Format)
     {
         Length = KmtVSNPrintF(Buffer, BufferMaxLength, Format, Arguments);
@@ -379,6 +387,7 @@ static SIZE_T KmtXSNPrintF(PSTR Buffer, SIZE_T BufferMaxLength, PCSTR FileAndLin
     return BufferLength;
 }
 
+// 1 modules/rostests/kmtests/kmtest/kmtest.c
 VOID KmtFinishTest(PCSTR TestName)
 {
     CHAR MessageBuffer[512];
@@ -396,6 +405,7 @@ VOID KmtFinishTest(PCSTR TestName)
     KmtAddToLogBuffer(ResultBuffer, MessageBuffer, MessageLength);
 }
 
+static
 BOOLEAN KmtVOk(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments)
 {
     CHAR MessageBuffer[512];
@@ -424,16 +434,31 @@ BOOLEAN KmtVOk(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments
     return Condition != 0;
 }
 
+// To convert to ok_():
+// 1 modules/rostests/kmtests/npfs/NpfsHelpers.c
+// a lot modules/rostests/kmtests/ntos_se/SeHelpers.c
 BOOLEAN KmtOk(INT Condition, PCSTR FileAndLine, PCSTR Format, ...)
 {
     BOOLEAN Ret;
     va_list Arguments;
+
+    // Check expected format.
+    // C_ASSERT(), in ok_()!?
+    // ASSERT(*Format && Format[strlen(Format) - 1] == '\n');
+    if (!*Format || Format[strlen(Format) - 1] != '\n')
+    {
+        KmtOk(FALSE, FileAndLine, "KmtTest text misses an ending '\\n': '%s'\n", Format);
+        // TODO: Add a '\n'! How?
+    }
+
     va_start(Arguments, Format);
     Ret = KmtVOk(Condition, FileAndLine, Format, Arguments);
     va_end(Arguments);
+
     return Ret;
 }
 
+static
 VOID KmtVTrace(PCSTR FileAndLine, PCSTR Format, va_list Arguments)
 {
     CHAR MessageBuffer[512];
@@ -443,14 +468,26 @@ VOID KmtVTrace(PCSTR FileAndLine, PCSTR Format, va_list Arguments)
     KmtAddToLogBuffer(ResultBuffer, MessageBuffer, MessageLength);
 }
 
+/* static : tests = 'declared but not defined' */
 VOID KmtTrace(PCSTR FileAndLine, PCSTR Format, ...)
 {
     va_list Arguments;
+
+    // Check expected format.
+    // C_ASSERT(), in trace_()!?
+    // ASSERT(*Format && Format[strlen(Format) - 1] == '\n');
+    if (!*Format || Format[strlen(Format) - 1] != '\n')
+    {
+        KmtOk(FALSE, FileAndLine, "KmtTest text misses an ending '\\n': '%s'\n", Format);
+        // TODO: Add a '\n'! How?
+    }
+
     va_start(Arguments, Format);
     KmtVTrace(FileAndLine, Format, Arguments);
     va_end(Arguments);
 }
 
+static
 BOOLEAN KmtVSkip(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Arguments)
 {
     CHAR MessageBuffer[512];
@@ -469,13 +506,26 @@ BOOLEAN KmtVSkip(INT Condition, PCSTR FileAndLine, PCSTR Format, va_list Argumen
     return !Condition;
 }
 
+// To convert to skip_():
+// 5 modules/rostests/kmtests/ntos_se/SeHelpers.c
 BOOLEAN KmtSkip(INT Condition, PCSTR FileAndLine, PCSTR Format, ...)
 {
     BOOLEAN Ret;
     va_list Arguments;
+
+    // Check expected format.
+    // C_ASSERT(), in skip_()!?
+    // ASSERT(*Format && Format[strlen(Format) - 1] == '\n');
+    if (!*Format || Format[strlen(Format) - 1] != '\n')
+    {
+        KmtOk(FALSE, FileAndLine, "KmtTest text misses an ending '\\n': '%s'\n", Format);
+        // TODO: Add a '\n'! How?
+    }
+
     va_start(Arguments, Format);
     Ret = KmtVSkip(Condition, FileAndLine, Format, Arguments);
     va_end(Arguments);
+
     return Ret;
 }
 
