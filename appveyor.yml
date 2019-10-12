@@ -1,18 +1,26 @@
+image:
+# Regressed :-(    - Visual Studio 2019
+  - Previous Visual Studio 2019
+
 environment:
   matrix:
+ # CORE-16426, Stub/Im-plement new __CxxFrameHandler4(), to compile ROS x64 with VS2019
+#
     - BuildType: "msvc-x64"
-    - BuildType: "msvc"
+#    - BuildType: "msvc"
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
 
-version: reactos.appveyor.{build}
+version: VS2019.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
-matrix:
-  fast_finish: true
 
 init:
+#   - dir "C:\Program Files (x86)"
+#   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\vcvarsall.bat" /s
+#   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC" /s
+#   - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
   - ps: >-
@@ -23,18 +31,26 @@ init:
       } Else {
         $env:clang_configure_option=""
       }
+      # cmake.exe, cmcldeps.exe, ninja.exe.
+#   - dir /s C:\RosCMakeNinja\bin
 
 build_script:
+    # With/Old: 16/18 min, Without/Current: 22/26 min :-<
   - set PATH=C:\RosCMakeNinja\bin;%PATH%
+#   - if "%BuildType%" == "msvc-x64" (
+#         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+#       ) else (
+#         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+#       )
   - if "%BuildType%" == "msvc-x64" (
-        call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
       ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
       )
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option%
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
