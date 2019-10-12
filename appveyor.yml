@@ -1,8 +1,9 @@
 image:
   - Previous Visual Studio 2019
-# Regressed :-( 
-  - Visual Studio 2019
-  - Visual Studio 2019 Preview
+# Regressed :-(
+#   - Visual Studio 2019
+# Regressed :-(
+#   - Visual Studio 2019 Preview
 
 environment:
   matrix:
