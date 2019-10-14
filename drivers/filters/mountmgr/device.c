@@ -1701,11 +1701,14 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
     PMOUNTMGR_MOUNT_POINT MountPoint;
     UNICODE_STRING SymbolicName, DeviceName;
 
+    DPRINT1("MountMgrQueryPoints(%p, %p)\n", DeviceExtension, Irp);
+
     Stack = IoGetCurrentIrpStackLocation(Irp);
 
     /* Validate input... */
     if (Stack->Parameters.DeviceIoControl.InputBufferLength < sizeof(MOUNTMGR_MOUNT_POINT))
     {
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -1729,18 +1732,21 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
     if ((MountPoint->SymbolicLinkNameOffset & 1) ||
         (MountPoint->SymbolicLinkNameLength & 1))
     {
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
         return STATUS_INVALID_PARAMETER;
     }
 
     if ((MountPoint->UniqueIdOffset & 1) ||
         (MountPoint->UniqueIdLength & 1))
     {
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
         return STATUS_INVALID_PARAMETER;
     }
 
     if ((MountPoint->DeviceNameOffset & 1) ||
         (MountPoint->DeviceNameLength & 1))
     {
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -1748,11 +1754,13 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
     if (((ULONG)MountPoint->SymbolicLinkNameLength + MountPoint->UniqueIdLength +
         MountPoint->DeviceNameLength) > Stack->Parameters.DeviceIoControl.InputBufferLength)
     {
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
         return STATUS_INVALID_PARAMETER;
     }
 
     if (Stack->Parameters.DeviceIoControl.OutputBufferLength < sizeof(MOUNTMGR_MOUNT_POINTS))
     {
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -1761,6 +1769,7 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
     {
         if (MountPoint->SymbolicLinkNameLength > MAXSHORT)
         {
+            ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
             return STATUS_INVALID_PARAMETER;
         }
 
@@ -1769,6 +1778,7 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
         SymbolicName.Buffer = AllocatePool(SymbolicName.MaximumLength);
         if (!SymbolicName.Buffer)
         {
+            DPRINT1("MountMgrQueryPoints() returns STATUS_INSUFFICIENT_RESOURCES.\n");
             return STATUS_INSUFFICIENT_RESOURCES;
         }
 
@@ -1779,6 +1789,10 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
 
         /* Query links using it */
         Status = QueryPointsFromSymbolicLinkName(DeviceExtension, &SymbolicName, Irp);
+        if (Status == STATUS_OBJECT_NAME_NOT_FOUND)
+            DPRINT1("QueryPointsFromSymbolicLinkName() returned STATUS_OBJECT_NAME_NOT_FOUND.\n");
+        else if (Status == STATUS_INVALID_PARAMETER)
+            DPRINT1("QueryPointsFromSymbolicLinkName() returned STATUS_INVALID_PARAMETER!\n");
         FreePool(SymbolicName.Buffer);
     }
     /* If user provided an unique ID */
@@ -1787,6 +1801,7 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
         UniqueId = AllocatePool(MountPoint->UniqueIdLength + sizeof(MOUNTDEV_UNIQUE_ID));
         if (!UniqueId)
         {
+            DPRINT1("MountMgrQueryPoints() returns STATUS_INSUFFICIENT_RESOURCES.\n");
             return STATUS_INSUFFICIENT_RESOURCES;
         }
 
@@ -1795,15 +1810,18 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
                       (PVOID)((ULONG_PTR)MountPoint + MountPoint->UniqueIdOffset),
                       MountPoint->UniqueIdLength);
 
-         /* Query links using it */
-         Status = QueryPointsFromMemory(DeviceExtension, Irp, UniqueId, NULL);
-         FreePool(UniqueId);
+        /* Query links using it */
+        Status = QueryPointsFromMemory(DeviceExtension, Irp, UniqueId, NULL);
+        if (Status == STATUS_INVALID_PARAMETER)
+            DPRINT1("QueryPointsFromMemory() returned STATUS_INVALID_PARAMETER!\n");
+        FreePool(UniqueId);
     }
     /* If caller provided a device name */
     else if (MountPoint->DeviceNameLength != 0)
     {
         if (MountPoint->DeviceNameLength > MAXSHORT)
         {
+            ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
             return STATUS_INVALID_PARAMETER;
         }
 
@@ -1812,6 +1830,7 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
         DeviceName.Buffer = AllocatePool(DeviceName.MaximumLength);
         if (!DeviceName.Buffer)
         {
+            DPRINT1("MountMgrQueryPoints() returns STATUS_INSUFFICIENT_RESOURCES.\n");
             return STATUS_INSUFFICIENT_RESOURCES;
         }
 
@@ -1822,14 +1841,25 @@ MountMgrQueryPoints(IN PDEVICE_EXTENSION DeviceExtension,
 
          /* Query links using it */
         Status = QueryPointsFromMemory(DeviceExtension, Irp, NULL, &DeviceName);
+        if (Status == STATUS_INVALID_PARAMETER)
+            DPRINT1("QueryPointsFromMemory() returned STATUS_INVALID_PARAMETER!\n");
         FreePool(DeviceName.Buffer);
     }
     else
     {
         /* Otherwise, query all links */
         Status = QueryPointsFromMemory(DeviceExtension, Irp, NULL, NULL);
+        if (Status == STATUS_INVALID_PARAMETER)
+            DPRINT1("QueryPointsFromMemory() returned STATUS_INVALID_PARAMETER!\n");
     }
 
+    if (Status == STATUS_SUCCESS)
+        DPRINT1("MountMgrQueryPoints() returns STATUS_SUCCESS.\n");
+    else if (Status == STATUS_INVALID_PARAMETER)
+        ASSERTMSG("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n", FALSE);
+//        DPRINT1("MountMgrQueryPoints() returns STATUS_INVALID_PARAMETER!\n");
+    else
+        DPRINT1("MountMgrQueryPoints() returns 0x%08x%\n", Status);
     return Status;
 }
 
@@ -2690,6 +2720,8 @@ MountMgrDeviceControl(IN PDEVICE_OBJECT DeviceObject,
     NTSTATUS Status, LockStatus;
     PDEVICE_EXTENSION DeviceExtension;
 
+    DPRINT1("MountMgrDeviceControl(%p, %p)\n", DeviceObject, Irp);
+
     Stack = IoGetCurrentIrpStackLocation(Irp);
     DeviceExtension = DeviceObject->DeviceExtension;
 
@@ -2802,12 +2834,19 @@ MountMgrDeviceControl(IN PDEVICE_OBJECT DeviceObject,
     {
         goto Complete;
     }
-
+    DPRINT1("MountMgrDeviceControl() returns STATUS_PENDING.\n");
     return Status;
 
 Complete:
     Irp->IoStatus.Status = Status;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 
+    if (Status == STATUS_SUCCESS)
+        DPRINT1("MountMgrDeviceControl() returns STATUS_SUCCESS.\n");
+    else if (Status == STATUS_INVALID_PARAMETER)
+//        ASSERTMSG("MountMgrDeviceControl() returns STATUS_INVALID_PARAMETER!\n", FALSE);
+        DPRINT1("MountMgrDeviceControl() returns STATUS_INVALID_PARAMETER!\n");
+    else
+        DPRINT1("MountMgrDeviceControl() returns 0x%08x%\n", Status);
     return Status;
 }

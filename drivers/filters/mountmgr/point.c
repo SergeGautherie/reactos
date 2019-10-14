@@ -472,18 +472,24 @@ QueryPointsFromSymbolicLinkName(IN PDEVICE_EXTENSION DeviceExtension,
     PLIST_ENTRY DeviceEntry, SymlinksEntry;
     PSYMLINK_INFORMATION SymlinkInformation;
 
+    DPRINT1("QPFSLN, SymbolicName = %.*S\n", SymbolicName->Length / sizeof(WCHAR), SymbolicName->Buffer);
+
     /* Find device */
     Status = QueryDeviceInformation(SymbolicName, &DeviceName,
                                     NULL, NULL, NULL,
                                     NULL, NULL, NULL);
     if (NT_SUCCESS(Status))
     {
+        DPRINT1("QPFSLN, DeviceName = %.*S\n", DeviceName.Length / sizeof(WCHAR), DeviceName.Buffer);
+
         /* Look for the device information */
         for (DeviceEntry = DeviceExtension->DeviceListHead.Flink;
              DeviceEntry != &(DeviceExtension->DeviceListHead);
              DeviceEntry = DeviceEntry->Flink)
         {
             DeviceInformation = CONTAINING_RECORD(DeviceEntry, DEVICE_INFORMATION, DeviceListEntry);
+
+            DPRINT1("QPFSLN, DeviceInformation->DeviceName = %.*S\n", DeviceInformation->DeviceName.Length / sizeof(WCHAR), DeviceInformation->DeviceName.Buffer);
 
             if (RtlEqualUnicodeString(&DeviceName, &(DeviceInformation->DeviceName), TRUE))
             {
@@ -495,6 +501,7 @@ QueryPointsFromSymbolicLinkName(IN PDEVICE_EXTENSION DeviceExtension,
 
         if (DeviceEntry == &(DeviceExtension->DeviceListHead))
         {
+            DPRINT1("QueryPointsFromSymbolicLinkName() returns STATUS_INVALID_PARAMETER !!!\n");
             return STATUS_INVALID_PARAMETER;
         }
 
@@ -505,6 +512,8 @@ QueryPointsFromSymbolicLinkName(IN PDEVICE_EXTENSION DeviceExtension,
         {
             SymlinkInformation = CONTAINING_RECORD(SymlinksEntry, SYMLINK_INFORMATION, SymbolicLinksListEntry);
 
+            DPRINT1("QPFSLN, SymlinkInformation->Name = %.*S\n", SymlinkInformation->Name.Length / sizeof(WCHAR), SymlinkInformation->Name.Buffer);
+
             if (RtlEqualUnicodeString(SymbolicName, &SymlinkInformation->Name, TRUE))
             {
                 break;
@@ -513,11 +522,14 @@ QueryPointsFromSymbolicLinkName(IN PDEVICE_EXTENSION DeviceExtension,
 
         if (SymlinksEntry == &(DeviceInformation->SymbolicLinksListHead))
         {
+            DPRINT1("QueryPointsFromSymbolicLinkName() returns STATUS_INVALID_PARAMETER !!!\n");
             return STATUS_INVALID_PARAMETER;
         }
     }
     else
     {
+        DPRINT1("QPFSLN, DeviceName = N/A\n");
+
         /* Browse all the devices to try to find the one
          * that has the given link...
          */
@@ -527,11 +539,15 @@ QueryPointsFromSymbolicLinkName(IN PDEVICE_EXTENSION DeviceExtension,
         {
             DeviceInformation = CONTAINING_RECORD(DeviceEntry, DEVICE_INFORMATION, DeviceListEntry);
 
+            DPRINT1("QPFSLN, DeviceInformation->DeviceName = %.*S\n", DeviceInformation->DeviceName.Length / sizeof(WCHAR), DeviceInformation->DeviceName.Buffer);
+
             for (SymlinksEntry = DeviceInformation->SymbolicLinksListHead.Flink;
                  SymlinksEntry != &(DeviceInformation->SymbolicLinksListHead);
                  SymlinksEntry = SymlinksEntry->Flink)
             {
                 SymlinkInformation = CONTAINING_RECORD(SymlinksEntry, SYMLINK_INFORMATION, SymbolicLinksListEntry);
+
+                DPRINT1("QPFSLN, SymlinkInformation->Name = %.*S\n", SymlinkInformation->Name.Length / sizeof(WCHAR), SymlinkInformation->Name.Buffer);
 
                 if (RtlEqualUnicodeString(SymbolicName, &SymlinkInformation->Name, TRUE))
                 {
@@ -548,6 +564,7 @@ QueryPointsFromSymbolicLinkName(IN PDEVICE_EXTENSION DeviceExtension,
         /* Even that way we didn't find, give up! */
         if (DeviceEntry == &(DeviceExtension->DeviceListHead))
         {
+            DPRINT1("QueryPointsFromSymbolicLinkName() returns STATUS_OBJECT_NAME_NOT_FOUND.\n");
             return STATUS_OBJECT_NAME_NOT_FOUND;
         }
     }

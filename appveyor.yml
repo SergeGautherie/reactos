@@ -9,7 +9,7 @@ environment:
 #     - BuildType: "clang-cl"
 #     - BuildType: vssolution
 
-version: Ubuntu1804.reactos.appveyor.{build}
+version: MountMgr.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 25
 clone_folder: c:\reactos-cov
