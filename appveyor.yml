@@ -1,13 +1,16 @@
 image:
-# Regressed :-(    - Visual Studio 2019
   - Previous Visual Studio 2019
+# Regressed :-( 
+  - Visual Studio 2019
+  - Visual Studio 2019 Preview
 
 environment:
   matrix:
  # CORE-16426, Stub/Im-plement new __CxxFrameHandler4(), to compile ROS x64 with VS2019
 #
     - BuildType: "msvc-x64"
-#    - BuildType: "msvc"
+#
+    - BuildType: "msvc"
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
 
@@ -42,11 +45,19 @@ build_script:
 #       ) else (
 #         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 #       )
-  - if "%BuildType%" == "msvc-x64" (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-      ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-      )
+  - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
+        if "%BuildType%" == "msvc-x64" (
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
+        ) else (
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
+        )
+    ) else (
+        if "%BuildType%" == "msvc-x64" (
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+        ) else (
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+        )
+    )
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
