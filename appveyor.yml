@@ -16,6 +16,8 @@ environment:
     - BuildType: "clang-cl"
 #
     - BuildType: vssolution
+#
+    - BuildType: vssolution-x64
 
 version: VS2019.reactos.appveyor.{build}
 skip_branch_with_pr: true
@@ -78,10 +80,24 @@ for:
   matrix:
     only:
       - BuildType: vssolution
+      - BuildType: vssolution-x64
 
   build_script:
     - set PATH=C:\RosCMakeNinja\bin;%PATH%
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+#     - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+    - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
+          if "%BuildType%" == "vssolution-x64" (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
+          ) else (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
+          )
+      ) else (
+          if "%BuildType%" == "vssolution-x64" (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+          ) else (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+          )
+      )
     - cmake --version
     - md C:\ros_build
     - cd C:\ros_build
