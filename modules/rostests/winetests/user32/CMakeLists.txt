@@ -2,10 +2,7 @@
 remove_definitions(-DWINVER=0x502 -D_WIN32_WINNT=0x502)
 add_definitions(-DWINVER=0x602 -D_WIN32_WINNT=0x602)
 
-if(MSVC)
-    # Disable warning C4477 (printf format warnings)
-    add_compile_flags("/wd4477")
-elseif(GCC AND GCC_VERSION VERSION_GREATER 7)
+if(GCC AND GCC_VERSION VERSION_GREATER 7)
     add_compile_flags("-Wno-format-overflow")
 endif()
 
