@@ -12,12 +12,9 @@ environment:
     - BuildType: "msvc-x64"
 #
     - BuildType: "msvc"
-#
-    - BuildType: "clang-cl"
-#
-    - BuildType: vssolution
-#
-    - BuildType: vssolution-x64
+#    - BuildType: "clang-cl"
+#    - BuildType: vssolution
+#    - BuildType: vssolution-x64
 
 version: VS2019.reactos.appveyor.{build}
 skip_branch_with_pr: true
