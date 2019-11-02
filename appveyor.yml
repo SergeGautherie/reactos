@@ -63,7 +63,7 @@ build_script:
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option%
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
