@@ -1,8 +1,9 @@
 image:
 # Regressed :-( + Workaround!
-  - Previous Visual Studio 2019
+#   - Previous Visual Studio 2019
 # Regressed :-( + Workaround!
-#   - Visual Studio 2019
+  - Visual Studio 2019
+    # Very slow (= minutes) to start.
 # Regressed :-( + Workaround!
 #   - Visual Studio 2019 Preview
 
