@@ -1,8 +1,9 @@
 image:
+# Regressed :-( + Workaround!
   - Previous Visual Studio 2019
-# Regressed :-(
+# Regressed :-( + Workaround!
 #   - Visual Studio 2019
-# Regressed :-(
+# Regressed :-( + Workaround!
 #   - Visual Studio 2019 Preview
 
 environment:
@@ -60,6 +61,10 @@ build_script:
             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
         )
     )
+  - where find
+  - which find
+    # https://github.com/appveyor/ci/issues/3147 workaround!
+  - del "C:\Program Files\Git\usr\bin\find.exe"
   - where find
   - which find
   - cmake --version
