@@ -22,6 +22,10 @@ REM Get the source root directory
 set REACTOS_SOURCE_DIR=%~dp0
 
 REM Ensure there's no spaces in the source path
+@echo oN
+echo (L.26) REACTOS_SOURCE_DIR = '%REACTOS_SOURCE_DIR%'
+echo %REACTOS_SOURCE_DIR% | find " "
+echo %REACTOS_SOURCE_DIR%| find " "
 echo %REACTOS_SOURCE_DIR%| find " " > NUL
 if %ERRORLEVEL% == 0 (
     echo. && echo   Your source path contains at least one space.
@@ -30,12 +34,20 @@ if %ERRORLEVEL% == 0 (
     echo   or move your source to a different folder.
     goto quit
 )
+@echo off
 
 REM Set default generator
 set CMAKE_GENERATOR="Ninja"
 set CMAKE_ARCH=
 
 REM Detect presence of cmake
+@echo oN
+echo (L.43) cmake and find...
+cmake --version
+cmake --version 2>&1
+cmake --version 2>&1 | find "cmake version"
+cmd /c cmake --version 2>&1 | find "cmake version"
+@echo off
 cmd /c cmake --version 2>&1 | find "cmake version" > NUL || goto cmake_notfound
 
 REM Detect build environment (MinGW, VS, WDK, ...)
