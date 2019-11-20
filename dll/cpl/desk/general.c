@@ -17,8 +17,6 @@ InitFontSizeList(HWND hWnd)
     int i, ci = 0;
     DWORD dwSize, dwValue, dwType;
 
-    hFontSize = GetDlgItem(hWnd, IDC_FONTSIZE_COMBO);
-
     hInf = SetupOpenInfFile(_T("font.inf"), NULL,
                             INF_STYLE_WIN4, NULL);
     if (hInf == INVALID_HANDLE_VALUE)
@@ -47,7 +45,8 @@ InitFontSizeList(HWND hWnd)
         RegCloseKey(hKey);
     }
 
-    for (;;)
+    hFontSize = GetDlgItem(hWnd, IDC_FONTSIZE_COMBO);
+    do
     {
         TCHAR Buffer[LINE_LEN];
         TCHAR Desc[LINE_LEN];
@@ -68,12 +67,8 @@ InitFontSizeList(HWND hWnd)
             else
                 SendMessage(hFontSize, CB_SETCURSEL, 0, 0);
         }
-
-        if (!SetupFindNextLine(&Context, &Context))
-        {
-            break;
-        }
     }
+    while (SetupFindNextLine(&Context, &Context));
 
     SetupCloseInfFile(hInf);
 }
