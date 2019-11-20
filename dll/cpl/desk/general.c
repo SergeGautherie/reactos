@@ -21,11 +21,17 @@ InitFontSizeList(HWND hWnd)
 
     hInf = SetupOpenInfFile(_T("font.inf"), NULL,
                             INF_STYLE_WIN4, NULL);
-
-    if (hInf != INVALID_HANDLE_VALUE)
+    if (hInf == INVALID_HANDLE_VALUE)
     {
-        if (SetupFindFirstLine(hInf, _T("Font Sizes"), NULL, &Context))
-        {
+        return;
+    }
+
+    if (!SetupFindFirstLine(hInf, _T("Font Sizes"), NULL, &Context))
+    {
+        SetupCloseInfFile(hInf);
+        return;
+    }
+
             if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SYSTEM\\CurrentControlSet\\Hardware Profiles\\Current\\Software\\Fonts"),
                              0, KEY_READ, &hKey) == ERROR_SUCCESS)
             {
@@ -68,8 +74,6 @@ InitFontSizeList(HWND hWnd)
                     break;
                 }
             }
-        }
-    }
 
     SetupCloseInfFile(hInf);
 }
