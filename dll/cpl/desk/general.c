@@ -33,9 +33,8 @@ InitFontSizeList(HWND hWnd)
     if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SYSTEM\\CurrentControlSet\\Hardware Profiles\\Current\\Software\\Fonts"),
                      0, KEY_READ, &hKey) == ERROR_SUCCESS)
     {
-        dwSize = MAX_PATH;
         dwType = REG_DWORD;
-
+        dwSize = sizeof(dwValue);
         if (RegQueryValueEx(hKey, _T("LogPixels"), NULL, &dwType,
                             (LPBYTE)&dwValue, &dwSize) != ERROR_SUCCESS)
         {
