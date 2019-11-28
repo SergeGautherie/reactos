@@ -10,15 +10,14 @@ image:
 environment:
   matrix:
  # CORE-16426, Stub/Im-plement new __CxxFrameHandler4(), to compile ROS x64 with VS2019
-#
-    - BuildType: "msvc-x64"
+#    - BuildType: "msvc-x64"
 #
     - BuildType: "msvc"
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
 #    - BuildType: vssolution-x64
 
-version: VS2019.reactos.appveyor.{build}
+version: BCD-RT.VS2019.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
@@ -75,7 +74,11 @@ build_script:
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+
+after_build:
+  - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
+  - appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
 
 test: off
 deploy: off
