@@ -40,6 +40,7 @@ init:
 #   - dir /s C:\RosCMakeNinja\bin
 
 build_script:
+  - ver
     # With/Old: 16/18 min, Without/Current: 22/26 min :-<
 #   - set PATH=C:\RosCMakeNinja\bin;%PATH%
 #   - if "%BuildType%" == "msvc-x64" (
@@ -69,17 +70,32 @@ build_script:
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
+  - set ROSTESTS_INSTALL=C:\ros_tests
   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
   - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-  - ps: >-
-      & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & ninja rostests 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+#   - ps: >-
+#       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+#   - ps: >-
+#       & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
 
 after_build:
   - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
-  - appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
+#   - appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
 
 test: off
+
+before_test:
+  - cmd: ninja rostests_install
+  - cmd: cd %ROSTESTS_INSTALL%
+  - cmd: 7z a -mx c:\ros_build\ros_tests.7z  kmtest_.exe *_drv.sys
+#   - cmd: 7z a -mx c:\ros_build\ros_tests.7z  rosautotest.exe  kmtest_.exe *_drv.sys
+  - cmd: cd c:\ros_build
+  - cmd: appveyor PushArtifact ros_tests.7z -FileName ros_tests-%SGVER%.7z
+
+test_script:
+  - echo NoOp. Only to enable "test_script", thus "before_test".
+
 deploy: off
 
 for:
