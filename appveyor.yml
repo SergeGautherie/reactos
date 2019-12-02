@@ -17,7 +17,7 @@ environment:
 #    - BuildType: vssolution
 #    - BuildType: vssolution-x64
 
-version: BCD-RT.VS2019.reactos.appveyor.{build}
+version: ShutDown.VS2019.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
@@ -70,15 +70,15 @@ build_script:
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option%
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
-      & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
 
 after_build:
   - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
-  - appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
+  - appveyor PushArtifact bootcd.iso -FileName bootcd-%SGVER%.iso
 
 test: off
 deploy: off
