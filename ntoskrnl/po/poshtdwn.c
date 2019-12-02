@@ -142,47 +142,75 @@ PopProcessShutDownLists(VOID)
     }
 }
 
+DECLSPEC_NORETURN
 VOID
 NTAPI
 PopShutdownHandler(VOID)
 {
-    PUCHAR Logo1, Logo2;
-    ULONG i;
-
     /* Stop all interrupts */
     KeRaiseIrqlToDpcLevel();
     _disable();
 
-    /* Do we have boot video */
+    /* Do we have boot video? */
     if (InbvIsBootDriverInstalled())
     {
+        PUCHAR Logo, Msg;
+
         /* Yes we do, cleanup for shutdown screen */
-        if (!InbvCheckDisplayOwnership()) InbvAcquireDisplayOwnership();
+        if (!InbvCheckDisplayOwnership())
+        {
+            InbvAcquireDisplayOwnership();
+        }
         InbvResetDisplay();
         InbvSolidColorFill(0, 0, 639, 479, 0);
         InbvEnableDisplayString(TRUE);
         InbvSetScrollRegion(0, 0, 639, 479);
 
         /* Display shutdown logo and message */
-        Logo1 = InbvGetResourceAddress(IDB_SHUTDOWN_MSG);
-        Logo2 = InbvGetResourceAddress(IDB_LOGO_DEFAULT);
-        if ((Logo1) && (Logo2))
+
+        Logo = InbvGetResourceAddress(IDB_LOGO_DEFAULT);
+        if (!Logo)
         {
-            /* 16px space between logo and message */
-            InbvBitBlt(Logo1, 213, 354);
-            InbvBitBlt(Logo2, 225, 114);
+            DPRINT1("InbvGetResourceAddress(IDB_LOGO_DEFAULT) failed\n");
+        }
+
+        Msg = InbvGetResourceAddress(IDB_SHUTDOWN_MSG);
+        if (!Msg)
+        {
+            DPRINT1("InbvGetResourceAddress(IDB_SHUTDOWN_MSG) failed\n");
+        }
+
+        /* 16px space between logo and message */
+
+        if (Logo)
+        {
+            InbvBitBlt(Logo, 225, 114);
+        }
+
+        if (Msg)
+        {
+            InbvBitBlt(Msg, 213, 354);
         }
     }
     else
     {
+        UINT i;
+
         /* Do it in text-mode */
-        for (i = 0; i < 25; i++) InbvDisplayString("\r\n");
+        for (i = 0; i < 25; ++i)
+        {
+            InbvDisplayString("\r\n");
+        }
+
         InbvDisplayString("                       ");
         InbvDisplayString("The system may be powered off now.\r\n");
     }
 
     /* Hang the system */
-    for (;;) HalHaltSystem();
+    while (TRUE) // 'noreturn' function.
+    {
+        HalHaltSystem();
+    }
 }
 
 VOID
