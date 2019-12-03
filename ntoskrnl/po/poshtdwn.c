@@ -185,11 +185,13 @@ PopShutdownHandler(VOID)
         if (Logo)
         {
             InbvBitBlt(Logo, 225, 114);
+            DPRINT1("InbvBitBlt(Logo) done\n");
         }
 
         if (Msg)
         {
             InbvBitBlt(Msg, 213, 354);
+            DPRINT1("InbvBitBlt(Msg) done\n");
         }
     }
     else
