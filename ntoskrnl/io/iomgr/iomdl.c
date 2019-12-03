@@ -29,11 +29,24 @@ IoAllocateMdl(IN PVOID VirtualAddress,
     ULONG Flags = 0;
     ULONG Size;
 
+    UNREFERENCED_PARAMETER(ChargeQuota);
+
     /* Make sure we got a valid length */
-    ASSERT(Length != 0);
+    ASSERTMSG("Not required, though suspect!", Length != 0);
+    // FIXME: It seems 0, though suspect(?), should be allowed! As in return a valid MDL!
+/*
+    if (Length == 0)
+    {
+        return NULL;
+    }
+*/
 
     /* Fail if allocation is over 2GB */
-    if (Length & 0x80000000) return NULL;
+    // FIXME? 2 GiB limit is NT6.0, NT5.x has "< 64MiB".
+    if (Length >= 0x80000000)
+    {
+        return NULL;
+    }
 
     /* Calculate the number of pages for the allocation */
     Size = ADDRESS_AND_SIZE_TO_SPAN_PAGES(VirtualAddress, Length);
@@ -72,6 +85,10 @@ IoAllocateMdl(IN PVOID VirtualAddress,
         /* Check if it came with a secondary buffer */
         if (SecondaryBuffer)
         {
+            ASSERT(Irp->MdlAddress != NULL);
+            /* Windows XP - 8 (too), VA=NULL crashes, or VA=nnn hangs */
+            /* FIXME: Should ReactOS dare to return NULL? */
+
             /* Insert the MDL at the end */
             p = Irp->MdlAddress;
             while (p->Next) p = p->Next;
@@ -79,6 +96,9 @@ IoAllocateMdl(IN PVOID VirtualAddress,
         }
         else
         {
+            /* NB: Try it. Disable it if it (wrongly) triggers in real life. */
+            ASSERTMSG("Not required, though suspect?", Irp->MdlAddress == NULL);
+
             /* Otherwise, insert it directly */
             Irp->MdlAddress = Mdl;
         }
@@ -145,6 +165,10 @@ VOID
 NTAPI
 IoFreeMdl(PMDL Mdl)
 {
+    ASSERT(Mdl != NULL);
+    /* Windows XP - 8 (too) crashes */
+    /* FIXME: Should ReactOS dare to return? */
+
     /* Tell Mm to reuse the MDL */
     MmPrepareMdlForReuse(Mdl);
 
