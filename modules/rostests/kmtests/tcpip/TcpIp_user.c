@@ -62,7 +62,7 @@ AcceptProc(
     ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     ok(ListenSocket != INVALID_SOCKET, "socket failed\n");
 
-    ZeroMemory(&ListenAddress, sizeof(ListenAddress));
+    RtlZeroMemory(&ListenAddress, sizeof(ListenAddress));
     ListenAddress.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
     ListenAddress.sin_port = htons(TEST_CONNECT_SERVER_PORT);
     ListenAddress.sin_family = AF_INET;
