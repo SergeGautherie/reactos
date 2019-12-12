@@ -1,11 +1,11 @@
 environment:
   matrix:
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
-#    - BuildType: "clang-cl"
-#    - BuildType: vssolution
+#    - BuildType: "msvc-x64"
+#    - BuildType: "msvc"
+    - BuildType: vssolution
+    - BuildType: "clang-cl"
 
-version: reactos.appveyor.{build}
+version: CORE-15991.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
