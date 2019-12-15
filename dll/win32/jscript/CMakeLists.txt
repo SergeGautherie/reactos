@@ -5,6 +5,7 @@ add_definitions(
 
 include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/wine)
 spec2def(jscript.dll jscript.spec)
+add_bison_files(cc_parser.y parser.y)
 
 list(APPEND SOURCE
     activex.c
@@ -34,9 +35,6 @@ list(APPEND SOURCE
     vbarray.c
     precomp.h)
 
-# cc_parser.tab.c/parser.tab.c have been generated with relative file paths...
-set_source_files_properties(cc_parser.tab.c parser.tab.c PROPERTIES COMPILE_FLAGS "-UREACTOS_SOURCE_DIR -DREACTOS_SOURCE_DIR=\"\\\".\\\"\"")
-
 list(APPEND jscript_rc_deps
     ${CMAKE_CURRENT_SOURCE_DIR}/jscript.rgs
     ${CMAKE_CURRENT_SOURCE_DIR}/jscript_classes.rgs
@@ -47,8 +45,8 @@ set_source_files_properties(rsrc.rc PROPERTIES OBJECT_DEPENDS "${jscript_rc_deps
 
 add_library(jscript MODULE
     ${SOURCE}
-    cc_parser.tab.c
-    parser.tab.c
+    ${CMAKE_CURRENT_BINARY_DIR}/cc_parser.tab.c
+    ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
     rsrc.rc
     ${CMAKE_CURRENT_BINARY_DIR}/jscript.def)
 

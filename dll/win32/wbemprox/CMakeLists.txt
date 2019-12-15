@@ -5,6 +5,7 @@ add_definitions(-D_WIN32_WINNT=0x600)
 add_definitions(-D__WINESRC__)
 include_directories(BEFORE ${REACTOS_SOURCE_DIR}/sdk/include/reactos/wine)
 spec2def(wbemprox.dll wbemprox.spec)
+add_bison_files(wql.y)
 
 list(APPEND SOURCE
     builtin.c
@@ -21,12 +22,9 @@ list(APPEND SOURCE
     wbemlocator.c
     precomp.h)
 
-# wql.tab.c has been generated with relative file paths...
-set_source_files_properties(wql.tab.c PROPERTIES COMPILE_FLAGS "-UREACTOS_SOURCE_DIR -DREACTOS_SOURCE_DIR=\"\\\".\\\"\"")
-
 add_library(wbemprox MODULE
     ${SOURCE}
-    wql.tab.c
+    ${CMAKE_CURRENT_BINARY_DIR}/wql.tab.c
     guid.c
     wbemprox.rc
     ${CMAKE_CURRENT_BINARY_DIR}/wbemprox.def)

@@ -13,8 +13,8 @@ matrix:
   fast_finish: true
 
 init:
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-  - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
+  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinjaFlexBison.7z","C:\RosCMakeNinjaFlexBison.7z")
+  - 7z x C:\RosCMakeNinjaFlexBison.7z -oC:\RosCMakeNinja
   - ps: >-
       If ($env:BuildType -Match "clang-cl") {
         $env:clang_configure_option="clang"
