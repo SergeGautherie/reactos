@@ -10,6 +10,8 @@
 #define NDEBUG
 #include <debug.h>
 
+static USHORT g_NtVersion;
+
 static
 POBJECT_TYPE
 GetObjectType(
@@ -155,9 +157,23 @@ TestObjectTypes(VOID)
 {
     ULONG Index;
 
+    if (skip(g_NtVersion <= 0x0600, "TODO on NT6.1+: GetObjectType() fails\n"))
+    {
+        // NB: ObOpenObjectByName() returns 0xc000000d.
+
+        return;
+    }
+
     ObpTypeObjectType = GetObjectType(L"\\ObjectTypes\\Type");
     if (skip(ObpTypeObjectType != NULL, "No Type object type\n"))
         return;
+
+    if (skip(g_NtVersion != 0x0600, "FIXME on NT6.0: GetObjectType() succeeds, but result is \"wrong\" then OS even crashes!\n"))
+    {
+        // NB: ObpDefaultObject and SeDefaultObjectMethod are NULL, then actual tests fail.
+
+        goto SkipOnNT60;
+    }
 
     ObpDefaultObject = ObpTypeObjectType->DefaultObject;
     ok(ObpDefaultObject != NULL, "No ObpDefaultObject\n");
@@ -192,7 +208,7 @@ TestObjectTypes(VOID)
 
     Index = 1;
     CheckObjectType(Type, ObpTypeObjectType,                    OBT_MAINTAIN_TYPE_LIST | OBT_CUSTOM_KEY,    0x100,  0x020000, 0x020000, 0x020000, 0x0f0001, 0x1f0001);
-        ok_eq_hex(ObpTypeObjectType->Key, TAG('ObjT'));
+    ok_eq_hex(ObpTypeObjectType->Key, TAG('ObjT'));
     CheckObjectType(Directory, ObpDirectoryObjectType,          OBT_CASE_INSENSITIVE | OBT_PAGED_POOL,      0x100,  0x020003, 0x02000c, 0x020003, 0x0f000f, 0x0f000f);
     CheckObjectType(SymbolicLink, ObpSymbolicLinkObjectType,    OBT_CASE_INSENSITIVE | OBT_PAGED_POOL,      0x100,  0x020001, 0x020000, 0x020001, 0x0f0001, 0x0f0001);
     CheckObjectType(Token, *SeTokenObjectType,                   OBT_SECURITY_REQUIRED | OBT_PAGED_POOL,     0x100,  0x020008, 0x0200e0, 0x020000, 0x0f01ff, 0x1f01ff);
@@ -215,8 +231,8 @@ TestObjectTypes(VOID)
     CheckObjectType(Section, MmSectionObjectType,               OBT_PAGED_POOL,                             0x100,  0x020005, 0x020002, 0x020008, 0x0f001f, 0x1f001f);
     CheckObjectType(Key, CmpKeyObjectType,                      OBT_CUSTOM_SECURITY_PROC | OBT_SECURITY_REQUIRED | OBT_PAGED_POOL,
                                                                                                             0x030,  0x020019, 0x020006, 0x020019, 0x0f003f, 0x1f003f);
-    CheckObjectType(Port, LpcPortObjectType,                    OBT_PAGED_POOL,                             0x7b2,  0x020001, 0x010001, 0x000000, 0x1f0001, 0x1f0001);
-    CheckObjectType(WaitablePort, LpcWaitablePortObjectType,    OBT_NO_DEFAULT,                             0x7b2,  0x020001, 0x010001, 0x000000, 0x1f0001, 0x1f0001);
+    CheckObjectType(Port, LpcPortObjectType,                    OBT_PAGED_POOL, g_NtVersion <= 0x0501 ? 0x7b2 : 0xfb2,  0x020001, 0x010001, 0x000000, 0x1f0001, 0x1f0001);
+    CheckObjectType(WaitablePort, LpcWaitablePortObjectType,    OBT_NO_DEFAULT, g_NtVersion <= 0x0501 ? 0x7b2 : 0xfb2,  0x020001, 0x010001, 0x000000, 0x1f0001, 0x1f0001);
     CheckObjectType(Adapter, IoAdapterObjectType,               0,                                          0x100,  0x120089, 0x120116, 0x1200a0, 0x1f01ff, 0x1f01ff);
     CheckObjectType(Controller, IoControllerObjectType,         0,                                          0x100,  0x120089, 0x120116, 0x1200a0, 0x1f01ff, 0x1f01ff);
     CheckObjectType(Device, IoDeviceObjectType,                 OBT_CUSTOM_SECURITY_PROC | OBT_CASE_INSENSITIVE,
@@ -226,10 +242,11 @@ TestObjectTypes(VOID)
     CheckObjectType(File, *IoFileObjectType,                     OBT_NO_DEFAULT | OBT_CUSTOM_SECURITY_PROC | OBT_CASE_INSENSITIVE | OBT_MAINTAIN_HANDLE_COUNT,
                                                                                                             0x130,  0x120089, 0x120116, 0x1200a0, 0x1f01ff, 0x1f01ff);
     CheckObjectType(WmiGuid, WmipGuidObjectType,                OBT_NO_DEFAULT | OBT_CUSTOM_SECURITY_PROC | OBT_SECURITY_REQUIRED,
-                                                                                                            0x100,  0x000001, 0x000002, 0x000010, 0x120fff, 0x1f0fff);
+                                                                                                            0x100,  g_NtVersion <= 0x0501 ? 0x020001 :  0x000001, g_NtVersion <= 0x0501 ? 0x020002 :  0x000002, g_NtVersion <= 0x0501 ? 0x020010 :  0x000010, 0x120fff, 0x1f0fff);
     CheckObjectType(FilterConnectionPort, NULL,                 OBT_NO_DEFAULT | OBT_SECURITY_REQUIRED,     0x100,  0x020001, 0x010001, 0x000000, 0x1f0001, 0x1f0001);
     CheckObjectType(FilterCommunicationPort, NULL,              OBT_NO_DEFAULT,                             0x100,  0x020001, 0x010001, 0x000000, 0x1f0001, 0x1f0001);
 
+SkipOnNT60:
     // exported but not created
     ok_eq_pointer(IoDeviceHandlerObjectType, NULL);
 
@@ -256,5 +273,13 @@ TestObjectTypes(VOID)
 
 START_TEST(ObTypes)
 {
+    RTL_OSVERSIONINFOW osvi;
+
+    RtlZeroMemory(&osvi, sizeof(osvi));
+    osvi.dwOSVersionInfoSize = sizeof(osvi);
+    RtlGetVersion(&osvi);
+    g_NtVersion = osvi.dwMajorVersion << 8 | osvi.dwMinorVersion;
+    trace("g_NtVersion = 0x%04hx\n", g_NtVersion);
+
     TestObjectTypes();
 }
