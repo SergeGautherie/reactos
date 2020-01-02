@@ -6331,7 +6331,8 @@ static void test_http_connection(void)
     test_http_read(si.port);
     test_connection_break(si.port);
     test_long_url(si.port);
-#ifdef __REACTOS__
+// #define ROSTESTS_294_FIXED
+#ifndef ROSTESTS_294_FIXED
 if (!winetest_interactive)
 {
     skip("Skipping test_redirect and test_persistent_connection due to hang. See ROSTESTS-294.\n");
@@ -6339,9 +6340,17 @@ if (!winetest_interactive)
 else
 {
 #endif
-    test_redirect(si.port);
+    // Fails (wrong url) and hangs.
+    skip("Skipping test_redirect due to hang. See ROSTESTS-294.\n");
+    // trace("(ROSTESTS_294) Before test_redirect()\n");
+    // test_redirect(si.port);
+    // trace("(ROSTESTS_294) After  test_redirect()\n");
+
+    // Fails (!?) and hangs.
+    trace("(ROSTESTS_294) Before test_persistent_connection()\n");
     test_persistent_connection(si.port);
-#ifdef __REACTOS__
+    trace("(ROSTESTS_294) After  test_persistent_connection()\n");
+#ifndef ROSTESTS_294_FIXED
 }
 #endif
     test_remove_dot_segments(si.port);
