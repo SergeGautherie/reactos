@@ -4884,7 +4884,10 @@ START_TEST (winhttp)
     test_multi_authentication(si.port);
     test_large_data_authentication(si.port);
     test_bad_header(si.port);
-#ifdef __REACTOS__
+// 
+#define ROSTESTS_350_FIXED
+#ifndef ROSTESTS_350_FIXED
+// ToTest: Unneeded/unwanted on Windows (S03) !!?
     if (!winetest_interactive)
     {
         skip("Skipping tests due to hang. See ROSTESTS-350\n");
@@ -4900,6 +4903,7 @@ START_TEST (winhttp)
         test_basic_request(si.port, NULL, quitW);
     }
 #else
+    trace("(ROSTESTS_350) Before test_multiple_reads()\n");
     test_multiple_reads(si.port);
     test_cookies(si.port);
     test_request_path_escapes(si.port);
@@ -4907,6 +4911,7 @@ START_TEST (winhttp)
 
     /* send the basic request again to shutdown the server thread */
     test_basic_request(si.port, NULL, quitW);
+    trace("(ROSTESTS_350) After  test_basic_request(quitW)\n");
 #endif
 
     WaitForSingleObject(thread, 3000);
