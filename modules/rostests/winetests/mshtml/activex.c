@@ -20,6 +20,10 @@
 
 #include <test_tlb.h>
 
+#ifdef __REACTOS__
+#include <versionhelpers.h>
+#endif
+
 #define DEFINE_EXPECT(func) \
     static BOOL expect_ ## func = FALSE, called_ ## func = FALSE
 
@@ -2423,32 +2427,29 @@ static void test_flash_ax(void)
     /* Set in DoVerb */
     CHECK_CALLED(InPlaceObject_GetWindow);
     CHECK_CALLED(SetObjectRects);
-// 
-#define ROSTESTS_114_FIXED_1_2_3
-#ifndef ROSTESTS_114_FIXED_1_2_3
-// ToTest: Unneeded/unwanted on Windows (S03) !!?
-    if (winetest_interactive)
+// #define ROSTESTS_114_FIXED_1_2_3
+#if defined(__REACTOS__) && !defined(ROSTESTS_114_FIXED_1_2_3)
+    if (IsReactOS() && !winetest_interactive)
     {
-        test_ui_activate();
-        test_container(notif_doc);
-        test_object_elem(notif_doc);
+// Hang or crash?
+        skip("Skipping test_ui_activate, test_container and test_object_elem, due to ?. See ROSTESTS-114.\n");
     }
     else
     {
-        skip("Skipping test_ui_activate(). ROSTESTS-114.\n");
-        skip("Skipping test_container(notif_doc). ROSTESTS-114.\n");
-        skip("Skipping test_object_elem(notif_doc). ROSTESTS-114.\n");
+        trace("(ROSTESTS_114) Before test_ui_activate()\n");
+        test_ui_activate();
+        trace("(ROSTESTS_114) After  test_ui_activate()\n");
+        trace("(ROSTESTS_114) Before test_container()\n");
+        test_container(notif_doc);
+        trace("(ROSTESTS_114) After  test_container()\n");
+        trace("(ROSTESTS_114) Before test_object_elem()\n");
+        test_object_elem(notif_doc);
+        trace("(ROSTESTS_114) After  test_object_elem()\n");
     }
 #else
-    trace("(ROSTESTS_114) Before test_ui_activate()\n");
     test_ui_activate();
-    trace("(ROSTESTS_114) After  test_ui_activate()\n");
-    trace("(ROSTESTS_114) Before test_container()\n");
     test_container(notif_doc);
-    trace("(ROSTESTS_114) After  test_container()\n");
-    trace("(ROSTESTS_114) Before test_object_elem()\n");
     test_object_elem(notif_doc);
-    trace("(ROSTESTS_114) After  test_object_elem()\n");
 #endif
 
     IOleClientSite_AddRef(client_site);
@@ -2568,18 +2569,20 @@ static void test_event_binding(void)
     CHECK_CALLED(FindConnectionPoint);
     CHECK_CALLED(Advise);
 
-// 
-#define ROSTESTS_114_FIXED_4
-#ifndef ROSTESTS_114_FIXED_4
-// ToTest: Unneeded/unwanted on Windows (S03) !!?
-    if (winetest_interactive)
-        test_event_call();
+// #define ROSTESTS_114_FIXED_4
+#if defined(__REACTOS__) && !defined(ROSTESTS_114_FIXED_4)
+    if (IsReactOS() && !winetest_interactive)
+    {
+        skip("Skipping test_event_call. See ROSTESTS-114.\n");
+    }
     else
-        skip("Skipping test_event_call(). ROSTESTS-114.\n");
+    {
+        trace("(ROSTESTS_114) Before test_event_call()\n");
+        test_event_call();
+        trace("(ROSTESTS_114) After  test_event_call()\n");
+    }
 #else
-    trace("(ROSTESTS_114) Before test_event_call()\n");
     test_event_call();
-    trace("(ROSTESTS_114) After  test_event_call()\n");
 #endif
 
     SET_EXPECT(InPlaceDeactivate);

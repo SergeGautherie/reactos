@@ -33,6 +33,10 @@
 
 #include "wine/test.h"
 
+#ifdef __REACTOS__
+#include <versionhelpers.h>
+#endif
+
 /* Undocumented security flags */
 #define _SECURITY_FLAG_CERT_REV_FAILED    0x00800000
 #define _SECURITY_FLAG_CERT_INVALID_CA    0x01000000
@@ -6331,29 +6335,29 @@ static void test_http_connection(void)
     test_http_read(si.port);
     test_connection_break(si.port);
     test_long_url(si.port);
-// 
-#define ROSTESTS_294_FIXED
-#ifndef ROSTESTS_294_FIXED
-// ToTest: Unneeded/unwanted on Windows (S03) !!?
-if (!winetest_interactive)
-{
-    skip("Skipping test_redirect and test_persistent_connection due to hang. See ROSTESTS-294.\n");
-}
-else
-{
-#endif
-    // Fails (wrong url) and hangs.
-    // skip("Skipping test_redirect due to hang. See ROSTESTS-294.\n");
-    trace("(ROSTESTS_294) Before test_redirect()\n");
-    test_redirect(si.port);
-    trace("(ROSTESTS_294) After  test_redirect()\n");
+// #define ROSTESTS_294_FIXED
+#if defined(__REACTOS__) && !defined(ROSTESTS_294_FIXED)
+    if (IsReactOS() && !winetest_interactive)
+    {
+        skip("Skipping test_redirect and test_persistent_connection, due to hang. See ROSTESTS-294.\n");
+    }
+    else
+    {
+        // Fails (wrong url) and hangs.
+        // skip("Skipping test_redirect due to hang. See ROSTESTS-294.\n");
+        trace("(ROSTESTS_294) Before test_redirect()\n");
+        test_redirect(si.port);
+        trace("(ROSTESTS_294) After  test_redirect()\n");
 
-    // Fails (!?) and hangs.
-    trace("(ROSTESTS_294) Before test_persistent_connection()\n");
+        // Fails (!?) and hangs.
+        // skip("Skipping test_persistent_connection due to hang. See ROSTESTS-294.\n");
+        trace("(ROSTESTS_294) Before test_persistent_connection()\n");
+        test_persistent_connection(si.port);
+        trace("(ROSTESTS_294) After  test_persistent_connection()\n");
+    }
+#else
+    test_redirect(si.port);
     test_persistent_connection(si.port);
-    trace("(ROSTESTS_294) After  test_persistent_connection()\n");
-#ifndef ROSTESTS_294_FIXED
-}
 #endif
     test_remove_dot_segments(si.port);
     test_large_content(si.port);
