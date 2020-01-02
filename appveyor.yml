@@ -88,7 +88,12 @@ test: off
 before_test:
   - cmd: ninja rostests_install
   - cmd: cd %ROSTESTS_INSTALL%
-  - cmd: appveyor PushArtifact mshtml_winetest.exe -FileName mshtml_winetest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact mshtml_winetest.exe -FileName mshtml_winetest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact winhttp_winetest.exe -FileName winhttp_winetest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact wininet_winetest.exe -FileName wininet_winetest-%SGVER%.exe
+  - cmd: 7z a -mx c:\ros_build\ros_tests.7z  mshtml_winetest.exe winhttp_winetest.exe wininet_winetest.exe
+  - cmd: cd c:\ros_build
+  - cmd: appveyor PushArtifact ros_tests.7z -FileName ros_tests-%SGVER%.7z
 
 test_script:
   - echo NoOp. Only to enable "test_script", thus "before_test".
