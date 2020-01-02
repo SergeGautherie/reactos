@@ -6331,8 +6331,10 @@ static void test_http_connection(void)
     test_http_read(si.port);
     test_connection_break(si.port);
     test_long_url(si.port);
-// #define ROSTESTS_294_FIXED
+// 
+#define ROSTESTS_294_FIXED
 #ifndef ROSTESTS_294_FIXED
+// ToTest: Unneeded/unwanted on Windows (S03) !!?
 if (!winetest_interactive)
 {
     skip("Skipping test_redirect and test_persistent_connection due to hang. See ROSTESTS-294.\n");
@@ -6341,10 +6343,10 @@ else
 {
 #endif
     // Fails (wrong url) and hangs.
-    skip("Skipping test_redirect due to hang. See ROSTESTS-294.\n");
-    // trace("(ROSTESTS_294) Before test_redirect()\n");
-    // test_redirect(si.port);
-    // trace("(ROSTESTS_294) After  test_redirect()\n");
+    // skip("Skipping test_redirect due to hang. See ROSTESTS-294.\n");
+    trace("(ROSTESTS_294) Before test_redirect()\n");
+    test_redirect(si.port);
+    trace("(ROSTESTS_294) After  test_redirect()\n");
 
     // Fails (!?) and hangs.
     trace("(ROSTESTS_294) Before test_persistent_connection()\n");
