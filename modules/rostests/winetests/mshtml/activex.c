@@ -2423,6 +2423,10 @@ static void test_flash_ax(void)
     /* Set in DoVerb */
     CHECK_CALLED(InPlaceObject_GetWindow);
     CHECK_CALLED(SetObjectRects);
+// 
+#define ROSTESTS_114_FIXED_1_2_3
+#ifndef ROSTESTS_114_FIXED_1_2_3
+// ToTest: Unneeded/unwanted on Windows (S03) !!?
     if (winetest_interactive)
     {
         test_ui_activate();
@@ -2435,6 +2439,17 @@ static void test_flash_ax(void)
         skip("Skipping test_container(notif_doc). ROSTESTS-114.\n");
         skip("Skipping test_object_elem(notif_doc). ROSTESTS-114.\n");
     }
+#else
+    trace("(ROSTESTS_114) Before test_ui_activate()\n");
+    test_ui_activate();
+    trace("(ROSTESTS_114) After  test_ui_activate()\n");
+    trace("(ROSTESTS_114) Before test_container()\n");
+    test_container(notif_doc);
+    trace("(ROSTESTS_114) After  test_container()\n");
+    trace("(ROSTESTS_114) Before test_object_elem()\n");
+    test_object_elem(notif_doc);
+    trace("(ROSTESTS_114) After  test_object_elem()\n");
+#endif
 
     IOleClientSite_AddRef(client_site);
     cs = client_site;
@@ -2553,10 +2568,19 @@ static void test_event_binding(void)
     CHECK_CALLED(FindConnectionPoint);
     CHECK_CALLED(Advise);
 
+// 
+#define ROSTESTS_114_FIXED_4
+#ifndef ROSTESTS_114_FIXED_4
+// ToTest: Unneeded/unwanted on Windows (S03) !!?
     if (winetest_interactive)
         test_event_call();
     else
         skip("Skipping test_event_call(). ROSTESTS-114.\n");
+#else
+    trace("(ROSTESTS_114) Before test_event_call()\n");
+    test_event_call();
+    trace("(ROSTESTS_114) After  test_event_call()\n");
+#endif
 
     SET_EXPECT(InPlaceDeactivate);
     SET_EXPECT(Close);
