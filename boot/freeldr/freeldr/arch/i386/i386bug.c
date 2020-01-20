@@ -62,8 +62,8 @@ i386PrintText(CHAR *pszText)
             continue;
         }
 
-        MachVideoPutChar(*pszText, SCREEN_ATTR, i386_ScreenPosX, i386_ScreenPosY);
-        if (++i386_ScreenPosX >= Width)
+        MachVideoPutChar(*pszText, SCREEN_ATTR, i386_ScreenPosX++, i386_ScreenPosY);
+        if (i386_ScreenPosX >= Width)
         {
             i386_ScreenPosX = 0;
             ++i386_ScreenPosY;
