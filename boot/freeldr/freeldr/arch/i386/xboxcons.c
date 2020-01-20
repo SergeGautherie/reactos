@@ -18,8 +18,8 @@
 
 #include <freeldr.h>
 
-static unsigned CurrentCursorX = 0;
-static unsigned CurrentCursorY = 0;
+static unsigned CurrentCursorX;
+static unsigned CurrentCursorY;
 static unsigned CurrentAttr = 0x0f;
 
 VOID
