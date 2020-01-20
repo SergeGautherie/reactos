@@ -25,7 +25,20 @@ static unsigned CurrentAttr = 0x0f;
 VOID
 XboxConsPutChar(int c)
 {
-    ULONG Width, Unused;
+    ULONG Height, Unused, Width;
+
+    XboxVideoGetDisplaySize(&Width, &Height, &Unused);
+
+    if (CurrentCursorY >= Height)
+    {
+        /* HACK: Check what Windows does. (Ignore character? Scroll the screen?) */
+        XboxVideoPutChar('.', CurrentAttr, Width - 3, Height - 1);
+        XboxVideoPutChar('.', CurrentAttr, Width - 2, Height - 1);
+        XboxVideoPutChar('.', CurrentAttr, Width - 1, Height - 1);
+//          ASSERTMSG("Trying to print text out of screen\n", FALSE);
+//          FIXME("Trying to print text out of screen\n");
+        return;
+    }
 
     if (c == '\r')
     {
@@ -46,13 +59,12 @@ XboxConsPutChar(int c)
         CurrentCursorX++;
     }
 
-    XboxVideoGetDisplaySize(&Width, &Unused, &Unused);
     if (CurrentCursorX >= Width)
     {
         CurrentCursorX = 0;
         CurrentCursorY++;
     }
-    // FIXME: Implement vertical screen scrolling if we are at the end of the screen.
+//    // FIXME: Implement vertical screen scrolling if we are at the end of the screen.
 }
 
 BOOLEAN
