@@ -18,6 +18,7 @@
 
 #include <freeldr.h>
 
+/* TODO: There are no code/functions to (re)set these variables. Odd? */
 static unsigned CurrentCursorX;
 static unsigned CurrentCursorY;
 static unsigned CurrentAttr = 0x0f;
@@ -40,27 +41,34 @@ XboxConsPutChar(int c)
         return;
     }
 
+    /* Special cases: formatting characters, not to be printed as is. */
+    /* TODO: Should any of the 3 special cases call XboxVideoPutChar()? Or print some spaces? */
+    /* TODO: Check what Windows does. */
     if (c == '\r')
     {
         CurrentCursorX = 0;
+        return;
     }
-    else if (c == '\n')
+
+    if (c == '\n')
     {
         CurrentCursorX = 0;
         CurrentCursorY++;
+        return;
     }
-    else if (c == '\t')
+
+    if (c == '\t')
     {
-        CurrentCursorX = (CurrentCursorX + 8) & ~ 7;
+        CurrentCursorX = (CurrentCursorX + 8) & ~7;
     }
     else
     {
-        XboxVideoPutChar(c, CurrentAttr, CurrentCursorX, CurrentCursorY);
-        CurrentCursorX++;
+        XboxVideoPutChar(c, CurrentAttr, CurrentCursorX++, CurrentCursorY);
     }
 
     if (CurrentCursorX >= Width)
     {
+        /* HACK: Check what Windows does. (Ignore character? '\r'?) */
         CurrentCursorX = 0;
         CurrentCursorY++;
     }
