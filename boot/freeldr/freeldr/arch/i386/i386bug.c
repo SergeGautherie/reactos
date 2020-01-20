@@ -2,6 +2,7 @@
 #include <freeldr.h>
 
 #include <debug.h>
+DBG_DEFAULT_CHANNEL(UI);
 
 typedef struct _FRAME
 {
@@ -63,8 +64,12 @@ i386PrintText(CHAR *pszText)
         }
 
         MachVideoPutChar(*pszText, SCREEN_ATTR, i386_ScreenPosX++, i386_ScreenPosY);
+
         if (i386_ScreenPosX >= Width)
         {
+            /* HACK: Check what Windows does. (Ignore character? '\r'?) */
+            TRACE("i386_ScreenPosX (%lu) >= Width (%lu). Resetting to next line (i386_ScreenPosY + 1 = %lu)\n",
+                  i386_ScreenPosX, Width, i386_ScreenPosY + 1);
             i386_ScreenPosX = 0;
             ++i386_ScreenPosY;
         }
