@@ -457,8 +457,7 @@ BOOL CTrayClockWnd::ResetTime()
         KillTimer(ID_TRAYCLOCK_TIMER);
         IsTimerEnabled = FALSE;
     }
-
-    if (IsInitTimerEnabled)
+    else if (IsInitTimerEnabled)
     {
         KillTimer(ID_TRAYCLOCK_TIMER_INIT);
     }
@@ -468,9 +467,6 @@ BOOL CTrayClockWnd::ResetTime()
     /* Set the new timer */
     Ret = SetTimer(ID_TRAYCLOCK_TIMER_INIT, uiDueTime, NULL) != 0;
     IsInitTimerEnabled = Ret;
-
-    /* Update the time */
-    Update();
 
     return Ret;
 }
@@ -505,9 +501,6 @@ VOID CTrayClockWnd::CalibrateTimer()
             uiWait2. */
         Ret = SetTimer(ID_TRAYCLOCK_TIMER, uiWait2, NULL) != 0;
         IsTimerEnabled = Ret;
-
-        /* Update the time */
-        Update();
     }
     else
     {
@@ -515,6 +508,9 @@ VOID CTrayClockWnd::CalibrateTimer()
             minute/second ends. */
         ResetTime();
     }
+
+    /* Update the time */
+    Update();
 }
 
 LRESULT CTrayClockWnd::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -524,8 +520,7 @@ LRESULT CTrayClockWnd::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
     {
         KillTimer(ID_TRAYCLOCK_TIMER);
     }
-
-    if (IsInitTimerEnabled)
+    else if (IsInitTimerEnabled)
     {
         KillTimer(ID_TRAYCLOCK_TIMER_INIT);
     }
@@ -673,7 +668,14 @@ LRESULT CTrayClockWnd::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 
     m_tooltip.AddTool(&ti);
 
-    ResetTime();
+    if (!g_TaskbarSettings.sr.HideClock)
+    {
+        ResetTime();
+    }
+
+    /* Update the time */
+    Update();
+
     return TRUE;
 }
 
@@ -707,6 +709,25 @@ LRESULT CTrayClockWnd::OnTaskbarSettingsChanged(UINT uMsg, WPARAM wParam, LPARAM
         g_TaskbarSettings.sr.HideClock = newSettings->sr.HideClock;
         ShowWindow(g_TaskbarSettings.sr.HideClock ? SW_HIDE : SW_SHOW);
         bRealign = TRUE;
+
+        if (g_TaskbarSettings.sr.HideClock)
+        {
+            /* Disable all timers */
+            if (IsTimerEnabled)
+            {
+                KillTimer(ID_TRAYCLOCK_TIMER);
+                IsTimerEnabled = FALSE;
+            }
+            else if (IsInitTimerEnabled)
+            {
+                KillTimer(ID_TRAYCLOCK_TIMER_INIT);
+                IsInitTimerEnabled = FALSE;
+            }
+        }
+        else
+        {
+            ResetTime();
+        }
     }
 
     if (bRealign)
