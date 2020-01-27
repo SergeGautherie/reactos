@@ -9,7 +9,8 @@ image:
 environment:
   matrix:
  # CORE-16426, Stub/Im-plement new __CxxFrameHandler4(), to compile ROS x64 with VS2019
-#    - BuildType: "msvc-x64"
+#
+    - BuildType: "msvc-x64"
 #
     - BuildType: "msvc"
 #    - BuildType: "clang-cl"
