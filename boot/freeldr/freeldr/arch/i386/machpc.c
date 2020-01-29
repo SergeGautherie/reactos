@@ -841,7 +841,7 @@ DetectParallelPorts(PCONFIGURATION_COMPONENT_DATA BusKey)
     TRACE("DetectParallelPorts() done\n");
 }
 
-// static
+static
 BOOLEAN
 DetectKeyboardDevice(VOID)
 {
@@ -921,8 +921,8 @@ DetectKeyboardPeripheral(PCONFIGURATION_COMPONENT_DATA ControllerKey)
     ULONG Size;
     REGS Regs;
 
-    /* HACK: don't call DetectKeyboardDevice() as it fails in Qemu 0.8.2
-    if (DetectKeyboardDevice()) */
+    /* NB: don't call DetectKeyboardDevice() as it fails in Qemu 0.8.2 */
+    if (DetectKeyboardDevice())
     {
         /* Set 'Configuration Data' value */
         Size = sizeof(CM_PARTIAL_RESOURCE_LIST) +
