@@ -58,7 +58,7 @@ for:
     - cd ~/projects/ros_workdir
     - wget https://svn.reactos.org/amine/RosBEBinFull.tar.gz
     - tar -xzf RosBEBinFull.tar.gz
-    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh && ninja -k0 && ninja livecd' > tmp_build_file
+    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh && ninja -k0 && ninja bootcd' > tmp_build_file
 #     - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && ninja -k0 && ninja bootcdregtest' > tmp_build_file
 # ("git clone" explicite fctne, mais) Necessaire pour "git checkout" implicite.
     - cd $APPVEYOR_BUILD_FOLDER
@@ -71,9 +71,9 @@ for:
     - export BuildType=gcc
     - export SGVER=$APPVEYOR_BUILD_NUMBER-${APPVEYOR_REPO_COMMIT:0:7}-$BuildType
     - cd ~/projects/ros_workdir/Build
-    - 7za a -mx livecd.7z livecd.iso
+    - 7za a -mx bootcd.7z bootcd.iso
 # 
-    - appveyor PushArtifact livecd.7z -FileName livecd-$SGVER.7z
+    - appveyor PushArtifact bootcd.7z -FileName bootcd-$SGVER.7z
 -
   matrix:
     only:
