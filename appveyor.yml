@@ -64,7 +64,7 @@ for:
     - tar -xzf RosBEBinFull.tar.gz
       # 'cmake version 3.16.2' (But RosBE uses its own 3.2.1-ReactOS !!?)
     # - cmake --version
-    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh && ninja -k0 && ninja bootcd' > tmp_build_file
+    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSAPPS=1 && ninja -k0' > tmp_build_file
 #     - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && ninja -k0 && ninja bootcdregtest' > tmp_build_file
 # ("git clone" explicite fctne, mais) Necessaire pour "git checkout" implicite.
     - cd $APPVEYOR_BUILD_FOLDER
