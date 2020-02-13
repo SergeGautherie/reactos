@@ -52,14 +52,6 @@ for:
       - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu1604
       - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
 
-# Are these AppVeyor feature, or someone's local settings?
-# To test...
-#   environment:
-#     GCC_VERSION: 8
-# And maybe, for VS:
-#   environment:
-#       VC_VERSION: 16
-
   clone_folder: ~/projects/ros_workdir/reactos-cov
 
   init:
@@ -70,48 +62,6 @@ for:
     - cd ~/projects/ros_workdir
     - wget https://svn.reactos.org/amine/RosBEBinFull.tar.gz
     - tar -xzf RosBEBinFull.tar.gz
-      # Try to use default GCC (7.4.0, 8.3.0, 9.1.0), instead of ROSBE GCC (4.7.2).
-    - mv RosBEBinFull/i386 RosBEBinFull/i386__gcc472
-      # Without: '/usr/bin/ld: unrecognized option '--major-image-version''
-      # Try to use default CMake (3.16.2), instead of ROSBE CMake (3.2.1-ReactOS).
-      # Works but does not help.
-    # - mv RosBEBinFull/bin/cmake RosBEBinFull/bin/cmake__v321R
-      # '... where: command not found'
-    # - where i686-w64-mingw32-gcc
-    # - where i686-w64-mingw32-g++
-      # 'Command exited with code 1' == not found :-/
-    # - which i686-w64-mingw32-gcc
-    # - which i686-w64-mingw32-g++
-      # (gcc-5/g++-5), (6 !??), 7, 8 and 9 as alternatives.
-    # - ls -la /usr/bin
-      # 'gcc (Ubuntu 8.3.0-16ubuntu3~16.04) 8.3.0'
-      # 'g++ (Ubuntu 8.3.0-16ubuntu3~16.04) 8.3.0'
-      # 'gcc (Ubuntu 8.3.0-6ubuntu1~18.04.1) 8.3.0'
-      # 'g++ (Ubuntu 8.3.0-6ubuntu1~18.04.1) 8.3.0'
-    - sudo update-alternatives --set gcc /usr/bin/gcc-8
-      # 'update-alternatives: error: no alternatives for g++'
-    # - sudo update-alternatives --set g++ /usr/bin/g++-8
-      # '/usr/bin/gcc'
-    # - which gcc
-      # '/usr/bin/g++'
-    # - which g++
-      # Work but do not help.
-    # - export CC=/usr/bin/gcc-8
-    # - export CXX=/usr/bin/g++-8
-    # - export CMAKE_C_COMPILER=/usr/bin/gcc-8
-    # - export CMAKE_CXX_COMPILER=/usr/bin/g++-8
-      # Does not help.
-    # - export MINGW_TOOLCHAIN_PREFIX=x86_64-linux-gnu-
-    # - env
-      # Defaults:
-      # 'gcc (Ubuntu 5.5.0-12ubuntu1~16.04) 5.5.0 20171010'
-      # 'gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0'
-    - gcc --version
-      # Defaults:
-      # 'g++ (Ubuntu 5.5.0-12ubuntu1~16.04) 5.5.0 20171010'
-      # 'g++ (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0'
-    - g++ --version
-    # !? - ln RosBEBinFull/i386 ...
       # 'cmake version 3.16.2' (But RosBE uses its own 3.2.1-ReactOS !!?)
     # - cmake --version
     - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh && ninja -k0 && ninja bootcd' > tmp_build_file
