@@ -87,7 +87,6 @@ add_compile_flags("/wd4244 /wd4290 /wd4800 /wd4200 /wd4214")
 add_compile_flags("/wd4018")
 
 # The following warnings are treated as errors:
-# - C4005: 'identifier' : macro redefinition
 # - C4013: implicit function declaration
 # - C4020: too many actual parameters
 # - C4022: pointer type mismatch for parameter
@@ -110,7 +109,7 @@ add_compile_flags("/wd4018")
 # - C4700: uninitialized variable usage
 # - C4715: 'function': not all control paths return a value
 # - C4716: function must return a value
-add_compile_flags("/we4005 /we4013 /we4020 /we4022 /we4028 /we4047 /we4098 /we4101 /we4113 /we4129 /we4133 /we4163 /we4229 /we4311 /we4312 /we4313 /we4477 /we4603 /we4700 /we4715 /we4716")
+add_compile_flags("/we4013 /we4020 /we4022 /we4028 /we4047 /we4098 /we4101 /we4113 /we4129 /we4133 /we4163 /we4229 /we4311 /we4312 /we4313 /we4477 /we4603 /we4700 /we4715 /we4716")
 
 # - C4189: local variable initialized but not referenced
 # Not in Release mode and not with MSVC 2010
