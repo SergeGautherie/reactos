@@ -29,7 +29,10 @@
 
 typedef LONG NTSTATUS;	/* same as in ntdef.h / winternl.h */
 
+#if defined(__REACTOS__)
+// && !defined(_MSC_VER)
 #define UNW_FLAG_NHANDLER 0x00
+#endif
 
 typedef union
 {
