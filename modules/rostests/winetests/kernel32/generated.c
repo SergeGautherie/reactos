@@ -5,9 +5,18 @@
  * Unit tests for data structure packing
  */
 
+#ifndef __REACTOS__
 #define WINVER 0x0501
 #define _WIN32_IE 0x0501
 #define _WIN32_WINNT 0x0501
+#else
+#undef WINVER
+#define WINVER 0x0502
+#undef _WIN32_IE
+#define _WIN32_IE 0x0600
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0502
+#endif
 
 #define WINE_NOWINSOCK
 
