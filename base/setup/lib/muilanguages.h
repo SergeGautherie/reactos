@@ -1,5 +1,6 @@
 #pragma once
 
+// Includes, sorted by code.
 #ifdef LANGUAGE_AF_ZA
     #include "lang/af-ZA.h"
 #endif
@@ -418,6 +419,7 @@
     #include "lang/zu-ZU.h"
 #endif
 
+// Data list, sorted by Language Name.
 const MUI_LANGUAGE MUILanguageList[] =
 {
   /* Lang ID,     ANSI CP, OEM CP, MAC CP,   Language Name, GeoID, Fonts, KB Layouts */
@@ -427,53 +429,53 @@ const MUI_LANGUAGE MUILanguageList[] =
 #ifdef LANGUAGE_SQ_AL
     {L"0000041C", L"1250", L"852", L"10029", L"Albanian (Albania)", L"6", LatinFonts, sqALLayouts},
 #endif
-#ifdef LANGUAGE_AR_SA
-    {L"00000401", L"1256", L"720", L"10004", L"Arabic (Saudi Arabia)", L"205", UnicodeFonts, arSALayouts},
-#endif
-#ifdef LANGUAGE_AR_IQ
-    {L"00000801", L"1256", L"720", L"10004", L"Arabic (Iraq)", L"121", UnicodeFonts, arIQLayouts},
-#endif
-#ifdef LANGUAGE_AR_EG
-    {L"00000C01", L"1256", L"720", L"10004", L"Arabic (Egypt)", L"67", UnicodeFonts, arEGLayouts},
-#endif
-#ifdef LANGUAGE_AR_LY
-    {L"00001001", L"1256", L"720", L"10004", L"Arabic (Libya)", L"148", UnicodeFonts, arLYLayouts},
-#endif
 #ifdef LANGUAGE_AR_DZ
     {L"00001401", L"1256", L"720", L"10004", L"Arabic (Algeria)", L"4", UnicodeFonts, arDZLayouts},
-#endif
-#ifdef LANGUAGE_AR_MA
-    {L"00001801", L"1256", L"720", L"10004", L"Arabic (Morocco)", L"149", UnicodeFonts, arMALayouts},
-#endif
-#ifdef LANGUAGE_AR_TN
-    {L"00001C01", L"1256", L"720", L"10004", L"Arabic (Tunisia)", L"234", UnicodeFonts, arTNLayouts},
-#endif
-#ifdef LANGUAGE_AR_OM
-    {L"00002001", L"1256", L"720", L"10004", L"Arabic (Oman)", L"164", UnicodeFonts, arOMLayouts},
-#endif
-#ifdef LANGUAGE_AR_YE
-    {L"00002401", L"1256", L"720", L"10004", L"Arabic (Yemen)", L"261", UnicodeFonts, arYELayouts},
-#endif
-#ifdef LANGUAGE_AR_SY
-    {L"00002801", L"1256", L"720", L"10004", L"Arabic (Syria)", L"222", UnicodeFonts, arSYLayouts},
-#endif
-#ifdef LANGUAGE_AR_JO
-    {L"00002C01", L"1256", L"720", L"10004", L"Arabic (Jordan)", L"126", UnicodeFonts, arJOLayouts},
-#endif
-#ifdef LANGUAGE_AR_LB
-    {L"00003001", L"1256", L"720", L"10004", L"Arabic (Lebanon)", L"139", UnicodeFonts, arLBLayouts},
-#endif
-#ifdef LANGUAGE_AR_KW
-    {L"00003401", L"1256", L"720", L"10004", L"Arabic (Kuwait)", L"136", UnicodeFonts, arKWLayouts},
-#endif
-#ifdef LANGUAGE_AR_AE
-    {L"00003801", L"1256", L"720", L"10004", L"Arabic (U.A.E.)", L"224", UnicodeFonts, arAELayouts},
 #endif
 #ifdef LANGUAGE_AR_BH
     {L"00003C01", L"1256", L"720", L"10004", L"Arabic (Bahrain)", L"17", UnicodeFonts, arBHLayouts},
 #endif
+#ifdef LANGUAGE_AR_EG
+    {L"00000C01", L"1256", L"720", L"10004", L"Arabic (Egypt)", L"67", UnicodeFonts, arEGLayouts},
+#endif
+#ifdef LANGUAGE_AR_IQ
+    {L"00000801", L"1256", L"720", L"10004", L"Arabic (Iraq)", L"121", UnicodeFonts, arIQLayouts},
+#endif
+#ifdef LANGUAGE_AR_JO
+    {L"00002C01", L"1256", L"720", L"10004", L"Arabic (Jordan)", L"126", UnicodeFonts, arJOLayouts},
+#endif
+#ifdef LANGUAGE_AR_KW
+    {L"00003401", L"1256", L"720", L"10004", L"Arabic (Kuwait)", L"136", UnicodeFonts, arKWLayouts},
+#endif
+#ifdef LANGUAGE_AR_LB
+    {L"00003001", L"1256", L"720", L"10004", L"Arabic (Lebanon)", L"139", UnicodeFonts, arLBLayouts},
+#endif
+#ifdef LANGUAGE_AR_LY
+    {L"00001001", L"1256", L"720", L"10004", L"Arabic (Libya)", L"148", UnicodeFonts, arLYLayouts},
+#endif
+#ifdef LANGUAGE_AR_MA
+    {L"00001801", L"1256", L"720", L"10004", L"Arabic (Morocco)", L"149", UnicodeFonts, arMALayouts},
+#endif
+#ifdef LANGUAGE_AR_OM
+    {L"00002001", L"1256", L"720", L"10004", L"Arabic (Oman)", L"164", UnicodeFonts, arOMLayouts},
+#endif
 #ifdef LANGUAGE_AR_QA
     {L"00004001", L"1256", L"720", L"10004", L"Arabic (Qatar)", L"197", UnicodeFonts, arQALayouts},
+#endif
+#ifdef LANGUAGE_AR_SA
+    {L"00000401", L"1256", L"720", L"10004", L"Arabic (Saudi Arabia)", L"205", UnicodeFonts, arSALayouts},
+#endif
+#ifdef LANGUAGE_AR_SY
+    {L"00002801", L"1256", L"720", L"10004", L"Arabic (Syria)", L"222", UnicodeFonts, arSYLayouts},
+#endif
+#ifdef LANGUAGE_AR_TN
+    {L"00001C01", L"1256", L"720", L"10004", L"Arabic (Tunisia)", L"234", UnicodeFonts, arTNLayouts},
+#endif
+#ifdef LANGUAGE_AR_AE
+    {L"00003801", L"1256", L"720", L"10004", L"Arabic (U.A.E.)", L"224", UnicodeFonts, arAELayouts},
+#endif
+#ifdef LANGUAGE_AR_YE
+    {L"00002401", L"1256", L"720", L"10004", L"Arabic (Yemen)", L"261", UnicodeFonts, arYELayouts},
 #endif
 #ifdef LANGUAGE_HY_AM
     {L"0000042B", L"0", L"1", L"2", L"Armenian", L"7", UnicodeFonts, hyAMLayouts},

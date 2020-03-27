@@ -446,7 +446,7 @@ Default = "XT-, AT- or extended keyboard (83-105 keys)"
 00000843 = "Uzbek (Cyrillic)"
 ;0000042A = "Vietnamese"
 00000490 = "Walon"
-;00000435 = "Zulu"
+00000435 = "Zulu TxtSetup"
 
 
 [KeyboardLayout]
