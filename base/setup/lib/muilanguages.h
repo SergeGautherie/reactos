@@ -306,6 +306,9 @@
 #ifdef LANGUAGE_MY_MM
     #include "lang/my-MM.h"
 #endif
+#ifdef LANGUAGE_NB_NO
+    #include "lang/nb-NO.h"
+#endif
 #ifdef LANGUAGE_NL_BE
     #include "lang/nl-BE.h"
 #endif
@@ -314,6 +317,9 @@
 #endif
 #ifdef LANGUAGE_NN_NO
     #include "lang/nn-NO.h"
+#endif
+#ifdef LANGUAGE_NO_NO
+    #include "lang/no-NO.h"
 #endif
 #ifdef LANGUAGE_PA_IN
     #include "lang/pa-IN.h"
@@ -408,6 +414,9 @@
 #ifdef LANGUAGE_ZH_TW
     #include "lang/zh-TW.h"
 #endif
+#ifdef LANGUAGE_ZU_ZU
+    #include "lang/zu-ZU.h"
+#endif
 
 const MUI_LANGUAGE MUILanguageList[] =
 {
@@ -471,8 +480,6 @@ const MUI_LANGUAGE MUILanguageList[] =
 #endif
 #ifdef LANGUAGE_AZ_AZ
     {L"0000082C", L"1251", L"866", L"10007", L"Azeri (Cyrillic)", L"5", CyrillicFonts, azAZLayouts},
-#endif
-#ifdef LANGUAGE_AZ_AZ
     {L"0000042C", L"1254", L"857", L"10081", L"Azeri (Latin)", L"5", LatinFonts, azAZLayouts},
 #endif
 #ifdef LANGUAGE_EU_ES
@@ -688,6 +695,9 @@ const MUI_LANGUAGE MUILanguageList[] =
 #ifdef LANGUAGE_MN_MN
     {L"00000450", L"1251", L"866", L"10007", L"Mongolian (Mongolia)", L"154", CyrillicFonts, mnMNLayouts},
 #endif
+#ifdef LANGUAGE_NO_NO
+/**/    {L"00000414", L"1252", L"850", L"10000", L"Norwegian", L"177", LatinFonts, nbNOLayouts},
+#endif
 #ifdef LANGUAGE_NB_NO
     {L"00000414", L"1252", L"850", L"10000", L"Norwegian (Bokmal)", L"177", LatinFonts, nbNOLayouts},
 #endif
@@ -720,8 +730,6 @@ const MUI_LANGUAGE MUILanguageList[] =
 #endif
 #ifdef LANGUAGE_SR_SP
     {L"00000C1A", L"1251", L"855", L"10007", L"Serbian (Cyrillic)", L"271", CyrillicFonts, srSPLayouts},
-#endif
-#ifdef LANGUAGE_SR_SP
     {L"0000081A", L"1250", L"852", L"10029", L"Serbian (Latin)", L"271", LatinFonts, srSPLayouts},
 #endif
 #ifdef LANGUAGE_SK_SK
@@ -731,13 +739,11 @@ const MUI_LANGUAGE MUILanguageList[] =
     {L"00000424", L"1250", L"852", L"10029", L"Slovenian", L"212", LatinFonts, slSILayouts},
 #endif
 #ifdef LANGUAGE_ES_ES
+    {L"00000C0A", L"1252", L"850", L"10000", L"Spanish (International Sort)", L"217", LatinFonts, esESLayouts},
     {L"0000040A", L"1252", L"850", L"10000", L"Spanish (Traditional Sort)", L"217", LatinFonts, esESLayouts},
 #endif
 #ifdef LANGUAGE_ES_MX
     {L"0000080A", L"1252", L"850", L"10000", L"Spanish (Mexico)", L"166", LatinFonts, esMXLayouts},
-#endif
-#ifdef LANGUAGE_ES_ES
-    {L"00000C0A", L"1252", L"850", L"10000", L"Spanish (International Sort)", L"217", LatinFonts, esESLayouts},
 #endif
 #ifdef LANGUAGE_ES_GT
     {L"0000100A", L"1252", L"850", L"10000", L"Spanish (Guatemala)", L"99", LatinFonts, esGTLayouts},
@@ -824,10 +830,8 @@ const MUI_LANGUAGE MUILanguageList[] =
     {L"00000420", L"1256", L"720", L"10004", L"Urdu", L"190", UnicodeFonts, urPKLayouts},
 #endif
 #ifdef LANGUAGE_UZ_UZ
-    {L"00000443", L"1254", L"857", L"10029", L"Uzbek (Latin)", L"247", LatinFonts, uzUZLayouts},
-#endif
-#ifdef LANGUAGE_UZ_UZ
     {L"00000843", L"1251", L"866", L"10007", L"Uzbek (Cyrillic)", L"247", CyrillicFonts, uzUZLayouts},
+    {L"00000443", L"1254", L"857", L"10029", L"Uzbek (Latin)", L"247", LatinFonts, uzUZLayouts},
 #endif
 #ifdef LANGUAGE_VI_VN
     {L"0000042A", L"1258", L"1258", L"10000", L"Vietnamese", L"251", UnicodeFonts, viVNLayouts},
