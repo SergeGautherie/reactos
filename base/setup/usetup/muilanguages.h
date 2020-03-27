@@ -308,6 +308,9 @@
 // #ifdef LANGUAGE_MY_MM
     // #include "lang/my-MM.h"
 // #endif
+// #ifdef LANGUAGE_NB_NO
+    // #include "lang/nb-NO.h"
+// #endif
 // #ifdef LANGUAGE_NL_BE
     // #include "lang/nl-BE.h"
 // #endif
@@ -316,6 +319,9 @@
 #endif
 // #ifdef LANGUAGE_NN_NO
     // #include "lang/nn-NO.h"
+// #endif
+// #ifdef LANGUAGE_NO_NO
+    // #include "lang/no-NO.h"
 // #endif
 // #ifdef LANGUAGE_PA_IN
     // #include "lang/pa-IN.h"
@@ -410,6 +416,9 @@
 // #ifdef LANGUAGE_ZH_TW
     // #include "lang/zh-TW.h"
 // #endif
+// #ifdef LANGUAGE_ZU_ZU
+    // #include "lang/zu-ZU.h"
+// #endif
 
 const MUI_LANGUAGE_RESOURCE ResourceList[] =
 {
@@ -473,8 +482,6 @@ const MUI_LANGUAGE_RESOURCE ResourceList[] =
 #endif
 #ifdef LANGUAGE_AZ_AZ
     {L"0000082C", L"Azeri (Cyrillic)", enUSPages, enUSErrorEntries, enUSStrings},
-#endif
-#ifdef LANGUAGE_AZ_AZ
     {L"0000042C", L"Azeri (Latin)", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
 #ifdef LANGUAGE_EU_ES
@@ -690,6 +697,9 @@ const MUI_LANGUAGE_RESOURCE ResourceList[] =
 #ifdef LANGUAGE_MN_MN
     {L"00000450", L"Mongolian (Mongolia)", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
+#ifdef LANGUAGE_NO_NO
+    {L"00000414", L"Norwegian", enUSPages, enUSErrorEntries, enUSStrings},
+#endif
 #ifdef LANGUAGE_NB_NO
     {L"00000414", L"Norwegian (Bokmal)", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
@@ -722,8 +732,6 @@ const MUI_LANGUAGE_RESOURCE ResourceList[] =
 #endif
 #ifdef LANGUAGE_SR_SP
     {L"00000C1A", L"Serbian (Cyrillic)", enUSPages, enUSErrorEntries, enUSStrings},
-#endif
-#ifdef LANGUAGE_SR_SP
     {L"0000081A", L"Serbian (Latin)", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
 #ifdef LANGUAGE_SK_SK
@@ -733,13 +741,11 @@ const MUI_LANGUAGE_RESOURCE ResourceList[] =
     {L"00000424", L"Slovenian", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
 #ifdef LANGUAGE_ES_ES
+    {L"00000C0A", L"Spanish (International Sort)", esESPages, esESErrorEntries, esESStrings},
     {L"0000040A", L"Spanish (Traditional Sort)", esESPages, esESErrorEntries, esESStrings},
 #endif
 #ifdef LANGUAGE_ES_MX
     {L"0000080A", L"Spanish (Mexico)", esESPages, esESErrorEntries, esESStrings},
-#endif
-#ifdef LANGUAGE_ES_ES
-    {L"00000C0A", L"Spanish (International Sort)", esESPages, esESErrorEntries, esESStrings},
 #endif
 #ifdef LANGUAGE_ES_GT
     {L"0000100A", L"Spanish (Guatemala)", esESPages, esESErrorEntries, esESStrings},
@@ -826,10 +832,8 @@ const MUI_LANGUAGE_RESOURCE ResourceList[] =
     {L"00000420", L"Urdu", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
 #ifdef LANGUAGE_UZ_UZ
-    {L"00000443", L"Uzbek (Latin)", enUSPages, enUSErrorEntries, enUSStrings},
-#endif
-#ifdef LANGUAGE_UZ_UZ
     {L"00000843", L"Uzbek (Cyrillic)", enUSPages, enUSErrorEntries, enUSStrings},
+    {L"00000443", L"Uzbek (Latin)", enUSPages, enUSErrorEntries, enUSStrings},
 #endif
 #ifdef LANGUAGE_VI_VN
     {L"0000042A", L"Vietnamese", enUSPages, enUSErrorEntries, enUSStrings},
