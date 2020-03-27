@@ -177,8 +177,8 @@
 #include "nls/frb.nls"   /* 0x080c  LANG_FRENCH, SUBLANG_FRENCH_BELGIAN */
 #pragma code_page(1252)
 #include "nls/frc.nls"   /* 0x0c0c  LANG_FRENCH, SUBLANG_FRENCH_CANADIAN */
-#pragma code_page(1252)
-#include "nls/frs.nls"   /* 0x100c  LANG_FRENCH, SUBLANG_FRENCH_SWISS */
+// #pragma code_page(1252)
+// #include "nls/frs.nls"   /* 0x100c  LANG_FRENCH, SUBLANG_FRENCH_SWISS */
 #pragma code_page(1252)
 #include "nls/frl.nls"   /* 0x140c  LANG_FRENCH, SUBLANG_FRENCH_LUXEMBOURG */
 #pragma code_page(1252)
