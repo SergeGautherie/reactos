@@ -590,17 +590,17 @@ const MUI_LANGUAGE MUILanguageList[] =
 #ifdef LANGUAGE_FI_FI
     {L"0000040B", L"1252", L"850", L"10000", L"Finnish", L"77", LatinFonts, fiFILayouts},
 #endif
-#ifdef LANGUAGE_FR_CA
-    {L"00000C0C", L"1252", L"850", L"10000", L"French (Canada)", L"39", LatinFonts, frCALayouts},
-#endif
-#ifdef LANGUAGE_FR_FR
-    {L"0000040C", L"1252", L"850", L"10000", L"French (France)", L"84", LatinFonts, frFRLayouts},
-#endif
 #ifdef LANGUAGE_FR_BE
     {L"0000080C", L"1252", L"850", L"10000", L"French (Belgium)", L"21", LatinFonts, frBELayouts},
 #endif
+#ifdef LANGUAGE_FR_CA
+    {L"00000C0C", L"1252", L"850", L"10000", L"French (Canada)", L"39", LatinFonts, frCALayouts},
+#endif
 #ifdef LANGUAGE_FR_CH
     {L"0000100C", L"1252", L"850", L"10000", L"French (Switzerland)", L"223", LatinFonts, frCHLayouts},
+#endif
+#ifdef LANGUAGE_FR_FR
+    {L"0000040C", L"1252", L"850", L"10000", L"French (France) SetupLib", L"84", LatinFonts, frFRLayouts},
 #endif
 #ifdef LANGUAGE_FR_LU
     {L"0000140C", L"1252", L"850", L"10000", L"French (Luxembourg)", L"147", LatinFonts, frLULayouts},

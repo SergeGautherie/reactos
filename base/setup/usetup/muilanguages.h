@@ -645,7 +645,7 @@ const MUI_LANGUAGE_RESOURCE ResourceList[] =
     {L"0000100C", L"French (Switzerland)", frFRPages, frFRErrorEntries, frFRStrings},
 #endif
 #ifdef LANGUAGE_FR_FR
-    {L"0000040C", L"French (France)", frFRPages, frFRErrorEntries, frFRStrings},
+    {L"0000040C", L"French (France) USetup", frFRPages, frFRErrorEntries, frFRStrings},
 #endif
 #ifdef LANGUAGE_FR_LU
     {L"0000140C", L"French (Luxembourg)", frFRPages, frFRErrorEntries, frFRStrings},
