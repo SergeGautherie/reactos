@@ -56,7 +56,7 @@ for:
     - cd ~/projects/ros_workdir
     - wget https://svn.reactos.org/amine/RosBEBinFull.tar.gz
     - tar -xzf RosBEBinFull.tar.gz
-    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh && ninja -k0 && ninja bootcd && ninja livecd' > tmp_build_file
+    - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSAPPS=1 && ninja -k0 && ninja bootcd && ninja livecd' > tmp_build_file
 #     - echo 'mkdir ../Build && cd ../Build && $APPVEYOR_BUILD_FOLDER/configure.sh -DENABLE_ROSTESTS=1 && ninja -k0 && ninja bootcdregtest' > tmp_build_file
 # ("git clone" explicite fctne, mais) Necessaire pour "git checkout" implicite.
     - cd $APPVEYOR_BUILD_FOLDER
