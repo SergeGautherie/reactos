@@ -565,6 +565,7 @@ if($options->winetest) {
                 print OUT "\n";
 
                 print OUT "use strict;\n";
+                print OUT "use warnings 'all';\n";
                 print OUT "\n";
 
                 print OUT "require Exporter;\n";
