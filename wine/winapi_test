@@ -70,6 +70,7 @@ my @files;
     }
 }
 
+# Try it...
 if (0) {
     my $file = "tests.dat";
 
