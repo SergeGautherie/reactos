@@ -20,9 +20,9 @@ build_script:
   - move /Y C:\reactos-unused\wine\* tools\winapi\
 #   - dir include
 # BadSyntax  - del dlls\*\tests\generated.c
-  - perl ./tools/winapi/winapi_test -?
+#   - perl ./tools/winapi/winapi_test --help
   - perl ./tools/winapi/winapi_test
-  - perl ./tools/winapi/winapi_test -v
+#   - perl ./tools/winapi/winapi_test --verbose
    # Vraiment trop (10 MiB, first 1min30s is truncated)
 #   - perl ./tools/winapi/winapi_test -d
    # 10 'C:\wine-project\wine\dlls\*\tests'
