@@ -807,6 +807,8 @@ sub output_test_pack($$$$) {
 				  $type_name, $type);
 	    output_test_pack_fields(\*OUT, $type_name2type, \%type_name2optional, \%type_name2optional_fields, 
 				    $type_name, $type, 0);
+            print OUT "\n";
+            print OUT "    ok(TRUE, \"\");\n";
 	    print OUT "}\n";
 	    print OUT "\n";
 	}
