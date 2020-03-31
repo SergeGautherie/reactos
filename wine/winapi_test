@@ -877,7 +877,7 @@ foreach my $header (sort(keys(%{$file2types{$pointer_size}}))) {
 	my $type_name = $_type_name;
 
 	if (!exists($type_names_used{$type_name})) {
-	    $output->write("$type_name: type not used\n");
+#         $output->write("$type_name: type not used\n");
 	}
     }
 }
@@ -893,6 +893,6 @@ foreach my $type_name (sort(keys(%type_names_used))) {
     }
 
     if (!$found) {
-	$output->write("$type_name: type not used\n");
+#         $output->write("$type_name: type not used\n");
     }
 }
