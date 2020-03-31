@@ -665,6 +665,7 @@ sub output_test_pack_type($$$$$$) {
 		if (defined($type2)) {
 		    return &$dereference_type($type2);
 		} else {
+# To investigate: 2 HICON + 2 HINSTANCE; 2 LPVOID...
 		    $output->write("$type_name2: warning: type not found\n");
 		    return undef;
 		}
