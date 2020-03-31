@@ -1,75 +1,42 @@
-image:
-# Regressed :-(    - Visual Studio 2019
-  - Previous Visual Studio 2019
+image: Visual Studio 2019
 
-environment:
-  matrix:
- # CORE-16426, Stub/Im-plement new __CxxFrameHandler4(), to compile ROS x64 with VS2019
-#
-    - BuildType: "msvc-x64"
-#    - BuildType: "msvc"
-#    - BuildType: "clang-cl"
-#    - BuildType: vssolution
-
-version: VS2019.reactos.appveyor.{build}
+version: VS2019.wine.appveyor.{build}
 skip_branch_with_pr: true
-clone_depth: 5
-clone_folder: c:\reactos-cov
+clone_depth: 1
+clone_folder: C:\reactos-unused
 
 init:
-#   - dir "C:\Program Files (x86)"
-#   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\vcvarsall.bat" /s
-#   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC" /s
-#   - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-  - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
-  - ps: >-
-      If ($env:BuildType -Match "clang-cl") {
-        $env:clang_configure_option="clang"
-        (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
-        7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
-      } Else {
-        $env:clang_configure_option=""
-      }
-      # cmake.exe, cmcldeps.exe, ninja.exe.
-#   - dir /s C:\RosCMakeNinja\bin
+#    # 'C:\Program Files\Git\usr\bin\perl.exe'.
+#   - where perl
+#    # '/usr/bin/perl'.
+#   - which perl
+#    # 'This is perl 5, version 26, subversion 2 (v5.26.2) built for x86_64-msys-thread-multi'.
+#   - perl -v
+  - md C:\wine-project
+  - git clone --depth 1 git://source.winehq.org/git/wine.git C:\wine-project\wine
 
 build_script:
-    # With/Old: 16/18 min, Without/Current: 22/26 min :-<
-  - set PATH=C:\RosCMakeNinja\bin;%PATH%
-#   - if "%BuildType%" == "msvc-x64" (
-#         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
-#       ) else (
-#         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-#       )
-  - if "%BuildType%" == "msvc-x64" (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-      ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-      )
-  - cmake --version
-  - md c:\ros_build
-  - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option%
-  - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-  - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - cd C:\wine-project\wine
+  - move /Y C:\reactos-unused\wine\* tools\winapi\
+#   - dir include
+# BadSyntax  - del dlls\*\tests\generated.c
+  - perl ./tools/winapi/winapi_test -?
+  - perl ./tools/winapi/winapi_test
+  - perl ./tools/winapi/winapi_test -v
+   # Vraiment trop (10 MiB, first 1min30s is truncated)
+#   - perl ./tools/winapi/winapi_test -d
+   # 10 'C:\wine-project\wine\dlls\*\tests'
+#   - dir /s "*generated.c*"
 
 test: off
+# Comment compiler (seulement) les generated.c? (Pour vérifier que corrects.)
+
+before_test:
+  - 7z a -mx generated-c.7z  dlls\*\tests\generated.c
+#   -FileName ros_tests-%SGVER%.7z
+  - appveyor PushArtifact generated-c.7z
+
+test_script:
+  - echo NoOp. Only to enable "test_script", thus "before_test".
+
 deploy: off
-
-for:
--
-  matrix:
-    only:
-      - BuildType: vssolution
-
-  build_script:
-    - set PATH=C:\RosCMakeNinja\bin;%PATH%
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-    - cmake --version
-    - md C:\ros_build
-    - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1
-    - msbuild /verbosity:quiet /target:bootcd REACTOS.sln
