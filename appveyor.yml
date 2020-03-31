@@ -18,6 +18,8 @@ init:
 build_script:
   - cd C:\wine-project\wine
   - move /Y C:\reactos-unused\wine\* tools\winapi\
+# Comment utiliser widl pour generer les 2 .h manquants ?
+# Et pourquoi utilise-t-il les .h de Wine au lieu de ceux du MS SDK ?
 #   - dir include
 # BadSyntax  - del dlls\*\tests\generated.c
 #   - perl ./tools/winapi/winapi_test --help
