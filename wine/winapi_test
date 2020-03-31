@@ -390,11 +390,11 @@ foreach my $file (@files) {
 	    $progress .= ": line $line of $max_line";
 	}
 
-	$output->progress($progress);
-	$output->prefix($prefix);
+# 	$output->progress($progress);
+# 	$output->prefix($prefix);
     };
 
-    &$update_output();
+#     &$update_output();
 
     my $found_line = sub {
 	$line = shift;
