@@ -21,7 +21,7 @@ package config;
 use strict;
 use warnings 'all';
 
-use setup qw($current_dir $wine_dir $winapi_dir);
+use setup qw($current_dir $wine_dir);
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 require Exporter;
@@ -37,11 +37,9 @@ require Exporter;
     get_makefile_in_files
     get_spec_files
 );
-@EXPORT_OK = qw(
-    $current_dir $wine_dir $winapi_dir
-);
+@EXPORT_OK = qw();
 
-use vars qw($current_dir $wine_dir $winapi_dir);
+use vars qw($current_dir $wine_dir);
 
 use output qw($output);
 

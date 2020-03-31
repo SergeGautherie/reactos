@@ -27,9 +27,9 @@ BEGIN {
 
 use config qw(
     file_type files_skip files_filter
-    $current_dir $wine_dir $winapi_dir
 );
 use output qw($output);
+use setup qw($wine_dir $winapi_dir);
 use winapi_test_options qw($options);
 
 if($options->progress) {

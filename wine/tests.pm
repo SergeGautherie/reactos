@@ -29,10 +29,11 @@ require Exporter;
 @EXPORT_OK = qw($tests);
 
 use vars qw($tests);
+use vars qw($winapi_dir);
 
-use config qw($current_dir $wine_dir $winapi_dir);
 use options qw($options);
 use output qw($output);
+use setup qw($winapi_dir);
 
 sub import(@) {
     $Exporter::ExportLevel++;
