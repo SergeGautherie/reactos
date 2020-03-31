@@ -23,7 +23,7 @@ build_script:
 #   - dir include
 # BadSyntax  - del dlls\*\tests\generated.c
 #   - perl ./tools/winapi/winapi_test --help
-  - perl ./tools/winapi/winapi_test
+  - perl ./tools/winapi/winapi_test --no-progress
 #   - perl ./tools/winapi/winapi_test --verbose
    # Vraiment trop (10 MiB, first 1min30s is truncated)
 #   - perl ./tools/winapi/winapi_test -d
