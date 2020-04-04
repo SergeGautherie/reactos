@@ -178,6 +178,9 @@ StatusDialogProc(
         case WM_INITDIALOG:
         {
             PDISPLAYSTATUSMSG msg = (PDISPLAYSTATUSMSG)lParam;
+
+            ERR("[CORE-16775] StatusDialogProc uMsg=WM_INITDIALOG, msg=%p\n", msg);
+
             if (!msg)
                 return FALSE;
 
@@ -201,12 +204,16 @@ StatusDialogProc(
 
                 /* Get the animation bar control */
                 pDlgData->hWndBarCtrl = GetDlgItem(hwndDlg, IDC_BAR);
+
+                ERR("[CORE-16775] StatusDialogProc uMsg=WM_INITDIALOG, msg=%p, SetTimer()\n", msg);
             }
             return TRUE;
         }
 
         case WM_TIMER:
         {
+            ERR("[CORE-16775] StatusDialogProc uMsg=WM_TIMER\n");
+
             if (pDlgData && pDlgData->hBarBitmap)
             {
                 /*
@@ -216,6 +223,8 @@ StatusDialogProc(
                 pDlgData->BarCounter = (pDlgData->BarCounter + 7) % pDlgData->BarWidth;
                 InvalidateRect(pDlgData->hWndBarCtrl, NULL, FALSE);
                 UpdateWindow(pDlgData->hWndBarCtrl);
+
+                ERR("[CORE-16775] StatusDialogProc uMsg=WM_TIMER, UpdateWindow()\n");
             }
             return TRUE;
         }
@@ -223,6 +232,8 @@ StatusDialogProc(
         case WM_DRAWITEM:
         {
             LPDRAWITEMSTRUCT lpDis = (LPDRAWITEMSTRUCT)lParam;
+
+            ERR("[CORE-16775] StatusDialogProc uMsg=WM_DRAWITEM, lpDis=%p\n", lpDis);
 
             if (lpDis->CtlID != IDC_BAR)
             {
@@ -244,6 +255,8 @@ StatusDialogProc(
                 SelectObject(hdcMem, hOld);
                 DeleteDC(hdcMem);
 
+                ERR("[CORE-16775] StatusDialogProc uMsg=WM_DRAWITEM, lpDis=%p, BitBlt()\n", lpDis);
+
                 return TRUE;
             }
             return FALSE;
@@ -251,9 +264,15 @@ StatusDialogProc(
 
         case WM_DESTROY:
         {
+            ASSERTMSG("[CORE-16775] StatusDialogProc uMsg=WM_DESTROY\n", FALSE);
+
+            ERR("[CORE-16775] StatusDialogProc uMsg=WM_DESTROY\n");
+
             if (pDlgData && pDlgData->hBarBitmap)
             {
                 KillTimer(hwndDlg, IDT_BAR);
+
+                ERR("[CORE-16775] StatusDialogProc uMsg=WM_DESTROY, KillTimer()\n");
             }
             DlgData_Destroy(pDlgData);
             return TRUE;
