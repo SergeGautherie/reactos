@@ -308,7 +308,7 @@ sub _find_align_kind_size($) {
 	$align = $align2;
     } elsif (defined($align2) && !$align_kludge_reported{$_}) {
 	$align_kludge_reported{$_} = 1;
-# 	$output->write("$type_name: type needn't be kludged\n");
+	$output->write("$type_name: type needn't be kludged\n");
     }
 
     if (!defined($align)) {
@@ -324,7 +324,7 @@ sub _find_align_kind_size($) {
 	$size = $size2;
     } elsif (defined($size2) && !$size_kludge_reported{$_}) {
 	$size_kludge_reported{$_} = 1;
-# 	$output->write("$type_name: type needn't be kludged\n");
+	$output->write("$type_name: type needn't be kludged\n");
     }
 
     return ($align, $kind, $size);
