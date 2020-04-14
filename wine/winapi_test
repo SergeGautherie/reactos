@@ -63,6 +63,7 @@ my @files;
                 if (!$files{$header})
                 {
 		    push @files, "include/$header";
+# Is it required?
                     $files{$header} = 1;
                 }
             }
@@ -130,6 +131,7 @@ if (0) {
 }
 
 
+# file2types{active_pointer_size}{header_file_path}{type_name} = computed_type.
 my %file2types;
 
 my $progress_output;
@@ -139,6 +141,8 @@ my $progress_max = scalar(@files);
 ########################################################################
 # find_type
 
+my @type_names;
+my %type_name2optional;
 my %type_name2type;
 
 my %defines = (
@@ -357,6 +361,7 @@ sub find_count($) {
 foreach my $file (@files) {
   $progress_current++;
   foreach my $ptr (4, 8) {
+# No 'my' here? Assumed correct, but when/how is it restored (if needed?)?
     $pointer_size = $ptr;
 
     {
@@ -635,6 +640,7 @@ sub output_test_pack_type($$$$$$) {
 	print OUT "    /* $type_name */\n";
     }
 
+# Try to split align and size??
     if (!scalar(keys(%$optional_fields)) && defined($type_align) && defined($type_size)) {
 	print OUT "    TEST_TYPE_SIZE   ($type_name, $type_size)\n";
 	print OUT "    TEST_TYPE_ALIGN  ($type_name, $type_align)\n";
@@ -763,9 +769,8 @@ sub output_test_pack($$$$) {
     $output->prefix("$test_dir: $test: ");
 
     my @headers = $tests->get_section($test_dir, $test, "header");
-    my @type_names = $tests->get_section($test_dir, $test, "type");
+    @type_names = $tests->get_section($test_dir, $test, "type");
 
-    my %type_name2optional;
     my %type_name2optional_fields;
 
     foreach my $_type_name (@type_names) {
@@ -838,6 +843,7 @@ sub output_file($$$$) {
             output_test_pack(\*OUT, $test_dir, $test, \%type_names_used2);
             print OUT "#else /* _WIN64 */\n\n";
             $pointer_size = 4;
+# NB: type_names_used2 will be identically updated, never mind. Do check that, for safety?
             output_test_pack(\*OUT, $test_dir, $test, \%type_names_used2);
             print OUT "#endif /* _WIN64 */\n\n";
 	} else {
@@ -864,30 +870,84 @@ sub output_file($$$$) {
 ########################################################################
 # main
 
+# Should type_names_used too have a ptr key, as file2types has!?
+# Current code assumed that both 4 and 8 are either skipped or generated!
+# type_names_used{type_name} = status. -1=skipped (has '!' in tests.dat), 1=generated.
 my %type_names_used = ();
 
 my @test_dirs = $tests->get_test_dirs();
 foreach my $test_dir (@test_dirs) {
     my $file = "$wine_dir/$test_dir/generated.c";
+    $output->prefix("$file: ");
+    $output->write("replacing it...\n");
     replace_file($file, \&output_file, $test_dir, \@tests, \%type_names_used);
 }
 
-foreach my $header (sort(keys(%{$file2types{$pointer_size}}))) {
-    $output->prefix("$header: ");
-    my $type_name2type = $file2types{$pointer_size}{$header};
-    foreach my $_type_name (sort(keys(%$type_name2type))) {
-	my $type_name = $_type_name;
+# use Data::Dumper;
 
-	if (!exists($type_names_used{$type_name})) {
-#         $output->write("$type_name: type not used\n");
-	}
+$output->prefix("");
+$output->write("consistency checks, loop 1...\n");
+$output->prefix("$winapi_dir/tests.dat: ");
+foreach my $type_name (sort(@type_names)) {
+    if (!($type_name =~ /^!/) &&
+        !exists($type_names_used{$type_name})) {
+        $output->write("ps=$pointer_size, $type_name: type not generated  (Requested in tests.dat. Add a missing header?)\n");
     }
 }
 
+$output->prefix("");
+$output->write("consistency checks, loop 2...\n");
+# A premiere vue, resultat identique pour les 2...
+# foreach my $ptr (4, 8) {
+#   my $pointer_size = $ptr;
+foreach my $header (sort(keys(%{$file2types{$pointer_size}}))) {
+    $output->prefix("ps=$pointer_size, $header: ");
+    my $type_name2type = $file2types{$pointer_size}{$header};
+    foreach my $_type_name (sort(keys(%$type_name2type))) {
+# Is this "alias" really needed? (And elsewhere too...)
+	my $type_name = $_type_name;
+
+	if (!exists($type_names_used{$type_name})) {
+#            $output->write("$type_name: type not used (Present in this .h. Add it to tests.dat?)\n");
+	}
+    }
+}
+# } # foreach my $ptr (4, 8) {
+
+$output->prefix("");
+$output->write("consistency checks, loop 3...\n");
 $output->prefix("$winapi_dir/tests.dat: ");
+
+# my @k1;
+# # 2 sizes :-)
+# @k1 = sort(keys %file2types);
+# print 'sg1 ', Dumper(@k1);
+# # 5 headers :-)
+# @k1 = sort(keys %{$file2types{4}});
+# print 'sg2 ', Dumper(@k1);
+# # 2 names...
+# @k1 = sort(keys %{$file2types{4}{'include/rpcndr.h'}});
+# print 'sg3 ', Dumper(@k1);
+
+# A premiere vue, resultat identique pour les 2...
+# foreach my $ptr (4, 8) {
+#   my $pointer_size = $ptr;
+# '8 HASH(0x600486810) 4 HASH(0x6004349a8)' :-(
+# $output->write("[SG0] @{[%file2types]}\n");
+## needs my $h?  $output->write("[SG0] $_ $h{$_}\n") for (keys %h);
+# "ok": print Dumper(\%file2types);
 foreach my $type_name (sort(keys(%type_names_used))) {
+#    $output->write("[SG1] $type_name\n");
     my $found = 0;
     foreach my $header (sort(keys(%{$file2types{$pointer_size}}))) {
+#    $output->write("[SG2] $type_name, $header\n");
+#    my @k2 = sort(keys %{$type_name2type});
+#    print 'sgD2 ', Dumper(@k2);
+#    my @k2 = keys %type_name2type;
+#    print Dumper(@k2);
+#    print keys %type_name2type;
+# le global:     $output->write("[SG3g] $type_name, $header, @{[%type_name2type]}\n");
+# le local :     $output->write("[SG3l] $type_name, $header, @{[%{$type_name2type}]}\n");
         if (exists($file2types{$pointer_size}{$header}{$type_name})) {
             $found = 1;
             last;
@@ -895,6 +955,14 @@ foreach my $type_name (sort(keys(%type_names_used))) {
     }
 
     if (!$found) {
-#         $output->write("$type_name: type not used\n");
+# Qu'est-ce? Comment est-ce possible ?
+# Example: XMIT_ROUTINE_QUINTUPLE, tests.dat, rpcndr.h, rpcrt4/tests/generated.c.
+# Il ne trouve ni celui-ci ni aucun autre :-<
+        $output->write("ps=$pointer_size, $type_name: type not used  (??)\n");
     }
+#     else
+#     {
+#         $output->write("ps=$pointer_size, $type_name: type found\n");
+#     }
 }
+# } # foreach my $ptr (4, 8) {
