@@ -769,7 +769,7 @@ sub output_test_pack($$$$) {
     $output->prefix("$test_dir: $test: ");
 
     my @headers = $tests->get_section($test_dir, $test, "header");
-    @type_names = $tests->get_section($test_dir, $test, "type");
+    @type_names = sort($tests->get_section($test_dir, $test, "type"));
 
     my %type_name2optional_fields;
 
@@ -888,7 +888,7 @@ foreach my $test_dir (@test_dirs) {
 $output->prefix("");
 $output->write("consistency checks, loop 1...\n");
 $output->prefix("$winapi_dir/tests.dat: ");
-foreach my $type_name (sort(@type_names)) {
+foreach my $type_name (@type_names) {
     if (!($type_name =~ /^!/) &&
         !exists($type_names_used{$type_name})) {
         $output->write("ps=$pointer_size, $type_name: type not generated  (Requested in tests.dat. Add a missing header?)\n");
