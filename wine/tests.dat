@@ -1252,7 +1252,7 @@ DLLGETVERSIONPROC
 DLLVERSIONINFO
 DLLVERSIONINFO2
 HUSKEY
-IQueryAssociations
+!IQueryAssociations  # type not generated : interface.!.
 PHUSKEY
 
 %%%dlls/urlmon/tests
