@@ -1,0 +1,2 @@
+# Override ReactOS (mostly CRLF) settings.
+* text eol=lf
