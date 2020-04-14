@@ -16,7 +16,15 @@ init:
   - git clone --depth 1 git://source.winehq.org/git/wine.git C:\wine-project\wine
 
 build_script:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
   - cd C:\wine-project\wine
+  - cd include
+#   - midl /o urlmon.h /win32 /I. /I..\include /D __WINESRC__ /D _UCRT urlmon.idl
+  - midl /win32 /I. /D __WINESRC__ /D _UCRT shtypes.idl
+  - midl /win32 /I. /D __WINESRC__ /D _UCRT urlmon.idl
+  - midl /win32 /I. /D __WINESRC__ /D _UCRT wtypes.idl
+#   - dir urlmon.* wtypes.*
+  - cd ..
   - move /Y C:\reactos-unused\wine\* tools\winapi\
 # Comment utiliser widl pour generer les 2 .h manquants ?
 # Et pourquoi utilise-t-il les .h de Wine au lieu de ceux du MS SDK ?
@@ -34,7 +42,7 @@ test: off
 # Comment compiler (seulement) les generated.c? (Pour vérifier que corrects.)
 
 before_test:
-  - 7z a -mx generated-c.7z  dlls\*\tests\generated.c
+  - 7z a -mx generated-c.7z  dlls\*\tests\generated.c include\shtypes.h include\urlmon.h include\wtypes.h
 #   -FileName ros_tests-%SGVER%.7z
   - appveyor PushArtifact generated-c.7z
 
