@@ -888,6 +888,17 @@ $output->write("consistency checks, loop 2...\n");
 # A premiere vue, resultat identique pour les 2...
 # foreach my $ptr (4, 8) {
 #   my $pointer_size = $ptr;
+$output->write("[SG] Disabled, while running tests individually!\n");
+# ok gdi32
+# ok kernel32
+# -- ntdll
+# -- rpcrt4
+# pb shell32
+# -- shlwapi
+# ok urlmon
+# ok user32
+# -- wininet
+# ok winmm
 foreach my $header (sort(keys(%{$file2types{$pointer_size}}))) {
     $output->prefix("ps=$pointer_size, $header: ");
     my $type_name2type = $file2types{$pointer_size}{$header};
@@ -896,6 +907,8 @@ foreach my $header (sort(keys(%{$file2types{$pointer_size}}))) {
 	my $type_name = $_type_name;
 
 	if (!exists($type_names_used{$type_name})) {
+# A n'activer que globalement, car certains header (de base) communs.!.
+# Par contre, tester (sans) chaque "test" séparemment, puis tous ensemble.
 #            $output->write("$type_name: type not used (Present in this .h. Add it to tests.dat?)\n");
 	}
     }
