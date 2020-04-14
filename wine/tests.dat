@@ -653,8 +653,8 @@ CCHAR
 CHAR
 COLORREF
 !CONTEXT                # Architecture dependent
-DATE
-DOUBLE
+!DATE  # type not generated
+!DOUBLE  # type not generated
 DWORD
 DWORD32
 DWORD64
@@ -745,7 +745,7 @@ LPPOINT
 LPRECT
 LPRECTL
 LPSIZE
-LPTOP_LEVEL_EXCEPTION_FILTER
+!LPTOP_LEVEL_EXCEPTION_FILTER  # type not generated
 LRESULT
 LUID
 LUID_AND_ATTRIBUTES
@@ -857,7 +857,7 @@ PSZ
 PTOKEN_GROUPS
 PTOKEN_PRIVILEGES
 PTOKEN_USER
-PTOP_LEVEL_EXCEPTION_FILTER
+!PTOP_LEVEL_EXCEPTION_FILTER  # type not generated
 PULARGE_INTEGER
 PVECTORED_EXCEPTION_HANDLER
 PVOID
@@ -915,10 +915,10 @@ WAITORTIMERCALLBACKFUNC
 WCHAR
 WORD
 WPARAM
-__int16
-__int32
-__int64
-__int8
+!__int16  # type not generated
+!__int32  # type not generated
+!__int64  # type not generated
+!__int8  # type not generated
 
 %%%dlls/rpcrt4/tests
 
