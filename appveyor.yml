@@ -6,18 +6,22 @@ clone_depth: 1
 clone_folder: C:\reactos-unused
 
 init:
-#    # 'C:\Program Files\Git\usr\bin\perl.exe'.
-#   - where perl
-#    # '/usr/bin/perl'.
-#   - which perl
-#    # 'This is perl 5, version 26, subversion 2 (v5.26.2) built for x86_64-msys-thread-multi'.
-#   - perl -v
-  - md C:\wine-project
-  - git clone --depth 1 git://source.winehq.org/git/wine.git C:\wine-project\wine
+  # - PATH
+   # 'C:\Program Files\Git\usr\bin\perl.exe'.
+   # 'C:\Strawberry\perl\bin\perl.exe'
+  # - where perl
+   # '/usr/bin/perl'.
+  # - which perl
+   # 'This is perl 5, version 26, subversion 2 (v5.26.2) built for x86_64-msys-thread-multi'.
+  # - perl -v
+   # 'This is perl 5, version 30, subversion 2 (v5.30.2) built for MSWin32-x64-multi-thread'.
+  # - C:\Strawberry\perl\bin\perl -v
+  - md C:\projects\wine
+  - git clone --depth 1 git://source.winehq.org/git/wine.git C:\projects\wine\wine-git
 
 build_script:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-  - cd C:\wine-project\wine
+  - cd C:\projects\wine\wine-git
   - cd include
 #   - midl /o urlmon.h /win32 /I. /I..\include /D __WINESRC__ /D _UCRT urlmon.idl
   - midl /win32 /I. /D __WINESRC__ /D _UCRT shtypes.idl
@@ -30,12 +34,13 @@ build_script:
 # Et pourquoi utilise-t-il les .h de Wine au lieu de ceux du MS SDK ?
 #   - dir include
 # BadSyntax  - del dlls\*\tests\generated.c
+  - PATH=C:\Strawberry\perl\bin;%PATH%
 #   - perl ./tools/winapi/winapi_test --help
   - perl ./tools/winapi/winapi_test --no-progress
 #   - perl ./tools/winapi/winapi_test --verbose
    # Vraiment trop (10 MiB, first 1min30s is truncated)
 #   - perl ./tools/winapi/winapi_test -d
-   # 10 'C:\wine-project\wine\dlls\*\tests'
+   # 10 'C:\projects\wine\wine-git\dlls\*\tests'
 #   - dir /s "*generated.c*"
 
 test: off
