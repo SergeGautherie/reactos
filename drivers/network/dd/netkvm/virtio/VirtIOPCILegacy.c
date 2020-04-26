@@ -49,7 +49,11 @@
 /////////////////////////////////////////////////////////////////////////////////////
 void vio_legacy_dump_registers(VirtIODevice *vdev)
 {
+#ifndef __REACTOS__
+    DPrintf(5, ("%s\n", __FUNCTION__));
+#else
     DPrintf(5, "%s\n", __FUNCTION__);
+#endif
 
     DPrintf(0, "[VIRTIO_PCI_HOST_FEATURES] = %x\n", ioread32(vdev, vdev->addr + VIRTIO_PCI_HOST_FEATURES));
     DPrintf(0, "[VIRTIO_PCI_GUEST_FEATURES] = %x\n", ioread32(vdev, vdev->addr + VIRTIO_PCI_GUEST_FEATURES));

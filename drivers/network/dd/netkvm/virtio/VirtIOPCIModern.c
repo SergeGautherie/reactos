@@ -206,7 +206,11 @@ static NTSTATUS vio_modern_set_features(VirtIODevice *vdev, u64 features)
     vring_transport_features(vdev, &features);
 
     if (!virtio_is_feature_enabled(features, VIRTIO_F_VERSION_1)) {
-        DPrintf(0, "virtio: device uses modern interface but does not have VIRTIO_F_VERSION_1\n", 0);
+#ifndef __REACTOS__
+        DPrintf(0, ("virtio: device uses modern interface but does not have VIRTIO_F_VERSION_1\n"));
+#else
+        DPrintf(0, "virtio: device uses modern interface but does not have VIRTIO_F_VERSION_1\n");
+#endif
         return STATUS_INVALID_PARAMETER;
     }
 
