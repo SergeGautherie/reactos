@@ -254,19 +254,35 @@ static void vio_legacy_del_vq(VirtIOQueueInfo *info)
 }
 
 static const struct virtio_device_ops virtio_pci_device_ops = {
-    /* .get_config = */ vio_legacy_get_config,
-    /* .set_config = */ vio_legacy_set_config,
-    /* .get_config_generation = */ NULL,
-    /* .get_status = */ vio_legacy_get_status,
-    /* .set_status = */ vio_legacy_set_status,
-    /* .reset = */ vio_legacy_reset,
-    /* .get_features = */ vio_legacy_get_features,
-    /* .set_features = */ vio_legacy_set_features,
-    /* .set_config_vector = */ vio_legacy_set_config_vector,
-    /* .set_queue_vector = */ vio_legacy_set_queue_vector,
-    /* .query_queue_alloc = */ vio_legacy_query_vq_alloc,
-    /* .setup_queue = */ vio_legacy_setup_vq,
-    /* .delete_queue = */ vio_legacy_del_vq,
+#ifndef __REACTOS__
+    .get_config = vio_legacy_get_config,
+    .set_config = vio_legacy_set_config,
+    .get_config_generation = NULL,
+    .get_status = vio_legacy_get_status,
+    .set_status = vio_legacy_set_status,
+    .reset = vio_legacy_reset,
+    .get_features = vio_legacy_get_features,
+    .set_features = vio_legacy_set_features,
+    .set_config_vector = vio_legacy_set_config_vector,
+    .set_queue_vector = vio_legacy_set_queue_vector,
+    .query_queue_alloc = vio_legacy_query_vq_alloc,
+    .setup_queue = vio_legacy_setup_vq,
+    .delete_queue = vio_legacy_del_vq,
+#else
+    vio_legacy_get_config,
+    vio_legacy_set_config,
+    NULL,
+    vio_legacy_get_status,
+    vio_legacy_set_status,
+    vio_legacy_reset,
+    vio_legacy_get_features,
+    vio_legacy_set_features,
+    vio_legacy_set_config_vector,
+    vio_legacy_set_queue_vector,
+    vio_legacy_query_vq_alloc,
+    vio_legacy_setup_vq,
+    vio_legacy_del_vq,
+#endif
 };
 
 /* Legacy device initialization */

@@ -415,19 +415,35 @@ static void vio_modern_del_vq(VirtIOQueueInfo *info)
 }
 
 static const struct virtio_device_ops virtio_pci_device_ops = {
-    /* .get_config = */ vio_modern_get_config,
-    /* .set_config = */ vio_modern_set_config,
-    /* .get_config_generation = */ vio_modern_get_generation,
-    /* .get_status = */ vio_modern_get_status,
-    /* .set_status = */ vio_modern_set_status,
-    /* .reset = */ vio_modern_reset,
-    /* .get_features = */ vio_modern_get_features,
-    /* .set_features = */ vio_modern_set_features,
-    /* .set_config_vector = */ vio_modern_set_config_vector,
-    /* .set_queue_vector = */ vio_modern_set_queue_vector,
-    /* .query_queue_alloc = */ vio_modern_query_vq_alloc,
-    /* .setup_queue = */ vio_modern_setup_vq,
-    /* .delete_queue = */ vio_modern_del_vq,
+#ifndef __REACTOS__
+    .get_config = vio_modern_get_config,
+    .set_config = vio_modern_set_config,
+    .get_config_generation = vio_modern_get_generation,
+    .get_status = vio_modern_get_status,
+    .set_status = vio_modern_set_status,
+    .reset = vio_modern_reset,
+    .get_features = vio_modern_get_features,
+    .set_features = vio_modern_set_features,
+    .set_config_vector = vio_modern_set_config_vector,
+    .set_queue_vector = vio_modern_set_queue_vector,
+    .query_queue_alloc = vio_modern_query_vq_alloc,
+    .setup_queue = vio_modern_setup_vq,
+    .delete_queue = vio_modern_del_vq,
+#else
+    vio_modern_get_config,
+    vio_modern_set_config,
+    vio_modern_get_generation,
+    vio_modern_get_status,
+    vio_modern_set_status,
+    vio_modern_reset,
+    vio_modern_get_features,
+    vio_modern_set_features,
+    vio_modern_set_config_vector,
+    vio_modern_set_queue_vector,
+    vio_modern_query_vq_alloc,
+    vio_modern_setup_vq,
+    vio_modern_del_vq,
+#endif
 };
 
 static u8 find_next_pci_vendor_capability(VirtIODevice *vdev, u8 offset)
