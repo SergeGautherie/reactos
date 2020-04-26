@@ -36,4 +36,7 @@
 #define true TRUE
 #endif
 
+#ifndef __REACTOS__
+#define inline __forceinline
+#endif
 #define SMP_CACHE_BYTES 64
