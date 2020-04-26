@@ -80,7 +80,7 @@
     vdev->system->vdev_sleep(vdev->DeviceContext, msecs)
 
 /* the notify function used when creating a virt queue */
-void vp_notify(struct virtqueue *vq);
+bool vp_notify(struct virtqueue *vq);
 
 NTSTATUS vio_legacy_initialize(VirtIODevice *vdev);
 NTSTATUS vio_modern_initialize(VirtIODevice *vdev);
