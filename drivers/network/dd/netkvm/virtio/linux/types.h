@@ -2,7 +2,9 @@
 #define _LINUX_TYPES_H
 
 #define __bitwise__
-// #define __attribute__(x)
+#ifndef __REACTOS__
+#define __attribute__(x)
+#endif
 
 #define u8 unsigned char
 #define u16 unsigned short
