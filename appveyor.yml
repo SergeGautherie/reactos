@@ -1,20 +1,46 @@
+image:
+# Regressed :-( + Workaround!
+#   - Previous Visual Studio 2019
+    # VS (9/2008, 10/2010, 11/2012, 12/2013).
+#   - Visual Studio 2013
+    # 'Microsoft Windows [Version 6.3.9600]'
+# VS2008: last to target 2000.
+    # VS (9/2008, 10/2010, 11/2012, 12/2013,) 14/2015.
+# 
+  - Visual Studio 2015
+    # 'Microsoft Windows [Version 10.0.14393]'
+# VS2017 (v141): last to target XP/S2003.
+    # VS 14/2015, 15/2017.
+#   - Visual Studio 2017
+    # VS 16/2019.
+#   - Visual Studio 2019
+    # Very slow (= minutes) to start.
+# Regressed :-( + Workaround!
+#   - Visual Studio 2019 Preview
+
 environment:
   matrix:
-    - BuildType: "msvc-x64"
-    - BuildType: "msvc"
+# 
+   - BuildType: "msvc-x64"
+# 
+   - BuildType: "msvc"
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
+#    - BuildType: vssolution-x64
 
-version: reactos.appveyor.{build}
+version: BCD-RT.VS2015.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
-clone_folder: c:\reactos-cov
-matrix:
-  fast_finish: true
+clone_folder: C:\projects\reactos-git
 
 init:
+#   - dir "C:\Program Files (x86)"
+#   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\vcvarsall.bat" /s
+#   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC" /s
+#   - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
+  - del C:\RosCMakeNinja\bin\ninja.exe
   - ps: >-
       If ($env:BuildType -Match "clang-cl") {
         $env:clang_configure_option="clang"
@@ -23,24 +49,76 @@ init:
       } Else {
         $env:clang_configure_option=""
       }
+      # cmake.exe, cmcldeps.exe, ninja.exe.
+#   - dir /s C:\RosCMakeNinja\bin
 
 build_script:
+  - ver
+    # RosBE 2.1.x (+PCH), x86(_64): VS2015 9-11 min, VS2017 +1(,5) min.
+    #   'cmake version 3.2.1-ReactOS'
+    #   Ninja: (RosBE) '1.5.3' or (AppVeyor) '1.9.0'
+#     # RosBE 2.2.0 (-PCH), x86(_64): VS2015 21+29 min, VS2017 26+24 min.
+    # No RosBE (-PCH), x86(_64): VS2015 21+29 min, VS2017 26+24 min.
+    # With/Old: 16/18 min, Without/Current: 22/26 min :-<
+# 
   - set PATH=C:\RosCMakeNinja\bin;%PATH%
   - if "%BuildType%" == "msvc-x64" (
-        call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
       )
+#   - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
+#         if "%BuildType%" == "msvc-x64" (
+#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
+#         ) else (
+#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
+#         )
+#     ) else (
+#         if "%BuildType%" == "msvc-x64" (
+#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+#         ) else (
+#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+#         )
+#     )
+#   - where find
+#   - which find
+#     # https://github.com/appveyor/ci/issues/3147 workaround!
+#   - del "C:\Program Files\Git\usr\bin\find.exe"
+#   - where find
+#   - which find
+#   - cl 2>&1
   - cmake --version
+  - ninja --version
   - md c:\ros_build
   - cd c:\ros_build
+  - set ROSTESTS_INSTALL=C:\ros_tests
   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
+#   - ps: >-
+#       & ninja rostests 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-  - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+#   - ps: >-
+#       & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+
+after_build:
+  - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
+#   - appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
 
 test: off
+
+before_test:
+  - cmd: ninja rostests_install
+  - cmd: cd %ROSTESTS_INSTALL%
+#   - cmd: appveyor PushArtifact mshtml_winetest.exe -FileName mshtml_winetest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact winhttp_winetest.exe -FileName winhttp_winetest-%SGVER%.exe
+#   - cmd: appveyor PushArtifact wininet_winetest.exe -FileName wininet_winetest-%SGVER%.exe
+  - cmd: 7z a -mx c:\ros_build\ros_tests.7z  mshtml_winetest.exe winhttp_winetest.exe wininet_winetest.exe
+  - cmd: cd c:\ros_build
+  - cmd: appveyor PushArtifact ros_tests.7z -FileName ros_tests-%SGVER%.7z
+
+test_script:
+  - echo NoOp. Only to enable "test_script", thus "before_test".
+
 deploy: off
 
 for:
@@ -48,10 +126,24 @@ for:
   matrix:
     only:
       - BuildType: vssolution
+      - BuildType: vssolution-x64
 
   build_script:
     - set PATH=C:\RosCMakeNinja\bin;%PATH%
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+#     - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+    - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
+          if "%BuildType%" == "vssolution-x64" (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
+          ) else (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
+          )
+      ) else (
+          if "%BuildType%" == "vssolution-x64" (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+          ) else (
+              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+          )
+      )
     - cmake --version
     - md C:\ros_build
     - cd C:\ros_build
