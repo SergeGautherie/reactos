@@ -13,22 +13,37 @@ jobs:
   # 'choco: command not found'
 #       - name: Install packages
 #         run: choco install ninja -y
+# D_RosBE-21
         # (U16) RosBE 2.1.2 (+PCH): 14-15 min.
         #   'cmake version 3.2.1-ReactOS'
         #   Ninja: '1.6.0'
         # (U18) RosBE 2.1.2 (+PCH): 13-17 min.
         #   'cmake version 3.2.1-ReactOS'
         #   Ninja: '1.6.0'
-        # RosBE 2.2 (-PCH): 27 min.
-        #   'cmake version 3.17.0'
-      - name: Install RosBEBinFull (RosBE 2.1.2, +PCH)
 #           ls -alR rosbe
   # No, as no default Ninja.
 #           rm rosbe/bin/ninja*
+      - name: Install RosBEBinFull (RosBE 2.1.2, +PCH)
+        if: false
         run: |
           wget -nv https://svn.reactos.org/amine/RosBEBinFull.tar.gz
           tar -xzf RosBEBinFull.tar.gz
           mv RosBEBinFull rosbe
+# F_RosBE-21
+# D_RosBE-22
+        # (U16) RosBE 2.2 (-PCH): 30 min.
+        #   'cmake version 3.17.0'
+        #   Ninja: '1.10.0'
+        # (U18) RosBE 2.2 (-PCH): 27 min. (+ ccache: 42 min if empty, 3 min if minor change.)
+        #   'cmake version 3.17.0'
+        #   Ninja: '1.10.0'
+      - name: Install rosbe-ci (2.2, -PCH)
+        if: true
+        run: |
+          wget -nv https://svn.reactos.org/storage/vperevertkin/rosbe-ci.tar.zst
+          mkdir ${{github.workspace}}/rosbe
+          tar -I zstd -xf rosbe-ci.tar.zst --directory ${{github.workspace}}/rosbe
+# F_RosBE-22
       - name: Install other packages
         if: false
         run: sudo apt install ccache
@@ -104,21 +119,28 @@ jobs:
     steps:
     - name: Install packages
       run: choco install ninja -y
+# D_RosBE-21
       # (S16) RosBE 2.1.x (+PCH): 12-14 min.
       #   'cmake version 3.2.1-ReactOS'
       #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
       # (S19) RosBE 2.1.x (+PCH): 11-14 min.
       #   'cmake version 3.2.1-ReactOS'
       #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
-      # RosBE 2.2 (-PCH): 19 min.
-      #   'cmake version 3.17.2'
-#       #   Ninja: '1.8.2'
     - name: Install RosCMakeNinja (RosBE 2.1.x, +PCH)
+      if: false
       run: |
         curl -O https://svn.reactos.org/amine/RosCMakeNinja.zip
         7z x RosCMakeNinja.zip -o${{github.workspace}}\rosbe
         del ${{github.workspace}}\rosbe\bin\ninja.exe
         echo "::add-path::${{github.workspace}}\rosbe\bin"
+# F_RosBE-21
+# D_RosBE-22
+      # (S16) (No =) RosBE 2.2 (-PCH): 18 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
+      # (S19) (No =) RosBE 2.2 (-PCH): 17-21 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
     - name: Install Flex and Bison
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
@@ -126,6 +148,7 @@ jobs:
         echo "::add-path::${{github.workspace}}\bin"
         echo "::set-env name=BISON_PKGDATADIR::${{github.workspace}}\bin\share\bison"
         echo "::set-env name=M4::${{github.workspace}}\bin\m4.exe"
+# F_RosBE-22
     - name: Add CL to PATH
       uses: ilammy/msvc-dev-cmd@v1
       with:
@@ -177,15 +200,13 @@ jobs:
       run: |
          choco install ninja -y
          choco uninstall mingw strawberryperl -y
+# D_RosBE-21
       # (S16) RosBE 2.1.x (+PCH): 18-21 min.
       #   'cmake version 3.2.1-ReactOS'
       #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
       # (S19) RosBE 2.1.x (+PCH): N/A min.
       #   'cmake version 3.2.1-ReactOS'
       #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
-#       # RosBE 2.1.x (+PCH): 22-25 min.
-      #   'cmake version 3.2.1-ReactOS'
-      #   Ninja: '1.5.3'
 # (S19 only: )
 # Configure
 # ...
@@ -194,15 +215,21 @@ jobs:
 #   Unknown CMake command "add_link_options".
 # Call Stack (most recent call first):
 #   CMakeLists.txt:201 (include)
-      # RosBE 2.2 (-PCH): 26 min.
-      #   'cmake version 3.17.2'
-#       #   Ninja: '1.8.2'
     - name: Install RosCMakeNinja (RosBE 2.1.x, +PCH)
+      if: false
       run: |
         curl -O https://svn.reactos.org/amine/RosCMakeNinja.zip
         7z x RosCMakeNinja.zip -o${{github.workspace}}\rosbe
         del ${{github.workspace}}\rosbe\bin\ninja.exe
         echo "::add-path::${{github.workspace}}\rosbe\bin"
+# F_RosBE-21
+# D_RosBE-22
+      # (S16) (No =) RosBE 2.2 (-PCH): 23 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
+      # (S19) (No =) RosBE 2.2 (-PCH): 24-28 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
     - name: Install Flex and Bison
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
@@ -210,6 +237,7 @@ jobs:
         echo "::add-path::${{github.workspace}}\bin"
         echo "::set-env name=BISON_PKGDATADIR::${{github.workspace}}\bin\share\bison"
         echo "::set-env name=M4::${{github.workspace}}\bin\m4.exe"
+# F_RosBE-22
     - name: Add CL to PATH
       uses: ilammy/msvc-dev-cmd@v1
       with:
