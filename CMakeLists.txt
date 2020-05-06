@@ -1,6 +1,9 @@
 
 cmake_minimum_required(VERSION 3.17.0)
 
+# TODO!
+# MSVC: RosBE 2.1.x would still need this, but 2.2 does not anymore.
+# No better: if(NOT MSVC AND NOT CMAKE_VERSION MATCHES "ReactOS")
 if(NOT CMAKE_VERSION MATCHES "ReactOS")
     message(WARNING "Building with \"${CMAKE_COMMAND}\", which is not the custom CMake included in RosBE, might cause build issues...")
 endif()
