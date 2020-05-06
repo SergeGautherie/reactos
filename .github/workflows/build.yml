@@ -15,11 +15,13 @@ jobs:
           mkdir ${{github.workspace}}/rosbe
           tar -I zstd -xvf rosbe-ci.tar.zst --directory ${{github.workspace}}/rosbe
       - name: Install other packages
+        if: false
         run: sudo apt install ccache
       - uses: actions/checkout@v2
         with:
           path: src
       - name: Set up cache for ccache
+        if: false
         uses: actions/cache@v1
         with:
           path: ccache
@@ -27,15 +29,17 @@ jobs:
           restore-keys: |
             ccache-gcc-i386-
       - name: Set ccache settings
+        if: false
         run: |
           echo "::set-env name=CCACHE_BASEDIR::${{github.workspace}}"
           echo "::set-env name=CCACHE_DIR::${{github.workspace}}/ccache"
           echo "::set-env name=CCACHE_MAXSIZE::1G"
           echo "::set-env name=CCACHE_SLOPPINESS::time_macros"
+#           echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1' > commands
       - name: Configure
         run: |
           mkdir build
-          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1' > commands
+          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_ROSTESTS=1' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Build
         run: |
@@ -46,6 +50,7 @@ jobs:
           echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target bootcdregtest && cmake --build . --target livecd' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
       - name: Print ccache statistics
+        if: false
         run: ccache -s
       - name: Upload bootcd
         uses: actions/upload-artifact@v1
