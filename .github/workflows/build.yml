@@ -46,6 +46,7 @@ jobs:
           echo 'cd ${{github.workspace}}/build && cmake --build .' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Generate ISOs
+        if: false
         run: |
           echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
@@ -53,6 +54,7 @@ jobs:
         if: false
         run: ccache -s
       - name: Upload bootcd
+        if: false
         uses: actions/upload-artifact@v1
         with:
           name: reactos-gcc-i386-${{github.sha}}
@@ -64,6 +66,7 @@ jobs:
           name: reactos-gcc-i386-${{github.sha}}
           path: build/bootcdregtest.iso
       - name: Upload livecd
+        if: false
         uses: actions/upload-artifact@v1
         with:
           name: reactos-gcc-i386-${{github.sha}}
@@ -108,16 +111,19 @@ jobs:
       working-directory: ${{github.workspace}}\build
       run: cmake --build . 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
     - name: Generate ISOs
+      if: false
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
         cmake --build . --target livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
     - name: Upload bootcd
+      if: false
       uses: actions/upload-artifact@v1
       with:
         name: reactos-msvc-i386-${{github.sha}}
         path: build/bootcd.iso
     - name: Upload livecd
+      if: false
       uses: actions/upload-artifact@v1
       with:
         name: reactos-msvc-i386-${{github.sha}}
@@ -166,16 +172,19 @@ jobs:
       run: |
         cmake --build . 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
     - name: Generate ISOs
+      if: false
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
         cmake --build . --target livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
     - name: Upload bootcd
+      if: false
       uses: actions/upload-artifact@v1
       with:
         name: reactos-msvc-amd64-${{github.sha}}
         path: build/bootcd.iso
     - name: Upload livecd
+      if: false
       uses: actions/upload-artifact@v1
       with:
         name: reactos-msvc-amd64-${{github.sha}}
