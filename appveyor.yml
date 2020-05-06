@@ -28,7 +28,7 @@ environment:
 #    - BuildType: vssolution
 #    - BuildType: vssolution-x64
 
-version: BCD-RT.VS2015.reactos.appveyor.{build}
+version: VS2015.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: C:\projects\reactos-git
@@ -91,61 +91,10 @@ build_script:
   - ninja --version
   - md c:\ros_build
   - cd c:\ros_build
-  - set ROSTESTS_INSTALL=C:\ros_tests
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd -DENABLE_ROSTESTS=1
-#   - ps: >-
-#       & ninja rostests 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-#   - ps: >-
-#       & ninja bootcdregtest 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-
-after_build:
-  - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%
-#   - appveyor PushArtifact bootcdregtest.iso -FileName bootcdregtest-%SGVER%.iso
 
 test: off
 
-before_test:
-  - cmd: ninja rostests_install
-  - cmd: cd %ROSTESTS_INSTALL%
-#   - cmd: appveyor PushArtifact mshtml_winetest.exe -FileName mshtml_winetest-%SGVER%.exe
-#   - cmd: appveyor PushArtifact winhttp_winetest.exe -FileName winhttp_winetest-%SGVER%.exe
-#   - cmd: appveyor PushArtifact wininet_winetest.exe -FileName wininet_winetest-%SGVER%.exe
-  - cmd: 7z a -mx c:\ros_build\ros_tests.7z  mshtml_winetest.exe winhttp_winetest.exe wininet_winetest.exe
-  - cmd: cd c:\ros_build
-  - cmd: appveyor PushArtifact ros_tests.7z -FileName ros_tests-%SGVER%.7z
-
-test_script:
-  - echo NoOp. Only to enable "test_script", thus "before_test".
-
 deploy: off
-
-for:
--
-  matrix:
-    only:
-      - BuildType: vssolution
-      - BuildType: vssolution-x64
-
-  build_script:
-    - set PATH=C:\RosCMakeNinja\bin;%PATH%
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-    - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
-          if "%BuildType%" == "vssolution-x64" (
-              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
-          ) else (
-              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
-          )
-      ) else (
-          if "%BuildType%" == "vssolution-x64" (
-              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-          ) else (
-              call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-          )
-      )
-    - cmake --version
-    - md C:\ros_build
-    - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1
-    - msbuild /verbosity:quiet /target:bootcd REACTOS.sln
