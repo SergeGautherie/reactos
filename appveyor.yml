@@ -63,67 +63,86 @@ init:
       # cmake.exe, cmcldeps.exe, ninja.exe.
 #   - dir /s C:\RosCMakeNinja\bin
 
+#!# build_script:
+#!#   - ver
+#!# # D_RosBE-21
+#!#     # RosBE 2.1.x (+PCH), x86(_64): VS2015 9-11 min, VS2017 +1(,5) min.
+#!#     #   'cmake version 3.2.1-ReactOS'
+#!#     #   Ninja: (RosBE) '1.5.3' or (AppVeyor) '1.9.0'
+#!# #   - set PATH=C:\RosCMakeNinja\bin;%PATH%
+#!# # F_RosBE-21
+#!# # D_RosBE-22
+#!#     # (No =) RosBE 2.2.0 (-PCH), x86(_64): VS2015 23 + 17 min, VS2017 22 + 23 min.
+#!#     #   'cmake version 3.16.2'
+#!#     #   Ninja: (AppVeyor) '1.9.0'
+#!# #   - set PATH=C:\projects\bin;%PATH%
+#!# # F_RosBE-22
+#!#   - if "%BuildType%" == "msvc-x64" (
+#!#         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+#!#       ) else (
+#!#         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+#!#       )
+#!# #   - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
+#!# #         if "%BuildType%" == "msvc-x64" (
+#!# #             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
+#!# #         ) else (
+#!# #             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
+#!# #         )
+#!# #     ) else (
+#!# #         if "%BuildType%" == "msvc-x64" (
+#!# #             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
+#!# #         ) else (
+#!# #             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+#!# #         )
+#!# #     )
+#!# #   - where find
+#!# #   - which find
+#!# #     # https://github.com/appveyor/ci/issues/3147 workaround!
+#!# #   - del "C:\Program Files\Git\usr\bin\find.exe"
+#!# #   - where find
+#!# #   - which find
+#!# #   - cl 2>&1
+#!#   - cmake --version
+#!#   - ninja --version
+#!#   - md c:\ros_build
+#!#   - cd c:\ros_build
+#!# # D_RosBE-21
+#!# #   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
+#!# # F_RosBE-21
+#!# # D_RosBE-22
+#!#   - if "%BuildType%" == "msvc-x64" (
+#!#         cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 %APPVEYOR_BUILD_FOLDER%
+#!#       ) else (
+#!#         cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 %APPVEYOR_BUILD_FOLDER%
+#!#       )
+#!# # F_RosBE-22
+#!# # D_RosBE-21
+#!# #   - ps: >-
+#!# #       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+#!# # F_RosBE-21
+#!# # D_RosBE-22
+#!#   - ps: >-
+#!#       & cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+#!# # F_RosBE-22
+
 build_script:
   - ver
-# D_RosBE-21
-    # RosBE 2.1.x (+PCH), x86(_64): VS2015 9-11 min, VS2017 +1(,5) min.
-    #   'cmake version 3.2.1-ReactOS'
-    #   Ninja: (RosBE) '1.5.3' or (AppVeyor) '1.9.0'
-#   - set PATH=C:\RosCMakeNinja\bin;%PATH%
-# F_RosBE-21
-# D_RosBE-22
-    # (No =) RosBE 2.2.0 (-PCH), x86(_64): VS2015 23 + 17 min, VS2017 22 + 23 min.
-    #   'cmake version 3.16.2'
-    #   Ninja: (AppVeyor) '1.9.0'
-#   - set PATH=C:\projects\bin;%PATH%
-# F_RosBE-22
   - if "%BuildType%" == "msvc-x64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
       )
-#   - if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" (
-#         if "%BuildType%" == "msvc-x64" (
-#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" amd64
-#         ) else (
-#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Auxiliary\Build\vcvarsall.bat" x86
-#         )
-#     ) else (
-#         if "%BuildType%" == "msvc-x64" (
-#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64
-#         ) else (
-#             call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-#         )
-#     )
-#   - where find
-#   - which find
-#     # https://github.com/appveyor/ci/issues/3147 workaround!
-#   - del "C:\Program Files\Git\usr\bin\find.exe"
-#   - where find
-#   - which find
-#   - cl 2>&1
   - cmake --version
   - ninja --version
   - md c:\ros_build
   - cd c:\ros_build
-# D_RosBE-21
-#   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
-# F_RosBE-21
-# D_RosBE-22
   - if "%BuildType%" == "msvc-x64" (
         cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 %APPVEYOR_BUILD_FOLDER%
       ) else (
         cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 %APPVEYOR_BUILD_FOLDER%
       )
-# F_RosBE-22
-# D_RosBE-21
-#   - ps: >-
-#       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-# F_RosBE-21
-# D_RosBE-22
   - ps: >-
       & cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-# F_RosBE-22
 
 test: off
 
