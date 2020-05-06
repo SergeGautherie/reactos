@@ -38,9 +38,15 @@ init:
 #   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\vcvarsall.bat" /s
 #   - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC" /s
 #   - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-  - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
-  - del C:\RosCMakeNinja\bin\ninja.exe
+# D_RosBE-21
+#   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
+#   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
+#   - del C:\RosCMakeNinja\bin\ninja.exe
+# F_RosBE-21
+# D_RosBE-22
+  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/storage/vperevertkin/flexbison.7z","C:\projects\flexbison.7z")
+  - 7z x C:\projects\flexbison.7z -oC:\projects\bin
+# F_RosBE-22
 #   - ps: >-
 #       If ($env:BuildType -Match "clang-cl") {
 #         $env:clang_configure_option="clang"
@@ -54,14 +60,19 @@ init:
 
 build_script:
   - ver
+# D_RosBE-21
     # RosBE 2.1.x (+PCH), x86(_64): VS2015 9-11 min, VS2017 +1(,5) min.
     #   'cmake version 3.2.1-ReactOS'
     #   Ninja: (RosBE) '1.5.3' or (AppVeyor) '1.9.0'
-#     # RosBE 2.2.0 (-PCH), x86(_64): VS2015 21+29 min, VS2017 26+24 min.
-    # No RosBE (-PCH), x86(_64): VS2015 21+29 min, VS2017 26+24 min.
-    # With/Old: 16/18 min, Without/Current: 22/26 min :-<
+#   - set PATH=C:\RosCMakeNinja\bin;%PATH%
+# F_RosBE-21
+# D_RosBE-22
+    # (No =) RosBE 2.2.0 (-PCH), x86(_64): VS2015 23 + 17 min, VS2017 22 + 23 min.
+    #   'cmake version 3.16.2'
+    #   Ninja: (AppVeyor) '1.9.0'
 # 
-  - set PATH=C:\RosCMakeNinja\bin;%PATH%
+  - set PATH=C:\projects\bin;%PATH%
+# F_RosBE-22
   - if "%BuildType%" == "msvc-x64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
@@ -91,9 +102,24 @@ build_script:
   - ninja --version
   - md c:\ros_build
   - cd c:\ros_build
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
+# D_RosBE-21
+#   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
+# F_RosBE-21
+# D_RosBE-22
+  - if "%BuildType%" == "msvc-x64" (
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 %APPVEYOR_BUILD_FOLDER%
+      ) else (
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 %APPVEYOR_BUILD_FOLDER%
+      )
+# F_RosBE-22
+# D_RosBE-21
+#   - ps: >-
+#       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+# F_RosBE-21
+# D_RosBE-22
   - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & cmake --build . 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+# F_RosBE-22
 
 test: off
 
