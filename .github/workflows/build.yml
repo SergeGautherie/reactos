@@ -9,7 +9,7 @@ jobs:
     # runs-on: ubuntu-latest
     # runs-on: ubuntu-20.04
     steps:
-      - name: Install RosBE
+      - name: Install RosBE (2.2, -PCH)
         run: |
           wget https://svn.reactos.org/storage/vperevertkin/rosbe-ci.tar.zst
           mkdir ${{github.workspace}}/rosbe
