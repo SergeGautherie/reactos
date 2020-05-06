@@ -9,11 +9,11 @@ jobs:
     # runs-on: ubuntu-latest
     # runs-on: ubuntu-20.04
     steps:
-      - name: Install RosBE (2.2, -PCH)
+      - name: Install RosBEBinFull (RosBE 2.1.2, +PCH)
         run: |
-          wget https://svn.reactos.org/storage/vperevertkin/rosbe-ci.tar.zst
-          mkdir ${{github.workspace}}/rosbe
-          tar -I zstd -xvf rosbe-ci.tar.zst --directory ${{github.workspace}}/rosbe
+          wget -nv https://svn.reactos.org/amine/RosBEBinFull.tar.gz
+          tar -xzf RosBEBinFull.tar.gz
+          mv RosBEBinFull rosbe
       - name: Install other packages
         if: false
         run: sudo apt install ccache
@@ -78,6 +78,12 @@ jobs:
     steps:
     - name: Install packages
       run: choco install ninja -y
+    - name: Install RosCMakeNinja (RosBE 2.1.x, +PCH)
+      run: |
+        curl -O https://svn.reactos.org/amine/RosCMakeNinja.zip
+        7z x RosCMakeNinja.zip -o${{github.workspace}}\rosbe
+        del ${{github.workspace}}\rosbe\bin\ninja.exe
+        echo "::add-path::${{github.workspace}}\rosbe\bin"
     - name: Install Flex and Bison
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
@@ -129,6 +135,12 @@ jobs:
       run: |
          choco install ninja -y
          choco uninstall mingw strawberryperl -y
+    - name: Install RosCMakeNinja (RosBE 2.1.x, +PCH)
+      run: |
+        curl -O https://svn.reactos.org/amine/RosCMakeNinja.zip
+        7z x RosCMakeNinja.zip -o${{github.workspace}}\rosbe
+        del ${{github.workspace}}\rosbe\bin\ninja.exe
+        echo "::add-path::${{github.workspace}}\rosbe\bin"
     - name: Install Flex and Bison
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
