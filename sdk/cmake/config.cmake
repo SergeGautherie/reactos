@@ -19,7 +19,7 @@ elseif(ARCH STREQUAL "arm64")
 endif()
 
 if(ARCH STREQUAL "i386")
-    set(OARCH "pentium" CACHE STRING
+    set(OARCH "pentium2" CACHE STRING
     "Generate instructions for this CPU type. Specify one of:
      pentium, pentiumpro")
 elseif(ARCH STREQUAL "amd64")
@@ -39,7 +39,7 @@ elseif(ARCH STREQUAL "arm64")
 endif()
 
 if(ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64")
-    set(TUNE "generic" CACHE STRING
+    set(TUNE "pentium3" CACHE STRING
     "Which CPU ReactOS should be optimized for.")
 elseif(ARCH STREQUAL "arm")
     set(TUNE "generic-armv7-a" CACHE STRING
@@ -76,13 +76,12 @@ else()
 endif()
 
 if(MSVC)
-    set(KDBG FALSE CACHE BOOL
-"Whether to compile in the integrated kernel debugger.")
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
+        set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     else()
-        set(_WINKD_ TRUE CACHE BOOL "Whether to compile with the KD protocol.")
+        set(KDBG TRUE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     endif()
+    set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
