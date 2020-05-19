@@ -3,11 +3,11 @@ set(SARCH "pc" CACHE STRING
 "Sub-architecture to build for. Specify one of:
  pc pc98 xbox")
 
-set(OARCH "pentium" CACHE STRING
+set(OARCH "pentium2" CACHE STRING
 "Generate instructions for this CPU type. Specify one of:
  pentium, pentiumpro")
 
-set(TUNE "i686" CACHE STRING
+set(TUNE "pentium3" CACHE STRING
 "Which CPU ReactOS should be optimized for.")
 
 set(OPTIMIZE "4" CACHE STRING
@@ -51,14 +51,12 @@ else()
 endif()
 
 if(MSVC AND (NOT USE_CLANG_CL))
-    set(KDBG FALSE CACHE BOOL
-"Whether to compile in the integrated kernel debugger.")
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
+        set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     else()
-        set(_WINKD_ TRUE CACHE BOOL "Whether to compile with the KD protocol.")
+        set(KDBG TRUE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     endif()
-
+    set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
@@ -72,7 +70,7 @@ set(_ELF_ FALSE CACHE BOOL
 "Whether to compile support for ELF files.
 Do not enable unless you know what you're doing.")
 
-set(BUILD_MP TRUE CACHE BOOL
+set(BUILD_MP FALSE CACHE BOOL
 "Whether to build the multiprocessor versions of NTOSKRNL and HAL.")
 
 set(GENERATE_DEPENDENCY_GRAPH FALSE CACHE BOOL
