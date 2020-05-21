@@ -41,14 +41,14 @@ init:
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
   - del C:\RosCMakeNinja\bin\ninja.exe
-  - ps: >-
-      If ($env:BuildType -Match "clang-cl") {
-        $env:clang_configure_option="clang"
-        (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
-        7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
-      } Else {
-        $env:clang_configure_option=""
-      }
+#   - ps: >-
+#       If ($env:BuildType -Match "clang-cl") {
+#         $env:clang_configure_option="clang"
+#         (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
+#         7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
+#       } Else {
+#         $env:clang_configure_option=""
+#       }
       # cmake.exe, cmcldeps.exe, ninja.exe.
 #   - dir /s C:\RosCMakeNinja\bin
 
@@ -92,7 +92,7 @@ build_script:
   - md c:\ros_build
   - cd c:\ros_build
   - set ROSTESTS_INSTALL=C:\ros_tests
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option% -DENABLE_ROSTESTS=1
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd -DENABLE_ROSTESTS=1
 #   - ps: >-
 #       & ninja rostests 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
   - ps: >-
