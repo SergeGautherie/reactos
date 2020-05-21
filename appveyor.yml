@@ -44,8 +44,8 @@ init:
 #   - del C:\RosCMakeNinja\bin\ninja.exe
 # F_RosBE-21
 # D_RosBE-22
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/storage/vperevertkin/flexbison.7z","C:\projects\flexbison.7z")
-  - 7z x C:\projects\flexbison.7z -oC:\projects\bin
+#   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/storage/vperevertkin/flexbison.7z","C:\projects\flexbison.7z")
+#   - 7z x C:\projects\flexbison.7z -oC:\projects\bin
 # F_RosBE-22
 #   - ps: >-
 #       If ($env:BuildType -Match "clang-cl") {
@@ -70,8 +70,7 @@ build_script:
     # (No =) RosBE 2.2.0 (-PCH), x86(_64): VS2015 23 + 17 min, VS2017 22 + 23 min.
     #   'cmake version 3.16.2'
     #   Ninja: (AppVeyor) '1.9.0'
-# 
-  - set PATH=C:\projects\bin;%PATH%
+#   - set PATH=C:\projects\bin;%PATH%
 # F_RosBE-22
   - if "%BuildType%" == "msvc-x64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
