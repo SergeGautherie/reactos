@@ -142,6 +142,8 @@ jobs:
       #   'cmake version 3.17.2'
       #   Ninja: '1.10.0'
     - name: Install Flex and Bison
+        # Not used yet.
+      if: false
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
         7z x flexbison.7z -O${{github.workspace}}\bin
@@ -231,6 +233,8 @@ jobs:
       #   'cmake version 3.17.2'
       #   Ninja: '1.10.0'
     - name: Install Flex and Bison
+        # Not used yet.
+      if: false
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
         7z x flexbison.7z -O${{github.workspace}}\bin
