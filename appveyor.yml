@@ -118,7 +118,7 @@ build_script:
 # F_RosBE-21
 # D_RosBE-22
   - ps: >-
-      & cmake --build . 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
 # F_RosBE-22
 
 test: off
