@@ -10,11 +10,13 @@
 
 #include <ndissys.h>
 
-__inline ULONG SkipToOffset(
-    IN PNDIS_BUFFER Buffer,
-    IN UINT Offset,
-    IN OUT PUCHAR *Data,
-    IN OUT PUINT Size)
+static
+__inline
+UINT SkipToOffset(
+    _In_opt_ PNDIS_BUFFER Buffer,
+    _In_ UINT Offset,
+    _Out_ PUCHAR *Data, // TODO: PCHAR everywhere.
+    _Out_ PUINT Size)
 /*
  * FUNCTION: Skips Offset bytes into a buffer chain
  * ARGUMENTS:
@@ -22,18 +24,16 @@ __inline ULONG SkipToOffset(
  *     Offset = Number of bytes to skip
  *     Data   = Address of a pointer that on return will contain the
  *              address of the offset in the buffer
- *     Size   = Address of a pointer that on return will contain the
+ *     Size   = Address of an integer that on return will contain the
  *              size of the destination buffer
  * RETURNS:
- *     Offset into buffer, -1 if buffer chain was smaller than Offset bytes
- * NOTES:
- *     Buffer may be NULL
+ *     Offset into buffer, ~0 if buffer chain was smaller than Offset bytes
  */
 {
     for (;;) {
 
         if (!Buffer)
-            return 0xFFFFFFFF;
+            return ~0;
 
         NdisQueryBuffer(Buffer, Data, Size);
 

@@ -10,31 +10,30 @@
 
 #include "precomp.h"
 
-static inline
-INT SkipToOffset(
-    PNDIS_BUFFER Buffer,
-    UINT Offset,
-    PCHAR *Data,
-    PUINT Size)
+static
+__inline
+UINT SkipToOffset(
+    _In_opt_ PNDIS_BUFFER Buffer,
+    _In_ UINT Offset,
+    _Out_ PCHAR *Data,
+    _Out_ PUINT Size)
 /*
- * FUNCTION: Skip Offset bytes into a buffer chain
+ * FUNCTION: Skips Offset bytes into a buffer chain
  * ARGUMENTS:
  *     Buffer = Pointer to NDIS buffer
  *     Offset = Number of bytes to skip
  *     Data   = Address of a pointer that on return will contain the
  *              address of the offset in the buffer
- *     Size   = Address of a pointer that on return will contain the
+ *     Size   = Address of an integer that on return will contain the
  *              size of the destination buffer
  * RETURNS:
- *     Offset into buffer, -1 if buffer chain was smaller than Offset bytes
- * NOTES:
- *     Buffer may be NULL
+ *     Offset into buffer, ~0 if buffer chain was smaller than Offset bytes
  */
 {
     for (;;) {
 
         if (!Buffer)
-            return -1;
+            return ~0;
 
         NdisQueryBuffer(Buffer, Data, Size);
 
