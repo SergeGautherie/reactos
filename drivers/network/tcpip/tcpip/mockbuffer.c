@@ -50,7 +50,7 @@ VOID XNdisQueryBuffer(
  */
 {
 	if (VirtualAddress != NULL)
-	    *(PVOID*)VirtualAddress = Buffer->MappedSystemVa;
+	    *VirtualAddress = Buffer->MappedSystemVa;
 
 	*Length = ((PMDL)Buffer)->ByteCount;
 }
@@ -80,7 +80,7 @@ __inline INT SkipToOffset(
         if (!Buffer)
             return -1;
 
-        XNdisQueryBuffer(Buffer, (PVOID)Data, Size);
+        XNdisQueryBuffer(Buffer, Data, Size);
 
         if (Offset < *Size) {
             *Data = (PCHAR)((ULONG_PTR) *Data + Offset);
@@ -130,7 +130,7 @@ UINT CopyBufferToBufferChain(
     for (;;) {
         BytesToCopy = MIN(DstSize, Length);
 
-        RtlCopyMemory((PVOID)DstData, (PVOID)SrcData, BytesToCopy);
+        RtlCopyMemory(DstData, SrcData, BytesToCopy);
         BytesCopied += BytesToCopy;
         SrcData      = (PCHAR)((ULONG_PTR)SrcData + BytesToCopy);
 
@@ -146,7 +146,7 @@ UINT CopyBufferToBufferChain(
             if (!DstBuffer)
                 break;
 
-            XNdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
+            XNdisQueryBuffer(DstBuffer, &DstData, &DstSize);
         }
     }
 
@@ -189,7 +189,7 @@ UINT CopyBufferChainToBuffer(
 
         TI_DbgPrint(DEBUG_PBUFFER, ("Copying (%d) bytes from 0x%X to 0x%X\n", BytesToCopy, SrcData, DstData));
 
-        RtlCopyMemory((PVOID)DstData, (PVOID)SrcData, BytesToCopy);
+        RtlCopyMemory(DstData, SrcData, BytesToCopy);
         BytesCopied += BytesToCopy;
         DstData      = (PCHAR)((ULONG_PTR)DstData + BytesToCopy);
 
@@ -205,7 +205,7 @@ UINT CopyBufferChainToBuffer(
             if (!SrcBuffer)
                 break;
 
-            XNdisQueryBuffer(SrcBuffer, (PVOID)&SrcData, &SrcSize);
+            XNdisQueryBuffer(SrcBuffer, &SrcData, &SrcSize);
         }
     }
 
@@ -278,7 +278,7 @@ UINT CopyPacketToBufferChain(
     TI_DbgPrint(DEBUG_PBUFFER, ("DstBuffer (0x%X)  DstOffset (0x%X)  SrcPacket (0x%X)  SrcOffset (0x%X)  Length (%d)\n", DstBuffer, DstOffset, SrcPacket, SrcOffset, Length));
 
     /* Skip DstOffset bytes in the destination buffer chain */
-    XNdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
+    XNdisQueryBuffer(DstBuffer, &DstData, &DstSize);
     if (SkipToOffset(DstBuffer, DstOffset, &DstData, &DstSize) == -1)
         return 0;
 
@@ -297,7 +297,7 @@ UINT CopyPacketToBufferChain(
         if (DstSize < Count)
             Count = DstSize;
 
-        RtlCopyMemory((PVOID)DstData, (PVOID)SrcData, Count);
+        RtlCopyMemory(DstData, SrcData, Count);
 
         Total  += Count;
         Length -= Count;
@@ -312,7 +312,7 @@ UINT CopyPacketToBufferChain(
             if (!DstBuffer)
                 break;
 
-            XNdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
+            XNdisQueryBuffer(DstBuffer, &DstData, &DstSize);
         }
 
         SrcSize -= Count;
@@ -323,7 +323,7 @@ UINT CopyPacketToBufferChain(
             if (!SrcBuffer)
                 break;
 
-            XNdisQueryBuffer(SrcBuffer, (PVOID)&SrcData, &SrcSize);
+            XNdisQueryBuffer(SrcBuffer, &SrcData, &SrcSize);
         }
     }
 
