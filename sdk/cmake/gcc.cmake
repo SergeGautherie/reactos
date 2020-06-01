@@ -114,6 +114,8 @@ add_compile_flags("-Wno-deprecated")
 
 if(NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_flags("-Wno-maybe-uninitialized")
+
+    add_compile_flags("-Wno-array-bounds") # RWDI: 60, MSR: 59.
 endif()
 
 if(ARCH STREQUAL "amd64")
