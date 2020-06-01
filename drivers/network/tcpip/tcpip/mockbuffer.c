@@ -36,10 +36,10 @@ VOID XNdisGetFirstBufferFromPacket(PNDIS_PACKET Packet,
 /*
  * @implemented
  */
-VOID XNdisQueryBuffer
-(PNDIS_BUFFER    Buffer,
- PVOID           *VirtualAddress,
- PUINT           Length)
+VOID XNdisQueryBuffer(
+    _In_ PNDIS_BUFFER Buffer,
+    _Out_opt_ PVOID *VirtualAddress,
+    _Out_ PUINT Length)
 /*
  * FUNCTION:
  *     Queries an NDIS buffer for information

@@ -3022,9 +3022,9 @@ NDISAPI
 VOID
 NTAPI
 NdisQueryBuffer(
-  IN PNDIS_BUFFER Buffer,
-  OUT PVOID *VirtualAddress OPTIONAL,
-  OUT PUINT Length);
+    _In_ PNDIS_BUFFER Buffer,
+    _Out_opt_ PVOID *VirtualAddress,
+    _Out_ PUINT Length);
 */
 #define NdisQueryBuffer(_Buffer, _VirtualAddress, _Length) {         \
   if (ARGUMENT_PRESENT(_VirtualAddress)) {                           \
