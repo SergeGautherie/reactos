@@ -115,6 +115,7 @@ add_compile_flags("-Wno-deprecated")
 if(NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
     add_compile_flags("-Wno-maybe-uninitialized")
 
+    add_compile_flags("-Wno-stringop-overflow") # RWDI: 2, MSR: 1.
     add_compile_flags("-Wno-format-overflow") # RWDI: 3, MSR: 1.
     add_compile_flags("-Wno-stringop-truncation") # RWDI: 1+31, MSR: 0.
     add_compile_flags("-Wno-array-bounds") # RWDI: 60, MSR: 59.
