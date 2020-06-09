@@ -1216,7 +1216,9 @@ FatUnlockVolumeInternal (
                         (LEADING_BACKSLASH_OK))   \
 )
 
+#ifdef __REACTOS__
 static
+#endif
 INLINE
 BOOLEAN
 FatIsNameLongUnicodeValid (
