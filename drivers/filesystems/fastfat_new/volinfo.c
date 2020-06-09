@@ -396,7 +396,7 @@ Return Value:
             Status = FatQueryFsFullSizeInfo( IrpContext, Vcb, Buffer, &Length );
             break;
 
-#if (NTDDI_VERSION >= NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN8
         case FileFsSectorSizeInformation:
 
             Status = FatQueryFsSectorSizeInfo( IrpContext, Vcb, Buffer, &Length );
@@ -1315,7 +1315,7 @@ Return Value:
     return Status;
 }
 
-#if (NTDDI_VERSION >= NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN8
 
 NTSTATUS
 FatQueryFsSectorSizeInfo (

@@ -247,7 +247,7 @@ typedef struct _VCB {
 
     PDEVICE_OBJECT TargetDeviceObject;
 
-#if (NTDDI_VERSION > NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION > NTDDI_WIN8
     //
     //  The volume GUID of the target device object.
     //

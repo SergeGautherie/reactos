@@ -928,7 +928,7 @@ Return Value:
     PARTITION_INFORMATION_EX PartitionInformation;
     NTSTATUS StatusPartInfo;
 
-#if (NTDDI_VERSION > NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION > NTDDI_WIN8
     GUID VolumeGuid = {0};
 #endif
 
@@ -1222,7 +1222,7 @@ Return Value:
             try_return( Status = STATUS_UNRECOGNIZED_VOLUME );
         }
 
-#if (NTDDI_VERSION > NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION > NTDDI_WIN8
         //
         //  Initialize the volume guid.
         //
@@ -2921,7 +2921,7 @@ Return Value:
 #endif
 
 
-#if (NTDDI_VERSION >= NTDDI_WIN7)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN7
     case FSCTL_SET_ZERO_ON_DEALLOCATION:
         Status = FatSetZeroOnDeallocate( IrpContext, Irp );
         break;
@@ -8117,7 +8117,7 @@ Return Value:
     return;
 }
 
-#if (NTDDI_VERSION >= NTDDI_WIN7)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN7
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //  FatSetZeroOnDeallocate is used when we need to stomp over the contents with zeros when a file is deleted.

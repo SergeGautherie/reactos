@@ -201,7 +201,7 @@ Return Value:
     BOOLEAN AcquiredVcb = FALSE;
     BOOLEAN AcquiredFcb = FALSE;
 
-#if (NTDDI_VERSION >= NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN8
     BOOLEAN ProcessingDeleteOnClose = FALSE;
 #endif
 
@@ -298,7 +298,7 @@ Return Value:
             SetFlag( Fcb->FcbState, FCB_STATE_DELETE_ON_CLOSE );
             ClearFlag( Ccb->Flags, CCB_FLAG_DELETE_ON_CLOSE );
 
-#if (NTDDI_VERSION >= NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN8
             ProcessingDeleteOnClose = TRUE;
 #endif
 

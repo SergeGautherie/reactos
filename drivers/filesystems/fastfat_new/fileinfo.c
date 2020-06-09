@@ -470,7 +470,7 @@ Return Value:
             //
 
             if (FileInformationClass == FileNameInformation ||
-#if (NTDDI_VERSION >= NTDDI_VISTA)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_VISTA
                 FileInformationClass == FileNormalizedNameInformation ||
 #endif
                 FileInformationClass == FileAllInformation ) {
@@ -587,7 +587,7 @@ Return Value:
                 FatQueryNameInfo( IrpContext, Fcb, Ccb, FALSE, Buffer, &Length );
                 break;
 
-#if (NTDDI_VERSION >= NTDDI_VISTA)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_VISTA
             case FileNormalizedNameInformation:
 
                 FatQueryNameInfo( IrpContext, Fcb, Ccb, TRUE, Buffer, &Length );
@@ -1964,7 +1964,7 @@ Return Value:
     BOOLEAN ModifyLastWrite = FALSE;
     BOOLEAN ModifyLastAccess = FALSE;
 
-#if (NTDDI_VERSION >= NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN8
     BOOLEAN ModifiedAttributes = FALSE;
 #endif
 
@@ -2258,7 +2258,7 @@ Return Value:
 
                 NotifyFilter |= FILE_NOTIFY_CHANGE_ATTRIBUTES;
 
-#if (NTDDI_VERSION >= NTDDI_WIN8)
+#if !defined(__REACTOS__) || NTDDI_VERSION >= NTDDI_WIN8
                 ModifiedAttributes = TRUE;
 #endif
             }
