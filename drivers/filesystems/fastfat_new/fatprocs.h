@@ -62,10 +62,17 @@ typedef enum _TYPE_OF_OPEN {
 #endif
 
 #include "nodetype.h"
+#ifndef __REACTOS__
+#include "Fat.h"
+#include "Lfn.h"
+#include "FatStruc.h"
+#include "FatData.h"
+#else
 #include "fat.h"
 #include "lfn.h"
 #include "fatstruc.h"
 #include "fatdata.h"
+#endif
 
 
 
