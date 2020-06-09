@@ -51,6 +51,7 @@ Abstract:
 
 #define FAT_FILL_FREE 0
 
+static
 INLINE
 PCCB
 FatAllocateCcb (
@@ -59,6 +60,7 @@ FatAllocateCcb (
     return (PCCB) FsRtlAllocatePoolWithTag( PagedPool, sizeof(CCB), TAG_CCB );
 }
 
+static
 INLINE
 VOID
 FatFreeCcb (
@@ -72,6 +74,7 @@ FatFreeCcb (
     ExFreePool( Ccb );
 }
 
+static
 INLINE
 PFCB
 FatAllocateFcb (
@@ -80,6 +83,7 @@ FatAllocateFcb (
     return (PFCB) FsRtlAllocatePoolWithTag( PagedPool, sizeof(FCB), TAG_FCB );
 }
 
+static
 INLINE
 VOID
 FatFreeFcb (
@@ -2714,6 +2718,7 @@ Return Value:
 }
 
 
+static
 BOOLEAN
 FatSwapVpb (
     IN PIRP_CONTEXT IrpContext,
