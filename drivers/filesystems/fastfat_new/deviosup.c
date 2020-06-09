@@ -1970,8 +1970,8 @@ Return Value:
             if (!ExceptionExpected) {
                 NT_ASSERT( ExceptionExpected );
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
-#endif        
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
+#endif
                 FatBugCheck( 0, 0, 0 );
             }
 

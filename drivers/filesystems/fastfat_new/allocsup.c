@@ -2405,7 +2405,7 @@ Arguments:
                     //
 
                     if (0 == Vcb->Windows[ FaveWindow].ClustersFree) {
-                      
+                        
 #if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "we bugcheck here because our internal data structures are seriously corrupted if this happens" )
 #endif

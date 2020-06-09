@@ -5427,8 +5427,8 @@ Return Value:
             ClusterShift = Vcb->AllocationSupport.LogOfBytesPerCluster;
 
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28931, "calculate it anyway, in case someone adds code that uses this in the future" )    
-#endif        
+#pragma prefast( suppress:28931, "calculate it anyway, in case someone adds code that uses this in the future" )
+#endif
             ClusterSize = 1 << ClusterShift;
             
             AllocationSize = FcbOrDcb->Header.AllocationSize.LowPart;
@@ -5567,8 +5567,8 @@ Return Value:
             if (!FatGetNextMcbEntry(Vcb, McbToUse, Run, (PVBO)&Vcn, &Lbo, &ByteLength)) {
 
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )    
-#endif            
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
+#endif
                 FatBugCheck( (ULONG_PTR)FcbOrDcb, (ULONG_PTR)McbToUse, Run );
             }
 
@@ -6970,10 +6970,10 @@ Return Value:
          SourceBytesRemaining -= SourceMcbBytesInRun,
          SourceMcbVbo += SourceMcbBytesInRun) {
 
-        if (SourceMcbVbo != 0) {      
+        if (SourceMcbVbo != 0) {
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28931, "needed for debug build" )          
-#endif  
+#pragma prefast( suppress:28931, "needed for debug build" )
+#endif
             Result = FatGetNextMcbEntry( Vcb, &FcbOrDcb->Mcb,
                                          SourceIndex,
                                          &SourceVbo,
@@ -8181,7 +8181,7 @@ FatSetZeroOnDeallocate (
 
         SetFlag( FcbOrDcb->FcbState, FCB_STATE_ZERO_ON_DEALLOCATION );
         
-    } _SEH2_FINALLY {    
+    } _SEH2_FINALLY {
         
         if (ReleaseFcb) {
             FatReleaseFcb(IrpContext, FcbOrDcb);

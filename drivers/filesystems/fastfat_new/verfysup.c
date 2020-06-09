@@ -491,8 +491,8 @@ Return Value:
         DebugDump("Invalid FcbCondition\n", 0, Fcb);
         
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )     
-#endif   
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
+#endif
         FatBugCheck( Fcb->FcbCondition, 0, 0 );
     }
 
@@ -565,8 +565,8 @@ Return Value:
 
 #if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
-#pragma prefast( disable: 28193, "this will always wait" )     
-#endif   
+#pragma prefast( disable: 28193, "this will always wait" )
+#endif
     FatAcquireSharedGlobal( &IrpContext );
 #if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )

@@ -124,8 +124,8 @@ Restart:
             if (Node->Fcb->FcbState == FcbGood) {
 
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )         
-#endif       
+#pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
+#endif
                 FatBugCheck( (ULONG_PTR)*RootNode, (ULONG_PTR)Name, (ULONG_PTR)Node );
             }
 

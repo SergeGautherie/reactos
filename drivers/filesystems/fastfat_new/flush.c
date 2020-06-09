@@ -399,8 +399,8 @@ Return Value:
             {
                 BOOLEAN Finished;
 #if !defined(__REACTOS__) || defined(_MSC_VER)
-#pragma prefast( suppress:28931, "needed for debug build" )      
-#endif          
+#pragma prefast( suppress:28931, "needed for debug build" )
+#endif
                 Finished = FatAcquireExclusiveVcb( IrpContext, Vcb );
                 NT_ASSERT( Finished );
             }
