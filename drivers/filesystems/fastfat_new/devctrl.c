@@ -36,7 +36,9 @@ Abstract:
 IO_COMPLETION_ROUTINE FatDeviceControlCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeviceControlCompletionRoutine(
     IN PDEVICE_OBJECT DeviceObject,
     IN PIRP Irp,
@@ -52,7 +54,9 @@ FatDeviceControlCompletionRoutine(
 _Function_class_(IRP_MJ_DEVICE_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdDeviceControl (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -390,7 +394,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeviceControlCompletionRoutine(
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,

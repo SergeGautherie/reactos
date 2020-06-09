@@ -860,7 +860,9 @@ Return Value:
 
 _Function_class_(FAST_IO_CHECK_IF_POSSIBLE)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastIoCheckIfPossible (
     IN PFILE_OBJECT FileObject,
     IN PLARGE_INTEGER FileOffset,
@@ -969,7 +971,9 @@ Return Value:
 
 _Function_class_(FAST_IO_QUERY_BASIC_INFO)	
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastQueryBasicInfo (
     IN PFILE_OBJECT FileObject,
     IN BOOLEAN Wait,
@@ -1149,7 +1153,9 @@ Return Value:
 
 _Function_class_(FAST_IO_QUERY_STANDARD_INFO)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastQueryStdInfo (
     IN PFILE_OBJECT FileObject,
     IN BOOLEAN Wait,
@@ -1310,7 +1316,9 @@ Return Value:
 
 _Function_class_(FAST_IO_QUERY_NETWORK_OPEN_INFO)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastQueryNetworkOpenInfo (
     IN PFILE_OBJECT FileObject,
     IN BOOLEAN Wait,

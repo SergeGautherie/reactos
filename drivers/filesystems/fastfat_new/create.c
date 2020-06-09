@@ -282,7 +282,9 @@ FatCheckShareAccess (
 _Function_class_(IRP_MJ_CREATE)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdCreate (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp

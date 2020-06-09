@@ -203,7 +203,9 @@ FatRenameEAs (
 _Function_class_(IRP_MJ_QUERY_INFORMATION)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdQueryInformation (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -284,7 +286,9 @@ Return Value:
 _Function_class_(IRP_MJ_SET_INFORMATION)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdSetInformation (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp

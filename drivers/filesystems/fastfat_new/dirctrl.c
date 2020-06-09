@@ -73,7 +73,9 @@ FatNotifyChangeDirectory (
 _Function_class_(IRP_MJ_DIRECTORY_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdDirectoryControl (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp

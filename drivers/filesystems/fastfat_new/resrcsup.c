@@ -393,7 +393,9 @@ RetryFcbSharedWaitEx:
 
 _Requires_lock_held_(_Global_critical_region_)    
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatAcquireFcbForLazyWrite (
     IN PVOID Fcb,
     IN BOOLEAN Wait
@@ -487,7 +489,9 @@ Return Value:
 
 _Requires_lock_held_(_Global_critical_region_)    
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatReleaseFcbFromLazyWrite (
     IN PVOID Fcb
     )
@@ -552,7 +556,9 @@ Return Value:
 
 _Requires_lock_held_(_Global_critical_region_)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatAcquireFcbForReadAhead (
     IN PVOID Fcb,
     IN BOOLEAN Wait
@@ -622,7 +628,9 @@ Return Value:
 
 _Requires_lock_held_(_Global_critical_region_)    
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatReleaseFcbFromReadAhead (
     IN PVOID Fcb
     )
@@ -666,7 +674,9 @@ Return Value:
 _Function_class_(FAST_IO_ACQUIRE_FOR_CCFLUSH)
 _Requires_lock_held_(_Global_critical_region_)    
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatAcquireForCcFlush (
     IN PFILE_OBJECT FileObject,
     IN PDEVICE_OBJECT DeviceObject
@@ -750,7 +760,9 @@ FatAcquireForCcFlush (
 
 _Requires_lock_held_(_Global_critical_region_)    
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatReleaseForCcFlush (
     IN PFILE_OBJECT FileObject,
     IN PDEVICE_OBJECT DeviceObject
@@ -795,7 +807,9 @@ FatReleaseForCcFlush (
 
 
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatNoOpAcquire (
     IN PVOID Fcb,
     IN BOOLEAN Wait
@@ -842,7 +856,9 @@ Return Value:
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatNoOpRelease (
     IN PVOID Fcb
     )
@@ -883,7 +899,9 @@ Return Value:
 
 _Requires_lock_held_(_Global_critical_region_)    
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFilterCallbackAcquireForCreateSection (
     IN PFS_FILTER_CALLBACK_DATA CallbackData,
     OUT PVOID *CompletionContext

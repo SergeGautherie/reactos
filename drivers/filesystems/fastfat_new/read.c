@@ -53,7 +53,9 @@ Abstract:
 
 _Requires_lock_held_(_Global_critical_region_)
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatStackOverflowRead (
     IN PVOID Context,
     IN PKEVENT Event
@@ -68,7 +70,9 @@ FatPostStackOverflowRead (
     );
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatOverflowPagingFileRead (
     IN PVOID Context,
     IN PKEVENT Event
@@ -120,7 +124,9 @@ FatOverflowPagingFileRead (
 _Function_class_(IRP_MJ_READ)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdRead (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -411,7 +417,9 @@ Return Value:
 
 _Requires_lock_held_(_Global_critical_region_)
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatStackOverflowRead (
     IN PVOID Context,
     IN PKEVENT Event
@@ -1706,7 +1714,9 @@ Return Value:
 //
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatOverflowPagingFileRead (
     IN PVOID Context,
     IN PKEVENT Event

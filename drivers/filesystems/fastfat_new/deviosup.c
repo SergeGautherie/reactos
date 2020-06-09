@@ -72,7 +72,9 @@ typedef struct _FAT_SYNC_CONTEXT {
 IO_COMPLETION_ROUTINE FatMultiSyncCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatMultiSyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -82,7 +84,9 @@ FatMultiSyncCompletionRoutine (
 IO_COMPLETION_ROUTINE FatMultiAsyncCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatMultiAsyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -92,7 +96,9 @@ FatMultiAsyncCompletionRoutine (
 IO_COMPLETION_ROUTINE FatSpecialSyncCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatSpecialSyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -102,7 +108,9 @@ FatSpecialSyncCompletionRoutine (
 IO_COMPLETION_ROUTINE FatSingleSyncCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatSingleSyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -112,7 +120,9 @@ FatSingleSyncCompletionRoutine (
 IO_COMPLETION_ROUTINE FatSingleAsyncCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatSingleAsyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -122,7 +132,9 @@ FatSingleAsyncCompletionRoutine (
 IO_COMPLETION_ROUTINE FatPagingFileCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPagingFileCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -132,7 +144,9 @@ FatPagingFileCompletionRoutine (
 IO_COMPLETION_ROUTINE FatPagingFileCompletionRoutineCatch;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPagingFileCompletionRoutineCatch (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -2406,7 +2420,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatMultiSyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -2507,7 +2523,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatMultiAsyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -2805,7 +2823,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPagingFileCompletionRoutineCatch (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -2898,7 +2918,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPagingFileCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -2967,7 +2989,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatSpecialSyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -3034,7 +3058,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatSingleSyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -3106,7 +3132,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatSingleAsyncCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,

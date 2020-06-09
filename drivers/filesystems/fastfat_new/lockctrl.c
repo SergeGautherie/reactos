@@ -39,7 +39,9 @@ Abstract:
 _Function_class_(IRP_MJ_LOCK_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdLockControl (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -119,7 +121,9 @@ Return Value:
 
 _Function_class_(FAST_IO_LOCK)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastLock (
     IN PFILE_OBJECT FileObject,
     IN PLARGE_INTEGER FileOffset,
@@ -259,7 +263,9 @@ Return Value:
 
 _Function_class_(FAST_IO_UNLOCK_SINGLE)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastUnlockSingle (
     IN PFILE_OBJECT FileObject,
     IN PLARGE_INTEGER FileOffset,
@@ -381,7 +387,9 @@ Return Value:
 
 _Function_class_(FAST_IO_UNLOCK_ALL)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastUnlockAll (
     IN PFILE_OBJECT FileObject,
     PEPROCESS ProcessId,
@@ -494,7 +502,9 @@ Return Value:
 
 _Function_class_(FAST_IO_UNLOCK_ALL_BY_KEY)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastUnlockAllByKey (
     IN PFILE_OBJECT FileObject,
     PVOID ProcessId,

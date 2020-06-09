@@ -66,7 +66,9 @@ FatRemoveClose (
 IO_WORKITEM_ROUTINE FatCloseWorker;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatCloseWorker (
     _In_        PDEVICE_OBJECT DeviceObject,
     _In_opt_    PVOID Context
@@ -84,7 +86,9 @@ FatCloseWorker (
 _Function_class_(IRP_MJ_CLOSE)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdClose (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -325,7 +329,9 @@ Return Value:
 }
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatCloseWorker (
     _In_        PDEVICE_OBJECT DeviceObject,
     _In_opt_    PVOID Context

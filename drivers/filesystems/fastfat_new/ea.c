@@ -91,7 +91,9 @@ FatIsDuplicateEaName (
 _Function_class_(IRP_MJ_QUERY_EA)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdQueryEa (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -172,7 +174,9 @@ Return Value:
 _Function_class_(IRP_MJ_SET_EA)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdSetEa (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp

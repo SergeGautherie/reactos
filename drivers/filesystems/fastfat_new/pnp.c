@@ -64,7 +64,9 @@ FatPnpCancelRemove (
 IO_COMPLETION_ROUTINE FatPnpCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPnpCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -84,7 +86,9 @@ FatPnpCompletionRoutine (
 _Function_class_(IRP_MJ_PNP)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdPnp (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -885,7 +889,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPnpCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,

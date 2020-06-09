@@ -34,7 +34,9 @@ Abstract:
 _Function_class_(IRP_MJ_SHUTDOWN)
 _Function_class_(DRIVER_DISPATCH)	
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdShutdown (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp

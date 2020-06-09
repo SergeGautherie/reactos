@@ -26,7 +26,9 @@ Abstract:
 DRIVER_INITIALIZE DriverEntry;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 DriverEntry(
     _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
@@ -34,7 +36,9 @@ DriverEntry(
 
 _Function_class_(DRIVER_UNLOAD)
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatUnload(
     _In_ _Unreferenced_parameter_ PDRIVER_OBJECT DriverObject
     );
@@ -74,7 +78,9 @@ FatIsFujitsuFMR (
 
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 DriverEntry(
     _In_ PDRIVER_OBJECT DriverObject,
     _In_ PUNICODE_STRING RegistryPath
@@ -448,7 +454,9 @@ Return Value:
 
 _Function_class_(DRIVER_UNLOAD)
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatUnload(
     _In_ _Unreferenced_parameter_ PDRIVER_OBJECT DriverObject
     )

@@ -35,7 +35,9 @@ Abstract:
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatOplockComplete (
     IN PVOID Context,
     IN PIRP Irp
@@ -91,7 +93,9 @@ Return Value:
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPrePostIrp (
     IN PVOID Context,
     IN PIRP Irp

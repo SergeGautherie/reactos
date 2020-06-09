@@ -51,7 +51,9 @@ Abstract:
 IO_COMPLETION_ROUTINE FatFlushCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFlushCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -61,7 +63,9 @@ FatFlushCompletionRoutine (
 IO_COMPLETION_ROUTINE FatHijackCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatHijackCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -72,7 +76,9 @@ FatHijackCompletionRoutine (
 _Function_class_(IRP_MJ_FLUSH_BUFFERS)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdFlushBuffers (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -1316,7 +1322,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFlushCompletionRoutine (
     IN PDEVICE_OBJECT DeviceObject,
     IN PIRP Irp,
@@ -1353,7 +1361,9 @@ FatFlushCompletionRoutine (
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatHijackCompletionRoutine (
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,

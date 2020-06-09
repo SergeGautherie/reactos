@@ -1538,7 +1538,9 @@ FatReleaseVolumeFromClose (
 
 _Requires_lock_held_(_Global_critical_region_)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatAcquireFcbForLazyWrite (
     IN PVOID Null,
     IN BOOLEAN Wait
@@ -1546,14 +1548,18 @@ FatAcquireFcbForLazyWrite (
 
 _Requires_lock_held_(_Global_critical_region_)
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatReleaseFcbFromLazyWrite (
     IN PVOID Null
     );
 
 _Requires_lock_held_(_Global_critical_region_)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatAcquireFcbForReadAhead (
     IN PVOID Null,
     IN BOOLEAN Wait
@@ -1561,7 +1567,9 @@ FatAcquireFcbForReadAhead (
 
 _Requires_lock_held_(_Global_critical_region_)
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatReleaseFcbFromReadAhead (
     IN PVOID Null
     );
@@ -1569,7 +1577,9 @@ FatReleaseFcbFromReadAhead (
 _Function_class_(FAST_IO_ACQUIRE_FOR_CCFLUSH)
 _Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatAcquireForCcFlush (
     IN PFILE_OBJECT FileObject,
     IN PDEVICE_OBJECT DeviceObject
@@ -1578,28 +1588,36 @@ FatAcquireForCcFlush (
 _Function_class_(FAST_IO_RELEASE_FOR_CCFLUSH)
 _Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatReleaseForCcFlush (
     IN PFILE_OBJECT FileObject,
     IN PDEVICE_OBJECT DeviceObject
     );
 
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatNoOpAcquire (
     IN PVOID Fcb,
     IN BOOLEAN Wait
     );
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatNoOpRelease (
     IN PVOID Fcb
     );
 
 _Requires_lock_held_(_Global_critical_region_)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFilterCallbackAcquireForCreateSection (
     IN PFS_FILTER_CALLBACK_DATA CallbackData,
     OUT PVOID *CompletionContext
@@ -1988,7 +2006,9 @@ FatVerifyFcb (
 KDEFERRED_ROUTINE FatCleanVolumeDpc;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatCleanVolumeDpc (
     _In_ PKDPC Dpc,
     _In_opt_ PVOID DeferredContext,
@@ -2007,7 +2027,9 @@ FatMarkVolume (
 WORKER_THREAD_ROUTINE FatFspMarkVolumeDirtyWithRecover;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFspMarkVolumeDirtyWithRecover (
     PVOID Parameter
     );
@@ -2044,14 +2066,18 @@ FatPerformVerify (
 //
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatOplockComplete (
     IN PVOID Context,
     IN PIRP Irp
     );
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatPrePostIrp (
     IN PVOID Context,
     IN PIRP Irp
@@ -2204,7 +2230,9 @@ typedef union _UCHAR4 {
 _Function_class_(IRP_MJ_CLEANUP)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdCleanup (                         //  implemented in Cleanup.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2213,7 +2241,9 @@ FatFsdCleanup (                         //  implemented in Cleanup.c
 _Function_class_(IRP_MJ_CLOSE)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdClose (                           //  implemented in Close.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2222,7 +2252,9 @@ FatFsdClose (                           //  implemented in Close.c
 _Function_class_(IRP_MJ_CREATE)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdCreate (                          //  implemented in Create.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2232,7 +2264,9 @@ FatFsdCreate (                          //  implemented in Create.c
 _Function_class_(IRP_MJ_DEVICE_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdDeviceControl (                   //  implemented in DevCtrl.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2241,7 +2275,9 @@ FatFsdDeviceControl (                   //  implemented in DevCtrl.c
 _Function_class_(IRP_MJ_DIRECTORY_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdDirectoryControl (                //  implemented in DirCtrl.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2250,7 +2286,9 @@ FatFsdDirectoryControl (                //  implemented in DirCtrl.c
 _Function_class_(IRP_MJ_QUERY_EA)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdQueryEa (                         //  implemented in Ea.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2259,7 +2297,9 @@ FatFsdQueryEa (                         //  implemented in Ea.c
 _Function_class_(IRP_MJ_SET_EA)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdSetEa (                           //  implemented in Ea.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2268,7 +2308,9 @@ FatFsdSetEa (                           //  implemented in Ea.c
 _Function_class_(IRP_MJ_QUERY_INFORMATION)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdQueryInformation (                //  implemented in FileInfo.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2277,7 +2319,9 @@ FatFsdQueryInformation (                //  implemented in FileInfo.c
 _Function_class_(IRP_MJ_SET_INFORMATION)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdSetInformation (                  //  implemented in FileInfo.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2286,7 +2330,9 @@ FatFsdSetInformation (                  //  implemented in FileInfo.c
 _Function_class_(IRP_MJ_FLUSH_BUFFERS)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdFlushBuffers (                    //  implemented in Flush.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2295,7 +2341,9 @@ FatFsdFlushBuffers (                    //  implemented in Flush.c
 _Function_class_(IRP_MJ_FILE_SYSTEM_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdFileSystemControl (               //  implemented in FsCtrl.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2304,7 +2352,9 @@ FatFsdFileSystemControl (               //  implemented in FsCtrl.c
 _Function_class_(IRP_MJ_LOCK_CONTROL)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdLockControl (                     //  implemented in LockCtrl.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2313,7 +2363,9 @@ FatFsdLockControl (                     //  implemented in LockCtrl.c
 _Function_class_(IRP_MJ_PNP)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdPnp (                            //  implemented in Pnp.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2322,7 +2374,9 @@ FatFsdPnp (                            //  implemented in Pnp.c
 _Function_class_(IRP_MJ_READ)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdRead (                            //  implemented in Read.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2331,7 +2385,9 @@ FatFsdRead (                            //  implemented in Read.c
 _Function_class_(IRP_MJ_SHUTDOWN)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdShutdown (                        //  implemented in Shutdown.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2340,7 +2396,9 @@ FatFsdShutdown (                        //  implemented in Shutdown.c
 _Function_class_(IRP_MJ_QUERY_VOLUME_INFORMATION)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdQueryVolumeInformation (          //  implemented in VolInfo.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2349,7 +2407,9 @@ FatFsdQueryVolumeInformation (          //  implemented in VolInfo.c
 _Function_class_(IRP_MJ_SET_VOLUME_INFORMATION)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdSetVolumeInformation (            //  implemented in VolInfo.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2358,7 +2418,9 @@ FatFsdSetVolumeInformation (            //  implemented in VolInfo.c
 _Function_class_(IRP_MJ_WRITE)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdWrite (                           //  implemented in Write.c
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2384,7 +2446,9 @@ FatFsdWrite (                           //  implemented in Write.c
 WORKER_THREAD_ROUTINE FatFspDispatch;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFspDispatch (                        //  implemented in FspDisp.c
     _In_ PVOID Context
     );
@@ -2660,7 +2724,9 @@ FatPopUpFileCorrupt (
 //
 _Function_class_(FAST_IO_CHECK_IF_POSSIBLE)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastIoCheckIfPossible (
     IN PFILE_OBJECT FileObject,
     IN PLARGE_INTEGER FileOffset,
@@ -2674,7 +2740,9 @@ FatFastIoCheckIfPossible (
 
 _Function_class_(FAST_IO_QUERY_BASIC_INFO)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastQueryBasicInfo (
     IN PFILE_OBJECT FileObject,
     IN BOOLEAN Wait,
@@ -2685,7 +2753,9 @@ FatFastQueryBasicInfo (
 
 _Function_class_(FAST_IO_QUERY_STANDARD_INFO)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastQueryStdInfo (
     IN PFILE_OBJECT FileObject,
     IN BOOLEAN Wait,
@@ -2696,7 +2766,9 @@ FatFastQueryStdInfo (
 
 _Function_class_(FAST_IO_QUERY_NETWORK_OPEN_INFO)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastQueryNetworkOpenInfo (
     IN PFILE_OBJECT FileObject,
     IN BOOLEAN Wait,
@@ -2707,7 +2779,9 @@ FatFastQueryNetworkOpenInfo (
 
 _Function_class_(FAST_IO_LOCK)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastLock (
     IN PFILE_OBJECT FileObject,
     IN PLARGE_INTEGER FileOffset,
@@ -2722,7 +2796,9 @@ FatFastLock (
 
 _Function_class_(FAST_IO_UNLOCK_SINGLE)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastUnlockSingle (
     IN PFILE_OBJECT FileObject,
     IN PLARGE_INTEGER FileOffset,
@@ -2735,7 +2811,9 @@ FatFastUnlockSingle (
 
 _Function_class_(FAST_IO_UNLOCK_ALL)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastUnlockAll (
     IN PFILE_OBJECT FileObject,
     PEPROCESS ProcessId,
@@ -2745,7 +2823,9 @@ FatFastUnlockAll (
 
 _Function_class_(FAST_IO_UNLOCK_ALL_BY_KEY)
 BOOLEAN
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFastUnlockAllByKey (
     IN PFILE_OBJECT FileObject,
     PVOID ProcessId,

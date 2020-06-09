@@ -56,7 +56,9 @@ BOOLEAN FatNoAsync = FALSE;
 KDEFERRED_ROUTINE FatDeferredFlushDpc;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeferredFlushDpc (
     _In_ PKDPC Dpc,
     _In_opt_ PVOID DeferredContext,
@@ -67,7 +69,9 @@ FatDeferredFlushDpc (
 WORKER_THREAD_ROUTINE FatDeferredFlush;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeferredFlush (
     _In_ PVOID Parameter
     );
@@ -81,7 +85,9 @@ FatDeferredFlush (
 _Function_class_(IRP_MJ_WRITE)
 _Function_class_(DRIVER_DISPATCH)
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFsdWrite (
     _In_ PVOLUME_DEVICE_OBJECT VolumeDeviceObject,
     _Inout_ PIRP Irp
@@ -2961,7 +2967,9 @@ Return Value:
 //
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeferredFlushDpc (
     _In_ PKDPC Dpc,
     _In_opt_ PVOID DeferredContext,
@@ -3016,7 +3024,9 @@ Return Value:
 //
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeferredFlush (
     _In_ PVOID Parameter
     )

@@ -59,7 +59,9 @@ FatDetermineAndMarkFcbCondition (
 WORKER_THREAD_ROUTINE FatDeferredCleanVolume;
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeferredCleanVolume (
     _In_ PVOID Parameter
     );
@@ -67,7 +69,9 @@ FatDeferredCleanVolume (
 IO_COMPLETION_ROUTINE FatMarkVolumeCompletionRoutine;
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatMarkVolumeCompletionRoutine(
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,
@@ -499,7 +503,9 @@ Return Value:
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatDeferredCleanVolume (
     _In_ PVOID Parameter
     )
@@ -654,7 +660,9 @@ Return Value:
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatCleanVolumeDpc (
     _In_ PKDPC Dpc,
     _In_opt_ PVOID DeferredContext,
@@ -1098,7 +1106,9 @@ Return Value:
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFspMarkVolumeDirtyWithRecover(
     PVOID Parameter
     )
@@ -2013,7 +2023,9 @@ Return Value:
 //
 
 NTSTATUS
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatMarkVolumeCompletionRoutine(
     _In_ PDEVICE_OBJECT DeviceObject,
     _In_ PIRP Irp,

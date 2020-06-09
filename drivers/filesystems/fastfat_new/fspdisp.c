@@ -41,7 +41,9 @@ FatRemoveOverflowEntry (
 
 
 VOID
+#ifdef __REACTOS__
 NTAPI
+#endif
 FatFspDispatch (
     _In_ PVOID Context
     )
