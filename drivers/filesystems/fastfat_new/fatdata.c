@@ -34,7 +34,7 @@ Abstract:
 #ifdef ALLOC_PRAGMA
 
 #if DBG
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma alloc_text(PAGE, FatBugCheckExceptionFilter)
 #endif
 #endif
@@ -54,7 +54,7 @@ Abstract:
 //  The global fsd data record, and zero large integer
 //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:22112, "only applies to user mode processes" )
 #endif
 FAT_DATA FatData;
@@ -94,7 +94,7 @@ LARGE_INTEGER FatMagic10000    = {{0xe219652c, 0xd1b71758}};
 LARGE_INTEGER FatMagic86400000 = {{0xfa67b90e, 0xc6d750eb}};
 #endif
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:22112, "only applies to user mode processes" )
 #endif
 FAST_IO_DISPATCH FatFastIoDispatch;
@@ -264,7 +264,7 @@ Return Value:
 
         if (!FsRtlIsNtstatusExpected( ExceptionCode )) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
             FatBugCheck( (ULONG_PTR)ExceptionPointer->ExceptionRecord,
@@ -299,7 +299,7 @@ Return Value:
 
         } else {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
             FatBugCheck( (ULONG_PTR)ExceptionPointer->ExceptionRecord,

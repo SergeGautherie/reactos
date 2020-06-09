@@ -1285,7 +1285,7 @@ Return Value:
                     //  Set BytesToRead to ByteCount to satify the following ASSERT.
                     //
                     
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
                     BytesToRead = ByteCount;
@@ -1489,7 +1489,7 @@ Return Value:
             //  alligned.
             //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
             SectorSize = (ULONG)Vcb->Bpb.BytesPerSector;
@@ -1577,7 +1577,7 @@ Return Value:
 
         DebugDump("Illegal TypeOfOpen\n", 0, FcbOrDcb );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( TypeOfOpen, (ULONG_PTR) FcbOrDcb, 0 );

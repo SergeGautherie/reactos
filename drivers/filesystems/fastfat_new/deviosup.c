@@ -307,7 +307,7 @@ Return Value:
 
     if (!MustSucceed) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( Vbo, ByteCount, 0 );
@@ -416,7 +416,7 @@ Return Value:
 
     if (!MustSucceed) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( Vbo + ByteCount - 1, 1, 0 );
@@ -1955,7 +1955,7 @@ Return Value:
 
             if (!ExceptionExpected) {
                 NT_ASSERT( ExceptionExpected );
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
 #endif        
                 FatBugCheck( 0, 0, 0 );
@@ -2783,7 +2783,7 @@ Return Value:
                                   &FatFspMarkVolumeDirtyWithRecover,
                                   Packet );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "prefast indicates this is obsolete, but it is ok for fastfat to use it" )
 #endif
             ExQueueWorkItem( &Packet->Item, CriticalWorkQueue );
@@ -3563,7 +3563,7 @@ Return Value:
     // We fill in the UserIosb manually below,
     // So passing NULL for the final parameter is ok in this special case.
     //
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning(suppress: 6387) 
 #endif
     Irp = IoBuildDeviceIoControlRequest( IOCTL_DISK_MEDIA_REMOVAL,

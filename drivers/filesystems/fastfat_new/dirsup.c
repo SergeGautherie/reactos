@@ -711,7 +711,7 @@ Return Value:
         ShortNameWithCase.MaximumLength = sizeof(ShortNameBuffer);
         ShortNameWithCase.Buffer = ShortNameBuffer;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
         Status = RtlOemStringToCountedUnicodeString( &ShortNameWithCase,
@@ -862,7 +862,7 @@ Return Value:
 
         DebugTrace( 0, Dbg, "Called with non zero allocation/file size.\n", 0);
         
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
 #endif
         FatBugCheck( 0, 0, 0 );
@@ -3479,7 +3479,7 @@ Return Value:
                 //  file in the Dcb dir.
                 //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
                 Result = FsRtlAddLargeMcbEntry( &Mcb,
@@ -3581,7 +3581,7 @@ Return Value:
             LBO Vbo;
             LBO Lbo;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
             Result = FsRtlGetNextLargeMcbEntry( &Mcb,

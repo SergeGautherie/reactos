@@ -814,7 +814,7 @@ Return Value:
 
     if (FlagOn( Vcb->VcbState, VCB_STATE_FLAG_CREATE_IN_PROGRESS)) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "this is a serious programming error if it happens" )
 #endif
         FatBugCheck( 0, 0, 0);
@@ -1469,7 +1469,7 @@ Return Value:
             //  Not and Fcb or a Dcb so we bug check
             //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "this is a serious corruption if it happens" )
 #endif
             FatBugCheck( NodeType(Fcb), (ULONG_PTR) Fcb, 0 );
@@ -2237,7 +2237,7 @@ Return Value:
 
                 if (IsPagingFile && NT_SUCCESS(Iosb.Status)) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28112, "this should be safe" )
 #endif
                     if (!FatReserveMdl) {
@@ -2259,7 +2259,7 @@ Return Value:
                         InterlockedCompareExchangePointer( (void * volatile*)&FatReserveMdl, ReserveMdl, NULL );
 #endif
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28112, "this should be safe" )
 #endif
                         if (FatReserveMdl != ReserveMdl) {
@@ -3770,7 +3770,7 @@ Return Value:
         //  If we ever get here then the I/O system gave us some bad input
         //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( CreateDisposition, 0, 0 );
@@ -3797,7 +3797,7 @@ Return Value:
 
                 ClearFlag( *DesiredAccess, AddedAccess );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "it needs to be there for debug assert" );
 #endif
                 Status = IoCheckShareAccess( *DesiredAccess,
@@ -4133,7 +4133,7 @@ Return Value:
 _Success_(return.Status == STATUS_SUCCESS)
 _Requires_lock_held_(_Global_critical_region_)
 IO_STATUS_BLOCK
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning(suppress:6101) // bug in PREFast means the _Success_ annotation is not correctly applied
 #endif
 FatOpenExistingDirectory (
@@ -4769,7 +4769,7 @@ Return Value:
 
             DebugTrace(0, Dbg, "Illegal Create Disposition\n", 0);
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
             FatBugCheck( CreateDisposition, 0, 0 );
@@ -5365,7 +5365,7 @@ Return Value:
             FatDeleteCcb( IrpContext, &Ccb );
         }
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28924, "prefast thinks this test is redundant, but DCB can be NULL depending on where we raise" )
 #endif
         if ( Dcb == NULL) {
@@ -5459,7 +5459,7 @@ Return Value:
 
     if (!NT_SUCCESS( Iosb.Status )) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28924, "prefast thinks this test is redundant, but DCB can be NULL depending on where we raise" )
 #endif
         if (Dcb != NULL) {
@@ -5579,7 +5579,7 @@ Return Value:
                 //  For now we will just leave the parent lying around.
                 //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28924, "prefast thinks this test is redundant, but FileObject can be NULL depending on where we raise" )
 #endif
                 if (ARGUMENT_PRESENT( FileObject )) {

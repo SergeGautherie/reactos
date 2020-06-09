@@ -308,7 +308,7 @@ Return Value:
 
             if (TypeOfOpen == UserDirectoryOpen) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:6309, "FullDirectoryName may be NULL if NotifyIrp is also NULL. this indicates the object is being deleted." )
 #endif
                 FsRtlNotifyFullChangeDirectory( Vcb->NotifySync,
@@ -1035,7 +1035,7 @@ Return Value:
 
         default:
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "if the type of open is unknown then things are very bad." )
 #endif
             FatBugCheck( TypeOfOpen, 0, 0 );

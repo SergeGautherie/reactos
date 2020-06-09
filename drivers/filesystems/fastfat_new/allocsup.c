@@ -1025,7 +1025,7 @@ Arguments:
 
                 DebugTrace(0, Dbg, "Illegal Cluster Type.\n", FatEntry);
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "we bugcheck here because our internal data structures are seriously corrupted if this happens" )
 #endif
                 FatBugCheck( 0, 0, 0 );
@@ -2344,7 +2344,7 @@ Arguments:
 
                     if (1 == Vcb->NumberOfWindows) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "we bugcheck here because our internal data structures are seriously corrupted if this happens" )
 #endif
                         FatBugCheck( 0, 5, 0 );
@@ -2406,7 +2406,7 @@ Arguments:
 
                     if (0 == Vcb->Windows[ FaveWindow].ClustersFree) {
                       
-#ifdef _MSC_VER  
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "we bugcheck here because our internal data structures are seriously corrupted if this happens" )
 #endif
                         FatBugCheck( 0, 5, 1 );
@@ -2991,7 +2991,7 @@ Return Value:
 
 #if DBG
 #ifndef __REACTOS__
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "this is DBG build only" )
 #endif
                 PreviousClear = RtlNumberOfClearBits( &Vcb->FreeClusterBitMap );
@@ -4564,7 +4564,7 @@ Return Value:
 
             if ( ChainTogether ) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( suppress: 4310 )
 #endif
                 *(FatEntry-1) = (USHORT)FAT_CLUSTER_LAST;
@@ -4708,7 +4708,7 @@ Return Value:
 
         DebugTrace(-1, Dbg, "LogOf -> %8lx\n", Log);
     
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "we bugcheck here because our internal data structures are seriously corrupted if this happens" )
 #endif
         FatBugCheck( Value, Log, 0 );
@@ -5101,7 +5101,7 @@ Return Value:
                 if (FatIndexBitSize == 32) {
 
 #ifndef __REACTOS__
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( suppress: 4213 )
 #endif
                     FatEntry = *((PULONG)FatBuffer)++;

@@ -314,7 +314,7 @@ Return Value:
                     
                 } else {
                 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast(suppress:28159, "things are seriously wrong if we get here")
 #endif
                     FatBugCheck( NodeType(FsContext), 0, 0 );                
@@ -327,7 +327,7 @@ Return Value:
 
         default:
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
             FatBugCheck( NodeType(FsContext), 0, 0 );

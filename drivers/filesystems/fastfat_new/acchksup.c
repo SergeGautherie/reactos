@@ -332,7 +332,7 @@ Return Value:
 
     *EffectiveToken = RestrictedAccessToken;
     
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28175, "we're a file system, this is ok to touch" )
 #endif
     SeAccessCheck( DeviceObject->SecurityDescriptor,

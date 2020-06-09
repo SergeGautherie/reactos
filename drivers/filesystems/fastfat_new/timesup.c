@@ -119,13 +119,13 @@ Return Value:
             //  the number of milleconds onto tens of milleseconds boundaries.
             //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable: 4244 )
 #endif
             *TenMsecs = (TimeFields.Milliseconds / 10) +
                 ((TimeFields.Second % 2) * 100);
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( pop )
 #endif
         } else {

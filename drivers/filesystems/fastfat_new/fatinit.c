@@ -145,7 +145,7 @@ Return Value:
         return Status;
     }
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable:28155, "these are all correct" )
 #pragma prefast( disable:28169, "these are all correct" )
@@ -206,7 +206,7 @@ Return Value:
     FatFastIoDispatch.PrepareMdlWrite =         FsRtlPrepareMdlWriteDev;
     FatFastIoDispatch.MdlWriteComplete =        FsRtlMdlWriteCompleteDev;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
     

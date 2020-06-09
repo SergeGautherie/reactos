@@ -1053,7 +1053,7 @@ Return Value:
         //  Synchronize with FatCheckForDismount(), which modifies the vpb.
         //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -1061,7 +1061,7 @@ Return Value:
 
         (VOID)FatAcquireExclusiveGlobal( IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -1133,7 +1133,7 @@ Return Value:
             try_return( Status );
         }
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28175, "this is a filesystem driver, touching SectorSize is fine" )
 #endif
         VolDo->DeviceObject.SectorSize = (USHORT)Geometry.BytesPerSector;
@@ -1562,7 +1562,7 @@ Return Value:
             OldVpb->RealDevice = Vpb->RealDevice;
             ClearFlag( OldVcb->VcbState, VCB_STATE_VPB_NOT_ON_DEVICE);
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28175, "touching Vpb is ok for a filesystem" )
 #endif
             OldVpb->RealDevice->Vpb = OldVpb;
@@ -1965,7 +1965,7 @@ Return Value:
     //  verification.
     //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -1973,7 +1973,7 @@ Return Value:
 
     (VOID)FatAcquireExclusiveGlobal( IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -3155,7 +3155,7 @@ Return Value:
         } else {
 #endif
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
             FatBugCheck( FsControlCode, 0, 0 );
@@ -3774,7 +3774,7 @@ Return Value:
 
     SetFlag(IrpContext->Flags, IRP_CONTEXT_FLAG_WAIT);
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -3782,7 +3782,7 @@ Return Value:
 
     (VOID)FatAcquireExclusiveGlobal( IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -4425,7 +4425,7 @@ Return Value:
     IrpContext.MajorFunction = IrpSp->MajorFunction;
     IrpContext.MinorFunction = IrpSp->MinorFunction;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -4433,7 +4433,7 @@ Return Value:
 
     FatAcquireExclusiveGlobal( &IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -4473,7 +4473,7 @@ Return Value:
 
             (VOID)FatAcquireExclusiveVcb( &IrpContext, ExistingVcb );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28175, "touching Vpb is ok for a filesystem" )
 #endif
@@ -4503,7 +4503,7 @@ Return Value:
 
                 NT_ASSERT( DeviceToMarkBad->Vpb->DeviceObject == NULL );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -5424,7 +5424,7 @@ Return Value:
 
             ClusterShift = Vcb->AllocationSupport.LogOfBytesPerCluster;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "calculate it anyway, in case someone adds code that uses this in the future" )    
 #endif        
             ClusterSize = 1 << ClusterShift;
@@ -5509,7 +5509,7 @@ Return Value:
                                     NULL,
                                     &StartingRun)) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
                 FatBugCheck( (ULONG_PTR)FcbOrDcb, (ULONG_PTR)McbToUse, StartingVcn.LowPart );
@@ -5564,7 +5564,7 @@ Return Value:
 
             if (!FatGetNextMcbEntry(Vcb, McbToUse, Run, (PVBO)&Vcn, &Lbo, &ByteLength)) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )    
 #endif            
                 FatBugCheck( (ULONG_PTR)FcbOrDcb, (ULONG_PTR)McbToUse, Run );
@@ -6969,7 +6969,7 @@ Return Value:
          SourceMcbVbo += SourceMcbBytesInRun) {
 
         if (SourceMcbVbo != 0) {      
-#ifdef _MSC_VER      
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )          
 #endif  
             Result = FatGetNextMcbEntry( Vcb, &FcbOrDcb->Mcb,
@@ -7490,7 +7490,7 @@ Return Value:
         //  we check for that further down anyway. So send FALSE.
         //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "convenient for debugging" )
 #endif
         TypeOfOpen = FatDecodeFileObject( DasdFileObject, &Vcb, &DasdFcb, &DasdCcb ) ;
@@ -8051,7 +8051,7 @@ Return Value:
 
     NT_ASSERT( FlagOn(IrpContext->Flags, IRP_CONTEXT_FLAG_WAIT) );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -8059,7 +8059,7 @@ Return Value:
 
     FatAcquireExclusiveGlobal( IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -8080,7 +8080,7 @@ Return Value:
         //  it for now.
         //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable:28103,"prefast cannot work out that Vcb->Resource will be released below." )
 #pragma prefast( disable:28109,"prefast cannot work out the Vcb is not already held" );
@@ -8091,7 +8091,7 @@ Return Value:
             continue;
         }
         
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
         //

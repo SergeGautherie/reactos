@@ -1789,7 +1789,7 @@ Return Value:
     default:
 
         DebugTrace( DEBUG_TRACE_ERROR, 0, "Illegal Mdl Complete.\n", 0);
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "we're very broken if we get here" )
 #endif
         FatBugCheck( IrpContext->MajorFunction, 0, 0 );
@@ -1854,7 +1854,7 @@ Return Value:
     //  delete the Vcb.
     //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28931, "we use WaitStatus in the debug assert, in fre builds prefast complains it's unused" )
 #endif
     WaitStatus = KeWaitForSingleObject( &UninitializeCompleteEvent.Event,

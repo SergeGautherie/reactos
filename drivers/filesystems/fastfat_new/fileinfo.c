@@ -831,7 +831,7 @@ Return Value:
 
             if (FlagOn( Vcb->VcbState, VCB_STATE_FLAG_CREATE_IN_PROGRESS)) {
                 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
                 FatBugCheck( 0, 0, 0);
@@ -1633,7 +1633,7 @@ Return Value:
         ShortName.MaximumLength = sizeof(ShortNameBuffer);
         ShortName.Buffer = ShortNameBuffer;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
         Status = RtlOemStringToCountedUnicodeString( &ShortName,
@@ -1737,7 +1737,7 @@ Return Value:
 
     *Length -= FIELD_OFFSET(FILE_NAME_INFORMATION, FileName[0]);
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
     Status = RtlOemStringToCountedUnicodeString( &ShortName,
@@ -5122,7 +5122,7 @@ FatDeleteFile (
 
             if ( Fcb->UncleanCount != 0 ) {
                 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
                 FatBugCheck(0,0,0);

@@ -489,7 +489,7 @@ Return Value:
             //  OK, now convert this string to UNICODE
             //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
             Status = RtlOemStringToCountedUnicodeString( Lfn,
@@ -816,7 +816,7 @@ Return Value:
                 //  We have a candidate, make sure it doesn't exist.
                 //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
                 Status = RtlUnicodeStringToCountedOemString( ShortName,

@@ -214,7 +214,7 @@ Return Value:
         //  Lock request
         //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "prefast indicates this API is obsolete but it is ok for fastfat to continue using it" )
 #endif
         Results = FsRtlFastLock( &Fcb->Specific.Fcb.FileLock,

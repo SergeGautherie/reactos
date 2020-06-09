@@ -365,7 +365,7 @@ Return Value:
                           FatFspDispatch,
                           IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "prefast indicates this is an obsolete API but it is ok for fastfat to keep using it." )
 #endif
     ExQueueWorkItem( &IrpContext->WorkQueueItem, CriticalWorkQueue );

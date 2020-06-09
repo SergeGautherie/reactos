@@ -177,7 +177,7 @@ Return Value:
     
     NT_ASSERT( FlagOn(IrpContext->Flags, IRP_CONTEXT_FLAG_WAIT) );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -185,7 +185,7 @@ Return Value:
 
     (VOID) FatAcquireExclusiveGlobal( IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 

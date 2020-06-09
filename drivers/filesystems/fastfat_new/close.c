@@ -933,7 +933,7 @@ Return Value:
     //  get access.
     //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28137, "prefast wants Wait to be a constant, but that's not possible for fastfat" )
 #endif
     if (!ExAcquireResourceExclusiveLite( &Vcb->Resource, Wait )) {
@@ -1104,7 +1104,7 @@ Return Value:
 
         default:
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28159, "if the type of open is unknown, we seriously messed up." )
 #endif
             FatBugCheck( TypeOfOpen, 0, 0 );
@@ -1224,7 +1224,7 @@ Return Value:
 
                 SetFlag( IrpContext.Flags, IRP_CONTEXT_FLAG_WAIT );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28137, "prefast wants the wait parameter in this macro expansion to be a constant, unfortunately this is not possible" )
 #endif
                 FatAcquireExclusiveGlobal( &IrpContext );

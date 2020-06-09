@@ -17,7 +17,7 @@ Abstract:
 #ifndef _FATPROCS_
 #define _FATPROCS_
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( disable: 4127 ) // conditional expression is constant
 
 #pragma warning( push )
@@ -76,7 +76,7 @@ typedef enum _TYPE_OF_OPEN {
 
 
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( pop )
 #endif
 
@@ -2948,7 +2948,7 @@ FatProcessException (
 //
 
 #if DBG
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #define DebugBreakOnStatus(S) {                                                      \
 __pragma(warning(push))                                                              \
 __pragma(warning(disable:4127))                                                      \

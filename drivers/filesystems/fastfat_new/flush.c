@@ -392,7 +392,7 @@ Return Value:
 
             {
                 BOOLEAN Finished;
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )      
 #endif          
                 Finished = FatAcquireExclusiveVcb( IrpContext, Vcb );
@@ -447,7 +447,7 @@ Return Value:
 
         default:
             
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
             FatBugCheck( TypeOfOpen, 0, 0 );

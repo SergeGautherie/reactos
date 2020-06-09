@@ -241,7 +241,7 @@ Return Value:
 
     IoAcquireVpbSpinLock( &SavedIrql );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28175, "touching Vpb is ok for a filesystem" )
 #endif
@@ -260,7 +260,7 @@ Return Value:
         SetFlag( Vcb->VcbState, VCB_STATE_VPB_NOT_ON_DEVICE);
     }
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -486,7 +486,7 @@ Return Value:
 
         DebugDump("Invalid FcbCondition\n", 0, Fcb);
         
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )     
 #endif   
         FatBugCheck( Fcb->FcbCondition, 0, 0 );
@@ -557,12 +557,12 @@ Return Value:
     //  still exists.
     //
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28193, "this will always wait" )     
 #endif   
     FatAcquireSharedGlobal( &IrpContext );
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -728,7 +728,7 @@ Return Value:
 
         ExInitializeWorkItem( &Packet->Item, &FatDeferredCleanVolume, Packet );
         
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "prefast indicates this is an obsolete API, but it is ok for fastfat to keep using it" )
 #endif
         ExQueueWorkItem( &Packet->Item, CriticalWorkQueue );
@@ -1782,7 +1782,7 @@ Return Value:
     default:
 
         DebugDump("Invalid VcbCondition\n", 0, Vcb);
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
 #endif
         FatBugCheck( Vcb->VcbCondition, 0, 0 );
@@ -1922,13 +1922,13 @@ Return Value:
 
             FatReleaseVcb( IrpContext, Vcb);
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )            
 #pragma prefast( disable: 28193 )
 #endif
             FatAcquireExclusiveGlobal( IrpContext );
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 

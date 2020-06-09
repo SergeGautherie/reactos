@@ -639,14 +639,14 @@ Return Value:
                                     &DirtyByteCount,
                                     NULL )) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
                 DirtyVbo = (VBO)DirtyLbo;
 
                 DebugTrace(0, Dbg, "Last dirty fat Mcb entry was a hole: corrupt.\n", 0);
                 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )                
 #endif
                 FatBugCheck( 0, 0, 0 );
@@ -1627,7 +1627,7 @@ Return Value:
 
                         FcbOrDcbAcquired = TRUE;
                         
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "convenient for debugging" )
 #endif
                         FcbAcquiredExclusive = TRUE;
@@ -2278,7 +2278,7 @@ Return Value:
 
                     UnwindOutstandingAsync = FALSE;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "convenient for debugging" )
 #endif
                     Wait = TRUE;
@@ -2617,7 +2617,7 @@ Return Value:
             //  alligned.
             //
             
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28931, "needed for debug build" )
 #endif
             SectorSize = (ULONG)Vcb->Bpb.BytesPerSector;
@@ -2706,7 +2706,7 @@ Return Value:
 
         DebugDump("Illegal TypeOfOpen\n", 0, FcbOrDcb );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( TypeOfOpen, (ULONG_PTR) FcbOrDcb, 0 );
@@ -3004,7 +3004,7 @@ Return Value:
                           FatDeferredFlush,
                           FlushContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "prefast indicates this API is obsolete, but it's ok for fastfat to keep using it" )
 #endif
     ExQueueWorkItem( &FlushContext->Item, CriticalWorkQueue );

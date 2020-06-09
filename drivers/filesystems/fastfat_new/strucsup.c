@@ -309,7 +309,7 @@ Return Value:
         NT_ASSERT( FlagOn(IrpContext->Flags, IRP_CONTEXT_FLAG_WAIT) );
 
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )
 #pragma prefast( disable: 28193, "this will always wait" )
@@ -317,7 +317,7 @@ Return Value:
 
         (VOID)FatAcquireExclusiveGlobal( IrpContext );
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -628,7 +628,7 @@ Return Value:
             if (UnwindWeAllocatedMcb) { FsRtlUninitializeLargeMcb( &Vcb->DirtyFatMcb ); }
             if (UnwindWeAllocatedBadBlockMap) { FsRtlUninitializeLargeMcb(&Vcb->BadBlockMcb ); }
             if (UnwindEntryList != NULL) {
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress: 28137, "prefast wants the wait to be a constant, but that isn't possible for the way fastfat is designed" )          
 #endif      
                 (VOID)FatAcquireExclusiveGlobal( IrpContext );
@@ -849,7 +849,7 @@ Return Value:
 
     if ((Vcb->DirectAccessOpenCount != 0) || (Vcb->OpenFileCount != 0)) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( 0, 0, 0 );
@@ -1036,7 +1036,7 @@ Return Value:
         if (Vcb->RootDcb != NULL) {
 
             DebugDump("Error trying to create multiple root dcbs\n", 0, Vcb);
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )          
 #endif  
             FatBugCheck( 0, 0, 0 );
@@ -1982,7 +1982,7 @@ Return Value:
     if (Fcb->OpenCount != 0) {
 
         DebugDump("Error deleting Fcb, Still Open\n", 0, Fcb);
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )        
 #endif
         FatBugCheck( 0, 0, 0 );
@@ -1996,7 +1996,7 @@ Return Value:
         (Fcb->Header.NodeTypeCode != FAT_NTC_ROOT_DCB) &&
         (Fcb->Header.NodeTypeCode != FAT_NTC_FCB)) {
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( suppress:28159, "things are seriously wrong if we get here" )
 #endif
         FatBugCheck( 0, 0, 0 );
@@ -2763,7 +2763,7 @@ Return Value:
 
     OldVpb = Vcb->Vpb;
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( push )
 #pragma prefast( disable: 28175, "touching Vpb is ok for a filesystem" )
 #endif
@@ -2816,7 +2816,7 @@ Return Value:
             }
         }
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma prefast( pop )
 #endif
 
@@ -3222,7 +3222,7 @@ Return Value:
 
                 c = Lfn->Buffer[i];
 
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable:4244 )
 #endif
@@ -3231,7 +3231,7 @@ Return Value:
                                          c <= 'z' ?
                                          c - (UCHAR)('a'-'A') :
                                          (UCHAR)c;
-#ifdef _MSC_VER
+#if !defined(__REACTOS__) || defined(_MSC_VER)
 #pragma warning( pop )
 #endif
             }
