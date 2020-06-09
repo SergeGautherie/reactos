@@ -14,7 +14,11 @@ Abstract:
 
 --*/
 
+#ifndef __REACTOS__
+#include "FatProcs.h"
+#else
 #include "fatprocs.h"
+#endif
 
 //
 //  The following constant is the maximum number of ExWorkerThreads that we

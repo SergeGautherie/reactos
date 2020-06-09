@@ -14,7 +14,11 @@ Abstract:
 
 --*/
 
+#ifndef __REACTOS__
+#include "FatProcs.h"
+#else
 #include "fatprocs.h"
+#endif
 
 //
 //  The local debug trace level

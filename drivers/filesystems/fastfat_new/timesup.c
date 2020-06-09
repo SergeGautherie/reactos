@@ -13,7 +13,11 @@ Abstract:
 
 --*/
 
+#ifndef __REACTOS__
+#include "FatProcs.h"
+#else
 #include "fatprocs.h"
+#endif
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(PAGE, FatNtTimeToFatTime)
