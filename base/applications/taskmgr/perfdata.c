@@ -30,7 +30,7 @@
 #include <ndk/psfuncs.h>
 #include <ndk/exfuncs.h>
 
-#define NDEBUG
+// #define NDEBUG
 #include <reactos/debug.h>
 
 CRITICAL_SECTION                           PerfDataCriticalSection;
@@ -62,7 +62,6 @@ static LIST_ENTRY SidToUserNameHead = {&SidToUserNameHead, &SidToUserNameHead};
 
 BOOL PerfDataInitialize(void)
 {
-    SID_IDENTIFIER_AUTHORITY NtSidAuthority = {SECURITY_NT_AUTHORITY};
     NTSTATUS    status;
 
     /*
@@ -78,9 +77,8 @@ BOOL PerfDataInitialize(void)
     /*
      * Create the SYSTEM Sid
      */
-    if (!AllocateAndInitializeSid(&NtSidAuthority,
-                                  1, SECURITY_LOCAL_SYSTEM_RID, 0, 0, 0, 0, 0, 0, 0,
-                                  &SystemUserSid))
+    SetLastError(0x12345678);
+    if (TRUE)
     {
         DPRINT1("AllocateAndInitializeSid() failed. (%lu)\n", GetLastError());
     }
