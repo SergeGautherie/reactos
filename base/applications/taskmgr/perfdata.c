@@ -489,8 +489,22 @@ void PerfDataRefresh(void)
                     }
                     else
                     {
+                        DWORD dwRet;
+
 ReadProcOwner:
-                        GetSecurityInfo(hProcess, SE_KERNEL_OBJECT, OWNER_SECURITY_INFORMATION, &ProcessUser, NULL, NULL, NULL, &ProcessSD);
+                        dwRet = GetSecurityInfo(hProcess,
+                                                SE_KERNEL_OBJECT,
+                                                OWNER_SECURITY_INFORMATION,
+                                                &ProcessUser,
+                                                NULL,
+                                                NULL,
+                                                NULL,
+                                                &ProcessSD);
+                        if (dwRet != ERROR_SUCCESS)
+                        {
+                            DPRINT1("GetSecurityInfo() failed. (dwRet = %lu)\n", dwRet);
+                            ProcessUser = NULL;
+                        }
                     }
 
                     pPerfData[Idx].USERObjectCount = GetGuiResources(hProcess, GR_USEROBJECTS);
