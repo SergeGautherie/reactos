@@ -168,7 +168,6 @@ CachedGetUserFromSid(
 
 void PerfDataRefresh(void)
 {
-    ULONG                                      ulSize;
     NTSTATUS                                   status;
     ULONG                                      BufferSize;
     PSYSTEM_PROCESS_INFORMATION                pSPI;
@@ -180,8 +179,8 @@ void PerfDataRefresh(void)
     SYSTEM_TIMEOFDAY_INFORMATION               SysTimeInfo;
     SYSTEM_FILECACHE_INFORMATION               SysCacheInfo;
     BOOLEAN                                    HasSysCacheInfo, HasSysPerfInfo, HasSysTimeInfo;
-    PSYSTEM_HANDLE_INFORMATION                 SysHandleInfoData;
-    PSYSTEM_PROCESS_INFORMATION                pBuffer;
+    PSYSTEM_HANDLE_INFORMATION                 SysHandleInfoData = NULL;
+    PSYSTEM_PROCESS_INFORMATION                pBuffer = NULL;
     PSYSTEM_PROCESSOR_PERFORMANCE_INFORMATION  SysProcessorTimeInfo;
     double                                     dbSystemTime;
     double                                     CurrentKernelTime;
@@ -228,19 +227,30 @@ void PerfDataRefresh(void)
     BufferSize = 0;
     do
     {
-        BufferSize += 0x10000;
+        status = NtQuerySystemInformation(SystemHandleInformation,
+                                          SysHandleInfoData,
+                                          BufferSize,
+                                          &BufferSize);
+        if (status != STATUS_INFO_LENGTH_MISMATCH)
+        {
+            break;
+        }
+
+        if (SysHandleInfoData)
+        {
+            HeapFree(GetProcessHeap(), 0, SysHandleInfoData);
+        }
         SysHandleInfoData = HeapAlloc(GetProcessHeap(), 0, BufferSize);
         if (!SysHandleInfoData)
         {
             break;
         }
-
-        status = NtQuerySystemInformation(SystemHandleInformation, SysHandleInfoData, BufferSize, &ulSize);
-
-        if (status == STATUS_INFO_LENGTH_MISMATCH) {
-            HeapFree(GetProcessHeap(), 0, SysHandleInfoData);
-        }
-    } while (status == STATUS_INFO_LENGTH_MISMATCH);
+    } while (TRUE);
+    if (!NT_SUCCESS(status))
+    {
+        HeapFree(GetProcessHeap(), 0, SysHandleInfoData);
+        SysHandleInfoData = NULL;
+    }
 
     /* Get process information
      * We don't know how much data there is so just keep
@@ -249,20 +259,30 @@ void PerfDataRefresh(void)
     BufferSize = 0;
     do
     {
-        BufferSize += 0x10000;
+        status = NtQuerySystemInformation(SystemProcessInformation,
+                                          pBuffer,
+                                          BufferSize,
+                                          &BufferSize);
+        if (status != STATUS_INFO_LENGTH_MISMATCH)
+        {
+            break;
+        }
+
+        if (pBuffer)
+        {
+            HeapFree(GetProcessHeap(), 0, pBuffer);
+        }
         pBuffer = HeapAlloc(GetProcessHeap(), 0, BufferSize);
         if (!pBuffer)
         {
             break;
         }
-
-        status = NtQuerySystemInformation(SystemProcessInformation, pBuffer, BufferSize, &ulSize);
-
-        if (status == STATUS_INFO_LENGTH_MISMATCH) {
-            HeapFree(GetProcessHeap(), 0, pBuffer);
-        }
-
-    } while (status == STATUS_INFO_LENGTH_MISMATCH);
+    } while (TRUE);
+    if (!NT_SUCCESS(status))
+    {
+        HeapFree(GetProcessHeap(), 0, pBuffer);
+        pBuffer = NULL;
+    }
 
     EnterCriticalSection(&PerfDataCriticalSection);
 
