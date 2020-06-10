@@ -27,6 +27,14 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     # GA_VS19: 'sdk\include\crt\math.h(202): error C2169: '_hypotf': intrinsic function, cannot be defined'
     add_compile_flags("/Oi-")
 endif()
+if(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    # AppV_VS15: 'cl : Command line warning D9025 : overriding '/Ox' with '/O1''
+    # AppV_VS17: ?
+    # AppV_VS19: ?
+    # GA_VS17: ?
+#!!?    # GA_VS19: 'cl : Command line warning D9025 : overriding '/Ox' with '/O1''
+    add_compile_flags("/wd9025")
+endif()
 
 # Always use string pooling: this helps reducing the binaries size since a lot
 # of redundancy come from the usage of __FILE__ / __RELFILE__ in the debugging
