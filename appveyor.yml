@@ -33,9 +33,9 @@ platform:
 #   - amd64
 
 configuration:
+  - Release
   - Debug
   - RelWithDebInfo
-  - Release
   - MinSizeRel
 
 version: VS2015.reactos.appveyor.{build}
