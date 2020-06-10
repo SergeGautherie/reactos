@@ -63,11 +63,11 @@ jobs:
 #         os: [windows-2016, windows-2019]
         cmake_build_type: [Debug, Release]
         experimental: [false]
-        include:
-          - cmake_build_type: RelWithDebInfo
-            experimental: true
-          - cmake_build_type: MinSizeRel
-            experimental: true
+#         include:
+#           - cmake_build_type: RelWithDebInfo
+#             experimental: true
+#           - cmake_build_type: MinSizeRel
+#             experimental: true
     steps:
     - name: Install packages
       run: choco install ninja -y
