@@ -32,7 +32,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     # AppV_VS19: ?
     # GA_VS17: ?
 #!!?    # GA_VS19: 'cl : Command line warning D9025 : overriding '/Ox' with '/O1''
-    add_compile_flags("/wd9025")
+    replace_compile_flags("/Ox" " ")
+    replace_compile_flags("/O1" " ")
 endif()
 
 # Always use string pooling: this helps reducing the binaries size since a lot
