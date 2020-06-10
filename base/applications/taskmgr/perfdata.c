@@ -31,13 +31,10 @@
 #include <ndk/exfuncs.h>
 
 CRITICAL_SECTION                           PerfDataCriticalSection;
-PPERFDATA                                  pPerfDataOld = NULL;    /* Older perf data (saved to establish delta values) */
-PPERFDATA                                  pPerfData = NULL;       /* Most recent copy of perf data */
-ULONG                                      ProcessCountOld = 0;
+PPERFDATA                                  pPerfData = NULL;
 ULONG                                      ProcessCount = 0;
 double                                     dbIdleTime;
 double                                     dbKernelTime;
-double                                     dbSystemTime;
 LARGE_INTEGER                              liOldIdleTime = {{0,0}};
 double                                     OldKernelTime = 0;
 LARGE_INTEGER                              liOldSystemTime = {{0,0}};
@@ -45,7 +42,6 @@ SYSTEM_PERFORMANCE_INFORMATION             SystemPerfInfo;
 SYSTEM_BASIC_INFORMATION                   SystemBasicInfo;
 SYSTEM_FILECACHE_INFORMATION               SystemCacheInfo;
 ULONG                                      SystemNumberOfHandles;
-PSYSTEM_PROCESSOR_PERFORMANCE_INFORMATION  SystemProcessorTimeInfo = NULL;
 PSID                                       SystemUserSid = NULL;
 
 PCMD_LINE_CACHE global_cache = NULL;
@@ -105,10 +101,6 @@ void PerfDataUninitialize(void)
         pEntry = CONTAINING_RECORD(pCur, SIDTOUSERNAME, List);
         pCur = pCur->Flink;
         HeapFree(GetProcessHeap(), 0, pEntry);
-    }
-
-    if (SystemProcessorTimeInfo) {
-        HeapFree(GetProcessHeap(), 0, SystemProcessorTimeInfo);
     }
 }
 
@@ -188,7 +180,11 @@ void PerfDataRefresh(void)
     PSYSTEM_HANDLE_INFORMATION                 SysHandleInfoData;
     PSYSTEM_PROCESS_INFORMATION                pBuffer;
     PSYSTEM_PROCESSOR_PERFORMANCE_INFORMATION  SysProcessorTimeInfo;
+    double                                     dbSystemTime;
     double                                     CurrentKernelTime;
+    ULONG                                      ProcessCountOld;
+    PPERFDATA                                  *ppPerfDataOld = &pPerfData; // Previous performance data.
+    PPERFDATA                                  pPerfData;                   // Current performance data.
     PSECURITY_DESCRIPTOR                       ProcessSD;
     PSID                                       ProcessUser;
     ULONG                                      Buffer[64]; /* must be 4 bytes aligned! */
@@ -269,24 +265,17 @@ void PerfDataRefresh(void)
     memcpy(&SystemCacheInfo, &SysCacheInfo, sizeof(SYSTEM_FILECACHE_INFORMATION));
 
     /*
-     * Save system processor time info
-     */
-    if (SystemProcessorTimeInfo) {
-        HeapFree(GetProcessHeap(), 0, SystemProcessorTimeInfo);
-    }
-    SystemProcessorTimeInfo = SysProcessorTimeInfo;
-
-    /*
      * Save system handle info
      */
     SystemNumberOfHandles = SysHandleInfoData->NumberOfHandles;
     HeapFree(GetProcessHeap(), 0, SysHandleInfoData);
 
     for (CurrentKernelTime=0, Idx=0; Idx<(ULONG)SystemBasicInfo.NumberOfProcessors; Idx++) {
-        CurrentKernelTime += Li2Double(SystemProcessorTimeInfo[Idx].KernelTime);
-        CurrentKernelTime += Li2Double(SystemProcessorTimeInfo[Idx].DpcTime);
-        CurrentKernelTime += Li2Double(SystemProcessorTimeInfo[Idx].InterruptTime);
+        CurrentKernelTime += Li2Double(SysProcessorTimeInfo[Idx].KernelTime);
+        CurrentKernelTime += Li2Double(SysProcessorTimeInfo[Idx].DpcTime);
+        CurrentKernelTime += Li2Double(SysProcessorTimeInfo[Idx].InterruptTime);
     }
+    HeapFree(GetProcessHeap(), 0, SysProcessorTimeInfo);
 
     /* If it's a first call - skip idle time calcs */
     if (liOldIdleTime.QuadPart != 0) {
@@ -331,10 +320,10 @@ void PerfDataRefresh(void)
         /* Get the old perf data for this process (if any) */
         /* so that we can establish delta values */
         pPDOld = NULL;
-        if (pPerfDataOld) {
+        if (*ppPerfDataOld) {
             for (Idx2=0; Idx2<ProcessCountOld; Idx2++) {
-                if (pPerfDataOld[Idx2].ProcessId == pSPI->UniqueProcessId) {
-                    pPDOld = &pPerfDataOld[Idx2];
+                if ((*ppPerfDataOld)[Idx2].ProcessId == pSPI->UniqueProcessId) {
+                    pPDOld = &(*ppPerfDataOld)[Idx2];
                     break;
                 }
             }
@@ -365,13 +354,9 @@ void PerfDataRefresh(void)
         pPerfData[Idx].PeakWorkingSetSizeBytes = pSPI->PeakWorkingSetSize;
         if (pPDOld)
             pPerfData[Idx].WorkingSetSizeDelta = labs((LONG)pSPI->WorkingSetSize - (LONG)pPDOld->WorkingSetSizeBytes);
-        else
-            pPerfData[Idx].WorkingSetSizeDelta = 0;
         pPerfData[Idx].PageFaultCount = pSPI->PageFaultCount;
         if (pPDOld)
             pPerfData[Idx].PageFaultCountDelta = labs((LONG)pSPI->PageFaultCount - (LONG)pPDOld->PageFaultCount);
-        else
-            pPerfData[Idx].PageFaultCountDelta = 0;
         pPerfData[Idx].VirtualMemorySizeBytes = pSPI->VirtualSize;
         pPerfData[Idx].PagedPoolUsagePages = pSPI->QuotaPeakPagedPoolUsage;
         pPerfData[Idx].NonPagedPoolUsagePages = pSPI->QuotaPeakNonPagedPoolUsage;
@@ -379,9 +364,6 @@ void PerfDataRefresh(void)
         pPerfData[Idx].HandleCount = pSPI->HandleCount;
         pPerfData[Idx].ThreadCount = pSPI->NumberOfThreads;
         pPerfData[Idx].SessionId = pSPI->SessionId;
-        pPerfData[Idx].UserName[0] = UNICODE_NULL;
-        pPerfData[Idx].USERObjectCount = 0;
-        pPerfData[Idx].GDIObjectCount = 0;
         ProcessUser = SystemUserSid;
         ProcessSD = NULL;
 
@@ -439,10 +421,12 @@ ClearInfo:
         pSPI = (PSYSTEM_PROCESS_INFORMATION)((LPBYTE)pSPI + pSPI->NextEntryOffset);
     }
     HeapFree(GetProcessHeap(), 0, pBuffer);
-    if (pPerfDataOld) {
-        HeapFree(GetProcessHeap(), 0, pPerfDataOld);
+
+    if (*ppPerfDataOld) {
+        HeapFree(GetProcessHeap(), 0, *ppPerfDataOld);
     }
-    pPerfDataOld = pPerfData;
+    *ppPerfDataOld = pPerfData;
+
     LeaveCriticalSection(&PerfDataCriticalSection);
 }
 
