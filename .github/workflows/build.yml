@@ -5,6 +5,19 @@ jobs:
   build-gcc-i386:
     name: GCC (i386)
     runs-on: ubuntu-latest
+    continue-on-error: ${{matrix.experimental}}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake_build_type: [Debug]
+        experimental: [false]
+        include:
+          - cmake_build_type: Release
+            experimental: true
+          - cmake_build_type: RelWithDebInfo
+            experimental: true
+          - cmake_build_type: MinSizeRel
+            experimental: true
     steps:
       - name: Install RosBE
         run: |
@@ -20,9 +33,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ccache
-          key: ccache-gcc-i386-${{github.sha}}
+          key: ccache-gcc-i386-${{matrix.cmake_build_type}}-${{github.sha}}
           restore-keys: |
-            ccache-gcc-i386-
+            ccache-gcc-i386-${{matrix.cmake_build_type}}-
       - name: Set ccache settings
         run: |
           echo "::set-env name=CCACHE_BASEDIR::${{github.workspace}}"
@@ -32,7 +45,7 @@ jobs:
       - name: Configure
         run: |
           mkdir build
-          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1' > commands
+          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DCMAKE_BUILD_TYPE=${{matrix.cmake_build_type}}' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Build
         run: |
@@ -44,6 +57,21 @@ jobs:
   build-msvc-i386:
     name: MSVC (i386)
     runs-on: windows-latest
+#     runs-on: ${{matrix.os}}
+    continue-on-error: ${{matrix.experimental}}
+    strategy:
+      fail-fast: false
+      matrix:
+#         os: [windows-2016, windows-2019]
+        cmake_build_type: [Debug]
+        experimental: [false]
+        include:
+          - cmake_build_type: Release
+            experimental: true
+          - cmake_build_type: RelWithDebInfo
+            experimental: true
+          - cmake_build_type: MinSizeRel
+            experimental: true
     steps:
     - name: Install packages
       run: choco install ninja -y
@@ -58,7 +86,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DCMAKE_BUILD_TYPE=${{matrix.cmake_build_type}} ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
