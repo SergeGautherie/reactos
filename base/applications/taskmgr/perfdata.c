@@ -33,14 +33,14 @@
 CRITICAL_SECTION                           PerfDataCriticalSection;
 PPERFDATA                                  pPerfData = NULL;
 ULONG                                      ProcessCount = 0;
-double                                     dbIdleTime;
-double                                     dbKernelTime;
+double                                     dbIdleTime = 0.0;
+double                                     dbKernelTime = 0.0;
 LARGE_INTEGER                              liOldIdleTime = {{0,0}};
 double                                     OldKernelTime = 0.0;
 LARGE_INTEGER                              liOldSystemTime = {{0,0}};
-SYSTEM_PERFORMANCE_INFORMATION             SystemPerfInfo;
+SYSTEM_PERFORMANCE_INFORMATION             SystemPerfInfo = {0};
 SYSTEM_BASIC_INFORMATION                   SystemBasicInfo;
-SYSTEM_FILECACHE_INFORMATION               SystemCacheInfo;
+SYSTEM_FILECACHE_INFORMATION               SystemCacheInfo = {0};
 ULONG                                      SystemNumberOfHandles = 0;
 PSID                                       SystemUserSid = NULL;
 
@@ -179,6 +179,7 @@ void PerfDataRefresh(void)
     SYSTEM_PERFORMANCE_INFORMATION             SysPerfInfo;
     SYSTEM_TIMEOFDAY_INFORMATION               SysTimeInfo;
     SYSTEM_FILECACHE_INFORMATION               SysCacheInfo;
+    BOOLEAN                                    HasSysCacheInfo, HasSysPerfInfo, HasSysTimeInfo;
     PSYSTEM_HANDLE_INFORMATION                 SysHandleInfoData;
     PSYSTEM_PROCESS_INFORMATION                pBuffer;
     PSYSTEM_PROCESSOR_PERFORMANCE_INFORMATION  SysProcessorTimeInfo;
@@ -194,18 +195,15 @@ void PerfDataRefresh(void)
 
     /* Get new system time */
     status = NtQuerySystemInformation(SystemTimeOfDayInformation, &SysTimeInfo, sizeof(SysTimeInfo), NULL);
-    if (!NT_SUCCESS(status))
-        return;
+    HasSysTimeInfo = NT_SUCCESS(status);
 
     /* Get new CPU's idle time */
     status = NtQuerySystemInformation(SystemPerformanceInformation, &SysPerfInfo, sizeof(SysPerfInfo), NULL);
-    if (!NT_SUCCESS(status))
-        return;
+    HasSysPerfInfo = NT_SUCCESS(status);
 
     /* Get system cache information */
     status = NtQuerySystemInformation(SystemFileCacheInformation, &SysCacheInfo, sizeof(SysCacheInfo), NULL);
-    if (!NT_SUCCESS(status))
-        return;
+    HasSysCacheInfo = NT_SUCCESS(status);
 
     // Get system processor performance information.
     SysProcessorTimeInfo = HeapAlloc(GetProcessHeap(), 0,
@@ -268,15 +266,24 @@ void PerfDataRefresh(void)
 
     EnterCriticalSection(&PerfDataCriticalSection);
 
-    /*
-     * Save system performance info
-     */
-    memcpy(&SystemPerfInfo, &SysPerfInfo, sizeof(SYSTEM_PERFORMANCE_INFORMATION));
+    // Save system performance information.
+    if (HasSysPerfInfo)
+    {
+        memcpy(&SystemPerfInfo, &SysPerfInfo, sizeof(SYSTEM_PERFORMANCE_INFORMATION));
+    }
+    else
+    {
+        RtlZeroMemory(&SystemPerfInfo, sizeof(SYSTEM_PERFORMANCE_INFORMATION));
+    }
 
-    /*
-     * Save system cache info
-     */
-    memcpy(&SystemCacheInfo, &SysCacheInfo, sizeof(SYSTEM_FILECACHE_INFORMATION));
+    // Save system cache information.
+    if (HasSysCacheInfo)
+    {
+        memcpy(&SystemCacheInfo, &SysCacheInfo, sizeof(SYSTEM_FILECACHE_INFORMATION));
+    }
+    else
+    {
+        RtlZeroMemory(&SystemCacheInfo, sizeof(SYSTEM_FILECACHE_INFORMATION));
     }
 
     // Save system handle information.
@@ -305,27 +312,35 @@ void PerfDataRefresh(void)
     }
 
     // Calculate time values.
-    if (HasSysTimeInfo && liOldSystemTime.QuadPart &&
-        HasSysPerfInfo && liOldIdleTime.QuadPart &&
-        CurrentKernelTime && OldKernelTime)
+    if (HasSysTimeInfo && liOldSystemTime.QuadPart)
     {
         /*  CurrentValue = NewValue - OldValue */
-        dbIdleTime = Li2Double(SysPerfInfo.IdleProcessTime) - Li2Double(liOldIdleTime);
-        dbKernelTime = CurrentKernelTime - OldKernelTime;
         dbSystemTime = Li2Double(SysTimeInfo.CurrentTime) - Li2Double(liOldSystemTime);
 
-        /*  CurrentCpuIdle = IdleTime / SystemTime */
-        dbIdleTime = dbIdleTime / dbSystemTime;
-        dbKernelTime = dbKernelTime / dbSystemTime;
+        if (HasSysPerfInfo && liOldIdleTime.QuadPart)
+        {
+            dbIdleTime = Li2Double(SysPerfInfo.IdleProcessTime) - Li2Double(liOldIdleTime);
+            /*  CurrentCpuIdle = IdleTime / SystemTime */
+            dbIdleTime = dbIdleTime / dbSystemTime;
+            /*  CurrentCpuUsage% = 100 - (CurrentCpuIdle * 100) / NumberOfProcessors */
+            dbIdleTime = 100.0 - dbIdleTime * 100.0 / (double)SystemBasicInfo.NumberOfProcessors; /* + 0.5; */
+        }
 
-        /*  CurrentCpuUsage% = 100 - (CurrentCpuIdle * 100) / NumberOfProcessors */
-        dbIdleTime = 100.0 - dbIdleTime * 100.0 / (double)SystemBasicInfo.NumberOfProcessors; /* + 0.5; */
-        dbKernelTime = 100.0 - dbKernelTime * 100.0 / (double)SystemBasicInfo.NumberOfProcessors; /* + 0.5; */
+        if (CurrentKernelTime && OldKernelTime)
+        {
+            dbKernelTime = CurrentKernelTime - OldKernelTime;
+            dbKernelTime = dbKernelTime / dbSystemTime;
+            dbKernelTime = 100.0 - dbKernelTime * 100.0 / (double)SystemBasicInfo.NumberOfProcessors; /* + 0.5; */
+        }
+    }
+    else
+    {
+        dbIdleTime = dbKernelTime = dbSystemTime = 0.0;
     }
 
     /* Store new CPU's idle and system time */
-    liOldIdleTime = SysPerfInfo.IdleProcessTime;
-    liOldSystemTime = SysTimeInfo.CurrentTime;
+    liOldIdleTime = HasSysPerfInfo ? SysPerfInfo.IdleProcessTime : (LARGE_INTEGER)0LL;
+    liOldSystemTime = HasSysTimeInfo ? SysTimeInfo.CurrentTime : (LARGE_INTEGER)0LL;
     OldKernelTime = CurrentKernelTime;
 
     /* Determine the process count
@@ -382,7 +397,8 @@ void PerfDataRefresh(void)
 
         pPerfData[Idx].ProcessId = pSPI->UniqueProcessId;
 
-        if (pPDOld)    {
+        if (pPDOld && dbSystemTime)
+        {
             double    CurTime = Li2Double(pSPI->KernelTime) + Li2Double(pSPI->UserTime);
             double    OldTime = Li2Double(pPDOld->KernelTime) + Li2Double(pPDOld->UserTime);
             double    CpuTime = (CurTime - OldTime) / dbSystemTime;
