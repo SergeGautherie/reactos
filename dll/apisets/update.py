@@ -21,9 +21,9 @@ IGNORE_OPTIONS = ('-norelay', '-ret16', '-ret64', '-register', '-private',
 
 # Figure these out later
 FUNCTION_BLACKLIST = [
-    # api-ms-win-crt-utility-l1-1-0_stubs.c(6):
-    # error C2169: '_abs64': intrinsic function, cannot be defined
-    '_abs64',
+    # api-ms-win-crt-utility-l1-1-0_stubs.c(...):
+    # error C2169: '...': intrinsic function, cannot be defined
+    '_abs64', 'llabs',
     '_byteswap_uint64', '_byteswap_ulong', '_byteswap_ushort',
     '_rotl64', '_rotr64',
 ]
