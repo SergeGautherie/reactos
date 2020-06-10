@@ -4,6 +4,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_flags("/Ob0 /Od")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_flags("/Ox /Ob2 /Ot /Oy /GT")
+    # AppV_VS15: ok
+    # AppV_VS17: ?
+    # AppV_VS19: ?
+    # GA_VS17: ?
+    # GA_VS19: 'sdk\include\crt\math.h(202): error C2169: '_hypotf': intrinsic function, cannot be defined'
+    add_compile_flags("/Oi-")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:REF /OPT:ICF")
 elseif(OPTIMIZE STREQUAL "1")
     add_compile_flags("/O1")
