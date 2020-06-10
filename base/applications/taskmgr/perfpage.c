@@ -438,7 +438,6 @@ DWORD WINAPI PerformancePageRefreshThread(void *lpParameter)
              *  Get the CPU usage
              */
             CpuUsage = PerfDataGetProcessorUsage();
-            if (CpuUsage <= 0 )       CpuUsage = 0;
             if (CpuUsage > 100)       CpuUsage = 100;
 
             if (!bInMenuLoop)
@@ -450,7 +449,6 @@ DWORD WINAPI PerformancePageRefreshThread(void *lpParameter)
             if (TaskManagerSettings.ShowKernelTimes)
             {
                 CpuKernelUsage = PerfDataGetProcessorSystemUsage();
-                if (CpuKernelUsage <= 0)   CpuKernelUsage = 0;
                 if (CpuKernelUsage > 100) CpuKernelUsage = 100;
             }
             else
