@@ -20,27 +20,23 @@ image:
 
 environment:
   matrix:
-#   - BuildType: "msvc-x64"
-#     USE_ROSBE_VERSION: 21
-#   - BuildType: "msvc-x64"
-#     USE_ROSBE_VERSION: 22
 #   - BuildType: "msvc"
 #     USE_ROSBE_VERSION: 21
   - BuildType: "msvc"
     USE_ROSBE_VERSION: 22
-    CMAKE_BUILD_TYPE: Debug
-  - BuildType: "msvc"
-    USE_ROSBE_VERSION: 22
-    CMAKE_BUILD_TYPE: RelWithDebInfo
-  - BuildType: "msvc"
-    USE_ROSBE_VERSION: 22
-    CMAKE_BUILD_TYPE: Release
-  - BuildType: "msvc"
-    USE_ROSBE_VERSION: 22
-    CMAKE_BUILD_TYPE: MinSizeRel
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
 #    - BuildType: vssolution-x64
+
+platform:
+  - x86
+#   - amd64
+
+configuration:
+  - Debug
+  - RelWithDebInfo
+  - Release
+  - MinSizeRel
 
 version: VS2015.reactos.appveyor.{build}
 skip_branch_with_pr: true
@@ -136,7 +132,7 @@ init:
 
 build_script:
   - ver
-  - if "%BuildType%" == "msvc-x64" (
+  - if "%platform%" == "amd64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
@@ -145,10 +141,10 @@ build_script:
   - ninja --version
   - md c:\ros_build
   - cd c:\ros_build
-  - if "%BuildType%" == "msvc-x64" (
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 %APPVEYOR_BUILD_FOLDER%
+  - if "%platform%" == "amd64" (
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 -DCMAKE_BUILD_TYPE=%configuration% %APPVEYOR_BUILD_FOLDER%
       ) else (
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% %APPVEYOR_BUILD_FOLDER%
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DCMAKE_BUILD_TYPE=%configuration% %APPVEYOR_BUILD_FOLDER%
       )
   - ps: >-
       & cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
