@@ -543,7 +543,9 @@ LRESULT MSRLE32_CompressRLE4(const CodecInfo *pi, LPCBITMAPINFOHEADER lpbiIn,
 {
   LPWORD lpC;
   LONG   lLine, lInLine;
+#if !defined(__REACTOS__) || !defined(NDEBUG)
   LPBYTE lpOutStart = lpOut;
+#endif
 
   /* pre-conditions */
   assert(pi != NULL && lpbiOut != NULL);
@@ -696,7 +698,9 @@ LRESULT MSRLE32_CompressRLE8(const CodecInfo *pi, LPCBITMAPINFOHEADER lpbiIn,
 {
   LPWORD lpC;
   LONG   lInLine, lLine;
+#if !defined(__REACTOS__) || !defined(NDEBUG)
   LPBYTE lpOutStart = lpOut;
+#endif
 
   assert(pi != NULL && lpbiOut != NULL);
   assert(lpIn != NULL && lpOut != NULL);

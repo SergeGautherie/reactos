@@ -848,7 +848,9 @@ void ME_GetCharFormat(ME_TextEditor *editor, const ME_Cursor *from,
 
   do {
     /* FIXME add more style feature comparisons */
+#if !defined(__REACTOS__) || !defined(NDEBUG)
     DWORD dwAttribs = CFM_SIZE | CFM_FACE | CFM_COLOR | CFM_UNDERLINETYPE;
+#endif
     DWORD dwEffects = CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_PROTECTED | CFM_LINK | CFM_SUPERSCRIPT;
 
     run = ME_FindItemFwd(run, diRun);

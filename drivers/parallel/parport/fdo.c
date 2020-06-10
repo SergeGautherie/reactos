@@ -173,6 +173,11 @@ FdoStartDevice(IN PDEVICE_OBJECT DeviceObject,
                        PartialDescriptorTranslated->u.Interrupt.Level,
                        PartialDescriptorTranslated->u.Interrupt.Vector);
 
+#if 1
+#if defined(_MSC_VER) && (!DBG || defined(NDEBUG))
+                DBG_UNREFERENCED_LOCAL_VARIABLE(PartialDescriptorTranslated);
+#endif
+#else
 //                Dirql = (KIRQL)PartialDescriptorTranslated->u.Interrupt.Level;
 //                Vector = PartialDescriptorTranslated->u.Interrupt.Vector;
 //                Affinity = PartialDescriptorTranslated->u.Interrupt.Affinity;
@@ -183,6 +188,7 @@ FdoStartDevice(IN PDEVICE_OBJECT DeviceObject,
 //                    InterruptMode = LevelSensitive;
 
 //                ShareInterrupt = (PartialDescriptorTranslated->ShareDisposition == CmResourceShareShared);
+#endif
                 break;
 
             default:
