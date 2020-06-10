@@ -4,12 +4,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_flags("/Ob0 /Od")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_compile_flags("/Ox /Ob2 /Ot /Oy /GT")
-    # AppV_VS15: ok
-    # AppV_VS17: ?
-    # AppV_VS19: ?
-    # GA_VS17: ?
-    # GA_VS19: 'sdk\include\crt\math.h(202): error C2169: '_hypotf': intrinsic function, cannot be defined'
-    add_compile_flags("/Oi-")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:REF /OPT:ICF")
 elseif(OPTIMIZE STREQUAL "1")
     add_compile_flags("/O1")
@@ -18,9 +12,19 @@ elseif(OPTIMIZE STREQUAL "2")
 elseif(OPTIMIZE STREQUAL "3")
     add_compile_flags("/Ot /Ox /GS-")
 elseif(OPTIMIZE STREQUAL "4")
+    # 4 = default.
     add_compile_flags("/Os /Ox /GS-")
 elseif(OPTIMIZE STREQUAL "5")
     add_compile_flags("/Gy /Ob2 /Os /Ox /GS-")
+endif()
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # For: Release, RelWithDebInfo, (and MinSizeRel !??).
+    # AppV_VS15: 'dll\apisets\api-ms-win-crt-utility-l1-1-0_stubs.c(41): error C2169: 'llabs': intrinsic function, cannot be defined'
+    # AppV_VS17: ?
+    # AppV_VS19: ?
+    # GA_VS17: ?
+    # GA_VS19: 'sdk\include\crt\math.h(202): error C2169: '_hypotf': intrinsic function, cannot be defined'
+    add_compile_flags("/Oi-")
 endif()
 
 # Always use string pooling: this helps reducing the binaries size since a lot
