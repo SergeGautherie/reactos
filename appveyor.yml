@@ -20,15 +20,24 @@ image:
 
 environment:
   matrix:
-# 
-  - BuildType: "msvc-x64"
-    USE_ROSBE_VERSION: 21
-  - BuildType: "msvc-x64"
-    USE_ROSBE_VERSION: 22
+#   - BuildType: "msvc-x64"
+#     USE_ROSBE_VERSION: 21
+#   - BuildType: "msvc-x64"
+#     USE_ROSBE_VERSION: 22
+#   - BuildType: "msvc"
+#     USE_ROSBE_VERSION: 21
   - BuildType: "msvc"
-    USE_ROSBE_VERSION: 21
+    USE_ROSBE_VERSION: 22
+    CMAKE_BUILD_TYPE: Debug
   - BuildType: "msvc"
     USE_ROSBE_VERSION: 22
+    CMAKE_BUILD_TYPE: RelWithDebInfo
+  - BuildType: "msvc"
+    USE_ROSBE_VERSION: 22
+    CMAKE_BUILD_TYPE: Release
+  - BuildType: "msvc"
+    USE_ROSBE_VERSION: 22
+    CMAKE_BUILD_TYPE: MinSizeRel
 #    - BuildType: "clang-cl"
 #    - BuildType: vssolution
 #    - BuildType: vssolution-x64
@@ -139,7 +148,7 @@ build_script:
   - if "%BuildType%" == "msvc-x64" (
         cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 %APPVEYOR_BUILD_FOLDER%
       ) else (
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 %APPVEYOR_BUILD_FOLDER%
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DCMAKE_BUILD_TYPE=%CMAKE_BUILD_TYPE% %APPVEYOR_BUILD_FOLDER%
       )
   - ps: >-
       & cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
