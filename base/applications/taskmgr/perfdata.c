@@ -113,14 +113,18 @@ void PerfDataUninitialize(void)
     }
 }
 
-static void SidToUserName(PSID Sid, LPWSTR szBuffer, DWORD BufferSize)
+static
+BOOL
+SidToUserName(
+    _In_ PSID Sid,
+    _Out_ LPWSTR szBuffer,
+    _Inout_ DWORD cchBuffer)
 {
-    static WCHAR szDomainNameUnused[255];
+    WCHAR szDomainNameUnused[255];
     DWORD DomainNameLen = sizeof(szDomainNameUnused) / sizeof(szDomainNameUnused[0]);
     SID_NAME_USE Use;
 
-    if (Sid != NULL)
-        LookupAccountSidW(NULL, Sid, szBuffer, &BufferSize, szDomainNameUnused, &DomainNameLen, &Use);
+    return LookupAccountSidW(NULL, Sid, szBuffer, &cchBuffer, szDomainNameUnused, &DomainNameLen, &Use);
 }
 
 VOID
@@ -164,7 +168,13 @@ CachedGetUserFromSid(
     }
 
     /* We didn't find the SID in the list, get the name conventional */
-    SidToUserName(pSid, pUserName, cwcUserName);
+    if (!SidToUserName(pSid, pUserName, cwcUserName))
+    {
+        DPRINT1("SidToUserName() failed! (%lu)\n", GetLastError());
+        pUserName[0] = UNICODE_NULL;
+        *pcwcUserName = 0;
+        return;
+    }
 
     /* Allocate a new entry */
     *pcwcUserName = wcslen(pUserName);
