@@ -129,7 +129,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_flags("/Zi")
     endif()
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_definitions("/D NDEBUG")
+    add_definitions("/DNDEBUG")
 endif()
 
 # Hotpatchable images
