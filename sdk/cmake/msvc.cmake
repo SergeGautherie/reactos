@@ -141,6 +141,17 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_definitions("/D NDEBUG")
 endif()
 
+# if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+#     # Test: il y en a un, de Wine !!?
+#     add_compile_flags("/we4005")
+# endif()
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # Avoid tons of 'warning C4005: 'NDEBUG': macro redefinition'.
+    # For the time being, too bad if there are others...
+    add_compile_flags("/wd4005")
+endif()
+
 # Hotpatchable images
 if(ARCH STREQUAL "i386")
     if(NOT USE_CLANG_CL)
