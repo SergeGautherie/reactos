@@ -1,5 +1,4 @@
 
-#if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     # no optimization
     add_compile_flags("/Ob0 /Od")
@@ -125,12 +124,10 @@ if(USE_CLANG_CL)
 endif()
 
 # Debugging
-#if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     if(NOT (_PREFAST_ OR _VS_ANALYZE_))
         add_compile_flags("/Zi")
     endif()
-#elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
     add_definitions("/D NDEBUG")
 endif()
