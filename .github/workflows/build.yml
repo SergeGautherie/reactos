@@ -1,0 +1,282 @@
+name: Build-SG
+on: [push, pull_request]
+
+jobs:
+  build-gcc-i386:
+    name: GCC (i386)
+    runs-on: ubuntu-16.04
+    # runs-on: ubuntu-18.04
+    # runs-on: ubuntu-latest
+    # runs-on: ubuntu-20.04
+    steps:
+# Other installer !?
+  # 'choco: command not found'
+#       - name: Install packages
+#         run: choco install ninja -y
+# D_RosBE-21
+        # (U16) RosBE 2.1.2 (+PCH): 14-15 min.
+        #   'cmake version 3.2.1-ReactOS'
+        #   Ninja: '1.6.0'
+        # (U18) RosBE 2.1.2 (+PCH): 13-17 min.
+        #   'cmake version 3.2.1-ReactOS'
+        #   Ninja: '1.6.0'
+#           ls -alR rosbe
+  # No, as no default Ninja.
+#           rm rosbe/bin/ninja*
+      - name: Install RosBEBinFull (RosBE 2.1.2, +PCH)
+        if: false
+        run: |
+          wget -nv https://svn.reactos.org/amine/RosBEBinFull.tar.gz
+          tar -xzf RosBEBinFull.tar.gz
+          mv RosBEBinFull rosbe
+# F_RosBE-21
+# D_RosBE-22
+        # (U16) RosBE 2.2 (-PCH): 30 min.
+        #   'cmake version 3.17.0'
+        #   Ninja: '1.10.0'
+        # (U18) RosBE 2.2 (-PCH): 27 min. (+ ccache: 42 min if empty, 3 min if minor change.)
+        #   'cmake version 3.17.0'
+        #   Ninja: '1.10.0'
+      - name: Install rosbe-ci (2.2, -PCH)
+        if: true
+        run: |
+          wget -nv https://svn.reactos.org/storage/vperevertkin/rosbe-ci.tar.zst
+          mkdir ${{github.workspace}}/rosbe
+          tar -I zstd -xf rosbe-ci.tar.zst --directory ${{github.workspace}}/rosbe
+# F_RosBE-22
+      - name: Install other packages
+        if: false
+        run: sudo apt install ccache
+      - name: Check software versions
+        run: |
+          echo 'cmake --version' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < commands
+          echo 'ninja --version' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < commands
+      - uses: actions/checkout@v2
+        with:
+          path: src
+      - name: Set up cache for ccache
+        if: false
+        uses: actions/cache@v1
+        with:
+          path: ccache
+          key: ccache-gcc-i386-${{github.sha}}
+          restore-keys: |
+            ccache-gcc-i386-
+      - name: Set ccache settings
+        if: false
+        run: |
+          echo "::set-env name=CCACHE_BASEDIR::${{github.workspace}}"
+          echo "::set-env name=CCACHE_DIR::${{github.workspace}}/ccache"
+          echo "::set-env name=CCACHE_MAXSIZE::1G"
+          echo "::set-env name=CCACHE_SLOPPINESS::time_macros"
+#           echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1' > commands
+      - name: Configure
+        run: |
+          mkdir build
+          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < commands
+# Can't filter out logs :-/
+      - name: Build
+        run: |
+          echo 'cd ${{github.workspace}}/build && cmake --build . -- -k 0' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < commands
+      - name: Generate ISOs
+        if: true
+        run: |
+          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
+      - name: Print ccache statistics
+        if: false
+        run: ccache -s
+      - name: Upload bootcd
+        if: true
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-${{github.sha}}
+          path: build/bootcd.iso
+      - name: Upload bootcdregtest
+        if: false
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-${{github.sha}}
+          path: build/bootcdregtest.iso
+      - name: Upload livecd
+        if: true
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-${{github.sha}}
+          path: build/livecd.iso
+
+  build-msvc-i386:
+    name: MSVC (i386)
+      # NT 10, VS 2017.
+    runs-on: windows-2016
+      # NT 10, VS 2019.
+    # runs-on: windows-2019
+    # runs-on: windows-latest
+    steps:
+    - name: Install packages
+      run: choco install ninja -y
+# D_RosBE-21
+      # (S16) RosBE 2.1.x (+PCH): 12-14 min.
+      #   'cmake version 3.2.1-ReactOS'
+      #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
+      # (S19) RosBE 2.1.x (+PCH): 11-14 min.
+      #   'cmake version 3.2.1-ReactOS'
+      #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
+    - name: Install RosCMakeNinja (RosBE 2.1.x, +PCH)
+      if: false
+      run: |
+        curl -O https://svn.reactos.org/amine/RosCMakeNinja.zip
+        7z x RosCMakeNinja.zip -o${{github.workspace}}\rosbe
+        del ${{github.workspace}}\rosbe\bin\ninja.exe
+        echo "::add-path::${{github.workspace}}\rosbe\bin"
+# F_RosBE-21
+# D_RosBE-22
+      # (S16) (No =) RosBE 2.2 (-PCH): 18 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
+      # (S19) (No =) RosBE 2.2 (-PCH): 17-21 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
+    - name: Install Flex and Bison
+        # Not used yet.
+      if: false
+      run: |
+        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+        7z x flexbison.7z -O${{github.workspace}}\bin
+        echo "::add-path::${{github.workspace}}\bin"
+        echo "::set-env name=BISON_PKGDATADIR::${{github.workspace}}\bin\share\bison"
+        echo "::set-env name=M4::${{github.workspace}}\bin\m4.exe"
+# F_RosBE-22
+    - name: Add CL to PATH
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86
+    - uses: actions/checkout@v2
+      with:
+        path: src
+    - name: Check software versions
+      run: |
+        cmake --version
+        ninja --version
+    - name: Configure
+      run: |
+        mkdir build
+        cd build
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
+    - name: Build
+      working-directory: ${{github.workspace}}\build
+      run: cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+    - name: Generate ISOs
+      if: true
+      working-directory: ${{github.workspace}}\build
+      run: |
+        cmake --build . --target bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+        cmake --build . --target livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+    - name: Upload bootcd
+      if: true
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-i386-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      if: true
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-i386-${{github.sha}}
+        path: build/livecd.iso
+
+  build-msvc-amd64:
+    name: MSVC (amd64)
+      # NT 10, VS 2017.
+    runs-on: windows-2016
+      # NT 10, VS 2019.
+    # runs-on: windows-2019
+    # runs-on: windows-latest
+    steps:
+    - name: Install packages
+      # HACK: remove all packages which contain gcc binary
+      run: |
+         choco install ninja -y
+         choco uninstall mingw strawberryperl -y
+# D_RosBE-21
+      # (S16) RosBE 2.1.x (+PCH): 18-21 min.
+      #   'cmake version 3.2.1-ReactOS'
+      #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
+      # (S19) RosBE 2.1.x (+PCH): N/A min.
+      #   'cmake version 3.2.1-ReactOS'
+      #   Ninja: (RosBE) '1.5.3' or (GitHub) '1.8.2' or (Choco) '1.10.0'
+# (S19 only: )
+# Configure
+# ...
+# -- Selected localization: all
+# CMake Error at sdk/cmake/msvc.cmake:69 (add_link_options):
+#   Unknown CMake command "add_link_options".
+# Call Stack (most recent call first):
+#   CMakeLists.txt:201 (include)
+    - name: Install RosCMakeNinja (RosBE 2.1.x, +PCH)
+      if: false
+      run: |
+        curl -O https://svn.reactos.org/amine/RosCMakeNinja.zip
+        7z x RosCMakeNinja.zip -o${{github.workspace}}\rosbe
+        del ${{github.workspace}}\rosbe\bin\ninja.exe
+        echo "::add-path::${{github.workspace}}\rosbe\bin"
+# F_RosBE-21
+# D_RosBE-22
+      # (S16) (No =) RosBE 2.2 (-PCH): 23 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
+      # (S19) (No =) RosBE 2.2 (-PCH): 24-28 min.
+      #   'cmake version 3.17.2'
+      #   Ninja: '1.10.0'
+    - name: Install Flex and Bison
+        # Not used yet.
+      if: false
+      run: |
+        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+        7z x flexbison.7z -O${{github.workspace}}\bin
+        echo "::add-path::${{github.workspace}}\bin"
+        echo "::set-env name=BISON_PKGDATADIR::${{github.workspace}}\bin\share\bison"
+        echo "::set-env name=M4::${{github.workspace}}\bin\m4.exe"
+# F_RosBE-22
+    - name: Add CL to PATH
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+    - name: Check software versions
+      run: |
+        cmake --version
+        ninja --version
+    - uses: actions/checkout@v2
+      with:
+        path: src
+    - name: Configure
+      run: |
+        mkdir build
+        cd build
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 ${{github.workspace}}\src
+    - name: Build
+      working-directory: ${{github.workspace}}\build
+      run: |
+        cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+    - name: Generate ISOs
+      if: true
+      working-directory: ${{github.workspace}}\build
+      run: |
+        cmake --build . --target bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+        cmake --build . --target livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+    - name: Upload bootcd
+      if: true
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-amd64-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      if: true
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-amd64-${{github.sha}}
+        path: build/livecd.iso
