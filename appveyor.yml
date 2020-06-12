@@ -33,10 +33,7 @@ platform:
 #   - amd64
 
 configuration:
-  - Release
-  - Debug
   - RelWithDebInfo
-  - MinSizeRel
 
 version: VS2015.reactos.appveyor.{build}
 skip_branch_with_pr: true
