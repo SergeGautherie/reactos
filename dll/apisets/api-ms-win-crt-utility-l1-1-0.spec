@@ -18,7 +18,7 @@
 @ stub imaxdiv
 @ stdcall labs() msvcrt.labs
 @ stdcall ldiv() msvcrt.ldiv
-# stub -ret64 llabs  # error C2169: '...': intrinsic function, cannot be defined
+@ stub -ret64 llabs
 @ stub lldiv
 @ stdcall qsort() msvcrt.qsort
 @ stub qsort_s
