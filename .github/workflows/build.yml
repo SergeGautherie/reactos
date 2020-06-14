@@ -5,9 +5,9 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        compiler: [gcc]
-        arch: [i386]
-        config: [Release]
+        compiler: [gcc, clang]
+        arch: [i386, amd64]
+        config: [Debug, Release]
         dllver: ['0x502', '0x600']
         exclude:
           - dllver: 0x600
