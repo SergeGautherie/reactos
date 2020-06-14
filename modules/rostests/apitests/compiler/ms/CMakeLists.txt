@@ -1,2 +1,2 @@
 
-add_subdirectory(seh)
+# add_subdirectory(seh)
