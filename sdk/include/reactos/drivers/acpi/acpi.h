@@ -220,21 +220,6 @@ typedef struct _DEBUG_PORT_TABLE
     GEN_ADDR BaseAddress;
 } DEBUG_PORT_TABLE, *PDEBUG_PORT_TABLE;
 
-typedef struct _WATCHDOG_TABLE
-{
-    DESCRIPTION_HEADER Header;
-    GEN_ADDR ControlRegister;
-    GEN_ADDR CountRegister;
-    USHORT PciDeviceId;
-    USHORT PciVendorId;
-    UCHAR PciBus;
-    UCHAR PciDevice;
-    UCHAR PciFunction;
-    UCHAR PciSegment;
-    USHORT MaxCount;
-    UCHAR Units;
-} WATCHDOG_TABLE, *PWATCHDOG_TABLE;
-
 typedef struct _BOOT_TABLE
 {
     DESCRIPTION_HEADER Header;

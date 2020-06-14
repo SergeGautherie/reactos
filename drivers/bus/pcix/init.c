@@ -24,7 +24,7 @@ BOOLEAN PciLockDeviceResources;
 BOOLEAN PciEnableNativeModeATA;
 ULONG PciSystemWideHackFlags;
 PPCI_IRQ_ROUTING_TABLE PciIrqRoutingTable;
-PWATCHDOG_TABLE WdTable;
+ACPI_TABLE_WDRT *WdTable;
 PPCI_HACK_ENTRY PciHackTable;
 
 /* FUNCTIONS ******************************************************************/

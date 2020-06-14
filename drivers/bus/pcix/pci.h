@@ -21,6 +21,12 @@
 #include <arbiter.h>
 #include <cmreslist.h>
 
+// ACPICA
+#include <acpi.h>
+// ACPI_BIOS_ERROR was defined in acoutput.h,
+// but is redefined in bugcodes.h included from the DDK.
+#undef ACPI_BIOS_ERROR
+
 //
 // Tag used in all pool allocations (Pci Bus)
 //
@@ -1811,7 +1817,7 @@ extern PCI_INTERFACE PciLocationInterface;
 extern PCI_INTERFACE AgpTargetInterface;
 extern PCI_INTERFACE TranslatorInterfaceInterrupt;
 extern PDRIVER_OBJECT PciDriverObject;
-extern PWATCHDOG_TABLE WdTable;
+extern ACPI_TABLE_WDRT *WdTable;
 extern PPCI_HACK_ENTRY PciHackTable;
 extern BOOLEAN PciAssignBusNumbers;
 extern BOOLEAN PciEnableNativeModeATA;
