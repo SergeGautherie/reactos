@@ -138,8 +138,9 @@ HalpParseApicTables(
     DPRINT(" MadtTable %p, subtables %p - %p\n", MadtTable, AcpiHeader, (PVOID)TableEnd);
 
     // DBG: "Assertion failed at ../src/hal/halx86/acpi/madt.c(138): FALSE" + hangs
-    // REL: (_All_ master Boot/Live hang, except wihout Debug mode :-()
-    NT_ASSERT(FALSE);
+    // REL: (_All_ master Boot/Live hang, except wihout Debug mode :-( Retirer manuellement les '/DEBUG*' depuis le menu F8 F10)
+    //      Then, NT_ASSERT() still hangs, which is "fine".
+    // NT_ASSERT(FALSE);
 
     while ((ULONG_PTR)(AcpiHeader + 1) <= TableEnd)
     {
