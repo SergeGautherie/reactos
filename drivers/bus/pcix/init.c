@@ -29,8 +29,8 @@ PPCI_HACK_ENTRY PciHackTable;
 
 /* FUNCTIONS ******************************************************************/
 
+static
 NTSTATUS
-NTAPI
 PciAcpiFindRsdt(OUT PACPI_BIOS_MULTI_NODE *AcpiMultiNode)
 {
     BOOLEAN Result;
@@ -193,8 +193,8 @@ PciAcpiFindRsdt(OUT PACPI_BIOS_MULTI_NODE *AcpiMultiNode)
     return Status;
 }
 
+static
 PVOID
-NTAPI
 PciGetAcpiTable(IN ULONG TableCode)
 {
     PDESCRIPTION_HEADER Header;
@@ -202,7 +202,7 @@ PciGetAcpiTable(IN ULONG TableCode)
     PRSDT Rsdt;
     PXSDT Xsdt;
     ULONG EntryCount, TableLength, Offset, CurrentEntry;
-    PVOID TableBuffer, MappedAddress;
+    PVOID TableBuffer = NULL, MappedAddress;
     PHYSICAL_ADDRESS PhysicalAddress;
     NTSTATUS Status;
 
@@ -225,7 +225,6 @@ PciGetAcpiTable(IN ULONG TableCode)
     /* Check how big the table really is and get rid of the temporary header */
     TableLength = Header->Length;
     MmUnmapIoSpace(Header, sizeof(DESCRIPTION_HEADER));
-    Header = NULL;
 
     /* Map its true size */
     MappedAddress = MmMapIoSpace(AcpiMultiNode->RsdtAddress,
@@ -295,18 +294,23 @@ PciGetAcpiTable(IN ULONG TableCode)
             TableBuffer = ExAllocatePoolWithTag(PagedPool,
                                                 Header->Length,
                                                 PCI_POOL_TAG);
-            if (!TableBuffer) break;
+            if (TableBuffer)
+            {
+                /* Copy the table into the buffer */
+                RtlCopyMemory(TableBuffer, Header, Header->Length);
+            }
 
-            /* Copy the table into the buffer */
-            RtlCopyMemory(TableBuffer, Header, Header->Length);
+            /* Clean up */
+            MmUnmapIoSpace(Header, sizeof(DESCRIPTION_HEADER));
+
+            break;
         }
 
         /* Done with this table, keep going */
         MmUnmapIoSpace(Header, sizeof(DESCRIPTION_HEADER));
     }
 
-    if (Header) MmUnmapIoSpace(Header, sizeof(DESCRIPTION_HEADER));
-    return NULL;
+    return TableBuffer;
 }
 
 NTSTATUS
