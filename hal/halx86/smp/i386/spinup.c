@@ -13,7 +13,9 @@
 
 /* GLOBALS *******************************************************************/
 
+#if 0 // Unused
 extern PPROCESSOR_IDENTITY HalpProcessorIdentity;
+#endif
 extern PHYSICAL_ADDRESS HalpLowStubPhysicalAddress;
 extern PVOID HalpLowStub;
 
@@ -24,7 +26,7 @@ extern PVOID HalpAPEntry32;
 extern PVOID HalpAPEntry16End;
 extern HALP_APIC_INFO_TABLE HalpApicInfoTable;
 
-ULONG HalpStartedProcessorCount = 1;
+static ULONG HalpStartedProcessorCount = 1;
 
 #ifndef Add2Ptr
 #define Add2Ptr(P,I) ((PVOID)((PUCHAR)(P) + (I)))

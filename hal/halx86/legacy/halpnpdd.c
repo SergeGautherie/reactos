@@ -9,6 +9,7 @@
 /* INCLUDES *******************************************************************/
 
 #include <hal.h>
+
 #define NDEBUG
 #include <debug.h>
 
@@ -46,7 +47,7 @@ typedef struct _PDO_EXTENSION
 
 /* GLOBALS ********************************************************************/
 
-PDRIVER_OBJECT HalpDriverObject;
+static PDRIVER_OBJECT HalpDriverObject;
 
 /* PRIVATE FUNCTIONS **********************************************************/
 

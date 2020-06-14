@@ -50,7 +50,7 @@ typedef struct _PDO_EXTENSION
 
 /* GLOBALS ********************************************************************/
 
-PDRIVER_OBJECT HalpDriverObject;
+static PDRIVER_OBJECT HalpDriverObject;
 
 /* PRIVATE FUNCTIONS **********************************************************/
 
@@ -116,7 +116,7 @@ HalpAddDevice(IN PDRIVER_OBJECT DriverObject,
     if (!NT_SUCCESS(Status))
     {
         /* Fail */
-        DPRINT1("HAL: Could not create ACPI device object status=0x%08x\n", Status);
+        DPRINT1("HAL: Could not create ACPI device object: Status 0x%08lx\n", Status);
         return Status;
     }
 
@@ -135,7 +135,7 @@ HalpAddDevice(IN PDRIVER_OBJECT DriverObject,
     PdoDeviceObject->Flags &= ~DO_DEVICE_INITIALIZING;
 
     /* Find the ACPI watchdog table */
-    Wdrt = HalAcpiGetTable(0, 'TRDW');
+    Wdrt = HalAcpiGetTable(0, WDRT_SIGNATURE);
     if (Wdrt)
     {
         /* FIXME: TODO */
@@ -143,7 +143,7 @@ HalpAddDevice(IN PDRIVER_OBJECT DriverObject,
     }
 
     /* Return status */
-    DPRINT("Device added %lx\n", Status);
+    DPRINT("Device added: Status 0x%08lx\n", Status);
     return Status;
 }
 
@@ -711,7 +711,7 @@ HalpDispatchPnp(IN PDEVICE_OBJECT DeviceObject,
         }
 
         /* Otherwise, we failed, so set the status and complete the request */
-        DPRINT1("IRP failed with status: %lx\n", Status);
+        DPRINT1("IRP failed: Status 0x%08lx\n", Status);
         Irp->IoStatus.Status = Status;
         IoCompleteRequest(Irp, IO_NO_INCREMENT);
         return Status;
@@ -814,7 +814,7 @@ HalpDispatchPnp(IN PDEVICE_OBJECT DeviceObject,
         if (Status == STATUS_NOT_SUPPORTED) Status = Irp->IoStatus.Status;
 
         /* Complete the IRP */
-        DPRINT("IRP completed with status: %lx\n", Status);
+        DPRINT("IRP completed: Status 0x%08lx\n", Status);
         Irp->IoStatus.Status = Status;
         IoCompleteRequest(Irp, IO_NO_INCREMENT);
         return Status;
