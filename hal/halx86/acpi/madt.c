@@ -14,10 +14,35 @@
 #undef ACPI_BIOS_ERROR
 #include <smp.h>
 
+#define EARLY_DEBUG
+
 // #define NDEBUG
 #include <debug.h>
 
 /* GLOBALS ********************************************************************/
+
+#if defined(EARLY_DEBUG)
+
+ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
+
+#undef DbgPrint
+#define DbgPrint FrLdrDbgPrint
+
+#else
+
+#if 0
+
+#undef DbgPrint
+
+#if defined(_MSC_VER)
+#define DbgPrint __noop
+#else
+#define DbgPrint
+#endif // _MSC_VER
+
+#endif // 0
+
+#endif // EARLY_DEBUG
 
 HALP_APIC_INFO_TABLE HalpApicInfoTable;
 
@@ -44,6 +69,20 @@ HalpParseApicTables(
     ACPI_SUBTABLE_HEADER *AcpiHeader;
     ULONG_PTR TableEnd;
 
+#if defined(EARLY_DEBUG)
+    if (LoaderBlock)
+    {
+        /* Define your own function or use the trick with FreeLoader */
+        FrLdrDbgPrint = ((PLOADER_PARAMETER_BLOCK)LoaderBlock)->u.I386.CommonDataArea;
+    }
+#if 0 // Future
+    else
+    {
+        /* Define your own function or use the trick with FreeLoader */
+        FrLdrDbgPrint = DPRINT1;
+    }
+#endif
+#endif
 
 // Local debug only.
     DPRINT("HalpParseApicTables(%p)\n", LoaderBlock);
@@ -235,6 +274,23 @@ HalpPrintApicTables(VOID)
 {
 #if DBG
     ULONG i;
+
+#if 0 // No LoaderBlock parameter...
+#if defined(EARLY_DEBUG)
+    if (LoaderBlock)
+    {
+        /* Define your own function or use the trick with FreeLoader */
+        DPRINT01 = ((PLOADER_PARAMETER_BLOCK)LoaderBlock)->u.I386.CommonDataArea;
+    }
+#if 0 // Future
+    else
+    {
+        /* Define your own function or use the trick with FreeLoader */
+        DPRINT01 = DPRINT1;
+    }
+#endif
+#endif
+#endif
 
     DPRINT1("Physical processor count: %lu\n", HalpApicInfoTable.ProcessorCount);
     for (i = 0; i < HalpApicInfoTable.ProcessorCount; i++)
