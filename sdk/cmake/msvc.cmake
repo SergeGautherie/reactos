@@ -152,7 +152,6 @@ endif()
 if(NOT (_PREFAST_ OR _VS_ANALYZE_))
     add_compile_options($<$<CONFIG:Debug>:/Zi>)
 endif()
-add_compile_definitions($<$<CONFIG:Release>:NDEBUG>)
 
 # Hotpatchable images
 if(ARCH STREQUAL "i386")
