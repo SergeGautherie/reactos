@@ -9,6 +9,7 @@
 /* INCLUDES *******************************************************************/
 
 #include <ntoskrnl.h>
+
 #define NDEBUG
 #include <debug.h>
 
@@ -431,16 +432,15 @@ ULONG
 DbgPrintEarly(const char *fmt, ...)
 {
     va_list args;
-    unsigned int i;
     char Buffer[1024];
     PCHAR String = Buffer;
 
     va_start(args, fmt);
-    i = vsprintf(Buffer, fmt, args);
+    vsprintf(Buffer, fmt, args);
     va_end(args);
 
     /* Output the message */
-    while (*String != 0)
+    while (*String != ANSI_NULL)
     {
         if (*String == '\n')
         {

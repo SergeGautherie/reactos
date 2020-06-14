@@ -591,7 +591,7 @@ HalpInitBootTable(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
         (BootTable->Header.Length >= sizeof(BOOT_TABLE)) &&
         (BootTable->CMOSIndex >= 9))
     {
-        DPRINT1("BOOT table found, but not supported!\n");
+        DPRINT1("BOOT table found, but not supported\n");
     }
     else
     {
@@ -1075,7 +1075,7 @@ HalpAcpiDetectResourceListSize(OUT PULONG ListSize)
     PAGED_CODE();
 
     /* One element if there is a SCI */
-    *ListSize = HalpFixedAcpiDescTable.sci_int_vector ? 1: 0;
+    *ListSize = HalpFixedAcpiDescTable.sci_int_vector ? 1 : 0;
 }
 
 NTSTATUS
