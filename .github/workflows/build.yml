@@ -7,7 +7,7 @@ jobs:
       matrix:
         compiler: [gcc]
         arch: [i386]
-        config: [Debug]
+        config: [Debug, Release]
         dllver: ['0x502', '0x600']
         exclude:
           - dllver: 0x600
