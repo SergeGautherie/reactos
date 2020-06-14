@@ -137,4 +137,9 @@ ApicStartApplicationProcessor(
     /* Startup IPI */
     ApicRequestGlobalInterrupt(HalpProcessorIdentity[NTProcessorNumber].LapicId, (StartupLoc.LowPart) >> 12,
         APIC_MT_Startup, APIC_TGM_Edge, APIC_DSH_Destination);
+
+#if 0 // TODO: Is that correct?
+    // TODO: Should it be set on boot processor (0) too, elsewhere?
+    HalpProcessorIdentity[NTProcessorNumber].ProcessorStarted = TRUE;
+#endif
 }
