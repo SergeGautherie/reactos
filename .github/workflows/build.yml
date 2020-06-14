@@ -8,7 +8,7 @@ jobs:
       matrix:
         compiler: [gcc]
         arch: [i386]
-        config: [Debug, Release]
+        config: [Debug]
         dllver: ['0x502']
       fail-fast: false
     runs-on: ubuntu-latest
