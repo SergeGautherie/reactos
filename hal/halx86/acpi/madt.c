@@ -17,7 +17,9 @@
 // #define NDEBUG
 #include <debug.h>
 
+#if DBG
 #define EARLY_DEBUG
+#endif
 
 /* GLOBALS ********************************************************************/
 

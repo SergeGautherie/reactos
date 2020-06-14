@@ -14,7 +14,9 @@
 #define NDEBUG
 #include <debug.h>
 
+#if DBG
 // Untested here. #define EARLY_DEBUG
+#endif
 
 #if defined(EARLY_DEBUG)
 
