@@ -14,7 +14,7 @@
 #undef ACPI_BIOS_ERROR
 #include <smp.h>
 
-#define NDEBUG
+// #define NDEBUG
 #include <debug.h>
 
 /* GLOBALS ********************************************************************/
@@ -43,6 +43,10 @@ HalpParseApicTables(
     ACPI_TABLE_MADT *MadtTable;
     ACPI_SUBTABLE_HEADER *AcpiHeader;
     ULONG_PTR TableEnd;
+
+
+// Local debug only.
+    DPRINT("HalpParseApicTables(%p)\n", LoaderBlock);
 
     MadtTable = HalAcpiGetTable(LoaderBlock, APIC_SIGNATURE);
     if (!MadtTable)

@@ -10,6 +10,7 @@
 #include <hal.h>
 #include "apicp.h"
 #include <smp.h>
+
 #define NDEBUG
 #include <debug.h>
 
@@ -30,6 +31,8 @@ HalpInitProcessor(
     {
 #endif
         HalpParseApicTables(LoaderBlock);
+// Local debug only.
+        HalpPrintApicTables();
 #ifdef CONFIG_SMP
     }
 
