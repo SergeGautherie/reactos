@@ -9,6 +9,7 @@
 /* INCLUDES ******************************************************************/
 
 #include <hal.h>
+
 #define NDEBUG
 #include <debug.h>
 
@@ -160,3 +161,41 @@ HalInitSystem(IN ULONG BootPhase,
     /* All done, return */
     return TRUE;
 }
+
+#if 0
+#include <internal/kd.h>
+
+VOID
+NTAPI
+KdPortPutByteEx(
+    IN PCPPORT PortInformation,
+    IN UCHAR ByteToSend)
+{
+    CpPutByte(PortInformation, ByteToSend);
+}
+
+ULONG
+DbgPrintEarly(const char *fmt, ...)
+{
+    va_list args;
+    char Buffer[1024];
+    PCHAR String = Buffer;
+
+    va_start(args, fmt);
+    vsprintf(Buffer, fmt, args);
+    va_end(args);
+
+    /* Output the message */
+    while (*String != ANSI_NULL)
+    {
+        if (*String == '\n')
+        {
+            KdPortPutByteEx(NULL, '\r');
+        }
+        KdPortPutByteEx(NULL, *String);
+        String++;
+    }
+
+    return STATUS_SUCCESS;
+}
+#endif

@@ -14,8 +14,60 @@
 #undef ACPI_BIOS_ERROR
 #include <smp.h>
 
+#if 0
+// Does not help :-/
+#include <stdio.h>
+
+//// #undef DbgPrint
+
+// undefined printf !-(
+#define DbgPrint printf
+#endif
+
 // #define NDEBUG
 #include <debug.h>
+
+#if 0 && DBG
+#include <internal/kd.h>
+#include <cportlib/cportlib.h>
+
+VOID
+NTAPI
+KdPortPutByteEx(
+    IN PCPPORT PortInformation,
+    IN UCHAR ByteToSend)
+{
+    CpPutByte(PortInformation, ByteToSend);
+}
+
+ULONG
+DbgPrintEarly(const char *fmt, ...)
+{
+    va_list args;
+    char Buffer[1024];
+    PCHAR String = Buffer;
+
+    va_start(args, fmt);
+    vsprintf(Buffer, fmt, args);
+    va_end(args);
+
+    /* Output the message */
+    while (*String != ANSI_NULL)
+    {
+        if (*String == '\n')
+        {
+            KdPortPutByteEx(NULL, '\r');
+        }
+        KdPortPutByteEx(NULL, *String);
+        String++;
+    }
+
+    return STATUS_SUCCESS;
+}
+
+#undef DbgPrint
+#define DbgPrint DbgPrintEarly
+#endif // DBG
 
 /* GLOBALS ********************************************************************/
 
