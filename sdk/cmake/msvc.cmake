@@ -23,8 +23,7 @@ endif()
 add_compile_options(/GF)
 
 # Enable function level linking and comdat folding (only C/C++, not ASM!)
-add_compile_options($<$<COMPILE_LANGUAGE:CXX>:/Gy>)
-add_compile_options($<$<COMPILE_LANGUAGE:C>:/Gy>)
+add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:/Gy>)
 add_link_options(/OPT:REF /OPT:ICF)
 
 if(ARCH STREQUAL "i386")
@@ -145,6 +144,7 @@ endif()
 add_compile_options(/w14115)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Werror=unknown-warning-option>)
     add_compile_options("$<$<COMPILE_LANGUAGE:C,CXX>:-nostdinc;-Wno-multichar;-Wno-char-subscripts;-Wno-microsoft-enum-forward-reference;-Wno-pragma-pack;-Wno-microsoft-anon-tag;-Wno-parentheses-equality;-Wno-unknown-pragmas>")
 endif()
 
@@ -270,17 +270,17 @@ function(set_module_type_toolchain MODULE TYPE)
     # Set the PE image version numbers from the NT OS version ReactOS is based on
     target_link_options(${MODULE} PRIVATE "/VERSION:5.01")
 
-    if((TYPE STREQUAL win32dll) OR (TYPE STREQUAL win32ocx) OR (TYPE STREQUAL cpl))
+    if((TYPE STREQUAL "win32dll") OR (TYPE STREQUAL "win32ocx") OR (TYPE STREQUAL "cpl"))
         target_link_options(${MODULE} PRIVATE /DLL)
     elseif(TYPE IN_LIST KERNEL_MODULE_TYPES)
         # Mark INIT section as Executable Read Write Discardable
         target_link_options(${MODULE} PRIVATE /SECTION:INIT,ERWD)
 
-        if(TYPE STREQUAL kernelmodedriver)
+        if(TYPE STREQUAL "kernelmodedriver")
             target_link_options(${MODULE} PRIVATE /DRIVER)
-        elseif(TYPE STREQUAL wdmdriver)
+        elseif(TYPE STREQUAL "wdmdriver")
             target_link_options(${MODULE} PRIVATE /DRIVER:WDM)
-        elseif (TYPE STREQUAL kernel)
+        elseif (TYPE STREQUAL "kernel")
             # Mark .rsrc section as non-disposable non-pageable, as bugcheck code needs to access it
             target_link_options(${MODULE} PRIVATE /SECTION:.rsrc,!DP)
         endif()
