@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         compiler: [gcc]
-        arch: [i386, amd64]
+        arch: [i386]
         config: [Debug]
         dllver: ['0x502']
       fail-fast: false
