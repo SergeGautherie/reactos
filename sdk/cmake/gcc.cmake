@@ -144,9 +144,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
 # Différences liées à NDEBUG !!?
         # (Release)3
         add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=format-overflow>)
-
-        # 1 occurrence.
-        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=incompatible-pointer-types>)
     else()
         # 5 occurrences.
         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-error=incompatible-pointer-types>)
