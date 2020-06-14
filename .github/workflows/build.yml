@@ -72,6 +72,7 @@ jobs:
     - name: Build
       run: echo 'cmake --build ${{github.workspace}}/build -- -k0' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Generate ISOs
+      if: false
       run: echo 'cmake --build ${{github.workspace}}/build --target bootcd --target livecd' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Print ccache statistics
       run: ccache -s
@@ -238,6 +239,7 @@ jobs:
         path: build/msvc_pdb
 
   build-clang-cl:
+    if: false
     strategy:
       matrix:
         arch: [i386]
