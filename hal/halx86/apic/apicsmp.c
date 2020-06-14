@@ -119,9 +119,10 @@ ApicStartApplicationProcessor(
     _In_ ULONG NTProcessorNumber,
     _In_ PHYSICAL_ADDRESS StartupLoc)
 {
+    // TODO: Do we really want 3 ASSERT() for that? If yes (or no), then add a comment?
     ASSERT(StartupLoc.HighPart == 0);
-    ASSERT((StartupLoc.QuadPart & 0xFFF) == 0);
-    ASSERT((StartupLoc.QuadPart & 0xFFF00FFF) == 0);
+    ASSERT((StartupLoc.LowPart & 0x00000FFF) == 0);
+    ASSERT((StartupLoc.LowPart & 0xFFF00000) == 0);
 
     /* Init IPI */
     ApicRequestGlobalInterrupt(HalpProcessorIdentity[NTProcessorNumber].LapicId, 0,
