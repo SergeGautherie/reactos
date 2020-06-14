@@ -5,15 +5,13 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        compiler: [gcc, clang]
+        compiler: [gcc]
         arch: [i386, amd64]
         config: [Debug, Release]
-        dllver: ['0x502', '0x600']
-        exclude:
-          - dllver: 0x600
-            compiler: clang
-          - dllver: 0x600
-            config: Release
+        dllver: ['0x502']
+#         exclude:
+#           - arch: amd64
+#             config: Release
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
@@ -52,6 +50,10 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh $LLVM_VERSION
         echo "D_CLANG_VERSION=-DCLANG_VERSION=$LLVM_VERSION" >> $GITHUB_ENV
+    - name: Install Python packages
+      uses: BSFishy/pip-action@v1 # See https://github.com/marketplace/actions/pip-installer
+      with:
+        packages: pefile # for gen_baseaddress.py
     - name: Source checkout
       uses: actions/checkout@v3
       with:
@@ -77,16 +79,32 @@ jobs:
     - name: Build
       run: echo 'cmake --build ${{github.workspace}}/build -- -k0' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Generate ISOs
+      if: false
       run: echo 'cmake --build ${{github.workspace}}/build --target bootcd --target livecd' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Print ccache statistics
       run: ccache -s
     - name: Upload ISOs
+      if: false
       uses: actions/upload-artifact@v3
       with:
         name: reactos-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
         path: |
           build/bootcd.iso
           build/livecd.iso
+    - name: Update baseaddress file (i386)
+      if: ${{ matrix.arch == 'i386' }}
+      working-directory: ${{github.workspace}}/src
+      run: python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
+    - name: Update baseaddress file (amd64)
+      if: ${{ matrix.arch == 'amd64' }}
+      working-directory: ${{github.workspace}}/src
+      run: python sdk/tools/gen_baseaddress.py -64 ${{github.workspace}}/build
+    - name: Upload baseaddress file
+      uses: actions/upload-artifact@v3
+      with:
+        name: baseaddress-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
+        # Upload all files, though only the new one should be actually used.
+        path: src/sdk/cmake/baseaddress*.cmake
 
   build-msvc:
     strategy:
@@ -95,7 +113,7 @@ jobs:
         toolset: ['14.2', '14.1', '14.0'] # VS 2019, 2017, and 2015 (see below)
         arch: [i386, amd64]
         config: [Debug, Release]
-        dllver: ['0x502', '0x600']
+        dllver: ['0x502']
         exclude: # VS 2019, 2017 only with windows-latest; VS 2015 only with windows-2019
           - os: windows-2019
             toolset: '14.2'
@@ -103,14 +121,8 @@ jobs:
             toolset: '14.1'
           - os: windows-latest
             toolset: '14.0'
-          - dllver: 0x600
-            os: windows-2019
-          - dllver: 0x600
-            toolset: '14.1'
-          - dllver: 0x600
-            toolset: '14.0'
-          - dllver: 0x600
-            config: Release
+#           - arch: amd64
+#             config: Release
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
@@ -123,6 +135,10 @@ jobs:
         echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Install Python packages
+      uses: BSFishy/pip-action@v1 # See https://github.com/marketplace/actions/pip-installer
+      with:
+        packages: pefile # for gen_baseaddress.py
     - name: Activate VS cmd (x86)
       if: ${{ matrix.arch == 'i386' }}
       uses: ilammy/msvc-dev-cmd@v1
@@ -144,8 +160,10 @@ jobs:
     - name: Build
       run: cmake --build build -- -k0
     - name: Generate ISOs
+      if: false
       run: cmake --build build --target bootcd --target livecd
     - name: Upload ISOs
+      if: false
       uses: actions/upload-artifact@v3
       with:
         name: reactos-msvc${{matrix.toolset}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
@@ -153,13 +171,28 @@ jobs:
           build/bootcd.iso
           build/livecd.iso
     - name: Upload debug symbols
-      if: ${{ matrix.config == 'Debug' }}
+      if: false
       uses: actions/upload-artifact@v3
       with:
         name: reactos-syms-msvc${{matrix.toolset}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
         path: build/msvc_pdb
+    - name: Update baseaddress file (i386)
+      if: ${{ matrix.arch == 'i386' }}
+      working-directory: ${{github.workspace}}/src
+      run: python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
+    - name: Update baseaddress file (amd64)
+      if: ${{ matrix.arch == 'amd64' }}
+      working-directory: ${{github.workspace}}/src
+      run: python sdk/tools/gen_baseaddress.py -64 ${{github.workspace}}/build
+    - name: Upload baseaddress file
+      uses: actions/upload-artifact@v3
+      with:
+        name: baseaddress-${{matrix.toolset}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
+        # Upload all files, though only the new one should be actually used.
+        path: src/sdk/cmake/baseaddress*.cmake
 
   build-msvc-arm:
+    if: false
     strategy:
       matrix:
         toolset: ['14.2', '14.1'] # VS 2019, 2017
@@ -240,6 +273,7 @@ jobs:
         path: build/msvc_pdb
 
   build-clang-cl:
+    if: false
     strategy:
       matrix:
         arch: [i386, amd64]
@@ -298,29 +332,30 @@ jobs:
         name: reactos-syms-clang-cl-${{matrix.arch}}-${{matrix.config}}-${{github.sha}}
         path: build/msvc_pdb
 
-# Disable MSBuild for the moment being until a proper fix is provided -- see CORE-18911
-#  build-msbuild-i386:
-#    name: MSBuild (i386)
-#    runs-on: windows-2019
-#    steps:
-#    - name: Install Flex and Bison
-#      run: |
-#        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
-#        7z x flexbison.7z -O${{github.workspace}}\bin
-#        echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-#        echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-#        echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-#    - name: Add CL to PATH
-#      uses: ilammy/msvc-dev-cmd@v1
-#      with:
-#        arch: amd64_x86
-#    - uses: actions/checkout@v3
-#      with:
-#        path: src
-#    - name: Configure
-#      run: |
-#        mkdir build
-#        cd build
-#        cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
-#    - name: Build
-#      run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
+  build-msbuild-i386:
+    name: MSBuild (i386)
+    # Disable MSBuild, until a proper fix is provided -- see CORE-18911
+    if: false
+    runs-on: windows-2019
+    steps:
+    - name: Install Flex and Bison
+      run: |
+        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+        7z x flexbison.7z -O${{github.workspace}}\bin
+        echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Add CL to PATH
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86
+    - uses: actions/checkout@v3
+      with:
+        path: src
+    - name: Configure
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+    - name: Build
+      run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
