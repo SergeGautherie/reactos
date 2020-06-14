@@ -1,5 +1,6 @@
 
-cmake_minimum_required(VERSION 3.17.0)
+# AppV: 3.17.0 -> 3.16.2 :-/
+cmake_minimum_required(VERSION 3.16.2)
 
 if(NOT CMAKE_VERSION MATCHES "ReactOS")
     message(WARNING "Building with \"${CMAKE_COMMAND}\", which is not the custom CMake included in RosBE, might cause build issues...")
