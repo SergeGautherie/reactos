@@ -110,7 +110,7 @@ if(MSVC)
     option(_VS_ANALYZE_ "Whether to enable static analysis while compiling." OFF)
     # RTC are incompatible with compiler optimizations.
     cmake_dependent_option(RUNTIME_CHECKS "Whether to enable runtime checks on MSVC" ON
-                           "CMAKE_BUILD_TYPE STREQUAL Debug" OFF)
+                           "NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL Debug" OFF)
 endif()
 
 if(GCC)
