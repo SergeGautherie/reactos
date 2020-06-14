@@ -25,7 +25,7 @@ ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
 // Phase "1" : après "... HAL Detected" !!?
 // 0: Phase0 rien, Phase "1" fctne.
 // 1: Phase0 fctne, Phase "1" crash.
-#if 1
+#if 0
 #undef DbgPrint
 #define DbgPrint FrLdrDbgPrint
 #endif
@@ -899,7 +899,7 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     if (HalpProcessedACPIPhase0) return STATUS_SUCCESS;
 
 // Nécessaire en mode ACPI seul, mais inutile en mode APIC car appelée en "second", après bannière NTOS.
-#if 0 && defined(EARLY_DEBUG)
+#if 1 && defined(EARLY_DEBUG)
     if (LoaderBlock)
     {
         if (FrLdrDbgPrint)
