@@ -11,7 +11,9 @@
 
 /* Bitmaps */
 
+#ifdef 0 // Unused.
 IDB_HIBERNATE_BAR   BITMAP "inbv/resources/hibernate.bmp"
+#endif
 IDB_SHUTDOWN_MSG    BITMAP "inbv/resources/shutdown.bmp"
 IDB_BAR_DEFAULT     BITMAP "inbv/resources/barserver.bmp"
 IDB_LOGO_DEFAULT    BITMAP "inbv/resources/logo.bmp"

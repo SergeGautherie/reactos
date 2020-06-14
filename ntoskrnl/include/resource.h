@@ -16,8 +16,10 @@
 
 #pragma once
 
+#ifdef 0 // Unused.
 #define IDB_BOOT_SCREEN     1
 #define IDB_HIBERNATE_BAR   2
+#endif
 #define IDB_SHUTDOWN_MSG    3
 #define IDB_BAR_DEFAULT     4
 #define IDB_LOGO_DEFAULT    5
@@ -26,13 +28,17 @@
 #define IDB_WKSTA_FOOTER    7
 
 #define IDB_BAR_WKSTA       8
+#ifdef 0 // Unused.
 #define IDB_BAR_HOME        9
+#endif
 
+// FIXME: Same value as IDB_TEXT_SVRFAMILY?
 #define IDB_SERVER_LOGO     13
 #define IDB_SERVER_HEADER   14
 #define IDB_SERVER_FOOTER   15
 
 /* Workstation editions Overlays */
+#ifdef 0 // Unused.
 #define IDB_TEXT_PROF       10  // Professional
 #define IDB_TEXT_HOME       11  // Home Edition
 #define IDB_TEXT_EMBEDDED   12  // Embedded
@@ -40,11 +46,16 @@
 #define IDB_TEXT_DOTNET     16  // .NET 2003
 #define IDB_TEXT_TABLETPC   17  // Tablet PC Edition
 #define IDB_TEXT_MEDIACTR   18  // Media Center Edition
+#endif
 
 /* Server editions Overlays */
+#ifdef 1 // Used, though without corresponding resources.
 #define IDB_STORAGE_SERVER  16  // Storage Server
 #define IDB_CLUSTER_SERVER  17  // Compute Cluster Edition
+#endif
+#ifdef 0 // Unused.
 #define IDB_STORAGE_SERVER2 18
+#endif
 
 /* ReactOS additions */
 #define IDB_LOGO_XMAS       19
