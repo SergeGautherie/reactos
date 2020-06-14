@@ -73,6 +73,9 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     endif()
 
 elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    # Disallow unknown warning options: mistyped, GCC-only, ...
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Werror=unknown-warning-option>)
+
     add_compile_options("$<$<COMPILE_LANGUAGE:C>:-Wno-microsoft>")
     add_compile_options(-Wno-pragma-pack)
     add_compile_options(-fno-associative-math)
@@ -112,11 +115,68 @@ endif()
 add_compile_options(-march=${OARCH} -mtune=${TUNE})
 
 # Warnings, errors
-if((NOT CMAKE_BUILD_TYPE STREQUAL "Release") AND (NOT CMAKE_C_COMPILER_ID STREQUAL Clang))
+# Exclude 'Clang' and '(GCC) amd64' builds, until they are ready to be that strict.
+if((NOT CMAKE_C_COMPILER_ID STREQUAL "Clang") AND (NOT ARCH STREQUAL "amd64"))
+    # Promote all warnings as errors, by default.
     add_compile_options(-Werror)
-else()
-    if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-        add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Werror=unknown-warning-option>)
+    if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+        # FIXME: Investigate cases, use -Wno-maybe-uninitialized if/where false-positive.
+        # Silenced occurrences.
+        # (Debug)1,000+ (Release)1,000+
+        add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-maybe-uninitialized>)
+        # Too many (BUG ??): Start with Clang's 'sometimes-uninitialized'.
+        # add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=maybe-uninitialized>)
+#     else() # if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+        # FIXME: Investigate cases, use -Wno-sometimes-uninitialized if/where false-positive.
+        # (Debug)119 (Release)122
+# Does not work? (Future, anyway.)         add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=sometimes-uninitialized>) # FIXME: CORE-17545
+    endif()
+endif()
+# Be less strict with 'Release' builds, which are allowed to trigger warnings related to '#if DBG' code, for example.
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    # FIXME: Investigate cases, use -Wno-array-bounds if/where false-positive.
+    # 58 occurrences.
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=array-bounds>)
+
+    if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+        # FIXME: Investigate cases, use -Wno-format-overflow if/where false-positive.
+        # 8- occurrences.
+# Différences liées à NDEBUG !!?
+        # (Release)3
+        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=format-overflow>)
+
+        # 1 occurrence.
+        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=incompatible-pointer-types>)
+    else()
+        # 5 occurrences.
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-error=incompatible-pointer-types>)
+    endif()
+
+    # Silence these warnings.
+    # Up to 1,000+ occurrences.
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-unused-but-set-variable>)
+    # 37- occurrences.
+# Différences liées à NDEBUG !!?
+    # (Release)12
+    add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-unused-variable>)
+
+    if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+        # FIXME: Investigate cases, use -Wno-stringop-overflow if/where false-positive.
+        # 3 occurrences.
+# Cf sdk/lib/rtl/debug.c:84
+# Cf modules/rosapps/applications/net/ncftp/ncftp/getline.c:1391
+# Cf modules/rosapps/applications/sysutils/regecpl/Console.cpp:771
+# Différences liées à NDEBUG !!?
+        # (Release)2
+        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=stringop-overflow>)
+
+        # FIXME: Investigate cases, use -Wno-stringop-truncation if/where false-positive.
+        # 31 occurrences.
+        add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=stringop-truncation>)
+
+        # FIXME: Investigate cases, use -Wno-unknown-pragmas if/where false-positive.
+        # 1 occurrence.
+        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=unknown-pragmas>)
     endif()
 endif()
 
@@ -126,10 +186,6 @@ add_compile_options(-Wno-unused-const-variable)
 add_compile_options(-Wno-unused-local-typedefs)
 add_compile_options(-Wno-deprecated)
 add_compile_options(-Wno-unused-result) # FIXME To be removed when CORE-17637 is resolved
-
-if(NOT CMAKE_C_COMPILER_ID STREQUAL "Clang")
-    add_compile_options(-Wno-maybe-uninitialized)
-endif()
 
 if(ARCH STREQUAL "amd64")
     add_compile_options(-Wno-format)
@@ -180,7 +236,6 @@ elseif(ARCH STREQUAL "amd64")
     if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
         add_compile_options(-mpreferred-stack-boundary=4)
     endif()
-    add_compile_options(-Wno-error)
 endif()
 
 # Other
@@ -601,4 +656,3 @@ target_compile_definitions(libstdc++ INTERFACE "$<$<COMPILE_LANGUAGE:CXX>:PAL_ST
 # Create our alias libraries
 add_library(cppstl ALIAS libstdc++)
 add_library(cpprt ALIAS libsupc++)
-
