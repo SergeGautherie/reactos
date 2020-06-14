@@ -1507,7 +1507,7 @@ BOOL WINAPI mciFreeCommandResource(UINT uTable)
     FreeResource(S_MciCmdTable[uTable].hMem);
     S_MciCmdTable[uTable].hMem = NULL;
     S_MciCmdTable[uTable].lpTable = NULL;
-    HeapFree(GetProcessHeap(), 0, S_MciCmdTable[uTable].aVerbs);
+    HeapFree(GetProcessHeap(), 0, (LPVOID)S_MciCmdTable[uTable].aVerbs);
     S_MciCmdTable[uTable].aVerbs = 0;
     S_MciCmdTable[uTable].nVerbs = 0;
     return TRUE;
