@@ -866,7 +866,7 @@ DriverEntry(IN PDRIVER_OBJECT DriverObject,
         if (PciRunningDatacenter) DPRINT1("PCI running on datacenter build\n");
 
         /* Check if the system has an ACPI Hardware Watchdog Timer */
-        //WdTable = PciGetAcpiTable(WDRT_SIGNATURE);
+        WdTable = PciGetAcpiTable(WDRT_SIGNATURE);
         Status = STATUS_SUCCESS;
     } while (FALSE);
 
