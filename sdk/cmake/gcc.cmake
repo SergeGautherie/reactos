@@ -131,6 +131,10 @@ if((NOT CMAKE_C_COMPILER_ID STREQUAL "Clang") AND (NOT ARCH STREQUAL "amd64"))
         # (Debug)119 (Release)122
 # Does not work? (Future, anyway.)         add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=sometimes-uninitialized>) # FIXME: CORE-17545
     endif()
+elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    # Promote some warnings that do not happen (anymore).
+    add_compile_options(
+        $<$<COMPILE_LANGUAGE:C,CXX>:-Werror=incompatible-pointer-types>)
 endif()
 # Be less strict with 'Release' builds, which are allowed to trigger warnings related to '#if DBG' code, for example.
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -144,9 +148,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
 # Différences liées à NDEBUG !!?
         # (Release)3
         add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=format-overflow>)
-    else()
-        # 5 occurrences.
-        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-error=incompatible-pointer-types>)
     endif()
 
     # Silence these warnings.
