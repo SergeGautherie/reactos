@@ -22,8 +22,10 @@
 
 ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
 
+#if 0
 #undef DbgPrint
 #define DbgPrint FrLdrDbgPrint
+#endif
 
 #else
 

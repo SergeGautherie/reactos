@@ -69,7 +69,7 @@ HalpParseApicTables(
     ACPI_SUBTABLE_HEADER *AcpiHeader;
     ULONG_PTR TableEnd;
 
-#if 0 && defined(EARLY_DEBUG)
+#if 1 && defined(EARLY_DEBUG)
     if (LoaderBlock)
     {
         /* Define your own function or use the trick with FreeLoader */
