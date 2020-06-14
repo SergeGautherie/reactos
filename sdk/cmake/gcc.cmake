@@ -173,10 +173,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # FIXME: Investigate cases, use -Wno-stringop-truncation if/where false-positive.
         # 31 occurrences.
         add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=stringop-truncation>)
-
-        # FIXME: Investigate cases, use -Wno-unknown-pragmas if/where false-positive.
-        # 1 occurrence.
-        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=unknown-pragmas>)
     endif()
 endif()
 
