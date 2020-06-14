@@ -666,7 +666,7 @@ SetThreadAffinityMask(IN HANDLE hThread,
     KAFFINITY AffinityMask;
     NTSTATUS Status;
 
-    AffinityMask = (KAFFINITY)dwThreadAffinityMask;
+    AffinityMask = dwThreadAffinityMask;
 
     Status = NtQueryInformationThread(hThread,
                                       ThreadBasicInformation,
