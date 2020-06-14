@@ -28,7 +28,7 @@ try:
     import pefile
 except ImportError:
     print('# Please install pefile from pip or https://github.com/erocarrera/pefile')
-    sys.exit(-1)
+    # sys.exit(-1) # No, let's output to stdout!
 
 
 ALL_EXTENSIONS = (
@@ -374,16 +374,18 @@ def get_target_file(ntdll_path):
         ntdll_pe = pefile.PE(ntdll_path, fast_load=True)
         names = [sect.Name.strip(b'\0') for sect in ntdll_pe.sections]
         count = b'|'.join(names).count(b'/')
-        if IS_64_BIT:
+        # print('#', names, len(names), count)
+        if IS_64_BIT: # All 64-bit (GCC: Debug 10+count=7, Release 10+count=0; MSVC: 6+count=0)
             return 'baseaddress64.cmake'
-        elif b'.rossym' in names:
+        elif b'.rossym' in names: # 32-bit GCC Debug (8+count=0+'.rossym')
             return 'baseaddress.cmake'
-        elif count == 0:
+        elif count == 0: # All 32-bit MSVC (5+count=0)
             return 'baseaddress_msvc.cmake'
-        elif count > 3:
+        elif count == 1: # 32-bit GCC Release (8+count=1)
             return 'baseaddress_dwarf.cmake'
         else:
-            assert False, "Unknown"
+            print('Unknown case (count={}), fallback to default'.format(count))
+            # assert False, "Unknown"
     return None
 
 def run_dir(target):
@@ -401,10 +403,12 @@ def run_dir(target):
     ntdll_path = layout.found['ntdll.dll'].filename
     target_file = get_target_file(ntdll_path)
     if target_file:
+        print('Generating', target_file)
         target_dir = os.path.realpath(os.path.dirname(os.path.dirname(__file__)))
         target_path = os.path.join(target_dir, 'cmake', target_file)
         output_file = open(target_path, "w")
     else:
+        print('Outputting to stdout')
         output_file = sys.stdout
     with output_file:
         output_file.write('# Generated from {}\n'.format(target))
@@ -423,7 +427,7 @@ def main():
     if len(dirs) < 1:
         trydir = os.getcwd()
         print(USAGE)
-        print('No path specified, trying the working directory: ', trydir)
+        print('No path specified, trying the working directory:', trydir)
         dirs = [trydir]
     for onedir in dirs:
         if onedir.lower() in ['-help', '/help', '/h', '-h', '/?', '-?']:
