@@ -113,13 +113,6 @@ if((NOT CMAKE_C_COMPILER_ID STREQUAL "Clang") AND (NOT ARCH STREQUAL "amd64"))
         # (Debug)119 (Release)122
 # Does not work? (Future, anyway.)         add_compile_options($<$<COMPILE_LANGUAGE:C,CXX>:-Wno-error=sometimes-uninitialized>) # FIXME: CORE-17545
     endif()
-
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        # FIXME: Investigate cases, use -Wno-implicit-function-declaration if/where false-positive.
-        # 0 occurrence.
-        # (Release)28
-        add_compile_options($<$<COMPILE_LANGUAGE:C>:-Wno-error=implicit-function-declaration>)
-    endif()
 endif()
 # Be less strict with 'Release' builds, which are allowed to trigger warnings related to '#if DBG' code, for example.
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
