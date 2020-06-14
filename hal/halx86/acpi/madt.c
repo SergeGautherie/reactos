@@ -54,9 +54,7 @@ HALP_APIC_INFO_TABLE HalpApicInfoTable;
 static PROCESSOR_IDENTITY HalpStaticProcessorIdentity[MAXIMUM_PROCESSORS];
 const PPROCESSOR_IDENTITY HalpProcessorIdentity = HalpStaticProcessorIdentity;
 
-#if 0
 extern ULONG HalpPicVectorRedirect[16];
-#endif
 
 /* FUNCTIONS ******************************************************************/
 
@@ -107,7 +105,7 @@ HalpParseApicTables(
 
     DPRINT("MADT table: Address %08X, Flags %08X\n", MadtTable->Address, MadtTable->Flags);
 
-#if 1
+#if 0
 
     // TODO: We support only legacy APIC for now
     HalpApicInfoTable.ApicMode = HALP_APIC_MODE_LEGACY;
@@ -246,7 +244,7 @@ HalpParseApicTables(
                     return;
                 }
 
-#if 1
+#if 0
                 // TODO: Implement it.
 #else // TODO: Is that correct?
                 // Note: GlobalIrq is not validated in any way (yet).
