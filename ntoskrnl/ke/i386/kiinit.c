@@ -746,7 +746,7 @@ KiSystemStartup(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     Cpu = KeNumberProcessors;
     if (!Cpu)
     {
-        /* If this is the boot CPU, set FS and the CPU Number*/
+        /* If this is the boot CPU, set FS and the CPU Number */
         Ke386SetFs(KGDT_R0_PCR);
         __writefsdword(KPCR_PROCESSOR_NUMBER, Cpu);
 
