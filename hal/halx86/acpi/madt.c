@@ -135,6 +135,8 @@ HalpParseApicTables(
     TableEnd = (ULONG_PTR)MadtTable + MadtTable->Header.Length;
     DPRINT(" MadtTable %p, subtables %p - %p\n", MadtTable, AcpiHeader, (PVOID)TableEnd);
 
+    // DBG: "Assertion failed at ../src/hal/halx86/acpi/madt.c(138): FALSE" + hangs
+    // REL: ?
     NT_ASSERT(FALSE);
 
     while ((ULONG_PTR)(AcpiHeader + 1) <= TableEnd)
