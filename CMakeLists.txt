@@ -223,7 +223,8 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         message(WARNING "-- Disabling precompiled headers on GCC by default CORE-17108.")
         option(PCH "Whether to use precompiled headers" OFF)
     else()
-        option(PCH "Whether to use precompiled headers" ON)
+        message(WARNING "-- Disabling precompiled headers support, to try to workaround msvc-analyze 'file-not-found' errors.")
+        option(PCH "Whether to use precompiled headers" OFF)
     endif()
 
     # Version Options
