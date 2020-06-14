@@ -39,17 +39,17 @@ jobs:
       with:
         path: src
     - name: Configure
-      run: cmake -S src -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DDLL_EXPORT_VERSION=${{matrix.dllver}}
+      run: cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DDLL_EXPORT_VERSION=${{matrix.dllver}}
     - name: Build
-      run: cmake --build build -- -k0
+      run: cmake --build ${{github.workspace}}/build -- -k0
     - name: Generate ISOs
-      run: cmake --build build --target bootcd --target livecd
+      run: cmake --build ${{github.workspace}}/build --target bootcd --target livecd
     - name: Run MSVC Code Analysis
       uses: microsoft/msvc-code-analysis-action@v0.1.1
       # Provide a unique ID to access the sarif output path
       id: run-analysis
       with:
-        cmakeBuildDirectory: build
+        cmakeBuildDirectory: ${{github.workspace}}/build
         buildConfiguration: ${{matrix.config}}
         # Ruleset file that will determine what checks will be run
         ruleset: NativeRecommendedRules.ruleset
