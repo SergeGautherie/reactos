@@ -9,35 +9,38 @@
 /* INCLUDES *******************************************************************/
 
 #include <hal.h>
-#define NDEBUG
+
+// #define NDEBUG
 #include <debug.h>
 
 /* GLOBALS ********************************************************************/
 
-LIST_ENTRY HalpAcpiTableCacheList;
-FAST_MUTEX HalpAcpiTableCacheLock;
+// TODO: Why 2? 1 should be enough?
+#define ACPI_TABLE_DEFAULT_PAGE_NUMBER 2
+static LIST_ENTRY HalpAcpiTableCacheList;
+static FAST_MUTEX HalpAcpiTableCacheLock;
 
-BOOLEAN HalpProcessedACPIPhase0;
-BOOLEAN HalpPhysicalMemoryMayAppearAbove4GB;
+static BOOLEAN HalpProcessedACPIPhase0;
+static BOOLEAN HalpPhysicalMemoryMayAppearAbove4GB;
 
-FADT HalpFixedAcpiDescTable;
-PDEBUG_PORT_TABLE HalpDebugPortTable;
-PACPI_SRAT HalpAcpiSrat;
-PBOOT_TABLE HalpSimpleBootFlagTable;
+static FADT HalpFixedAcpiDescTable;
+static PDEBUG_PORT_TABLE HalpDebugPortTable;
+static PACPI_SRAT HalpAcpiSrat;
+static PBOOT_TABLE HalpSimpleBootFlagTable;
 
-PHYSICAL_ADDRESS HalpMaxHotPlugMemoryAddress;
+static PHYSICAL_ADDRESS HalpMaxHotPlugMemoryAddress;
 PHYSICAL_ADDRESS HalpLowStubPhysicalAddress;
-PHARDWARE_PTE HalpPteForFlush;
-PVOID HalpVirtAddrForFlush;
+static PHARDWARE_PTE HalpPteForFlush;
+static PVOID HalpVirtAddrForFlush;
 PVOID HalpLowStub;
 
-PACPI_BIOS_MULTI_NODE HalpAcpiMultiNode;
+static PACPI_BIOS_MULTI_NODE HalpAcpiMultiNode;
 
-LIST_ENTRY HalpAcpiTableMatchList;
+static LIST_ENTRY HalpAcpiTableMatchList;
 
-ULONG HalpInvalidAcpiTable;
+static ULONG HalpInvalidAcpiTable;
 
-ULONG HalpPicVectorRedirect[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
+static ULONG HalpPicVectorRedirect[] = {0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15};
 
 /* This determines the HAL type */
 BOOLEAN HalDisableFirmwareMapper = TRUE;
@@ -144,16 +147,22 @@ HalpAcpiGetTableFromBios(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
                          IN ULONG Signature)
 {
     PHYSICAL_ADDRESS PhysicalAddress;
-    PXSDT Xsdt;
-    PRSDT Rsdt;
+    static PXSDT Xsdt;
+    static PRSDT Rsdt;
     PFADT Fadt;
     PDESCRIPTION_HEADER Header = NULL;
-    ULONG TableLength;
-    CHAR CheckSum = 0;
-    ULONG Offset;
-    ULONG EntryCount, CurrentEntry;
-    PCHAR CurrentByte;
+    UCHAR CheckSum;
+    static ULONG EntryCount;
+    ULONG CurrentEntry;
+    PUCHAR CurrentByte;
     PFN_COUNT PageCount;
+
+// Local debug only.
+    DPRINT("HalpAcpiGetTableFromBios(%p, %c%c%c%c)\n", LoaderBlock,
+            Signature & 0x000000FF,
+           (Signature & 0x0000FF00) >>  8,
+           (Signature & 0x00FF0000) >> 16,
+           (Signature & 0xFF000000) >> 24);
 
     /* Should not query the RSDT/XSDT by itself */
     if ((Signature == RSDT_SIGNATURE) || (Signature == XSDT_SIGNATURE)) return NULL;
@@ -163,175 +172,186 @@ HalpAcpiGetTableFromBios(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
     {
         /* Grab the FADT */
         Fadt = HalpAcpiGetTable(LoaderBlock, FADT_SIGNATURE);
-        if (Fadt)
+        if (!Fadt)
         {
-            /* Grab the DSDT address and assume 2 pages */
-            PhysicalAddress.HighPart = 0;
-            PhysicalAddress.LowPart = Fadt->dsdt;
-            TableLength = 2 * PAGE_SIZE;
+            /* Fail */
+            DPRINT1("HalpAcpiGetTable() failed\n");
+            return NULL;
+        }
 
-            /* Map it */
-            if (LoaderBlock)
-            {
-                /* Phase 0, use HAL heap */
-                Header = HalpMapPhysicalMemory64(PhysicalAddress, 2u);
-            }
-            else
-            {
-                /* Phase 1, use Mm */
-                Header = MmMapIoSpace(PhysicalAddress, 2 * PAGE_SIZE, 0);
-            }
+        /* Grab the DSDT address and assume a default size */
+        PhysicalAddress.HighPart = 0;
+        PhysicalAddress.LowPart = Fadt->dsdt;
 
-            /* Fail if we couldn't map it */
-            if (!Header)
-            {
-                DPRINT1("HAL: Failed to map ACPI table.\n");
-                return NULL;
-            }
-
-            /* Validate the signature */
-            if (Header->Signature != DSDT_SIGNATURE)
-            {
-                /* Fail and unmap */
-                if (LoaderBlock)
-                {
-                    /* Using HAL heap */
-                    HalpUnmapVirtualAddress(Header, 2);
-                }
-                else
-                {
-                    /* Using Mm */
-                    MmUnmapIoSpace(Header, 2 * PAGE_SIZE);
-                }
-
-                /* Didn't find anything */
-                return NULL;
-            }
+        /* Map it */
+        if (LoaderBlock)
+        {
+            /* Phase 0, use HAL heap */
+            Header = HalpMapPhysicalMemory64(PhysicalAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
         }
         else
         {
-            /* Couldn't find it */
+            /* Phase 1, use Mm */
+            Header = MmMapIoSpace(PhysicalAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE, 0);
+        }
+
+        /* Fail if we couldn't map it */
+        if (!Header)
+        {
+            DPRINT1("Failed to map DSDT table\n");
+            return NULL;
+        }
+
+        /* Validate the signature */
+        if (Header->Signature != DSDT_SIGNATURE)
+        {
+            DPRINT1("Table %c%c%c%c at 0x%p is not DSDT\n",
+                     Header->Signature & 0x000000FF,
+                    (Header->Signature & 0x0000FF00) >>  8,
+                    (Header->Signature & 0x00FF0000) >> 16,
+                    (Header->Signature & 0xFF000000) >> 24,
+                    Header);
+
+            /* Unmap */
+            if (LoaderBlock)
+            {
+                /* Using HAL heap */
+                HalpUnmapVirtualAddress(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
+            }
+            else
+            {
+                /* Using Mm */
+                MmUnmapIoSpace(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE);
+            }
+
+            /* Fail */
             return NULL;
         }
     }
     else
     {
-        /* To find tables, we need the RSDT */
-        Rsdt = HalpAcpiGetTable(LoaderBlock, RSDT_SIGNATURE);
-        if (Rsdt)
+        /* Cache RSDT/XSDT address */
+        if (!Xsdt && !Rsdt)
         {
-            /* Won't be using the XSDT */
-            Xsdt = NULL;
-        }
-        else
-        {
-            /* Only other choice is to use the XSDT */
+            /* To find tables, we need the new XSDT */
             Xsdt = HalpAcpiGetTable(LoaderBlock, XSDT_SIGNATURE);
-            if (!Xsdt) return NULL;
+            if (Xsdt)
+            {
+                /* Count physical addresses */
+                EntryCount = (Xsdt->Header.Length - FIELD_OFFSET(XSDT, Tables)) / sizeof(*Xsdt->Tables);
+            }
+            else
+            {
+                /* Fall back to the old RSDT */
+                Rsdt = HalpAcpiGetTable(LoaderBlock, RSDT_SIGNATURE);
+#if 0 // Impossible case
+                if (!Rsdt)
+                {
+                    DPRINT1("HalpAcpiGetTable() failed\n");
+                    return NULL;
+                }
+#endif
 
-            /* Won't be using the RSDT */
-            Rsdt = NULL;
-        }
+                /* Count 32-bit addresses */
+                EntryCount = (Rsdt->Header.Length - FIELD_OFFSET(RSDT, Tables)) / sizeof(*Rsdt->Tables);
+            }
 
-        /* Smallest RSDT/XSDT is one without table entries */
-        Offset = FIELD_OFFSET(RSDT, Tables);
-        if (Xsdt)
-        {
-            /* Figure out total size of table and the offset */
-            TableLength = Xsdt->Header.Length;
-            if (TableLength < Offset) Offset = Xsdt->Header.Length;
-
-            /* The entries are each 64-bits, so count them */
-            EntryCount = (TableLength - Offset) / sizeof(PHYSICAL_ADDRESS);
-        }
-        else
-        {
-            /* Figure out total size of table and the offset */
-            TableLength = Rsdt->Header.Length;
-            if (TableLength < Offset) Offset = Rsdt->Header.Length;
-
-            /* The entries are each 32-bits, so count them */
-            EntryCount = (TableLength - Offset) / sizeof(ULONG);
+            /* Extra-safetyIs table empty? */
+            if (EntryCount == 0)
+            {
+                /* Fail */
+                DPRINT1("No tables in %s table\n", Xsdt ? "XSDT" : "RSDT");
+                return NULL;
+            }
         }
 
         /* Start at the beginning of the array and loop it */
         for (CurrentEntry = 0; CurrentEntry < EntryCount; CurrentEntry++)
         {
-            /* Are we using the XSDT? */
-            if (!Xsdt)
-            {
-                /* Read the 32-bit physical address */
-                PhysicalAddress.LowPart = Rsdt->Tables[CurrentEntry];
-                PhysicalAddress.HighPart = 0;
-            }
-            else
+            /* Get table physical address */
+            if (Xsdt)
             {
                 /* Read the 64-bit physical address */
                 PhysicalAddress = Xsdt->Tables[CurrentEntry];
             }
-
-            /* Had we already mapped a table? */
-            if (Header)
+            else
             {
-                /* Yes, unmap it */
-                if (LoaderBlock)
-                {
-                    /* Using HAL heap */
-                    HalpUnmapVirtualAddress(Header, 2);
-                }
-                else
-                {
-                    /* Using Mm */
-                    MmUnmapIoSpace(Header, 2 * PAGE_SIZE);
-                }
+                /* Read the 32-bit physical address */
+                PhysicalAddress.QuadPart = Rsdt->Tables[CurrentEntry];
             }
 
             /* Now map this table */
             if (!LoaderBlock)
             {
                 /* Phase 1: Use HAL heap */
-                Header = MmMapIoSpace(PhysicalAddress, 2 * PAGE_SIZE, MmNonCached);
+                Header = MmMapIoSpace(PhysicalAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE,
+                                      MmNonCached);
             }
             else
             {
                 /* Phase 0: Use Mm */
-                Header = HalpMapPhysicalMemory64(PhysicalAddress, 2);
+                Header = HalpMapPhysicalMemory64(PhysicalAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
             }
 
             /* Check if we mapped it */
             if (!Header)
             {
-                /* Game over */
-                DPRINT1("HAL: Failed to map ACPI table.\n");
+                DPRINT1("Failed to map table %lu/%lu\n", CurrentEntry + 1, EntryCount);
                 return NULL;
             }
 
-            /* We found it, break out */
-            DPRINT("Found ACPI table %c%c%c%c at 0x%p\n",
+#if 1 // TODO, here and elsewhere
+            if (Header->Length < sizeof(*Header))
+            {
+                DPRINT1("Length is too short: %p, %u\n", Header, Header->Length);
+
+                /* Unmap the table */
+                if (LoaderBlock)
+                {
+                    /* Using HAL heap */
+                    HalpUnmapVirtualAddress(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
+                }
+                else
+                {
+                    /* Using Mm */
+                    MmUnmapIoSpace(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE);
+                }
+
+                return NULL;
+            }
+#endif
+
+            DPRINT("Found %c%c%c%c table at 0x%p\n",
                     Header->Signature & 0xFF,
                     (Header->Signature & 0xFF00) >> 8,
                     (Header->Signature & 0xFF0000) >> 16,
                     (Header->Signature & 0xFF000000) >> 24,
                     Header);
-            if (Header->Signature == Signature) break;
-        }
 
-        /* Did we end up here back at the last entry? */
-        if (CurrentEntry == EntryCount)
-        {
-            /* Yes, unmap the last table we processed */
+            /* Did we find it? */
+            if (Header->Signature == Signature) break;
+
+            /* Unmap the table */
             if (LoaderBlock)
             {
                 /* Using HAL heap */
-                HalpUnmapVirtualAddress(Header, 2);
+                HalpUnmapVirtualAddress(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
             }
             else
             {
                 /* Using Mm */
-                MmUnmapIoSpace(Header, 2 * PAGE_SIZE);
+                MmUnmapIoSpace(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE);
             }
+        }
 
-            /* Didn't find anything */
+        /* Not found? */
+        if (CurrentEntry == EntryCount)
+        {
+            DPRINT("There is no %c%c%c%c table\n",
+                    Signature & 0x000000FF,
+                   (Signature & 0x0000FF00) >>  8,
+                   (Signature & 0x00FF0000) >> 16,
+                   (Signature & 0xFF000000) >> 24);
             return NULL;
         }
     }
@@ -341,18 +361,18 @@ HalpAcpiGetTableFromBios(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
 
     /* How many pages do we need? */
     PageCount = BYTES_TO_PAGES(Header->Length);
-    if (PageCount != 2)
+    if (PageCount != ACPI_TABLE_DEFAULT_PAGE_NUMBER)
     {
         /* We assumed two, but this is not the case, free the current mapping */
         if (LoaderBlock)
         {
             /* Using HAL heap */
-            HalpUnmapVirtualAddress(Header, 2);
+            HalpUnmapVirtualAddress(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
         }
         else
         {
             /* Using Mm */
-            MmUnmapIoSpace(Header, 2 * PAGE_SIZE);
+            MmUnmapIoSpace(Header, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE);
         }
 
         /* Now map this table using its correct size */
@@ -366,18 +386,46 @@ HalpAcpiGetTableFromBios(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
             /* Phase 0: Use Mm */
             Header = HalpMapPhysicalMemory64(PhysicalAddress, PageCount);
         }
+
+        /* Fail if remap failed */
+        if (!Header)
+        {
+            DPRINT1("Failed to remap %c%c%c%c table (PageCount: %lu)\n",
+                     Signature & 0x000000FF,
+                    (Signature & 0x0000FF00) >>  8,
+                    (Signature & 0x00FF0000) >> 16,
+                    (Signature & 0xFF000000) >> 24,
+                    PageCount);
+            return NULL;
+        }
+        else
+        {
+            DPRINT("Remapped %c%c%c%c table (PageCount: %lu)\n",
+                    Signature & 0x000000FF,
+                   (Signature & 0x0000FF00) >>  8,
+                   (Signature & 0x00FF0000) >> 16,
+                   (Signature & 0xFF000000) >> 24,
+                   PageCount);
+        }
+    }
+    else
+    {
+        DPRINT("Mapped %c%c%c%c table (PageCount: %lu)\n",
+                Signature & 0x000000FF,
+               (Signature & 0x0000FF00) >>  8,
+               (Signature & 0x00FF0000) >> 16,
+               (Signature & 0xFF000000) >> 24,
+               PageCount);
     }
 
-    /* Fail if the remapped failed */
-    if (!Header) return NULL;
-
+// FIXME: Comment/Code mismatch...
     /* All tables in ACPI 3.0 other than the FACP should have correct checksum */
     if ((Header->Signature != FADT_SIGNATURE) || (Header->Revision > 2))
     {
         /* Go to the end of the table */
         CheckSum = 0;
-        CurrentByte = (PCHAR)Header + Header->Length;
-        while (CurrentByte-- != (PCHAR)Header)
+        CurrentByte = (PUCHAR)Header + Header->Length;
+        while (CurrentByte-- != (PUCHAR)Header)
         {
             /* Add this byte */
             CheckSum += *CurrentByte;
@@ -387,11 +435,19 @@ HalpAcpiGetTableFromBios(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
         if (CheckSum)
         {
             HalpInvalidAcpiTable = Header->Signature;
-            DPRINT1("Checksum failed on ACPI table %c%c%c%c\n",
+            DPRINT1("Checksum failed on %c%c%c%c table\n",
                     (Signature & 0xFF),
                     (Signature & 0xFF00) >> 8,
                     (Signature & 0xFF0000) >> 16,
                     (Signature & 0xFF000000) >> 24);
+        }
+        else
+        {
+            DPRINT("Checksum succeeded on %c%c%c%c table\n",
+                    Signature & 0x000000FF,
+                   (Signature & 0x0000FF00) >>  8,
+                   (Signature & 0x00FF0000) >> 16,
+                   (Signature & 0xFF000000) >> 24);
         }
     }
 
@@ -530,7 +586,7 @@ HalpInitBootTable(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
         (BootTable->Header.Length >= sizeof(BOOT_TABLE)) &&
         (BootTable->CMOSIndex >= 9))
     {
-        DPRINT1("ACPI Boot table found, but not supported!\n");
+        DPRINT1("BOOT table found, but not supported!\n");
     }
     else
     {
@@ -547,8 +603,7 @@ NTAPI
 HalpAcpiFindRsdtPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
                        OUT PACPI_BIOS_MULTI_NODE* AcpiMultiNode)
 {
-    PCONFIGURATION_COMPONENT_DATA ComponentEntry;
-    PCONFIGURATION_COMPONENT_DATA Next = NULL;
+    PCONFIGURATION_COMPONENT_DATA ComponentEntry = NULL;
     PCM_PARTIAL_RESOURCE_LIST ResourceList;
     PACPI_BIOS_MULTI_NODE NodeData;
     SIZE_T NodeLength;
@@ -567,34 +622,26 @@ HalpAcpiFindRsdtPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
     /* Assume failure */
     *AcpiMultiNode = NULL;
 
-    /* Find the multi function adapter key */
-    ComponentEntry = KeFindConfigurationNextEntry(LoaderBlock->ConfigurationRoot,
-                                                  AdapterClass,
-                                                  MultiFunctionAdapter,
-                                                  0,
-                                                  &Next);
-    while (ComponentEntry)
-    {
-        /* Find the ACPI BIOS key */
-        if (!_stricmp(ComponentEntry->ComponentEntry.Identifier, "ACPI BIOS"))
-        {
-            /* Found it */
-            break;
-        }
+// TODO: This does not look like the documented ACPI way to search for RSDP, to get RSDT and possibly XSDT.
+// FIXME: Can this find the XSDT (if it exists), or the RSDT only?
 
-        /* Keep searching */
-        Next = ComponentEntry;
+    /* Search for the multi function adapter key */
+    do
+    {
+        /* Find next entry */
         ComponentEntry = KeFindConfigurationNextEntry(LoaderBlock->ConfigurationRoot,
                                                       AdapterClass,
                                                       MultiFunctionAdapter,
                                                       NULL,
-                                                      &Next);
+                                                      &ComponentEntry);
     }
+    /* Is it the ACPI BIOS entry? */
+    while (ComponentEntry && _stricmp(ComponentEntry->ComponentEntry.Identifier, "ACPI BIOS"));
 
     /* Make sure we found it */
     if (!ComponentEntry)
     {
-        DPRINT1("**** HalpAcpiFindRsdtPhase0: did NOT find RSDT\n");
+        DPRINT1("HalpAcpiFindRsdtPhase0: did NOT find RSDT/XSDT\n");
         return STATUS_NOT_FOUND;
     }
 
@@ -603,6 +650,7 @@ HalpAcpiFindRsdtPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
     NodeData = (PACPI_BIOS_MULTI_NODE)(ResourceList + 1);
 
     /* How many E820 memory entries are there? */
+// TODO: Do we care about the E820 entries? They seem unused currently.
     NodeLength = sizeof(ACPI_BIOS_MULTI_NODE) +
                  (NodeData->Count - 1) * sizeof(ACPI_E820_ENTRY);
 
@@ -626,8 +674,8 @@ HalpAcpiFindRsdtPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock,
     }
 
     /* Save the multi node, bail out if we didn't find it */
-    HalpAcpiMultiNode = MappedAddress;
     if (!MappedAddress) return STATUS_INSUFFICIENT_RESOURCES;
+    HalpAcpiMultiNode = MappedAddress;
 
     /* Copy the multi-node data */
     RtlCopyMemory(MappedAddress, NodeData, NodeLength);
@@ -646,7 +694,7 @@ HalpAcpiTableCacheInit(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     PHYSICAL_ADDRESS PhysicalAddress;
     PVOID MappedAddress;
     ULONG TableLength;
-    PRSDT Rsdt;
+    PDESCRIPTION_HEADER _sdt; // Header part of either RSDT/XSDT
     PLOADER_PARAMETER_EXTENSION LoaderExtension;
 
     /* Only initialize once */
@@ -656,79 +704,94 @@ HalpAcpiTableCacheInit(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     ExInitializeFastMutex(&HalpAcpiTableCacheLock);
     InitializeListHead(&HalpAcpiTableCacheList);
 
-    /* Find the RSDT */
+    /* Find the table address */
     Status = HalpAcpiFindRsdtPhase0(LoaderBlock, &AcpiMultiNode);
     if (!NT_SUCCESS(Status)) return Status;
 
     PhysicalAddress.QuadPart = AcpiMultiNode->RsdtAddress.QuadPart;
 
-    /* Map the RSDT */
+    /* Map the table, assuming a default size */
     if (LoaderBlock)
     {
-        /* Phase0: Use HAL Heap to map the RSDT, we assume it's about 2 pages */
-        MappedAddress = HalpMapPhysicalMemory64(PhysicalAddress, 2);
+        /* Phase0: Use HAL Heap */
+        MappedAddress = HalpMapPhysicalMemory64(PhysicalAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
     }
     else
     {
         /* Use an I/O map */
-        MappedAddress = MmMapIoSpace(PhysicalAddress, PAGE_SIZE * 2, MmNonCached);
+        MappedAddress = MmMapIoSpace(PhysicalAddress, PAGE_SIZE * ACPI_TABLE_DEFAULT_PAGE_NUMBER,
+                                     MmNonCached);
     }
 
-    /* Get the RSDT */
-    Rsdt = MappedAddress;
+    /* Fail if we couldn't map it */
     if (!MappedAddress)
     {
         /* Fail, no memory */
-        DPRINT1("HAL: Failed to map RSDT\n");
+        DPRINT1("HAL: Failed to map RSDT/XSDT\n");
         return STATUS_INSUFFICIENT_RESOURCES;
     }
+    _sdt = MappedAddress;
 
-    /* Validate it */
-    if ((Rsdt->Header.Signature != RSDT_SIGNATURE) &&
-        (Rsdt->Header.Signature != XSDT_SIGNATURE))
+    /* Validate the signature */
+    if ((_sdt->Signature != XSDT_SIGNATURE) && (_sdt->Signature != RSDT_SIGNATURE))
     {
         /* Very bad: crash */
-        HalDisplayString("Bad RSDT pointer\r\n");
+        HalDisplayString("Bad RSDT/XSDT pointer/signature\r\n");
         KeBugCheckEx(MISMATCHED_HAL, 4, __LINE__, 0, 0);
     }
 
     /* We assumed two pages -- do we need less or more? */
-    TableLength = ADDRESS_AND_SIZE_TO_SPAN_PAGES(PhysicalAddress.LowPart,
-                                                 Rsdt->Header.Length);
-    if (TableLength != 2)
+    TableLength = ADDRESS_AND_SIZE_TO_SPAN_PAGES(PhysicalAddress.LowPart, _sdt->Length);
+    if (TableLength != ACPI_TABLE_DEFAULT_PAGE_NUMBER)
     {
-        /* Are we in phase 0 or 1? */
-        if (!LoaderBlock)
+        DPRINT("Remapping %c%c%c%c table (TableLength: %lu)\n",
+                _sdt->Signature & 0x000000FF,
+               (_sdt->Signature & 0x0000FF00) >>  8,
+               (_sdt->Signature & 0x00FF0000) >> 16,
+               (_sdt->Signature & 0xFF000000) >> 24,
+               TableLength);
+
+        /* Unmap the old table, remap the new one */
+        if (LoaderBlock)
         {
-            /* Unmap the old table, remap the new one, using Mm I/O space */
-            MmUnmapIoSpace(MappedAddress, 2 * PAGE_SIZE);
+            /* Phase 0, use HAL heap */
+            HalpUnmapVirtualAddress(MappedAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER);
+            MappedAddress = HalpMapPhysicalMemory64(PhysicalAddress, TableLength);
+        }
+        else
+        {
+            /* Phase 1, use Mm I/O space */
+            MmUnmapIoSpace(MappedAddress, ACPI_TABLE_DEFAULT_PAGE_NUMBER * PAGE_SIZE);
             MappedAddress = MmMapIoSpace(PhysicalAddress,
                                          TableLength << PAGE_SHIFT,
                                          MmNonCached);
         }
-        else
-        {
-            /* Unmap the old table, remap the new one, using HAL heap */
-            HalpUnmapVirtualAddress(MappedAddress, 2);
-            MappedAddress = HalpMapPhysicalMemory64(PhysicalAddress, TableLength);
-        }
 
         /* Get the remapped table */
-        Rsdt = MappedAddress;
         if (!MappedAddress)
         {
             /* Fail, no memory */
-            DPRINT1("HAL: Couldn't remap RSDT\n");
+            DPRINT1("HAL: Couldn't remap RSDT/XSDT\n");
             return STATUS_INSUFFICIENT_RESOURCES;
         }
+        _sdt = MappedAddress;
+    }
+    else
+    {
+        DPRINT("Mapped %c%c%c%c table (TableLength: %lu)\n",
+                _sdt->Signature & 0x000000FF,
+               (_sdt->Signature & 0x0000FF00) >>  8,
+               (_sdt->Signature & 0x00FF0000) >> 16,
+               (_sdt->Signature & 0xFF000000) >> 24,
+               TableLength);
     }
 
-    /* Now take the BIOS copy and make our own local copy */
-    Rsdt = HalpAcpiCopyBiosTable(LoaderBlock, &Rsdt->Header);
-    if (!Rsdt)
+    /* Make a local copy */
+    _sdt = HalpAcpiCopyBiosTable(LoaderBlock, _sdt);
+    if (!_sdt)
     {
         /* Fail, no memory */
-        DPRINT1("HAL: Couldn't remap RSDT\n");
+        DPRINT1("HAL: Couldn't copy RSDT/XSDT\n");
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
@@ -748,17 +811,18 @@ HalpAcpiTableCacheInit(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
         LoaderExtension = NULL;
     }
 
-    /* Cache the RSDT */
-    HalpAcpiCacheTable(&Rsdt->Header);
+    /* Cache the table */
+    HalpAcpiCacheTable(_sdt);
 
     /* Check for compatible loader block extension */
+// 0x58? SIZEOF_THROUGH_FIELD(AcpiTableSize)?
     if (LoaderExtension && (LoaderExtension->Size >= 0x58))
     {
         /* Compatible loader: did it provide an ACPI table override? */
         if ((LoaderExtension->AcpiTable) && (LoaderExtension->AcpiTableSize))
         {
             /* Great, because we don't support it! */
-            DPRINT1("ACPI Table Overrides Not Supported!\n");
+            DPRINT1("ACPI Table Overrides ignored: UNIMPLEMENTED\n");
         }
     }
 
@@ -812,9 +876,44 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
         return STATUS_NOT_FOUND;
     }
 
-    /* Assume typical size, otherwise whatever the descriptor table says */
-    TableLength = sizeof(FADT);
-    if (Fadt->Header.Length < sizeof(FADT)) TableLength = Fadt->Header.Length;
+// debug only
+   DPRINT1("FADT table: %p, Length %lu\n", Fadt, Fadt->Header.Length);
+
+// Proper (header) length check must be common in GetFromBios (pass expected length param) and return NULL if needed!
+    /* Require at least ACPI v1.0 length */
+    if (Fadt->Header.Length < RTL_SIZEOF_THROUGH_FIELD(FADT, flags))
+    {
+        DPRINT1("Length is too short: %p, %u\n", Fadt, Fadt->Header.Length);
+        return STATUS_NOT_FOUND;
+    }
+
+// Should be common check too.
+    /* Detect possible newer revision of this table */
+    if (Fadt->Header.Length > sizeof(*Fadt))
+    {
+        DPRINT1("Length is longer than expected: %p, %u\n", Fadt, Fadt->Header.Length);
+    }
+
+    /* Support older revisions too */
+    TableLength = min(Fadt->Header.Length, sizeof(*Fadt));
+
+#if DBG
+    /* Length increased on v1.5. minor_revision is available since v5.1 (v5.0 by compatibility) */
+    if (Fadt->Header.Length >= RTL_SIZEOF_THROUGH_FIELD(FADT, minor_revision) &&
+        Fadt->Header.Revision >= 5)
+    {
+        UINT8 Errata = (Fadt->minor_revision & 0xF0) >> 4;
+
+        DPRINT1("FADT table: ACPI v%u.%u-%c\n",
+            Fadt->Header.Revision,
+            Fadt->minor_revision & 0x0F,
+            Errata ? 'A' + (Errata - 1) : 0);
+    }
+    else
+    {
+        DPRINT1("FADT table: ACPI v%u\n", Fadt->Header.Revision);
+    }
+#endif
 
     /* Copy it in the HAL static buffer */
     RtlCopyMemory(&HalpFixedAcpiDescTable, Fadt, TableLength);
@@ -871,10 +970,14 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     /* Setup the boot table */
     HalpInitBootTable(LoaderBlock);
 
+#if DBG
     /* Debugging code */
     {
         PLIST_ENTRY ListHead, NextEntry;
         PACPI_CACHED_TABLE CachedTable;
+
+// TODO: Add a similar loop for all=available tables. Then/Before, rework cache to cache missing/header/full tables...
+        DPRINT1("ACPI tables in our cache:");
 
         /* Loop cached tables */
         ListHead = &HalpAcpiTableCacheList;
@@ -884,24 +987,20 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
             /* Get the table */
             CachedTable = CONTAINING_RECORD(NextEntry, ACPI_CACHED_TABLE, Links);
 
-            /* Compare signatures */
-            if ((CachedTable->Header.Signature == RSDT_SIGNATURE) ||
-                (CachedTable->Header.Signature == XSDT_SIGNATURE))
-            {
-                DPRINT1("ACPI %u.0 Detected. Tables:", CachedTable->Header.Revision + 1);
-            }
-
-            DbgPrint(" [%c%c%c%c]",
+            DbgPrint(" [%c%c%c%c r%u]",
                       CachedTable->Header.Signature & 0x000000FF,
                      (CachedTable->Header.Signature & 0x0000FF00) >>  8,
                      (CachedTable->Header.Signature & 0x00FF0000) >> 16,
-                     (CachedTable->Header.Signature & 0xFF000000) >> 24);
+                     (CachedTable->Header.Signature & 0xFF000000) >> 24,
+                     CachedTable->Header.Revision);
 
             /* Keep going */
             NextEntry = NextEntry->Flink;
         }
+
         DbgPrint("\n");
     }
+#endif
 
     /* Return success */
     return STATUS_SUCCESS;
