@@ -295,3 +295,9 @@ Path: modules/rosapps/lib/vfdlib
 Used Version: 2.1.2008.206
 License: GPL-2.0 (https://spdx.org/licenses/GPL-2.0.html)
 URL: https://vfd.sourceforge.net/
+
+Title: Console Registry Explorer
+Path: modules/rosapps/applications/sysutils/regexpl
+Used Version: ??? (Imported on 2000.10.04: ae69a8e (r1375))
+License: 'GNU GPL'
+URL: (Does not exist anymore)
