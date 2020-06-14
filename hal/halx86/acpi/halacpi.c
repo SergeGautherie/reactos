@@ -14,7 +14,32 @@
 // #define NDEBUG
 #include <debug.h>
 
+#define EARLY_DEBUG
+
 /* GLOBALS ********************************************************************/
+
+#if defined(EARLY_DEBUG)
+
+ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
+
+#undef DbgPrint
+#define DbgPrint FrLdrDbgPrint
+
+#else
+
+#if 0
+
+#undef DbgPrint
+
+#if defined(_MSC_VER)
+#define DbgPrint __noop
+#else
+#define DbgPrint
+#endif // _MSC_VER
+
+#endif // 0
+
+#endif // EARLY_DEBUG
 
 // TODO: Why 2? 1 should be enough?
 #define ACPI_TABLE_DEFAULT_PAGE_NUMBER 2
@@ -867,6 +892,21 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 
     /* Only do this once */
     if (HalpProcessedACPIPhase0) return STATUS_SUCCESS;
+
+#if defined(EARLY_DEBUG)
+    if (LoaderBlock)
+    {
+        /* Define your own function or use the trick with FreeLoader */
+        FrLdrDbgPrint = ((PLOADER_PARAMETER_BLOCK)LoaderBlock)->u.I386.CommonDataArea;
+    }
+#if 0 // Future
+    else
+    {
+        /* Define your own function or use the trick with FreeLoader */
+        FrLdrDbgPrint = DPRINT1;
+    }
+#endif
+#endif
 
     /* Setup the ACPI table cache */
     Status = HalpAcpiTableCacheInit(LoaderBlock);

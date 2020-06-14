@@ -14,16 +14,16 @@
 #undef ACPI_BIOS_ERROR
 #include <smp.h>
 
-#define EARLY_DEBUG
-
 // #define NDEBUG
 #include <debug.h>
+
+#define EARLY_DEBUG
 
 /* GLOBALS ********************************************************************/
 
 #if defined(EARLY_DEBUG)
 
-ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
+extern ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
 
 #undef DbgPrint
 #define DbgPrint FrLdrDbgPrint
@@ -69,7 +69,7 @@ HalpParseApicTables(
     ACPI_SUBTABLE_HEADER *AcpiHeader;
     ULONG_PTR TableEnd;
 
-#if defined(EARLY_DEBUG)
+#if 0 && defined(EARLY_DEBUG)
     if (LoaderBlock)
     {
         /* Define your own function or use the trick with FreeLoader */
