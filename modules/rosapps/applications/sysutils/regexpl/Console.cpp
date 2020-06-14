@@ -768,7 +768,11 @@ Paste:
 				if (dwCompletionStringSize)
 				{
           // Copy competion into main buffer
+#ifndef __REACTOS__
 					_tcsncpy(m_pchBuffer+dwCompletionOffset,pchCompletion,dwCompletionStringSize);
+#else
+					_tcscpy(m_pchBuffer+dwCompletionOffset,pchCompletion);
+#endif
 
 					// Write completion string to console
 					if (!Write(m_pchBuffer+dwCompletionOffset,dwCompletionStringSize))
