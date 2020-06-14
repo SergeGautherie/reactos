@@ -71,7 +71,7 @@ if(ARCH STREQUAL "i386")
 
 elseif(ARCH STREQUAL "amd64")
 
-    add_hal(hal SOURCES ${HAL_SOURCE} COMPONENTS generic acpi up apic)
-    add_hal(halmp SOURCES ${HAL_SOURCE} COMPONENTS generic acpi smp apic)
+    add_hal(hal SOURCES ${HAL_SOURCE} COMPONENTS generic acpi up apic) # Matches i386 halaacpi
+    add_hal(halmacpi SOURCES ${HAL_SOURCE} COMPONENTS generic acpi smp apic) # FIXME: (official?) halmp. FdrLdr menu expects halmacpi
 
 endif()
