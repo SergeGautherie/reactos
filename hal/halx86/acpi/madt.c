@@ -135,6 +135,8 @@ HalpParseApicTables(
     TableEnd = (ULONG_PTR)MadtTable + MadtTable->Header.Length;
     DPRINT(" MadtTable %p, subtables %p - %p\n", MadtTable, AcpiHeader, (PVOID)TableEnd);
 
+    NT_ASSERT(FALSE);
+
     while ((ULONG_PTR)(AcpiHeader + 1) <= TableEnd)
     {
         if (AcpiHeader->Length < sizeof(*AcpiHeader))
