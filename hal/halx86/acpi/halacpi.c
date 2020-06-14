@@ -22,7 +22,10 @@
 
 ULONG (*FrLdrDbgPrint)(_In_ _Printf_format_string_ PCSTR Format, ...);
 
-#if 0
+// Phase "1" : après "... HAL Detected" !!?
+// 0: Phase0 rien, Phase "1" fctne.
+// 1: Phase0 fctne, Phase "1" crash.
+#if 1
 #undef DbgPrint
 #define DbgPrint FrLdrDbgPrint
 #endif
@@ -895,9 +898,13 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     /* Only do this once */
     if (HalpProcessedACPIPhase0) return STATUS_SUCCESS;
 
-#if defined(EARLY_DEBUG)
+// Nécessaire en mode ACPI seul, mais inutile en mode APIC car appelée en "second", après bannière NTOS.
+#if 0 && defined(EARLY_DEBUG)
     if (LoaderBlock)
     {
+        if (FrLdrDbgPrint)
+            DPRINT("HalpSetupAcpiPhase0(%p): FrLdrDbgPrint %p\n", LoaderBlock, FrLdrDbgPrint);
+
         /* Define your own function or use the trick with FreeLoader */
         FrLdrDbgPrint = ((PLOADER_PARAMETER_BLOCK)LoaderBlock)->u.I386.CommonDataArea;
     }
@@ -909,6 +916,7 @@ HalpSetupAcpiPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     }
 #endif
 #endif
+    DPRINT("HalpSetupAcpiPhase0(%p)\n", LoaderBlock);
 
     /* Setup the ACPI table cache */
     Status = HalpAcpiTableCacheInit(LoaderBlock);

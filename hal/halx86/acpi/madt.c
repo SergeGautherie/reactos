@@ -69,9 +69,14 @@ HalpParseApicTables(
     ACPI_SUBTABLE_HEADER *AcpiHeader;
     ULONG_PTR TableEnd;
 
+// Hang if without it.
+// Nécessaire, car appelée en premier en mode APIC, avant bannière NTOS.
 #if 1 && defined(EARLY_DEBUG)
     if (LoaderBlock)
     {
+        if (FrLdrDbgPrint)
+            DPRINT("HalpParseApicTables(%p): FrLdrDbgPrint %p\n", LoaderBlock, FrLdrDbgPrint);
+
         /* Define your own function or use the trick with FreeLoader */
         FrLdrDbgPrint = ((PLOADER_PARAMETER_BLOCK)LoaderBlock)->u.I386.CommonDataArea;
     }
