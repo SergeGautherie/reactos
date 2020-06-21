@@ -40,13 +40,13 @@ Abstract:
 
 
 #ifdef __REACTOS__
-#if NTDDI_VERSION < NTDDI_WIN8
 // Downgrade unsupported NT6.2+ features.
+#undef MdlMappingNoExecute
 #define MdlMappingNoExecute 0
 #define NonPagedPoolNx NonPagedPool
 #define NonPagedPoolNxCacheAligned NonPagedPoolCacheAligned
+#undef POOL_NX_ALLOCATION
 #define POOL_NX_ALLOCATION 0
-#endif
 
 // Moved up: needed in 'fatstruc.h'.
 typedef enum _TYPE_OF_OPEN {
