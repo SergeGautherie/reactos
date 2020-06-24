@@ -15,32 +15,16 @@ START_TEST(ExUuid)
 {
     UUID Uuid;
     NTSTATUS Status;
-    unsigned char V;
 
     Status = ExUuidCreate(&Uuid);
     // FIXME: Why does Test WHS report RPC_NT_UUID_LOCAL_ONLY instead? (ROSTESTS-359)
     ok(Status == STATUS_SUCCESS, "ExUuidCreate returned unexpected status: %lx\n", Status);
 
-    V = (Uuid.Data3 & 0xF000) >> 12;
-    ok(V == 1, "UUID version: expected 1, got %u\n", V);
+    ok((Uuid.Data3 & 0xF000) >> 12 == 1,
+       "UUID version: expected 1, got %u\n",
+       (Uuid.Data3 & 0xF000) >> 12);
 
-    V = (Uuid.Data4[0] & 0xF0) >> 4;
-    if ((V & 0b1000) == 0b0000)
-    {
-        V = 0;
-    }
-    else if ((V & 0b1100) == 0b1000)
-    {
-        V = 1;
-    }
-    else if ((V & 0b1110) == 0b1100)
-    {
-        V = 2;
-    }
-    else // if ((V & 0b1110) == 0b1110)
-    {
-        // Reserved. Fake a value.
-        V = 255;
-    }
-    ok(V == 1, "UUID variant: expected 1, got %u\n", V);
+    ok(((Uuid.Data4[0] & 0xF0) >> 4 & 0b1100) == 0b1000,
+       "UUID variant: expected 0b10xx, got 0x%1x\n",
+       (Uuid.Data4[0] & 0xF0) >> 4);
 }
