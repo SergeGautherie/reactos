@@ -11,8 +11,9 @@
 #include "precomp.h"
 
 static
-__inline
-UINT SkipToOffset(
+inline
+UINT
+SkipToOffset(
     _In_opt_ PNDIS_BUFFER Buffer,
     _In_ UINT Offset,
     _Out_ PCHAR *Data,
