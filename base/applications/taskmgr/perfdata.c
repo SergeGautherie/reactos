@@ -463,7 +463,6 @@ void PerfDataRefresh(void)
         pPerfData[Idx].ThreadCount = pSPI->NumberOfThreads;
         pPerfData[Idx].SessionId = pSPI->SessionId;
         ProcessUser = SystemUserSid;
-DPRINT("%s(): ProcessUser = %p (SUS)\n", __FUNCTION__, ProcessUser);
         ProcessSD = NULL;
 
         if (pSPI->UniqueProcessId != NULL) {
@@ -482,10 +481,7 @@ DPRINT("%s(): ProcessUser = %p (SUS)\n", __FUNCTION__, ProcessUser);
                         CloseHandle(hProcessToken);
 
                         if (Ret)
-{
                             ProcessUser = ((PTOKEN_USER)Buffer)->User.Sid;
-DPRINT("%s(): ProcessUser = %p (B>U.S)\n", __FUNCTION__, ProcessUser);
-}
                         else
                             goto ReadProcOwner;
                     }
@@ -494,7 +490,6 @@ DPRINT("%s(): ProcessUser = %p (B>U.S)\n", __FUNCTION__, ProcessUser);
                         DWORD dwRet;
 
 ReadProcOwner:
-DPRINT("%s(): Calling GetSecurityInfo(%p)\n", __FUNCTION__, ProcessUser);
                         dwRet = GetSecurityInfo(hProcess,
                                                 SE_KERNEL_OBJECT,
                                                 OWNER_SECURITY_INFORMATION,
@@ -526,7 +521,6 @@ ClearInfo:
         }
 
         cwcUserName = sizeof(pPerfData[0].UserName) / sizeof(pPerfData[0].UserName[0]);
-DPRINT("%s(): Calling CachedGetUserFromSid(%p)\n", __FUNCTION__, ProcessUser);
         CachedGetUserFromSid(ProcessUser, pPerfData[Idx].UserName, &cwcUserName);
 
         if (ProcessSD != NULL)
