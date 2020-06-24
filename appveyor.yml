@@ -179,3 +179,28 @@ for:
       #   'cmake version 3.16.2'
       #   Ninja: (AppVeyor) '1.9.0'
 #     - set PATH=C:\projects\bin;%PATH%
+
+#     - set
+
+      # '3.16.2' -> '3.17.3'
+#     - where cmake
+#     - which cmake
+#     - cmake --version
+      # 'C:\Program Files\CMake'
+    - choco install cmake --no-progress --limitoutput --installargs="'ADD_CMAKE_TO_PATH=User ALLUSERS=0'"
+    - refreshenv
+#     - where cmake
+#     - which cmake
+#     - cmake --version
+
+      # '1.9.0' -> '1.10.0'
+#     - where ninja
+#     - which ninja
+#     - ninja --version
+      # 'C:\ProgramData\chocolatey\lib\ninja\tools'
+    - choco install ninja --no-progress --limitoutput
+      # Added after the existing one. Add it in front too!
+    - set PATH=C:\ProgramData\chocolatey\bin;%PATH%
+#     - where ninja
+#     - which ninja
+#     - ninja --version
