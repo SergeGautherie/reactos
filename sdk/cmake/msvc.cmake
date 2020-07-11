@@ -149,9 +149,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     if(NOT (_PREFAST_ OR _VS_ANALYZE_))
         add_compile_flags("/Zi")
     endif()
-#elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_definitions("/D NDEBUG")
 endif()
 
 # Hotpatchable images

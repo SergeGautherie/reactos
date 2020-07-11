@@ -125,7 +125,7 @@ endif()
 # Optimizations
 # FIXME: Revisit this to see if we even need these levels
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_compile_flags("-O2 -DNDEBUG")
+    add_compile_flags("-O2")
 else()
     if(OPTIMIZE STREQUAL "1")
         add_compile_flags("-Os -ftracer")
