@@ -106,19 +106,18 @@ int _tmain(int argc, TCHAR ** argv)
         offset = 0;
         for(i = 1; i < argc; i++)
         {
-            size_t length = _tcslen(argv[i]);
             _tcscpy(&buf[offset], argv[i]);
-            offset += length;
+            offset += _tcslen(argv[i]);
             if (i + 1 < argc)
             {
-                buf[offset] = _T(' ');
+                buf[offset++] = _T(' ');
             }
             else
             {
                 buf[offset] = _T('\n');
                 buf[offset+1] = _T('\0');
+                break;
             }
-            offset++;
         }
         _putts(buf);
         OutputDebugString(buf);
