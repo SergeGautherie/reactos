@@ -13,7 +13,7 @@ jobs:
         experimental: [false]
         include:
           - cmake_build_type: RelWithDebInfo
-            experimental: true
+            experimental: false
           - cmake_build_type: MinSizeRel
             experimental: true
     steps:
