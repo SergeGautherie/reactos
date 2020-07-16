@@ -15,7 +15,7 @@ jobs:
           - cmake_build_type: RelWithDebInfo
             experimental: false
           - cmake_build_type: MinSizeRel
-            experimental: true
+            experimental: false
     steps:
       - name: Install RosBE
         run: |
