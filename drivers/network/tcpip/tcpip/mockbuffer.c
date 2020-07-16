@@ -56,9 +56,8 @@ VOID XNdisQueryBuffer(
 }
 
 static
-inline
-UINT
-SkipToOffset(
+__inline
+UINT SkipToOffset(
     _In_opt_ PNDIS_BUFFER Buffer,
     _In_ UINT Offset,
     _Out_ PCHAR *Data,
