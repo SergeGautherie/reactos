@@ -35,7 +35,7 @@ __inline ULONG SkipToOffset(
         if (!Buffer)
             return 0xFFFFFFFF;
 
-        NdisQueryBuffer(Buffer, Data, Size);
+        NdisQueryBuffer(Buffer, (PVOID)Data, Size);
 
         if (Offset < *Size) {
             *Data  = (PUCHAR) ((ULONG_PTR) *Data + Offset);
@@ -84,7 +84,7 @@ UINT CopyBufferToBufferChain(
     for (;;) {
         BytesToCopy = MIN(DstSize, Length);
 
-        RtlCopyMemory(DstData, SrcData, BytesToCopy);
+        RtlCopyMemory((PVOID)DstData, (PVOID)SrcData, BytesToCopy);
         BytesCopied += BytesToCopy;
         SrcData      = (PUCHAR) ((ULONG_PTR) SrcData + BytesToCopy);
 
@@ -100,7 +100,7 @@ UINT CopyBufferToBufferChain(
             if (!DstBuffer)
                 break;
 
-            NdisQueryBuffer(DstBuffer, &DstData, &DstSize);
+            NdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
         }
     }
 
@@ -143,7 +143,7 @@ UINT CopyBufferChainToBuffer(
 
         NDIS_DbgPrint(MAX_TRACE, ("Copying (%d) bytes from 0x%X to 0x%X\n", BytesToCopy, SrcData, DstData));
 
-        RtlCopyMemory(DstData, SrcData, BytesToCopy);
+        RtlCopyMemory((PVOID)DstData, (PVOID)SrcData, BytesToCopy);
         BytesCopied += BytesToCopy;
         DstData      = (PUCHAR)((ULONG_PTR) DstData + BytesToCopy);
 
@@ -159,7 +159,7 @@ UINT CopyBufferChainToBuffer(
             if (!SrcBuffer)
                 break;
 
-            NdisQueryBuffer(SrcBuffer, &SrcData, &SrcSize);
+            NdisQueryBuffer(SrcBuffer, (PVOID)&SrcData, &SrcSize);
         }
     }
 
@@ -232,7 +232,7 @@ UINT CopyPacketToBufferChain(
     NDIS_DbgPrint(MAX_TRACE, ("DstBuffer (0x%X)  DstOffset (0x%X)  SrcPacket (0x%X)  SrcOffset (0x%X)  Length (%d)\n", DstBuffer, DstOffset, SrcPacket, SrcOffset, Length));
 
     /* Skip DstOffset bytes in the destination buffer chain */
-    NdisQueryBuffer(DstBuffer, &DstData, &DstSize);
+    NdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
     if (SkipToOffset(DstBuffer, DstOffset, &DstData, &DstSize) == 0xFFFFFFFF)
         return 0;
     /* Skip SrcOffset bytes in the source packet */
@@ -249,7 +249,7 @@ UINT CopyPacketToBufferChain(
         if (DstSize < Count)
             Count = DstSize;
 
-        RtlCopyMemory(DstData, SrcData, Count);
+        RtlCopyMemory((PVOID)DstData, (PVOID)SrcData, Count);
 
         Total  += Count;
         Length -= Count;
@@ -264,7 +264,7 @@ UINT CopyPacketToBufferChain(
             if (!DstBuffer)
                 break;
 
-            NdisQueryBuffer(DstBuffer, &DstData, &DstSize);
+            NdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
         }
 
         SrcSize -= Count;
@@ -275,7 +275,7 @@ UINT CopyPacketToBufferChain(
             if (!SrcBuffer)
                 break;
 
-            NdisQueryBuffer(SrcBuffer, &SrcData, &SrcSize);
+            NdisQueryBuffer(SrcBuffer, (PVOID)&SrcData, &SrcSize);
         }
     }
 
@@ -627,7 +627,7 @@ NdisCopyFromPacketToPacket(
             if (!DstBuffer)
                 break;
 
-            NdisQueryBuffer(DstBuffer, &DstData, &DstSize);
+            NdisQueryBuffer(DstBuffer, (PVOID)&DstData, &DstSize);
         }
 
         SrcSize -= Count;
@@ -638,7 +638,7 @@ NdisCopyFromPacketToPacket(
             if (!SrcBuffer)
                 break;
 
-            NdisQueryBuffer(SrcBuffer, &SrcData, &SrcSize);
+            NdisQueryBuffer(SrcBuffer, (PVOID)&SrcData, &SrcSize);
         }
     }
 
@@ -964,7 +964,7 @@ NdisQueryBuffer(
  */
 {
 	if (VirtualAddress != NULL)
-		*VirtualAddress = MmGetSystemAddressForMdl(Buffer);
+		*(PVOID*)VirtualAddress = MmGetSystemAddressForMdl(Buffer);
 
 	*Length = MmGetMdlByteCount(Buffer);
 }
@@ -1249,7 +1249,7 @@ NdisCopyFromPacketToPacketSafe(
             if (!DstBuffer)
                 break;
 
-            NdisQueryBufferSafe(DstBuffer, (PVOID *)&DstData, &DstSize, Priority);
+            NdisQueryBufferSafe(DstBuffer, (PVOID)&DstData, &DstSize, Priority);
             if (!DstData)
                 break;
         }
@@ -1262,7 +1262,7 @@ NdisCopyFromPacketToPacketSafe(
             if (!SrcBuffer)
                 break;
 
-            NdisQueryBufferSafe(SrcBuffer, (PVOID *)&SrcData, &SrcSize, Priority);
+            NdisQueryBufferSafe(SrcBuffer, (PVOID)&SrcData, &SrcSize, Priority);
             if (!SrcData)
                 break;
         }

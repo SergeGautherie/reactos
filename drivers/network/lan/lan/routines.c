@@ -46,7 +46,7 @@ __inline INT SkipToOffset(
         if (!Buffer)
             return -1;
 
-        NdisQueryBuffer(Buffer, Data, Size);
+        NdisQueryBuffer(Buffer, (PVOID)Data, Size);
 
         if (Offset < *Size) {
             *Data = (PCHAR)((ULONG_PTR) *Data + Offset);
