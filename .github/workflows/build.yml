@@ -100,3 +100,18 @@ jobs:
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build . -- -k 0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+    - name: Generate ISOs
+      working-directory: ${{github.workspace}}\build
+      run: |
+        cmake --build . --target bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+        cmake --build . --target livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+    - name: Upload bootcd
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-i386-${{matrix.cmake_build_type}}-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-i386-${{matrix.cmake_build_type}}-${{github.sha}}
+        path: build/livecd.iso
