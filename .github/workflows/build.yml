@@ -39,10 +39,10 @@ jobs:
     - name: Upload bootcd
       uses: actions/upload-artifact@v1
       with:
-        name: reactos-clang-cl-i386-${{github.sha}}
+        name: reactos-clang-cl-i386-bootcd-${{github.sha}}
         path: build/bootcd.iso
     - name: Upload livecd
       uses: actions/upload-artifact@v1
       with:
-        name: reactos-clang-cl-i386-${{github.sha}}
+        name: reactos-clang-cl-i386-livecd-${{github.sha}}
         path: build/livecd.iso
