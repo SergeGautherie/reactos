@@ -33,7 +33,7 @@ else()
 endif()
 set_subsystem(ntoskrnl native)
 
-if(MSVC)
+if(MSVC AND NOT USE_CLANG_CL)
     set_image_base(ntoskrnl 0x00400000)
     add_target_link_flags(ntoskrnl "/SECTION:.rsrc,!DP") #Accessed from bugcheck code
     add_target_link_flags(ntoskrnl "/SECTION:INIT,D")
