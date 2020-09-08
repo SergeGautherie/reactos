@@ -528,7 +528,7 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
         endforeach()
         add_custom_command(
             OUTPUT ${_output}
-            COMMAND cmd.exe /C "copy /Y /B ${_file_list} ${_real_output} > nul"
+            COMMAND cmd.exe /C "copy /Y /B ${_file_list} ${_real_output}"
             DEPENDS ${_file1} ${ARGN})
     endfunction()
 else()
