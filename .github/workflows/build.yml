@@ -180,6 +180,7 @@ jobs:
 
   build-msbuild-2016-i386:
     name: MSBuild 2016 (i386)
+    if: false  # Not now.
     runs-on: windows-2016
     steps:
     - name: Install Flex and Bison
@@ -216,7 +217,7 @@ jobs:
 
   build-msbuild-2019-amd64:
     name: MSBuild 2019 (amd64)
-    if: false  # Does not compile.
+#     if: false  # Does not compile.
     runs-on: windows-2019
     steps:
     - name: Install Flex and Bison
@@ -253,7 +254,7 @@ jobs:
 
   build-msbuild-2016-amd64:
     name: MSBuild 2016 (amd64)
-    if: false  # Does not compile.
+#     if: false  # Does not compile.
     runs-on: windows-2016
     steps:
     - name: Install Flex and Bison
