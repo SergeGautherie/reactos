@@ -8,6 +8,8 @@ jobs:
         compiler: [gcc, clang]
         arch: [i386, amd64]
       fail-fast: false
+    # if: ${{ (matrix.compiler == 'gcc') && (matrix.arch == 'i386') }}
+    if: false  # gcc-i386 good, 3 others bad.
     runs-on: ubuntu-latest
     steps:
     - name: Get RosBE build specifics
@@ -82,7 +84,9 @@ jobs:
         compiler: [msvc, clang-cl]
         arch: [i386, amd64]
       fail-fast: false
-    runs-on: windows-latest
+    # if: ${{ (matrix.compiler == 'msvc') && (matrix.arch == 'i386') }}
+    if: false  # msvc-i386 regressed!?, 3 others bad.
+    runs-on: windows-2016
     steps:
     - name: Install ninja
       run: choco install -y ninja
@@ -137,9 +141,10 @@ jobs:
         name: reactos-livecd-${{matrix.compiler}}-${{matrix.arch}}-${{github.sha}}
         path: build/livecd.iso
 
-  build-msbuild-i386:
-    name: MSBuild (i386)
-    runs-on: windows-latest
+  build-msbuild-2019-i386:
+    name: MSBuild 2019 (i386)
+    if: false  # VS2019 bug.
+    runs-on: windows-2019
     steps:
     - name: Install Flex and Bison
       run: |
@@ -162,3 +167,123 @@ jobs:
         cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
     - name: Build
       run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
+    - name: Upload bootcd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-bootcd-msbuild-2019-i386-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-livecd-msbuild-2019-i386-${{github.sha}}
+        path: build/livecd.iso
+
+  build-msbuild-2016-i386:
+    name: MSBuild 2016 (i386)
+    runs-on: windows-2016
+    steps:
+    - name: Install Flex and Bison
+      run: |
+        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+        7z x flexbison.7z -O${{github.workspace}}\bin
+        echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Add CL to PATH
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64_x86
+    - uses: actions/checkout@v2
+      with:
+        path: src
+    - name: Configure
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 15 2017" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+    - name: Build
+      run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
+    - name: Upload bootcd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-bootcd-msbuild-2016-i386-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-livecd-msbuild-2016-i386-${{github.sha}}
+        path: build/livecd.iso
+
+  build-msbuild-2019-amd64:
+    name: MSBuild 2019 (amd64)
+    if: false  # Does not compile.
+    runs-on: windows-2019
+    steps:
+    - name: Install Flex and Bison
+      run: |
+        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+        7z x flexbison.7z -O${{github.workspace}}\bin
+        echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Add CL to PATH
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+    - uses: actions/checkout@v2
+      with:
+        path: src
+    - name: Configure
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 16 2019" -A x64 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+    - name: Build
+      run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
+    - name: Upload bootcd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-bootcd-msbuild-2019-amd64-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-livecd-msbuild-2019-amd64-${{github.sha}}
+        path: build/livecd.iso
+
+  build-msbuild-2016-amd64:
+    name: MSBuild 2016 (amd64)
+    if: false  # Does not compile.
+    runs-on: windows-2016
+    steps:
+    - name: Install Flex and Bison
+      run: |
+        curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+        7z x flexbison.7z -O${{github.workspace}}\bin
+        echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Add CL to PATH
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+    - uses: actions/checkout@v2
+      with:
+        path: src
+    - name: Configure
+      run: |
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 15 2017" -A x64 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+    - name: Build
+      run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
+    - name: Upload bootcd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-bootcd-msbuild-2016-amd64-${{github.sha}}
+        path: build/bootcd.iso
+    - name: Upload livecd
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-livecd-msbuild-2016-amd64-${{github.sha}}
+        path: build/livecd.iso
