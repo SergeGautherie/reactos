@@ -6,6 +6,16 @@ jobs:
     strategy:
       matrix:
         arch: [i386, amd64]
+        toolset: ['14.2', '14.1', '14.0'] # VS 2019, 2017, 2015
+        exclude:
+        - arch: amd64 # Not compiling on amd64 prompt
+          toolset: '14.0' # VS 2015
+#         toolset: ['14.1'] # VS 2017
+#         include:
+#         - arch: [i386, amd64]
+#           toolset: '14.2' # VS 2019
+#         - arch: i386 # Not compiling on amd64 prompt
+#           toolset: '14.0' # VS 2015
       fail-fast: false
     runs-on: windows-latest
     steps:
@@ -21,13 +31,13 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: amd64_x86
-        toolset: '14.1' # latest masm build known to make bootable builds
+        toolset: ${{matrix.toolset}}
     - name: Activate VS cmd (amd64)
       if: ${{ matrix.arch == 'amd64' }}
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: amd64
-        toolset: '14.1' # latest masm build known to make bootable builds
+        toolset: ${{matrix.toolset}}
     - name: Source checkout
       uses: actions/checkout@v2
       with:
@@ -44,7 +54,7 @@ jobs:
 #       if: false # Useless, due to FreeLdr build issue. (CORE-17534)
       uses: actions/upload-artifact@v2
       with:
-        name: reactos-msbuild-${{matrix.arch}}-${{github.sha}}
+        name: reactos-msbuild${{matrix.toolset}}-${{matrix.arch}}-${{github.sha}}
         path: |
           build/bootcd.iso
           build/livecd.iso
@@ -52,5 +62,5 @@ jobs:
 #       if: false # Useless, until ISOs are uploaded.
       uses: actions/upload-artifact@v2
       with:
-        name: reactos-syms-msbuild-${{matrix.arch}}-${{github.sha}}
+        name: reactos-syms-msbuild${{matrix.toolset}}-${{matrix.arch}}-${{github.sha}}
         path: build/msvc_pdb
