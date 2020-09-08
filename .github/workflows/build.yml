@@ -82,10 +82,10 @@ jobs:
     strategy:
       matrix:
         compiler: [msvc, clang-cl]
-        arch: [i386, amd64]
+        arch: [amd64]
       fail-fast: false
     # if: ${{ (matrix.compiler == 'msvc') && (matrix.arch == 'i386') }}
-    if: false  # msvc-i386 regressed!?, 3 others bad.
+#     if: false  # msvc-i386 regressed!?, 3 others bad.
     runs-on: windows-2016
     steps:
     - name: Install ninja
