@@ -350,9 +350,6 @@ PAFD_HANDLE LockHandles( PAFD_HANDLE HandleArray, UINT HandleCount ) {
             return NULL;
         }
 
-        AFD_DbgPrint(MIN_TRACE,
-                     ("i=%u, O=%p\n", i, Object));
-
         // Create a kernel handle from the pointer.
         Status = ObOpenObjectByPointer(Object,
                                        OBJ_KERNEL_HANDLE,
