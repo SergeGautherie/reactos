@@ -33,17 +33,12 @@ _KdbEnter:
     push ds                 /* Ds */
     push es                 /* Es */
     push gs                 /* Gs */
-
     mov eax, dr7
     push eax                /* Dr7 */
-    /*
-     * Clear all breakpoint enable flags in dr7.
-     * Clear general detect enable flag too, though it is probaly not set currently.
-     * Leave alone R/W and LEN fields, reserved bits and exact breakpoint enable flags.
-     */
-    and eax, HEX(0FFFFDF00)     /* = 0xFFFF0000 | DR7_RESERVED_MASK | 0x00000300 */
-    mov dr7, eax
 
+    /* Clear all breakpoint enables in dr7. */
+    and eax, HEX(0FFFF0000)
+    mov dr7, eax
     mov eax, dr6
     push eax                /* Dr6 */
     mov eax, dr3
