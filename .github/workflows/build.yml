@@ -92,6 +92,8 @@ jobs:
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
     - name: Generate ISOs
+      # CORE-17235: [clang-cl 10] bootcd and livecd fail while loading drivers
+      if: false
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
