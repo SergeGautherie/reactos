@@ -148,8 +148,9 @@ VOID KillSelectsForFCB( PAFD_DEVICE_EXTENSION DeviceExt,
         for( i = 0; i < PollReq->HandleCount; i++ ) {
             AFD_DbgPrint(MAX_TRACE,("Req: %u, This %p\n",
                                     HandleArray[i].Handle, FileObject));
-            if( (PVOID)HandleArray[i].Handle == FileObject &&
-                (!OnlyExclusive || (OnlyExclusive && Poll->Exclusive)) ) {
+            if ((PVOID)HandleArray[i].Handle == FileObject &&
+                (!OnlyExclusive || Poll->Exclusive))
+            {
                 ZeroEvents( PollReq->Handles, PollReq->HandleCount );
                 SignalSocket( Poll, NULL, PollReq, STATUS_CANCELLED );
             }
