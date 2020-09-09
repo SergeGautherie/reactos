@@ -30,7 +30,11 @@ DbgUiConnectToDbg(VOID)
     if (NtCurrentTeb()->DbgSsReserved[1]) return STATUS_SUCCESS;
 
     /* Setup the Attributes */
-    InitializeObjectAttributes(&ObjectAttributes, NULL, 0, NULL, 0);
+    InitializeObjectAttributes(&ObjectAttributes,
+                               NULL,
+                               0 /* !?? | OBJ_KERNEL_HANDLE */,
+                               NULL,
+                               NULL);
 
     /* Create the object */
     return ZwCreateDebugObject(&NtCurrentTeb()->DbgSsReserved[1],

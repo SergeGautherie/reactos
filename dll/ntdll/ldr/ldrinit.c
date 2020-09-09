@@ -133,7 +133,7 @@ LdrOpenImageFileOptionsKey(IN PUNICODE_STRING SubKey,
     InitializeObjectAttributes(&ObjectAttributes,
                                Wow64 ?
                                &Wow64OptionsString : &ImageExecOptionsString,
-                               OBJ_CASE_INSENSITIVE,
+                               OBJ_CASE_INSENSITIVE /* !?? | OBJ_KERNEL_HANDLE */,
                                NULL,
                                NULL);
 
@@ -164,7 +164,7 @@ LdrOpenImageFileOptionsKey(IN PUNICODE_STRING SubKey,
         /* Setup the object attributes */
         InitializeObjectAttributes(&ObjectAttributes,
                                    &SubKeyString,
-                                   OBJ_CASE_INSENSITIVE,
+                                   OBJ_CASE_INSENSITIVE /* !?? | OBJ_KERNEL_HANDLE */,
                                    RootKey,
                                    NULL);
 
@@ -372,6 +372,7 @@ LdrQueryImageFileExecutionOptionsEx(IN PUNICODE_STRING SubKey,
 
         /* Close the key */
         NtClose(KeyHandle);
+        // !?? ZwClose(KeyHandle);
     }
 
     /* Return to caller */
@@ -2521,7 +2522,11 @@ LdrpInitializeProcess(IN PCONTEXT Context,
     }
 
     /* Close the key if we have one opened */
-    if (OptionsKey) NtClose(OptionsKey);
+    if (OptionsKey)
+    {
+        NtClose(OptionsKey);
+        // !?? ZwClose(OptionsKey);
+    }
 
     /* Return status */
     return Status;
