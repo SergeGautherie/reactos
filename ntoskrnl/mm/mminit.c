@@ -320,6 +320,11 @@ MmInitSystem(IN ULONG Phase,
         DataTableEntry = CONTAINING_RECORD(ListEntry, LDR_DATA_TABLE_ENTRY, InLoadOrderLinks);
 
         /* Set up the image protection */
+// Local check only, as no issue reported with this call.
+#if 0 && !defined(CORE_16449_IS_FIXED) && DBG
+        DPRINT1("(CORE-16449) Calling MiWriteProtectSystemImage(%p) for %wZ\n",
+                DataTableEntry->DllBase, &DataTableEntry->FullDllName);
+#endif
         MiWriteProtectSystemImage(DataTableEntry->DllBase);
     }
     ExReleaseResourceLite(&PsLoadedModuleResource);
