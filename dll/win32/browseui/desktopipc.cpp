@@ -603,7 +603,7 @@ extern "C" HRESULT WINAPI SHOpenNewFrame(LPITEMIDLIST pidl, IUnknown *paramC, lo
 * SHCreateFromDesktop			[BROWSEUI.106]
 * parameter is a FolderInfo
 */
-BOOL WINAPI SHCreateFromDesktop(ExplorerCommandLineParseResults * parseResults)
+BOOL WINAPI SHCreateFromDesktop(_In_ PEXPLORER_CMDLINE_PARSE_RESULTS parseResults)
 {
     TRACE("SHCreateFromDesktop\n");
 
