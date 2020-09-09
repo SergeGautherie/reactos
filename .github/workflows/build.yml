@@ -55,7 +55,8 @@ jobs:
           name: reactos-gcc-i386-${{github.sha}}
           path: build/livecd.iso
       - name: Upload bootcdregtest
-        if: true
+        # Works, but only to automate a test run (AppVeyor/GitHub)... (And will need to include Gecko !!?)
+        if: false
         uses: actions/upload-artifact@v1
         with:
           name: reactos-gcc-i386-BcdRt-${{github.sha}}
@@ -160,7 +161,8 @@ jobs:
         name: reactos-msvc-i386-${{github.sha}}
         path: build/livecd.iso
     - name: Upload bootcdregtest
-      if: true
+      # Works, but low value to me, as is. (And will need to include Gecko !!?)
+      if: false
       uses: actions/upload-artifact@v1
       with:
         name: reactos-msvc-i386-BcdRt-${{github.sha}}
