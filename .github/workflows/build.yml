@@ -137,7 +137,7 @@ jobs:
         path: build/bootcdregtest.iso
 
   build-msvc-i386:
-    if: true
+    if: false
     name: MSVC (i386)
     runs-on: windows-latest
     steps:
@@ -188,16 +188,20 @@ jobs:
         name: reactos-msvc-i386-BcdRt-${{github.sha}}
         path: build/bootcdregtest.iso
     - name: Upload host-tools
-      if: true
+      # CabMan, Spec2Def, WIdl, ...
+      # Mais x64 :-<
+      if: false
       uses: actions/upload-artifact@v2
       with:
-        name: reactos-gcc-i386-HostT-${{github.sha}}
+        name: reactos-msvc-i386-HostT-${{github.sha}}
         path: build/host-tools/bin/*
     - name: Upload sdk/tools
-      if: true
+      # Rien d'utile. (Que wpp: .obj .lib.)
+      # En particulier, Log2Lines est exclus avec msvc :-/
+      if: false
       uses: actions/upload-artifact@v2
       with:
-        name: reactos-gcc-i386-SdkT-${{github.sha}}
+        name: reactos-msvc-i386-SdkT-${{github.sha}}
         path: build/sdk/tools/*
 
   build-msvc-amd64:
