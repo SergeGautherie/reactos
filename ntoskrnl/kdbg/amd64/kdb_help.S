@@ -70,8 +70,16 @@ KdbEnter:
     mov [rsp + KTRAP_FRAME_Dr3], rax
     mov rax, dr6
     mov [rsp + KTRAP_FRAME_Dr6], rax
+
     mov rax, dr7
     mov [rsp + KTRAP_FRAME_Dr7], rax
+    /*
+     * Clear all breakpoint enable flags in dr7.
+     * Clear general detect enable flag too, though it is probaly not set currently.
+     * Leave alone R/W and LEN fields, reserved bits and exact breakpoint enable flags.
+     */
+    and rax, HEX(0FFFFDF00)     /* = 0xFFFF0000 | DR7_RESERVED_MASK | 0x00000300 */
+    mov dr7, rax
 
     /* Point rbp, where rsp was before */
     lea rbp, [rsp + SIZE_KTRAP_FRAME]
@@ -87,11 +95,6 @@ KdbEnter:
 
     /* Make sure the direction flag is cleared */
     cld
-
-    /* Clear all breakpoint enables in dr7. */
-    mov rax, dr7
-    and rax, 0xFFFF0000
-    mov dr7, rax
 
     /* Call KDB */
     mov byte ptr [rsp + KTRAP_FRAME_P5], 1 /* FirstChance */
