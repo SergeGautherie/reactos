@@ -933,7 +933,9 @@ FsRtlMdlRead(IN PFILE_OBJECT FileObject,
     FastDispatch = DeviceObject->DriverObject->FastIoDispatch;
 
     /* Check if we support Fast Calls, and check this one */
-    if (FastDispatch && FastDispatch->MdlRead)
+    if (FastDispatch != NULL &&
+        FastDispatch->SizeOfFastIoDispatch >= RTL_SIZEOF_THROUGH_FIELD(FAST_IO_DISPATCH, MdlRead) &&
+        FastDispatch->MdlRead != NULL)
     {
         /* Use the fast path */
         return FastDispatch->MdlRead(FileObject,
@@ -981,7 +983,9 @@ FsRtlMdlReadComplete(IN PFILE_OBJECT FileObject,
     FastDispatch = DeviceObject->DriverObject->FastIoDispatch;
 
     /* Check if we support Fast Calls, and check this one */
-    if (FastDispatch && FastDispatch->MdlReadComplete)
+    if (FastDispatch != NULL &&
+        FastDispatch->SizeOfFastIoDispatch >= RTL_SIZEOF_THROUGH_FIELD(FAST_IO_DISPATCH, MdlReadComplete) &&
+        FastDispatch->MdlReadComplete != NULL)
     {
         /* Use the fast path */
         return FastDispatch->MdlReadComplete(FileObject, MdlChain, DeviceObject);
@@ -1162,7 +1166,9 @@ FsRtlMdlWriteComplete(IN PFILE_OBJECT FileObject,
     FastDispatch = DeviceObject->DriverObject->FastIoDispatch;
 
     /* Check if we support Fast Calls, and check this one */
-    if (FastDispatch && FastDispatch->MdlWriteComplete)
+    if (FastDispatch != NULL &&
+        FastDispatch->SizeOfFastIoDispatch >= RTL_SIZEOF_THROUGH_FIELD(FAST_IO_DISPATCH, MdlWriteComplete) &&
+        FastDispatch->MdlWriteComplete != NULL)
     {
         /* Use the fast path */
         return FastDispatch->MdlWriteComplete(FileObject,
@@ -1230,7 +1236,9 @@ FsRtlPrepareMdlWrite(IN PFILE_OBJECT FileObject,
     FastDispatch = DeviceObject->DriverObject->FastIoDispatch;
 
     /* Check if we support Fast Calls, and check this one */
-    if (FastDispatch && FastDispatch->PrepareMdlWrite)
+    if (FastDispatch != NULL &&
+        FastDispatch->SizeOfFastIoDispatch >= RTL_SIZEOF_THROUGH_FIELD(FAST_IO_DISPATCH, PrepareMdlWrite) &&
+        FastDispatch->PrepareMdlWrite != NULL)
     {
         /* Use the fast path */
         return FastDispatch->PrepareMdlWrite(FileObject,
