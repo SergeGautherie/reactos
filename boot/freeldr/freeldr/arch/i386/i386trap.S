@@ -60,25 +60,25 @@ MACRO(SAVE_CPU_REGS)
     sidt [esp + 8]
     str word ptr [esp + 16]
     sldt word ptr [esp + 18]
-    mov eax, dr7;
+    mov eax, dr7
     push eax
-    mov eax, dr6;
+    mov eax, dr6
     push eax
-    mov eax, dr3;
+    mov eax, dr3
     push eax
-    mov eax, dr2;
+    mov eax, dr2
     push eax
-    mov eax, dr1;
+    mov eax, dr1
     push eax
-    mov eax, dr0;
+    mov eax, dr0
     push eax
-    mov eax, cr4;
+    mov eax, cr4
     push eax
-    mov eax, cr3;
+    mov eax, cr3
     push eax
-    mov eax, cr2;
+    mov eax, cr2
     push eax
-    mov eax, cr0;
+    mov eax, cr0
     push eax
 ENDM
 

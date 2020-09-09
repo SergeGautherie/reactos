@@ -681,7 +681,7 @@ FUNC KiInterruptDispatch
     EnterTrap (TF_HAS_ERROR_CODE or TF_SAVE_ALL or TF_IRQL)
 
     /* Increase interrupt count */
-    inc dword ptr gs:[PcInterruptCount];
+    inc dword ptr gs:[PcInterruptCount]
 
     /* Load the address of the interrupt object into rcx */
     mov rcx, [rbp + KTRAP_FRAME_ErrorCode]
