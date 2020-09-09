@@ -48,13 +48,11 @@ KiUpdateDr7(_In_ ULONG Dr7)
     {
         /* Sanity checks */
         ASSERT((DebugMask & DR_REG_MASK) != 0);
-        /* Reserved bits are already cleared */
-        ASSERT(Dr7 == DR7_OVERRIDE_MASK);
-        /* Return cleared Dr7 */
+        ASSERT((Dr7 & ~DR7_RESERVED_MASK) == DR7_OVERRIDE_MASK);
         return 0;
     }
 
-    /* Return unchanged Dr7 */
+    /* Return DR7 itself */
     return Dr7;
 }
 
@@ -574,7 +572,7 @@ KeContextToTrapFrame(IN PCONTEXT Context,
             if (Context->Dr3 > (ULONG)MmHighestUserAddress) TrapFrame->Dr3 = 0;
         }
 
-        /* Sanitize and save DR6. This clears reserved bits too */
+        /* Now sanitize and save DR6 */
         TrapFrame->Dr6 = Context->Dr6 & DR6_LEGAL;
 
         /* Update the Dr active mask */
@@ -584,7 +582,7 @@ KeContextToTrapFrame(IN PCONTEXT Context,
         if (TrapFrame->Dr3) DrMask |= DR_MASK(3);
         if (TrapFrame->Dr6) DrMask |= DR_MASK(6);
 
-        /* Sanitize and save DR7. This clears reserved bits too */
+        /* Sanitize and save DR7 */
         TrapFrame->Dr7 = Context->Dr7 & DR7_LEGAL;
         KiRecordDr7(&TrapFrame->Dr7, &DrMask);
 

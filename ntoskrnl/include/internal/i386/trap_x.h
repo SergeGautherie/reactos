@@ -150,17 +150,14 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
     }
 
     /* FIXME: KDBG messes around with these improperly */
-#if 1 || !defined(KDBG)
+#if !defined(KDBG)
     /* Check DR values */
     if (KiUserTrap(TrapFrame))
     {
         /* Check for active debugging */
         if (KeGetCurrentThread()->Header.DebugActive)
         {
-            ASSERT((TrapFrame->Dr7 & DR7_RESERVED_MASK) == 0);
-
-            /* Reserved bits are already cleared */
-            if (__builtin_expect(TrapFrame->Dr7 == 0, 0))
+            if (__builtin_expect((TrapFrame->Dr7 & ~DR7_RESERVED_MASK) == 0, 0))
             {
                 DbgPrint("Exiting with an invalid trap frame DR7: %08lx\n", TrapFrame->Dr7);
                 __debugbreak();
@@ -170,51 +167,17 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
             CheckDr(1, TrapFrame->Dr1);
             CheckDr(2, TrapFrame->Dr2);
             CheckDr(3, TrapFrame->Dr3);
-#if 1
-            ULONG DrValue6 = __readdr(6);
-            DbgPrint("KiExitTrapDebugChecks(), TF: DR6 = %08lx (%s %08lx)\n",
-                     DrValue6,
-                     DrValue6 == TrapFrame->Dr6 ? "==" : "!=",
-                     TrapFrame->Dr6);
-#endif
             CheckDr(7, TrapFrame->Dr7 | DR7_RESERVED_READ_AS_1);
         }
     }
     else
     {
         PKPRCB Prcb = KeGetCurrentPrcb();
-
-/* // Does not apply here?
-        if (__builtin_expect((Prcb->ProcessorState.SpecialRegisters.KernelDr7 & ~DR7_RESERVED_MASK) == 0, 0))
-        {
-            DbgPrint("Exiting with an invalid Dr7: %08lx\n",
-                     Prcb->ProcessorState.SpecialRegisters.KernelDr7);
-            __debugbreak();
-        }
-*/
-
         CheckDr(0, Prcb->ProcessorState.SpecialRegisters.KernelDr0);
         CheckDr(1, Prcb->ProcessorState.SpecialRegisters.KernelDr1);
         CheckDr(2, Prcb->ProcessorState.SpecialRegisters.KernelDr2);
         CheckDr(3, Prcb->ProcessorState.SpecialRegisters.KernelDr3);
-#if 1
-// Idée: tj supprimer/ajouter lors des read/write!?
-// NB: Vérifier manuellement les valeurs des reserved, surtout DR6 car doc Intel erronnée.
-
-        ULONG DrValue6 = __readdr(6);
-        DbgPrint("KiExitTrapDebugChecks(), Prcb: DR6 = %08lx (%s %08lx)\n",
-                 DrValue6,
-                 DrValue6 == Prcb->ProcessorState.SpecialRegisters.KernelDr6 ? "==" : "!=",
-                 Prcb->ProcessorState.SpecialRegisters.KernelDr6);
-
-        ULONG DrValue7 = __readdr(7);
-        DbgPrint("KiExitTrapDebugChecks(), Prcb: DR7 = %08lx (%s %08lx)\n",
-                 DrValue7,
-                 DrValue7 == Prcb->ProcessorState.SpecialRegisters.KernelDr7 ? "==" : "!=",
-                 Prcb->ProcessorState.SpecialRegisters.KernelDr7);
-#else
-        CheckDr(7, Prcb->ProcessorState.SpecialRegisters.KernelDr7 | DR7_RESERVED_READ_AS_1);
-#endif
+        // CheckDr(7, Prcb->ProcessorState.SpecialRegisters.KernelDr7); // Disabled, see CORE-10165 for more details.
     }
 #endif
 
@@ -301,7 +264,7 @@ KiHandleDebugRegistersOnTrapEntry(
     TrapFrame->Dr2 = __readdr(2);
     TrapFrame->Dr3 = __readdr(3);
     TrapFrame->Dr6 = __readdr(6);
-/* Not sanitized... */    TrapFrame->Dr7 = __readdr(7);
+    TrapFrame->Dr7 = __readdr(7);
 
     /* Disable all active debugging */
     __writedr(7, 0);
@@ -312,11 +275,7 @@ KiHandleDebugRegistersOnTrapEntry(
     __writedr(2, Prcb->ProcessorState.SpecialRegisters.KernelDr2);
     __writedr(3, Prcb->ProcessorState.SpecialRegisters.KernelDr3);
     __writedr(6, Prcb->ProcessorState.SpecialRegisters.KernelDr6);
-#if 0
-    __writedr(7, Prcb->ProcessorState.SpecialRegisters.KernelDr7 | DR7_RESERVED_READ_AS_1);
-#else
     __writedr(7, Prcb->ProcessorState.SpecialRegisters.KernelDr7);
-#endif
 }
 
 FORCEINLINE

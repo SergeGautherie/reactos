@@ -436,7 +436,7 @@ KdpAllowDisable(VOID)
         Dr7 =  KiProcessorBlock[i]->ProcessorState.SpecialRegisters.KernelDr7;
 
         /* Check if any processor breakpoints are active */
-        if ((Dr7 & ~DR7_RESERVED_MASK) != 0)
+        if (Dr7 != 0)
         {
             /* We can't allow running without a debugger then */
             return STATUS_ACCESS_DENIED;
