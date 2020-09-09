@@ -3370,13 +3370,14 @@ Exit:
  */
 NTSTATUS
 NTAPI
-NtCreateSection(OUT PHANDLE SectionHandle,
-                IN ACCESS_MASK DesiredAccess,
-                IN POBJECT_ATTRIBUTES ObjectAttributes OPTIONAL,
-                IN PLARGE_INTEGER MaximumSize OPTIONAL,
-                IN ULONG SectionPageProtection OPTIONAL,
-                IN ULONG AllocationAttributes,
-                IN HANDLE FileHandle OPTIONAL)
+NtCreateSection(
+    _Out_ PHANDLE SectionHandle,
+    _In_ ACCESS_MASK DesiredAccess,
+    _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+    _In_opt_ PLARGE_INTEGER MaximumSize,
+    _In_ ULONG SectionPageProtection,
+    _In_ ULONG AllocationAttributes,
+    _In_opt_ HANDLE FileHandle)
 {
     LARGE_INTEGER SafeMaximumSize;
     PVOID SectionObject;
