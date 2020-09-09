@@ -2249,9 +2249,6 @@ CreateProcessInternalW(IN HANDLE hUserToken,
     //
     // Core variables used for creating the initial process and thread
     //
-    const DWORD dwPriotityClassMask =
-        REALTIME_PRIORITY_CLASS | HIGH_PRIORITY_CLASS | ABOVE_NORMAL_PRIORITY_CLASS |
-        NORMAL_PRIORITY_CLASS | BELOW_NORMAL_PRIORITY_CLASS | IDLE_PRIORITY_CLASS;
     SECURITY_ATTRIBUTES LocalThreadAttributes, LocalProcessAttributes;
     OBJECT_ATTRIBUTES LocalObjectAttributes;
     POBJECT_ATTRIBUTES ObjectAttributes;
@@ -2449,14 +2446,6 @@ CreateProcessInternalW(IN HANDLE hUserToken,
         return FALSE;
     }
 
-    /* Set default priority class */
-    if (!(dwCreationFlags & dwPriotityClassMask))
-    {
-        // FIXME: Check if priority class of creating process is less than normal...
-
-        dwCreationFlags |= NORMAL_PRIORITY_CLASS;
-    }
-
     /* Convert the priority class */
     if (dwCreationFlags & IDLE_PRIORITY_CLASS)
     {
@@ -2478,16 +2467,24 @@ CreateProcessInternalW(IN HANDLE hUserToken,
     {
         PriorityClass.PriorityClass = PROCESS_PRIORITY_CLASS_HIGH;
     }
-    else // if (dwCreationFlags & REALTIME_PRIORITY_CLASS)
+    else if (dwCreationFlags & REALTIME_PRIORITY_CLASS)
     {
         PriorityClass.PriorityClass = PROCESS_PRIORITY_CLASS_HIGH;
         PriorityClass.PriorityClass += (BasepIsRealtimeAllowed(FALSE) != NULL);
     }
+    else
+    {
+        PriorityClass.PriorityClass = PROCESS_PRIORITY_CLASS_INVALID;
+    }
 
     /* Done with the priority masks, so get rid of them */
-    dwCreationFlags &= ~dwPriotityClassMask;
-
     PriorityClass.Foreground = FALSE;
+    dwCreationFlags &= ~(NORMAL_PRIORITY_CLASS |
+                         IDLE_PRIORITY_CLASS |
+                         HIGH_PRIORITY_CLASS |
+                         REALTIME_PRIORITY_CLASS |
+                         BELOW_NORMAL_PRIORITY_CLASS |
+                         ABOVE_NORMAL_PRIORITY_CLASS);
 
     /* You cannot request both a shared and a separate WoW VDM */
     if ((dwCreationFlags & CREATE_SEPARATE_WOW_VDM) &&
