@@ -324,7 +324,5 @@ MmInitSystem(IN ULONG Phase,
     }
     ExReleaseResourceLite(&PsLoadedModuleResource);
 
-    DPRINT1("(PR3271) sizeof(ANSI_NULL)=%Iu vs strlen(\".\")=%Iu\n", sizeof(ANSI_NULL), strlen("."));
-
     return TRUE;
 }
