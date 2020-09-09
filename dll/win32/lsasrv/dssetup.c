@@ -80,6 +80,7 @@ DsRolepGetBasicInfo(
         return ERROR_OUTOFMEMORY;
     }
 
+    // TODO: Set actual value.
     Buffer->MachineRole = DsRole_RoleStandaloneWorkstation;
     Buffer->DomainNameFlat = (LPWSTR)((LPBYTE)Buffer +
                                       sizeof(DSROLER_PRIMARY_DOMAIN_INFO_BASIC));
@@ -105,8 +106,10 @@ DsRolepGetUpdateStatus(
     if (Buffer == NULL)
         return ERROR_OUTOFMEMORY;
 
+    // TODO: Set actual value.
     Buffer->OperationState = 0;
-    Buffer->PreviousServerState = 0;
+    // TODO: Set actual value.
+    Buffer->PreviousServerState = DsRoleServerUnknown;
 
     *DomainInfo = (PDSROLER_PRIMARY_DOMAIN_INFORMATION)Buffer;
 
@@ -125,6 +128,7 @@ DsRolepGetOperationState(
     if (Buffer == NULL)
         return ERROR_OUTOFMEMORY;
 
+    // TODO: Set actual value.
     Buffer->OperationState = DsRoleOperationIdle;
 
     *DomainInfo = (PDSROLER_PRIMARY_DOMAIN_INFORMATION)Buffer;
