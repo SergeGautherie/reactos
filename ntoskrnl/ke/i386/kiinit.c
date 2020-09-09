@@ -687,6 +687,7 @@ KiSystemStartupBootStack(VOID)
 }
 
 static
+INIT_FUNCTION
 VOID
 KiMarkPageAsReadOnly(
     PVOID Address)

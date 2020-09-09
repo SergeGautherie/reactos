@@ -53,6 +53,7 @@ KiSetupSyscallHandler(VOID)
     }
 }
 
+INIT_FUNCTION
 VOID
 NTAPI
 KiSetupDecrementerTrap(VOID)
@@ -78,6 +79,7 @@ KiSetupDecrementerTrap(VOID)
     _enable();
 }
 
+INIT_FUNCTION
 VOID
 NTAPI
 KiInitializePcr(IN ULONG ProcessorNumber,
@@ -107,6 +109,7 @@ extern ULONG KiGetFeatureBits();
 extern VOID KiSetProcessorType();
 extern VOID KiGetCacheInformation();
 
+// FIXME: Should have INIT_FUNCTION, but currently ends on 'while(1)'... Misses 'KiIdleLoop()'?
 VOID
 NTAPI
 KiInitializeKernel(IN PKPROCESS InitProcess,
@@ -249,6 +252,7 @@ extern int KiPageFaultTrap();
 KTRAP_FRAME KiInitialTrapFrame;
 
 /* Use this for early boot additions to the page table */
+INIT_FUNCTION
 VOID
 NTAPI
 KiSystemStartupReal(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
@@ -343,6 +347,7 @@ AppCpuInit:
                        (PVOID)LoaderBlock);
 }
 
+INIT_FUNCTION
 VOID
 NTAPI
 KiInitMachineDependent(VOID)
