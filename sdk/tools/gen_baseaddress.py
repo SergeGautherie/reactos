@@ -294,13 +294,11 @@ class MemoryLayout(object):
         self.reserved[name] = (address, 0)
 
     def add(self, filename, name):
-# Early return!
-#         if name in self.found:
-#             return  # Assume duplicate files (rshell, ...) are 1:1 copies
+        if name in self.found:
+            print('%s: skipped, as %s already found' % (filename, name))
+            return  # Assume duplicate files (rshell, ...) are 1:1 copies
         size = size_of_image(filename)
         addr = 0
-        if name in self.found:
-            return  # Assume duplicate files (rshell, ...) are 1:1 copies
         if name in self.reserved:
             addr = self.reserved[name][0]
             self.reserved[name] = (addr, size)
@@ -314,7 +312,7 @@ class MemoryLayout(object):
             addr = self.start_at = self.initial
         return addr
 
-    def next_address(self, size):
+    def next_address(self, size, module_name):
         while True:
             current_start = self._next_address(size)
             current_end = current_start + size + self.module_padding
@@ -329,7 +327,7 @@ class MemoryLayout(object):
                    (current_start < res_start and current_end > res_end):
 #                 if (current_start < res_end) and \
 #                    (current_end > res_start):
-                    print('# Skip to below %s (0x%08x - 0x%08x)' % (key, res_start, res_end))
+                    print('%s: retry below %s (0x%08x - 0x%08x)' % (module_name, key, res_start, res_end))
                     # We passed this reserved item, we can remove it now
                     self.start_at = min(res_start, current_start)
 # 3. Do not waste space below res_start.
@@ -352,12 +350,12 @@ class MemoryLayout(object):
                 obj = self.found[curr]
                 del self.found[curr]
                 if not obj.address:
-                    obj.address = self.next_address(obj.size)
+                    obj.address = self.next_address(obj.size, obj._name)
                 self.addresses.append(obj)
         # We handled all known modules now, run over the rest we found
         for key in sorted(self.found):
             obj = self.found[key]
-            obj.address = self.next_address(obj.size)
+            obj.address = self.next_address(obj.size, obj._name)
             self.addresses.append(obj)
 
     def gen_baseaddress(self, output_file):
