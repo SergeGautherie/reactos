@@ -143,6 +143,7 @@ FsRtlCopyRead(IN PFILE_OBJECT FileObject,
         FastIoDispatch = Device->DriverObject->FastIoDispatch;
 
         /* Sanity check */
+// TODO? Convert to if().
         ASSERT(FastIoDispatch != NULL);
         ASSERT(FastIoDispatch->FastIoCheckIfPossible != NULL);
 
@@ -426,6 +427,7 @@ FsRtlCopyWrite(IN PFILE_OBJECT FileObject,
             FastIoDispatch = Device->DriverObject->FastIoDispatch;
 
             /* Sanity check */
+// TODO? Convert to if().
             ASSERT(FastIoDispatch != NULL);
             ASSERT(FastIoDispatch->FastIoCheckIfPossible != NULL);
 
@@ -636,6 +638,7 @@ FsRtlCopyWrite(IN PFILE_OBJECT FileObject,
                 FastIoDispatch = Device->DriverObject->FastIoDispatch;
 
                 /* Sanity check */
+// TODO? Convert to if().
                 ASSERT(FastIoDispatch != NULL);
                 ASSERT(FastIoDispatch->FastIoCheckIfPossible != NULL);
 
@@ -1083,6 +1086,7 @@ FsRtlMdlReadDev(IN PFILE_OBJECT FileObject,
 
         /* Sanity check */
         ASSERT(!KeIsExecutingDpc());
+// TODO? Convert to if().
         ASSERT(FastIoDispatch != NULL);
         ASSERT(FastIoDispatch->FastIoCheckIfPossible != NULL);
 
@@ -1402,6 +1406,7 @@ FsRtlPrepareMdlWriteDev(IN PFILE_OBJECT FileObject,
             FastIoDispatch = Device->DriverObject->FastIoDispatch;
 
             /* Sanity check */
+// TODO? Convert to if().
             ASSERT(FastIoDispatch != NULL);
             ASSERT(FastIoDispatch->FastIoCheckIfPossible != NULL);
 

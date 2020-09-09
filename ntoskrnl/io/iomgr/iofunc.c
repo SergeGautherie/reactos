@@ -2823,6 +2823,7 @@ NtReadFile(IN HANDLE FileHandle,
         {
             /* Perform fast read */
             FastIoDispatch = DeviceObject->DriverObject->FastIoDispatch;
+// TODO? Convert to if().
             ASSERT(FastIoDispatch != NULL && FastIoDispatch->FastIoRead != NULL);
 
             Success = FastIoDispatch->FastIoRead(FileObject,
@@ -3883,6 +3884,7 @@ NtWriteFile(IN HANDLE FileHandle,
         {
             /* Perform fast write */
             FastIoDispatch = DeviceObject->DriverObject->FastIoDispatch;
+// TODO? Convert to if().
             ASSERT(FastIoDispatch != NULL && FastIoDispatch->FastIoWrite != NULL);
 
             Success = FastIoDispatch->FastIoWrite(FileObject,
