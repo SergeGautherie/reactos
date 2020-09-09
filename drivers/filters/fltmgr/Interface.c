@@ -622,17 +622,21 @@ FltpFastIoCheckIfPossible(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoCheckIfPossible)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoCheckIfPossible != NULL &&
+        FastIoDispatch->FastIoCheckIfPossible(
+          FileObject,
+          FileOffset,
+          Length,
+          Wait,
+          LockKey,
+          CheckForReadOperation,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoCheckIfPossible(FileObject,
-                                                     FileOffset,
-                                                     Length,
-                                                     Wait,
-                                                     LockKey,
-                                                     CheckForReadOperation,
-                                                     IoStatus,
-                                                     AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -674,17 +678,21 @@ FltpFastIoRead(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoRead)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoRead != NULL &&
+        FastIoDispatch->FastIoRead(
+          FileObject,
+          FileOffset,
+          Length,
+          Wait,
+          LockKey,
+          Buffer,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoRead(FileObject,
-                                          FileOffset,
-                                          Length,
-                                          Wait,
-                                          LockKey,
-                                          Buffer,
-                                          IoStatus,
-                                          AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -726,17 +734,21 @@ FltpFastIoWrite(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoWrite)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoWrite != NULL &&
+        FastIoDispatch->FastIoWrite(
+          FileObject,
+          FileOffset,
+          Length,
+          Wait,
+          LockKey,
+          Buffer,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoWrite(FileObject,
-                                           FileOffset,
-                                           Length,
-                                           Wait,
-                                           LockKey,
-                                           Buffer,
-                                           IoStatus,
-                                           AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -775,14 +787,18 @@ FltpFastIoQueryBasicInfo(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoQueryBasicInfo)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoQueryBasicInfo != NULL &&
+        FastIoDispatch->FastIoQueryBasicInfo(
+          FileObject,
+          Wait,
+          Buffer,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoQueryBasicInfo(FileObject,
-                                                    Wait,
-                                                    Buffer,
-                                                    IoStatus,
-                                                    AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -821,14 +837,18 @@ FltpFastIoQueryStandardInfo(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoQueryStandardInfo)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoQueryStandardInfo != NULL &&
+        FastIoDispatch->FastIoQueryStandardInfo(
+          FileObject,
+          Wait,
+          Buffer,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoQueryStandardInfo(FileObject,
-                                                       Wait,
-                                                       Buffer,
-                                                       IoStatus,
-                                                       AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -871,18 +891,22 @@ FltpFastIoLock(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoLock)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoLock != NULL &&
+        FastIoDispatch->FastIoLock(
+          FileObject,
+          FileOffset,
+          Length,
+          ProcessId,
+          Key,
+          FailImmediately,
+          ExclusiveLock,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoLock(FileObject,
-                                          FileOffset,
-                                          Length,
-                                          ProcessId,
-                                          Key,
-                                          FailImmediately,
-                                          ExclusiveLock,
-                                          IoStatus,
-                                          AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -923,16 +947,20 @@ FltpFastIoUnlockSingle(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoUnlockSingle)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoUnlockSingle != NULL &&
+        FastIoDispatch->FastIoUnlockSingle(
+          FileObject,
+          FileOffset,
+          Length,
+          ProcessId,
+          Key,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoUnlockSingle(FileObject,
-                                                  FileOffset,
-                                                  Length,
-                                                  ProcessId,
-                                                  Key,
-                                                  IoStatus,
-                                                  AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -971,13 +999,17 @@ FltpFastIoUnlockAll(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoUnlockAll)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoUnlockAll != NULL &&
+        FastIoDispatch->FastIoUnlockAll(
+          FileObject,
+          ProcessId,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoUnlockAll(FileObject,
-                                               ProcessId,
-                                               IoStatus,
-                                               AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1016,14 +1048,18 @@ FltpFastIoUnlockAllByKey(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoUnlockAllByKey)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoUnlockAllByKey != NULL &&
+        FastIoDispatch->FastIoUnlockAllByKey(
+          FileObject,
+          ProcessId,
+          Key,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoUnlockAllByKey(FileObject,
-                                                    ProcessId,
-                                                    Key,
-                                                    IoStatus,
-                                                    AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1064,18 +1100,22 @@ FltpFastIoDeviceControl(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoDeviceControl)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoDeviceControl != NULL &&
+        FastIoDispatch->FastIoDeviceControl(
+          FileObject,
+          Wait,
+          InputBuffer,
+          InputBufferLength,
+          OutputBuffer,
+          OutputBufferLength,
+          IoControlCode,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoDeviceControl(FileObject,
-                                                   Wait,
-                                                   InputBuffer,
-                                                   InputBufferLength,
-                                                   OutputBuffer,
-                                                   OutputBufferLength,
-                                                   IoControlCode,
-                                                   IoStatus,
-                                                   AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1173,14 +1213,18 @@ FltpFastIoQueryNetworkOpenInfo(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoQueryNetworkOpenInfo)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoQueryNetworkOpenInfo != NULL &&
+        FastIoDispatch->FastIoQueryNetworkOpenInfo(
+          FileObject,
+          Wait,
+          Buffer,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoQueryNetworkOpenInfo(FileObject,
-                                                          Wait,
-                                                          Buffer,
-                                                          IoStatus,
-                                                          AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1221,16 +1265,20 @@ FltpFastIoMdlRead(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->MdlRead)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->MdlRead != NULL &&
+        FastIoDispatch->MdlRead(
+          FileObject,
+          FileOffset,
+          Length,
+          LockKey,
+          MdlChain,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->MdlRead(FileObject,
-                                       FileOffset,
-                                       Length,
-                                       LockKey,
-                                       MdlChain,
-                                       IoStatus,
-                                       AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1266,12 +1314,16 @@ FltpFastIoMdlReadComplete(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->MdlReadComplete)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->MdlReadComplete != NULL &&
+        FastIoDispatch->MdlReadComplete(
+          FileObject,
+          MdlChain,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->MdlReadComplete(FileObject,
-                                               MdlChain,
-                                               AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1312,16 +1364,20 @@ FltpFastIoPrepareMdlWrite(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->PrepareMdlWrite)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->PrepareMdlWrite != NULL &&
+        FastIoDispatch->PrepareMdlWrite(
+          FileObject,
+          FileOffset,
+          Length,
+          LockKey,
+          MdlChain,
+          IoStatus,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->PrepareMdlWrite(FileObject,
-                                               FileOffset,
-                                               Length,
-                                               LockKey,
-                                               MdlChain,
-                                               IoStatus,
-                                               AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1357,13 +1413,17 @@ FltpFastIoMdlWriteComplete(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->MdlWriteComplete)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->MdlWriteComplete != NULL &&
+        FastIoDispatch->MdlWriteComplete(
+          FileObject,
+          FileOffset,
+          MdlChain,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->MdlWriteComplete(FileObject,
-                                               FileOffset,
-                                               MdlChain,
-                                               AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1405,19 +1465,23 @@ FltpFastIoReadCompressed(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoReadCompressed)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoReadCompressed != NULL &&
+        FastIoDispatch->FastIoReadCompressed(
+          FileObject,
+          FileOffset,
+          Length,
+          LockKey,
+          Buffer,
+          MdlChain,
+          IoStatus,
+          CompressedDataInfo,
+          CompressedDataInfoLength,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoReadCompressed(FileObject,
-                                                    FileOffset,
-                                                    Length,
-                                                    LockKey,
-                                                    Buffer,
-                                                    MdlChain,
-                                                    IoStatus,
-                                                    CompressedDataInfo,
-                                                    CompressedDataInfoLength,
-                                                    AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1459,19 +1523,23 @@ FltpFastIoWriteCompressed(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->FastIoWriteCompressed)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->FastIoWriteCompressed != NULL &&
+        FastIoDispatch->FastIoWriteCompressed(
+          FileObject,
+          FileOffset,
+          Length,
+          LockKey,
+          Buffer,
+          MdlChain,
+          IoStatus,
+          CompressedDataInfo,
+          CompressedDataInfoLength,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->FastIoWriteCompressed(FileObject,
-                                                     FileOffset,
-                                                     Length,
-                                                     LockKey,
-                                                     Buffer,
-                                                     MdlChain,
-                                                     IoStatus,
-                                                     CompressedDataInfo,
-                                                     CompressedDataInfoLength,
-                                                     AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1505,12 +1573,16 @@ FltpFastIoMdlReadCompleteCompressed(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->MdlReadCompleteCompressed)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->MdlReadCompleteCompressed != NULL &&
+        FastIoDispatch->MdlReadCompleteCompressed(
+          FileObject,
+          MdlChain,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->MdlReadCompleteCompressed(FileObject,
-                                                         MdlChain,
-                                                         AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1545,13 +1617,17 @@ FltpFastIoMdlWriteCompleteCompressed(_In_ PFILE_OBJECT FileObject,
     FastIoDispatch = AttachedDeviceObject->DriverObject->FastIoDispatch;
 
     /* Make sure our FastIo table is valid */
-    if (FastIoDispatch && FastIoDispatch->MdlWriteCompleteCompressed)
+    /* Forward the call onto the device we attached to */
+    if (FastIoDispatch != NULL &&
+        FastIoDispatch->MdlWriteCompleteCompressed != NULL &&
+        FastIoDispatch->MdlWriteCompleteCompressed(
+          FileObject,
+          FileOffset,
+          MdlChain,
+          AttachedDeviceObject))
     {
-        /* Forward the call onto the device we attached to */
-        return FastIoDispatch->MdlWriteCompleteCompressed(FileObject,
-                                                          FileOffset,
-                                                          MdlChain,
-                                                          AttachedDeviceObject);
+        /* Request was handled */
+        return TRUE;
     }
 
     /* We failed to handle the request, send it down the slow path */
@@ -1600,7 +1676,12 @@ FltpFastIoQueryOpen(_Inout_ PIRP Irp,
 
         /* Restore the DeviceObject as we found it */
         StackPtr->DeviceObject = DeviceObject;
-        return Success;
+
+        if (Success)
+        {
+            /* Request was handled */
+            return TRUE;
+        }
     }
 
     /* We failed to handle the request, send it down the slow path */
