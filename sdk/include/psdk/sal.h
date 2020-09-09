@@ -1489,7 +1489,7 @@ enum __SAL_YesNo {_SAL_notpresent, _SAL_no, _SAL_maybe, _SAL_yes, _SAL_default};
 // not required to be a legal standalone annotation, and in the case
 // of attribute annotations, usually is not.  (In the case of some declspec
 // annotations, it might be, but it should not be assumed so.)  Those
-// symols will be used in the _PreN..., _PostN... and _RetN... annotations
+// symbols will be used in the _PreN..., _PostN... and _RetN... annotations
 // to build up more complete annotations.
 
 // A symbol ending in _impl_ is reserved to the implementation as well,
