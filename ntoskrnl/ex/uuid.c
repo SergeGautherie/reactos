@@ -401,9 +401,18 @@ ExUuidCreate(OUT UUID *Uuid)
             Time.QuadPart = ExpUuidCachedValues.Time;
 
             C_ASSERT(sizeof(ExpUuidCachedValues.GuidInit) == sizeof(Uuid->Data4));
+
+            RtlCopyMemory(&Uuid->Data4[0],
+                          &ExpUuidCachedValues.NodeId[0],
+                          SEED_BUFFER_SIZE);
+            DPRINT1("Data4 (6) = %08lx %08lx\n", *(ULONG *)&Uuid->Data4[0], *(ULONG *)&Uuid->Data4[4]);
+
+            DPRINT1("GuidInit  = %08lx %08lx\n", *(ULONG *)&ExpUuidCachedValues.GuidInit[0], *(ULONG *)&ExpUuidCachedValues.GuidInit[4]);
+
             RtlCopyMemory(Uuid->Data4,
                           ExpUuidCachedValues.GuidInit,
                           sizeof(Uuid->Data4));
+            DPRINT1("Data4 (8) = %08lx %08lx\n", *(ULONG *)&Uuid->Data4[0], *(ULONG *)&Uuid->Data4[4]);
 
             Valid = ExpUuidCacheValid;
             AllocatedCount = InterlockedDecrement(&ExpUuidCachedValues.AllocatedCount);
