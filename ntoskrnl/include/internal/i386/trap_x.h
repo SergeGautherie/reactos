@@ -155,7 +155,7 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         /* Check for active debugging */
         if (KeGetCurrentThread()->Header.DebugActive)
         {
-            if (__builtin_expect((TrapFrame->Dr7 & ~DR7_RESERVED_MASK) == 0, 0))
+            if (__builtin_expect((TrapFrame->Dr7 & DR7_ACTIVE) == 0, 0))
             {
                 DbgPrint("Exiting with a clear trap frame DR7: %08lx\n", TrapFrame->Dr7);
                 __debugbreak();
