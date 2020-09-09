@@ -520,7 +520,7 @@ ObReferenceObjectByHandle(IN HANDLE Handle,
         if (ObKernelHandleToHandle(Handle) == NULL)
         {
 // Disable to ease investigation if need be. (CORE-10207)
-#if TRUE
+#if FALSE
             KeBugCheckEx(DRIVER_VERIFIER_DETECTED_VIOLATION,
                          0xF5, // NULL handle passed to ObReferenceObjectByHandle.
                          (ULONG_PTR)Handle,
