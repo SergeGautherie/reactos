@@ -69,8 +69,14 @@ jobs:
         if: true
         uses: actions/upload-artifact@v1
         with:
-          name: reactos-gcc-i386-HT-${{github.sha}}
-          path: build/sdk/tools/*
+          name: reactos-gcc-i386-HostT-${{github.sha}}
+          path: build/host-tools/*
+      - name: Upload sdk-tools
+        if: true
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-SdkT-${{github.sha}}
+          path: build/sdk-tools/*
 
   build-clang-cl-i386:
     # Useless to me, unless touching clang.
@@ -131,6 +137,7 @@ jobs:
         path: build/bootcdregtest.iso
 
   build-msvc-i386:
+    if: false
     name: MSVC (i386)
     runs-on: windows-latest
     steps:
