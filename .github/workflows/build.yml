@@ -32,15 +32,20 @@ jobs:
       - name: Configure
         run: |
           mkdir build
-          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DUNATTENDED_BOOTCD=yes -DUNATTENDED_BOOTCD_DisableGeckoInst=yes' > commands
+          echo 'cd ${{github.workspace}}/build &&' > commands
+          echo '${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DUNATTENDED_BOOTCD=yes -DUNATTENDED_BOOTCD_DisableGeckoInst=yes' >> commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Build
         run: |
-          echo 'cd ${{github.workspace}}/build && cmake --build .' > commands
+          echo 'cd ${{github.workspace}}/build &&' > commands
+          echo 'cmake --build .' >> commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Generate ISOs
         run: |
-          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd && cmake --build . --target bootcdregtest' > commands
+          echo 'cd ${{github.workspace}}/build &&' > commands
+          echo 'cmake --build . --target bootcd &&' >> commands
+          echo 'cmake --build . --target livecd &&' >> commands
+          echo 'cmake --build . --target bootcdregtest' >> commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
       - name: Print ccache statistics
         run: ccache -s
