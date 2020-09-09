@@ -31,7 +31,6 @@ extern PVOID KiArmVectorTable;
 
 /* FUNCTIONS ******************************************************************/
 
-INIT_FUNCTION
 VOID
 NTAPI
 KiInitMachineDependent(VOID)
@@ -40,7 +39,6 @@ KiInitMachineDependent(VOID)
     return;
 }
 
-INIT_FUNCTION
 VOID
 NTAPI
 KiInitializeKernel(IN PKPROCESS InitProcess,
@@ -175,7 +173,6 @@ KiInitializeKernel(IN PKPROCESS InitProcess,
 //C_ASSERT((FIELD_OFFSET(KIPCR, FirstLevelDcacheSize) & 4) == 0);
 //C_ASSERT(sizeof(KIPCR) <= PAGE_SIZE);
 
-INIT_FUNCTION
 VOID
 NTAPI
 KiInitializePcr(IN ULONG ProcessorNumber,
@@ -308,7 +305,6 @@ KiInitializePcr(IN ULONG ProcessorNumber,
 #endif
 }
 
-INIT_FUNCTION
 VOID
 NTAPI
 KiInitializeMachineType(VOID)
@@ -330,7 +326,6 @@ KiInitializeMachineType(VOID)
     }
 }
 
-INIT_FUNCTION
 VOID
 KiInitializeSystem(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {

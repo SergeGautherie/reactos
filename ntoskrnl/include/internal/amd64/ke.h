@@ -314,7 +314,7 @@ struct _KPCR;
 
 //VOID KiInitializeTss(IN PKTSS Tss, IN UINT64 Stack);
 
-/* INIT_FUNCTION */ VOID KiSwitchToBootStack(IN ULONG_PTR InitialStack);
+VOID KiSwitchToBootStack(IN ULONG_PTR InitialStack);
 VOID KiDivideErrorFault(VOID);
 VOID KiDebugTrapOrFault(VOID);
 VOID KiNmiInterrupt(VOID);

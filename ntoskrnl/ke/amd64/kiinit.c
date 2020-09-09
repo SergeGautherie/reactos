@@ -85,7 +85,6 @@ KiInitMachineDependent(VOID)
 
 }
 
-INIT_FUNCTION
 VOID
 NTAPI
 KiInitializePcr(IN PKIPCR Pcr,
@@ -161,7 +160,6 @@ KiInitializePcr(IN PKIPCR Pcr,
     KeSetCurrentIrql(PASSIVE_LEVEL);
 }
 
-INIT_FUNCTION
 VOID
 NTAPI
 KiInitializeCpu(PKIPCR Pcr)
@@ -235,7 +233,6 @@ KiInitializeCpu(PKIPCR Pcr)
     __writemsr(MSR_PAT, Pat);
 }
 
-INIT_FUNCTION
 VOID
 FASTCALL
 KiInitializeTss(IN PKTSS64 Tss,
@@ -340,8 +337,7 @@ KiInitializeKernelMachineDependent(
 
 static LDR_DATA_TABLE_ENTRY LdrCoreEntries[3];
 
-INIT_FUNCTION
-VOID
+void
 KiInitModuleList(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
     PLDR_DATA_TABLE_ENTRY LdrEntry;
@@ -468,3 +464,4 @@ KiSystemStartup(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     /* Switch to new kernel stack and start kernel bootstrapping */
     KiSwitchToBootStack(InitialStack & ~3);
 }
+
