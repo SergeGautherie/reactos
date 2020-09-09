@@ -160,6 +160,8 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         __debugbreak();
     }
 
+    /* FIXME: KDBG messes around with these improperly */
+#if !defined(KDBG)
     /* Check DR values */
     if (KiUserTrap(TrapFrame))
     {
@@ -194,6 +196,7 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
 // Remove '& ~DR7_RESERVED_MASK' once sanitized everywhere.
         CheckDrWithMask(7, ~DR7_RESERVED_MASK, Prcb->ProcessorState.SpecialRegisters.KernelDr7 & ~DR7_RESERVED_MASK);
     }
+#endif
 
     StopChecking = FALSE;
 }
