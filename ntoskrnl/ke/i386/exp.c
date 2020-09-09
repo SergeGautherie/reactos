@@ -39,9 +39,9 @@ KeInitExceptions(VOID)
 
 ULONG
 FASTCALL
-KiUpdateDr7(IN ULONG Dr7)
+KiUpdateDr7(_In_ ULONG Dr7)
 {
-    ULONG DebugMask = KeGetCurrentThread()->Header.DebugActive;
+    BYTE DebugMask = (BYTE)KeGetCurrentThread()->Header.DebugActive;
 
     /* Check if debugging is enabled */
     if (DebugMask & DR_MASK(DR7_OVERRIDE_V))
@@ -58,17 +58,17 @@ KiUpdateDr7(IN ULONG Dr7)
 
 BOOLEAN
 FASTCALL
-KiRecordDr7(OUT PULONG Dr7Ptr,
-            OUT PULONG DrMask)
+KiRecordDr7(_Inout_ PULONG Dr7Ptr,
+            _Inout_opt_ BYTE *DrMask)
 {
-    ULONG NewMask, Mask;
+    BYTE NewMask, Mask;
     UCHAR Result;
 
     /* Check if the caller gave us a mask */
     if (!DrMask)
     {
         /* He didn't, use the one from the thread */
-        Mask = KeGetCurrentThread()->Header.DebugActive;
+        Mask = (BYTE)KeGetCurrentThread()->Header.DebugActive;
     }
     else
     {
@@ -321,7 +321,7 @@ KeContextToTrapFrame(IN PCONTEXT Context,
     ULONG i;
     BOOLEAN V86Switch = FALSE;
     KIRQL OldIrql;
-    ULONG DrMask = 0;
+    BYTE DrMask = 0;
 
     /* Do this at APC_LEVEL */
     OldIrql = KeGetCurrentIrql();
