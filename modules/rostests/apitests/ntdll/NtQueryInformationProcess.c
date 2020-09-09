@@ -185,6 +185,47 @@ Test_ProcessTimes(void)
 #undef SPIN_TIME
 }
 
+// Check NtQueryInformationProcess() alignment requirement, using ProcessPriorityClass.
+static
+void
+test_ProcessPriorityClass_Alignment(void)
+{
+    const HANDLE hProcess = GetCurrentProcess();
+
+    ULONG PriorityClassBuffer[2];
+    NTSTATUS Status;
+
+    // Explicit, though obvious.
+    ok((ULONG_PTR)&PriorityClassBuffer % 4 == 0, "PriorityClassBuffer is misaligned\n");
+    C_ASSERT(sizeof(PROCESS_PRIORITY_CLASS) == 2); // '2 < sizeof(ULONG)'.
+
+#if 1
+    // 1-byte alignment.
+    Status = NtQueryInformationProcess(hProcess,
+                                       ProcessPriorityClass,
+                                       (PVOID)(((ULONG_PTR)&PriorityClassBuffer) + 1),
+                                       sizeof(PROCESS_PRIORITY_CLASS),
+                                       NULL);
+    ok_hex(Status, STATUS_DATATYPE_MISALIGNMENT);
+#endif
+
+    // 2-byte alignment.
+    Status = NtQueryInformationProcess(hProcess,
+                                       ProcessPriorityClass,
+                                       (PVOID)(((ULONG_PTR)&PriorityClassBuffer) + 2),
+                                       sizeof(PROCESS_PRIORITY_CLASS),
+                                       NULL);
+    ok_hex(Status, STATUS_DATATYPE_MISALIGNMENT);
+
+    // 4-byte alignment.
+    Status = NtQueryInformationProcess(hProcess,
+                                       ProcessPriorityClass,
+                                       &PriorityClassBuffer,
+                                       sizeof(PROCESS_PRIORITY_CLASS),
+                                       NULL);
+    ok_hex(Status, STATUS_SUCCESS);
+}
+
 static
 void
 Test_ProcessPriorityClassAlignment(void)
@@ -326,6 +367,8 @@ Test_ProcessWx86Information(void)
 START_TEST(NtQueryInformationProcess)
 {
     NTSTATUS Status;
+
+    test_ProcessPriorityClass_Alignment();
 
     Status = NtQuerySystemTime(&TestStartTime);
     ok_hex(Status, STATUS_SUCCESS);
