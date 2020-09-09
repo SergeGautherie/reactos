@@ -1024,8 +1024,8 @@ KiQuantumEnd(
     VOID
 );
 
+DECLSPEC_NORETURN
 VOID
-FASTCALL
 KiIdleLoop(
     VOID
 );

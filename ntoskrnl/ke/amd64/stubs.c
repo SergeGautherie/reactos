@@ -108,8 +108,8 @@ KeUserModeCallback(IN ULONG RoutineIndex,
     return STATUS_UNSUCCESSFUL;
 }
 
+DECLSPEC_NORETURN
 VOID
-FASTCALL
 KiIdleLoop(VOID)
 {
     PKPRCB Prcb = KeGetCurrentPrcb();
