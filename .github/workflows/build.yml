@@ -49,3 +49,8 @@ jobs:
         with:
           name: reactos-gcc-i386-bootcd-${{github.sha}}
           path: build/bootcd.iso
+      - name: Upload test (netapi32)
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-tests-${{github.sha}}
+          path: build/modules/rostests/apitests/netapi32/netapi32_apitest.exe
