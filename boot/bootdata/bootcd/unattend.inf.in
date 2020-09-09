@@ -6,7 +6,7 @@ Signature = "$ReactOS$"
 ; no - unattend setup disabled
 UnattendSetupEnabled = @UNATTENDED_BOOTCD@
 
-; Install to \Device\Harddisk0\Partition1\ReactOS
+; Install to \Device\Harddisk<DDN>\Partition<DPN>\<ID>
 DestinationDiskNumber = @UNATTENDED_BOOTCD_DestinationDiskNumber@
 DestinationPartitionNumber = @UNATTENDED_BOOTCD_DestinationPartitionNumber@
 InstallationDirectory=@UNATTENDED_BOOTCD_InstallationDirectory@
