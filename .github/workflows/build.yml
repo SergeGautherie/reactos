@@ -198,6 +198,8 @@ jobs:
       run: |
         cmake --build .
     - name: Generate ISOs
+      # bootcd and livecd crash QEMU-x64 0.10.5.
+      if: false
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
