@@ -44,8 +44,7 @@ jobs:
         run: |
           echo 'cd ${{github.workspace}}/build &&' > commands
           echo 'cmake --build . --target bootcd &&' >> commands
-          echo 'cmake --build . --target livecd &&' >> commands
-          echo 'cmake --build . --target bootcdregtest' >> commands
+          echo 'cmake --build . --target livecd' >> commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
       - name: Print ccache statistics
         run: ccache -s
@@ -164,7 +163,6 @@ jobs:
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
-        cmake --build . --target bootcdregtest
     - name: Upload bootcd
       uses: actions/upload-artifact@v1
       with:
