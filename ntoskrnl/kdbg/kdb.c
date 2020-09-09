@@ -1309,7 +1309,7 @@ KdbpGetExceptionNumberFromStatus(
  * \param PreviousMode     UserMode if the exception was raised from umode, otherwise KernelMode.
  * \param Context          Context, IN/OUT parameter.
  * \param TrapFrame        Exception TrapFrame.
- * \param FirstChance      TRUE when called before exception frames were serached,
+ * \param FirstChance      TRUE when called before exception frames were searched,
  *                         FALSE for the second call.
  *
  * \returns KD_CONTINUE_TYPE
