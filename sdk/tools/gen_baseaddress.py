@@ -246,7 +246,7 @@ class Module(object):
         self._reserved = address != 0
         self.filename = filename
 
-    def gen_baseaddress(self, output_file):
+    def gen_baseaddress(self, output_file, layout_padding):
         name, ext = os.path.splitext(self._name)
         postfix = ''
         if ext in('.acm', '.drv') and self._name != 'winspool.drv':
@@ -261,9 +261,12 @@ class Module(object):
         # Current longest name is: 'msvcrt_crt_dll_startup' (22).
         if len(name) > 22:
             print('#', name, 'is longer than current width:', len(name), '> 22')
+        # Uncomment postfix, to add end address.
         if is_x64():
+            # postfix = ' # - 0x%016x%s' % (self.address + self.size + padding, postfix)
             output_file.write('set(baseaddress_%-22s 0x%016x)%s\n' % (name, self.address, postfix))
         else:
+            postfix = ' # - 0x%08x%s' % (self.address + self.size + layout_padding, postfix)
             output_file.write('set(baseaddress_%-22s 0x%08x)%s\n' % (name, self.address, postfix))
 
     def end(self):
@@ -291,6 +294,9 @@ class MemoryLayout(object):
         self.reserved[name] = (address, 0)
 
     def add(self, filename, name):
+# Early return!
+#         if name in self.found:
+#             return  # Assume duplicate files (rshell, ...) are 1:1 copies
         size = size_of_image(filename)
         addr = 0
         if name in self.found:
@@ -316,11 +322,18 @@ class MemoryLayout(object):
             for key, reserved in self.reserved.items():
                 res_start = reserved[0]
                 res_end = res_start + reserved[1] + self.module_padding
+# 1. res_end ne devrait-il pas etre exclus !!?
+# 2. Test bcp plus simple possible !!?
                 if (res_start <= current_start <= res_end) or \
                    (res_start <= current_end <= res_end) or \
                    (current_start < res_start and current_end > res_end):
+#                 if (current_start < res_end) and \
+#                    (current_end > res_start):
+                    print('# Skip to below %s (0x%08x - 0x%08x)' % (key, res_start, res_end))
                     # We passed this reserved item, we can remove it now
                     self.start_at = min(res_start, current_start)
+# 3. Do not waste space below res_start.
+#                     self.start_at = res_start
                     del self.reserved[key]
                     current_start = 0
                     break
@@ -348,8 +361,9 @@ class MemoryLayout(object):
             self.addresses.append(obj)
 
     def gen_baseaddress(self, output_file):
+        output_file.write('# Module padding: 0x%4x\n\n' % self.module_padding)
         for obj in self.addresses:
-            obj.gen_baseaddress(output_file)
+            obj.gen_baseaddress(output_file, self.module_padding)
 
 def get_target_file(ntdll_path):
     if 'pefile' in globals():
@@ -378,6 +392,9 @@ def run_dir(target):
       layout.add_reserved('user32.dll', 0x000007FF7F190000)
     else:
       layout = MemoryLayout(0x7c920000)
+#       layout = MemoryLayout(0x7c800000) # WS03 R2 EE (SP2?) ntdll.dll v5.2.3790.4455.
+# Why is user32 addr reserved?
+# Where does this addr come from?
       layout.add_reserved('user32.dll', 0x77a20000)
     for root, _, files in os.walk(target):
         for dll in [filename for filename in files if filename.endswith(ALL_EXTENSIONS)]:
