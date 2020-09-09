@@ -105,10 +105,10 @@ DsRoleGetPrimaryDomainInformation(
     if (!Buffer)
         return ERROR_INVALID_PARAMETER;
 
+    *Buffer = NULL;
+
     if ((InfoLevel < DsRolePrimaryDomainInfoBasic) || (InfoLevel > DsRoleOperationState))
         return ERROR_INVALID_PARAMETER;
-
-    *Buffer = NULL;
 
     status = DsSetupBind((LPWSTR)lpServer, &hBinding);
     if (status)
