@@ -40,6 +40,7 @@ LsapRegCreateKey(IN HANDLE ParentKeyHandle,
 
     InitializeObjectAttributes(&ObjectAttributes,
                                &Name,
+// !??
                                OBJ_CASE_INSENSITIVE | OBJ_OPENIF,
                                ParentKeyHandle,
                                NULL);
