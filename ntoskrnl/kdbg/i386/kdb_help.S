@@ -95,15 +95,8 @@ _KdbEnter:
     mov dr2, eax
     pop eax            /* Dr3 */
     mov dr3, eax
-
     pop eax            /* Dr6 */
-    /*
-     * Clear all status flags in dr6.
-     * Leave alone reserved bits.
-     */
-    and eax, HEX(0FFFF1FF0)     /* = ~DR6_LEGAL */
     mov dr6, eax
-
     pop eax            /* Dr7 */
     mov dr7, eax
 
