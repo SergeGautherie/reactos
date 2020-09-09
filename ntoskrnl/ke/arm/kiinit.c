@@ -306,6 +306,7 @@ KiInitializePcr(IN ULONG ProcessorNumber,
 }
 
 VOID
+NTAPI
 KiInitializeMachineType(VOID)
 {
     /* Detect ARM version */
