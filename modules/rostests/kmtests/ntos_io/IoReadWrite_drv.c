@@ -29,6 +29,9 @@ static ULONG TestLastFastWriteKey;
 static PFILE_OBJECT TestFileObject;
 static PDEVICE_OBJECT TestDeviceObject;
 
+static ULONG FastIoRead_Count;
+static ULONG FastIoWrite_Count;
+
 NTSTATUS
 TestEntry(
     _In_ PDRIVER_OBJECT DriverObject,
@@ -159,6 +162,11 @@ TestFastIoRead(
     PTEST_FCB Fcb;
     NTSTATUS Status;
 
+    DPRINT1("In %s()\n", __FUNCTION__);
+    ++FastIoRead_Count;
+    // Report whether this FastIO function is actually called or not.
+    ok(TRUE, "\n");
+
     //trace("FastIoRead: %p %lx %I64d+%lu -> %p\n", FileObject, LockKey, FileOffset->QuadPart, Length, Buffer);
     ok_eq_pointer(FileObject, TestFileObject);
     ok_bool_true(Wait, "Wait is");
@@ -227,6 +235,11 @@ TestFastIoWrite(
 {
     PTEST_FCB Fcb;
     NTSTATUS Status;
+
+    DPRINT1("In %s()\n", __FUNCTION__);
+    ++FastIoWrite_Count;
+    // Report whether this FastIO function is actually called or not.
+    ok(TRUE, "\n");
 
     //trace("FastIoWrite: %p %lx %p -> %I64d+%lu\n", FileObject, LockKey, Buffer, FileOffset->QuadPart, Length);
     ok_eq_pointer(FileObject, TestFileObject);

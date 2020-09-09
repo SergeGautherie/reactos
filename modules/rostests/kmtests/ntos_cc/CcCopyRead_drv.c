@@ -23,6 +23,8 @@ static PDEVICE_OBJECT TestDeviceObject;
 static KMT_IRP_HANDLER TestIrpHandler;
 static FAST_IO_DISPATCH TestFastIoDispatch;
 
+static ULONG FastIoRead_Count;
+
 static
 BOOLEAN
 NTAPI
@@ -36,6 +38,11 @@ FastIoRead(
     _Out_ PIO_STATUS_BLOCK IoStatus,
     _In_ PDEVICE_OBJECT DeviceObject)
 {
+    DPRINT1("In %s()\n", __FUNCTION__);
+    ++FastIoRead_Count;
+    // Report whether this FastIO function is actually called or not.
+    ok(TRUE, "\n");
+
     IoStatus->Status = STATUS_NOT_SUPPORTED;
     return FALSE;
 }

@@ -26,6 +26,10 @@ static UNICODE_STRING InitOnCreate = RTL_CONSTANT_STRING(L"\\InitOnCreate");
 static UNICODE_STRING InitOnRW = RTL_CONSTANT_STRING(L"\\InitOnRW");
 static UNICODE_STRING InvalidInit = RTL_CONSTANT_STRING(L"\\InvalidInit");
 
+static ULONG FastIoRead_Count;
+static ULONG FastIoWrite_Count;
+static ULONG FastIoQueryStandardInfo_Count;
+
 static
 BOOLEAN
 NTAPI
@@ -39,6 +43,11 @@ FastIoRead(
     _Out_ PIO_STATUS_BLOCK IoStatus,
     _In_ PDEVICE_OBJECT DeviceObject)
 {
+    DPRINT1("In %s()\n", __FUNCTION__);
+    ++FastIoRead_Count;
+    // Report whether this FastIO function is actually called or not.
+    ok(FALSE, "%s() unexpectedly called\n", __FUNCTION__);
+
     IoStatus->Status = STATUS_NOT_SUPPORTED;
     return FALSE;
 }
@@ -56,6 +65,11 @@ FastIoWrite(
     _Out_ PIO_STATUS_BLOCK IoStatus,
     _In_ PDEVICE_OBJECT DeviceObject)
 {
+    DPRINT1("In %s()\n", __FUNCTION__);
+    ++FastIoWrite_Count;
+    // Report whether this FastIO function is actually called or not.
+    ok(FALSE, "%s() unexpectedly called\n", __FUNCTION__);
+
     IoStatus->Status = STATUS_NOT_SUPPORTED;
     return FALSE;
 }
@@ -70,6 +84,11 @@ FastIoQueryStandardInfo(
     _Out_ PIO_STATUS_BLOCK IoStatus,
     _In_ PDEVICE_OBJECT DeviceObject)
 {
+    DPRINT1("In %s()\n", __FUNCTION__);
+    ++FastIoQueryStandardInfo_Count;
+    // Report whether this FastIO function is actually called or not.
+    ok(TRUE, "\n");
+
     IoStatus->Status = STATUS_NOT_SUPPORTED;
     return FALSE;
 }
