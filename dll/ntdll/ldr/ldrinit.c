@@ -145,7 +145,7 @@ LdrOpenImageFileOptionsKey(IN PUNICODE_STRING SubKey,
         if (InterlockedCompareExchangePointer(RootKeyLocation, RootKey, NULL) != NULL)
         {
             /* Someone already opened it, use it instead */
-            NtClose(RootKey);
+            ZwClose(RootKey);
             RootKey = *RootKeyLocation;
         }
 
