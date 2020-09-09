@@ -1,10 +1,10 @@
-set(UNATTENDED_BOOTCD "no" CACHE STRING "Whether to build a self-installing bootcd (yes/no)")
-
 function(add_unattended_bootcd_option _var _default _doc)
-    if (UNATTENDED_BOOTCD STREQUAL "yes")
-        set(${_var} "${_default}" CACHE STRING ${_doc})
-    endif()
+    set(${_var} "${_default}" CACHE STRING ${_doc})
 endfunction()
+
+# Matches inf UnattendSetupEnabled option.
+add_unattended_bootcd_option(UNATTENDED_BOOTCD "no"
+    "Whether to enable bootcd unattended setup (yes/no)")
 
 add_unattended_bootcd_option(UNATTENDED_BOOTCD_DestinationDiskNumber "0"
     "The Disk Number ReactOS will be installed on during bootcd unattended setup")
@@ -35,8 +35,5 @@ add_unattended_bootcd_option(UNATTENDED_BOOTCD_LocaleID "409"
 add_unattended_bootcd_option(UNATTENDED_BOOTCD_ProductOption "0"
     "The product installed during bootcd unattended setup. 0: Server, 1: WorkStation")
 
-if (UNATTENDED_BOOTCD STREQUAL "yes")
-    configure_file(unattend.inf.in unattend.inf @ONLY)
-    add_cd_file(FILE ${CMAKE_CURRENT_BINARY_DIR}/unattend.inf DESTINATION reactos NO_CAB FOR bootcd)
-endif()
-
+configure_file(unattend.inf.in unattend.inf @ONLY)
+add_cd_file(FILE ${CMAKE_CURRENT_BINARY_DIR}/unattend.inf DESTINATION reactos NO_CAB FOR bootcd)
