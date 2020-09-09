@@ -90,6 +90,8 @@ jobs:
     - name: Install packages
       run: choco install ninja -y
     - name: Install Flex and Bison
+      # Inutil(is)e.
+      if: false
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
         7z x flexbison.7z -O${{github.workspace}}\bin
@@ -147,6 +149,8 @@ jobs:
     - name: Install packages
       run: choco install ninja -y
     - name: Install Flex and Bison
+      # Inutil(is)e.
+      if: false
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
         7z x flexbison.7z -O${{github.workspace}}\bin
@@ -216,6 +220,8 @@ jobs:
     - name: Install packages
       run: choco install ninja -y
     - name: Install Flex and Bison
+      # Inutil(is)e.
+      if: false
       run: |
         curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
         7z x flexbison.7z -O${{github.workspace}}\bin
