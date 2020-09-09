@@ -325,6 +325,9 @@ PAFD_HANDLE LockHandles( PAFD_HANDLE HandleArray, UINT HandleCount ) {
 
     for (i = 0; i < HandleCount; i++)
     {
+        AFD_DbgPrint(MIN_TRACE,
+                     ("i=%u, HA.H=%p\n", i, (HANDLE)HandleArray[i].Handle));
+
         if ((HANDLE)HandleArray[i].Handle == NULL)
         {
             continue;
@@ -346,6 +349,9 @@ PAFD_HANDLE LockHandles( PAFD_HANDLE HandleArray, UINT HandleCount ) {
             UnlockHandles(FileObjects, i);
             return NULL;
         }
+
+        AFD_DbgPrint(MIN_TRACE,
+                     ("i=%u, O=%p\n", i, Object));
 
         // Create a kernel handle from the pointer.
         Status = ObOpenObjectByPointer(Object,
@@ -383,6 +389,9 @@ PAFD_HANDLE LockHandles( PAFD_HANDLE HandleArray, UINT HandleCount ) {
             UnlockHandles(FileObjects, i);
             return NULL;
         }
+
+        AFD_DbgPrint(MIN_TRACE,
+                     ("i=%u, FO.H=%p\n", i, (PVOID)FileObjects[i].Handle));
 
         FileObjects[i].Events = HandleArray[i].Events;
     }
