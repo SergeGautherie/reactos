@@ -590,7 +590,7 @@ PeLdrAllocateDataTableEntry(
     OUT PLDR_DATA_TABLE_ENTRY *NewEntry)
 {
     PVOID BaseVA = PaToVa(BasePA);
-    PWSTR Buffer;
+    PWSTR BaseDllNameBuffer, Buffer;
     PLDR_DATA_TABLE_ENTRY DataTableEntry;
     PIMAGE_NT_HEADERS NtHeaders;
     USHORT Length;
@@ -625,6 +625,9 @@ PeLdrAllocateDataTableEntry(
         return FALSE;
     }
 
+    // Save Buffer, in case of later failure.
+    BaseDllNameBuffer = Buffer;
+
     RtlZeroMemory(Buffer, Length);
     while (*BaseDllName != 0)
     {
@@ -641,6 +644,7 @@ PeLdrAllocateDataTableEntry(
     Buffer = (PWSTR)FrLdrHeapAlloc(Length, TAG_WLDR_NAME);
     if (Buffer == NULL)
     {
+        FrLdrHeapFree(BaseDllNameBuffer, TAG_WLDR_NAME);
         FrLdrHeapFree(DataTableEntry, TAG_WLDR_DTE);
         return FALSE;
     }
