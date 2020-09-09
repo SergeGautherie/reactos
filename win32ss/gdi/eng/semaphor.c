@@ -169,9 +169,13 @@ EngInitializeSafeSemaphore(
         ASSERT_IRQL_LESS_OR_EQUAL(PASSIVE_LEVEL);
         while (Semaphore->hsem == NULL)
         {
+            // Sleep(0); // Does not compile: kernel32 Sleep() unavailable...
+
             // Relinquish time slice.
             LARGE_INTEGER Interval = {0LL};
             KeDelayExecutionThread(KernelMode, FALSE, &Interval);
+
+            // NtYieldExecution(); // 'undefined reference to `_imp__NtYieldExecution@0''
         }
     }
 
