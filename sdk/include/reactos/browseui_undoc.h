@@ -110,7 +110,7 @@ typedef struct ExplorerCommandLineParseResults
     LPITEMIDLIST            pidlRoot;
     CLSID                   clsid;
     GUID                    guidInproc;
-    // TODO: 'ULONG                   Padding[0x100];'?
+    ULONG                   Padding[0x100];
 } EXPLORER_CMDLINE_PARSE_RESULTS, *PEXPLORER_CMDLINE_PARSE_RESULTS;
 
 #define SH_EXPLORER_CMDLINE_FLAG_ONE      0x00000001
