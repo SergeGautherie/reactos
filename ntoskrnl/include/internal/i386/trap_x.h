@@ -159,7 +159,7 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         {
             if (__builtin_expect((TrapFrame->Dr7 & ~DR7_RESERVED_MASK) == 0, 0))
             {
-                DbgPrint("Exiting with an invalid trap frame DR7: %08lx\n", TrapFrame->Dr7);
+                DbgPrint("Exiting with a clear trap frame DR7: %08lx\n", TrapFrame->Dr7);
                 __debugbreak();
             }
 
