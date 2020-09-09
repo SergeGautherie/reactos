@@ -172,10 +172,11 @@ EngInitializeSafeSemaphore(
             // Sleep(0); // Does not compile: kernel32 Sleep() unavailable...
 
             // Relinquish time slice.
-            LARGE_INTEGER Interval = {0LL};
-            KeDelayExecutionThread(KernelMode, FALSE, &Interval);
+//             LARGE_INTEGER Interval = {0LL};
+//             KeDelayExecutionThread(KernelMode, FALSE, &Interval);
 
             // NtYieldExecution(); // 'undefined reference to `_imp__NtYieldExecution@0''
+            ZwYieldExecution();
         }
     }
 
