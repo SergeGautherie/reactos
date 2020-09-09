@@ -40,7 +40,7 @@ jobs:
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Generate ISOs
         run: |
-          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
+          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd && cmake --build . --target bootcdregtest' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
       - name: Print ccache statistics
         run: ccache -s
@@ -54,6 +54,12 @@ jobs:
         with:
           name: reactos-gcc-i386-${{github.sha}}
           path: build/livecd.iso
+      - name: Upload bootcdregtest
+        if: true
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-BcdRt-${{github.sha}}
+          path: build/bootcdregtest.iso
 
   build-clang-cl-i386:
     name: Clang-CL (i386)
@@ -89,6 +95,7 @@ jobs:
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
+        cmake --build . --target bootcdregtest
     - name: Upload bootcd
       if: false
       uses: actions/upload-artifact@v1
@@ -101,6 +108,12 @@ jobs:
       with:
         name: reactos-clang-cl-i386-${{github.sha}}
         path: build/livecd.iso
+    - name: Upload bootcdregtest
+      if: false
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-clang-cl-i386-BcdRt-${{github.sha}}
+        path: build/bootcdregtest.iso
 
   build-msvc-i386:
     name: MSVC (i386)
@@ -135,6 +148,7 @@ jobs:
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
+        cmake --build . --target bootcdregtest
     - name: Upload bootcd
       uses: actions/upload-artifact@v1
       with:
@@ -145,6 +159,12 @@ jobs:
       with:
         name: reactos-msvc-i386-${{github.sha}}
         path: build/livecd.iso
+    - name: Upload bootcdregtest
+      if: true
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-i386-BcdRt-${{github.sha}}
+        path: build/bootcdregtest.iso
 
   build-msvc-amd64:
     name: MSVC (amd64)
@@ -180,6 +200,7 @@ jobs:
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
+        cmake --build . --target bootcdregtest
     - name: Upload bootcd
       if: false
       uses: actions/upload-artifact@v1
@@ -192,3 +213,9 @@ jobs:
       with:
         name: reactos-msvc-amd64-${{github.sha}}
         path: build/livecd.iso
+    - name: Upload bootcdregtest
+      if: false
+      uses: actions/upload-artifact@v1
+      with:
+        name: reactos-msvc-amd64-BcdRt-${{github.sha}}
+        path: build/bootcdregtest.iso
