@@ -90,6 +90,7 @@ NtQueryInformationProcess(IN HANDLE ProcessHandle,
     if (ProcessInformationLength == 0)
     {
         DPRINT1("Invalid value: ProcessInformationLength == 0\n");
+        ASSERT(ProcessInformationLength != 0);
     }
 
     /* Check for user-mode caller */
