@@ -94,7 +94,7 @@ KiRecordDr7(_Inout_ PULONG Dr7Ptr,
             NewMask |= DR_MASK(DR7_OVERRIDE_V);
 
             /* Set DR7 override */
-            *Dr7Ptr |= DR7_OVERRIDE_MASK;
+            *Dr7Ptr = DR7_OVERRIDE_MASK;
         }
         else
         {
