@@ -2479,8 +2479,12 @@ MiWriteProtectSystemImage(
     if ((NtHeaders->OptionalHeader.MajorOperatingSystemVersion < 5) ||
         (NtHeaders->OptionalHeader.MajorSubsystemVersion < 5))
     {
+#ifndef CORE_17321_IS_FIXED
+        DPRINT1("(CORE-17321) Processing NT 4 driver @ %p\n", ImageBase);
+#else
         DPRINT1("Skipping NT 4 driver @ %p\n", ImageBase);
         return;
+#endif
     }
 
     /* Get the section headers */
