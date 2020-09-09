@@ -144,7 +144,8 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
     /* If we're ignoring previous mode, make sure caller doesn't actually want it */
     if (SkipPreviousMode && (TrapFrame->PreviousPreviousMode != -1))
     {
-        DbgPrint("Exiting a trap witout restoring previous mode, yet previous mode seems valid: %lx\n", TrapFrame->PreviousPreviousMode);
+        DbgPrint("Exiting a trap without restoring previous mode, yet previous mode seems valid: %lx\n",
+                 TrapFrame->PreviousPreviousMode);
         __debugbreak();
     }
 
@@ -156,7 +157,11 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         /* Check for active debugging */
         if (KeGetCurrentThread()->Header.DebugActive)
         {
-            if ((TrapFrame->Dr7 & ~DR7_RESERVED_MASK) == 0) __debugbreak();
+            if ((TrapFrame->Dr7 & ~DR7_RESERVED_MASK) == 0)
+            {
+                DbgPrint("Exiting with an invalid trap frame DR7: %08lx\n", TrapFrame->Dr7);
+                __debugbreak();
+            }
 
             CheckDr(0, TrapFrame->Dr0);
             CheckDr(1, TrapFrame->Dr1);
