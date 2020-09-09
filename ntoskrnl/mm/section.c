@@ -4969,15 +4969,17 @@ MiRosUnmapViewInSystemSpace(IN PVOID MappedBase)
  *
  * @implemented
  */
-NTSTATUS NTAPI
-MmCreateSection (OUT PVOID  * Section,
-                 IN ACCESS_MASK  DesiredAccess,
-                 IN POBJECT_ATTRIBUTES ObjectAttributes     OPTIONAL,
-                 IN PLARGE_INTEGER  MaximumSize,
-                 IN ULONG   SectionPageProtection,
-                 IN ULONG   AllocationAttributes,
-                 IN HANDLE   FileHandle   OPTIONAL,
-                 IN PFILE_OBJECT  FileObject  OPTIONAL)
+NTSTATUS
+NTAPI
+MmCreateSection(
+    _Out_ PVOID *Section,
+    _In_ ACCESS_MASK DesiredAccess,
+    _In_opt_ POBJECT_ATTRIBUTES ObjectAttributes,
+    _In_ PLARGE_INTEGER MaximumSize,
+    _In_ ULONG SectionPageProtection,
+    _In_ ULONG AllocationAttributes,
+    _In_opt_ HANDLE FileHandle,
+    _In_opt_ PFILE_OBJECT FileObject)
 {
     NTSTATUS Status;
     ULONG Protection;
