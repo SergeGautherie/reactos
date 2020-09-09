@@ -104,6 +104,8 @@ KdbEnter:
     mov rcx, 0                 /* ExceptionRecord */
     call KdbEnterDebuggerException
 
+    /* TODO: Restore/update debugging registers, as on i386? */
+
     /* Restore segment selectors */
     mov ax, [rsp + KTRAP_FRAME_SegDs]
     mov ds, ax
