@@ -66,6 +66,12 @@ jobs:
         with:
           name: reactos-gcc-i386-BcdRt-${{github.sha}}
           path: build/bootcdregtest.iso
+      - name: Upload host-tools
+        if: true
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-HT-${{github.sha}}
+          path: build/sdk/tools/*
 
   build-clang-cl-i386:
     # Useless to me, unless touching clang.
