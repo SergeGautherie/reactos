@@ -52,6 +52,7 @@ KiInitializeHandBuiltThread(
 }
 
 INIT_FUNCTION
+DECLSPEC_NORETURN
 VOID
 NTAPI
 KiSystemStartupBootStack(VOID)

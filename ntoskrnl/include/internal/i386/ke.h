@@ -811,10 +811,11 @@ KiCheckForApcDelivery(IN PKTRAP_FRAME TrapFrame)
 //
 INIT_FUNCTION
 FORCEINLINE
+DECLSPEC_NORETURN
 VOID
 KiSwitchToBootStack(IN ULONG_PTR InitialStack)
 {
-    INIT_FUNCTION VOID NTAPI KiSystemStartupBootStack(VOID);
+    INIT_FUNCTION DECLSPEC_NORETURN VOID NTAPI KiSystemStartupBootStack(VOID);
 
     /* We have to switch to a new stack before continuing kernel initialization */
 #ifdef __GNUC__
@@ -842,6 +843,8 @@ KiSwitchToBootStack(IN ULONG_PTR InitialStack)
 #else
 #error Unknown Compiler
 #endif
+
+    UNREACHABLE;
 }
 
 //

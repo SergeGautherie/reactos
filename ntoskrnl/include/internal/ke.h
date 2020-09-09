@@ -744,6 +744,7 @@ NTAPI
 KiInitializeBugCheck(VOID);
 
 INIT_FUNCTION
+// TODO: Add DECLSPEC_NORETURN, after checking it applies everywhere.
 VOID
 NTAPI
 KiSystemStartup(
