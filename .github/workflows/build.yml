@@ -63,6 +63,8 @@ jobs:
           path: build/bootcdregtest.iso
 
   build-clang-cl-i386:
+    # Useless to me, unless touching clang.
+    if: false
     name: Clang-CL (i386)
     runs-on: windows-latest
     steps:
@@ -171,6 +173,8 @@ jobs:
         path: build/bootcdregtest.iso
 
   build-msvc-amd64:
+    # Useless to me, unless touching x64.
+    if: false
     name: MSVC (amd64)
     runs-on: windows-latest
     steps:
