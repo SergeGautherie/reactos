@@ -149,8 +149,6 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         __debugbreak();
     }
 
-    /* FIXME: KDBG messes around with these improperly */
-#if !defined(KDBG)
     /* Check DR values */
     if (KiUserTrap(TrapFrame))
     {
@@ -179,7 +177,6 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         CheckDr(3, Prcb->ProcessorState.SpecialRegisters.KernelDr3);
         CheckDr(7, Prcb->ProcessorState.SpecialRegisters.KernelDr7);
     }
-#endif
 
     StopChecking = FALSE;
 }
