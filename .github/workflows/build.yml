@@ -49,6 +49,11 @@ jobs:
         with:
           name: reactos-gcc-i386-${{github.sha}}
           path: build/livecd.iso
+      - name: Upload test (browseui)
+        uses: actions/upload-artifact@v1
+        with:
+          name: reactos-gcc-i386-tests-${{github.sha}}
+          path: build/modules/rostests/apitests/browseui/browseui_apitest.exe
       - name: Upload test (kernel32)
         uses: actions/upload-artifact@v1
         with:
