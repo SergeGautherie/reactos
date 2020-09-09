@@ -66,12 +66,15 @@ jobs:
           name: reactos-gcc-i386-BcdRt-${{github.sha}}
           path: build/bootcdregtest.iso
       - name: Upload host-tools
+#        # CabMan, Spec2Def, WIdl, ...
+#       # Mais Linux :-<
         if: true
         uses: actions/upload-artifact@v2
         with:
           name: reactos-gcc-i386-HostT-${{github.sha}}
           path: build/host-tools/bin/*
       - name: Upload sdk/tools
+#        # En particulier, Log2Lines.
         if: true
         uses: actions/upload-artifact@v2
         with:
