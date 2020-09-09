@@ -5101,7 +5101,7 @@ MmCreateSection(
 
             if (KernelFileHandle != FileHandle)
             {
-                ZwClose(KernelFileHandle);
+                ObCloseHandle(KernelFileHandle, KernelMode);
             }
 
             if (FileObject)
@@ -5140,7 +5140,7 @@ MmCreateSection(
 
         if (KernelFileHandle != FileHandle)
         {
-            ZwClose(KernelFileHandle);
+            ObCloseHandle(KernelFileHandle, KernelMode);
         }
     }
 #endif
