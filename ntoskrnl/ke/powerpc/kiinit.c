@@ -2,7 +2,7 @@
  * PROJECT:         ReactOS Kernel
  * LICENSE:         GPL - See COPYING in the top level directory
  * FILE:            ntoskrnl/ke/powerpc/kiinit.c
- * PURPOSE:         Kernel Initialization for x86 CPUs
+ * PURPOSE:         Kernel Initialization for PowerPC CPUs
  * PROGRAMMERS:     Alex Ionescu (alex.ionescu@reactos.org)
  *                  Art Yerkes (ayerkes@speakeasy.net)
  */
