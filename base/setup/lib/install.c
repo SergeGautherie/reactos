@@ -416,7 +416,7 @@ AddSectionToCopyQueue(
     /* Search for the SectionName section */
     if (!SpInfFindFirstLine(InfFile, SectionName, NULL, &FilesContext))
     {
-        DPRINT1("AddSectionToCopyQueue(): Unable to find section '%S' in TXTSETUP.SIF\n", SectionName);
+/*Demote to DPRINT !!?*/        DPRINT1("AddSectionToCopyQueue(): Unable to find section '%S' in TXTSETUP.SIF, or section is empty\n", SectionName);
         return FALSE;
     }
 
