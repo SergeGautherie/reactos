@@ -1659,8 +1659,74 @@ WINAPI
 GetPriorityClass(IN HANDLE hProcess)
 {
     NTSTATUS Status;
+#if 1
     /* NtQueryInformationProcess() requires 4-byte alignment */
     PROCESS_PRIORITY_CLASS DECLSPEC_ALIGN(4) PriorityClass;
+#else
+    CHAR Dummy0 = 0;
+    PROCESS_PRIORITY_CLASS PriorityClass;
+
+/*
+error: 'warn_if_not_aligned' may not be specified for 'PriorityClass1'
+    PROCESS_PRIORITY_CLASS DECLSPEC_ALIGN(4) PriorityClass1 __attribute__((warn_if_not_aligned(4)));
+    PROCESS_PRIORITY_CLASS DECLSPEC_ALIGN(2) PriorityClass2 __attribute__((warn_if_not_aligned(2)));
+*/
+    // CHAR Dummy1 = 1;
+    PROCESS_PRIORITY_CLASS DECLSPEC_ALIGN(4) PriorityClass1;
+    // CHAR Dummy2 = 2;
+    PROCESS_PRIORITY_CLASS DECLSPEC_ALIGN(2) PriorityClass2;
+
+// -(1+2) -(1align+4) -2
+    DPRINT1("GetPriorityClass, Stack addresses: %p, 0 %p %p, 1 %p %p, 2 %p %p\n",
+            &Status, &Dummy0, &PriorityClass, NULL /* &Dummy1 */, &PriorityClass1, NULL /* &Dummy2 */, &PriorityClass2);
+//    DPRINT1("GetPriorityClass, Stack addresses: %p, %d %p, %d %p, %d %p\n",
+//            &Status, Dummy0, &PriorityClass, Dummy1, &PriorityClass1, Dummy2, &PriorityClass2);
+
+    ASSERT((ULONG_PTR)&Status % 4 == 0);
+
+    C_ASSERT(sizeof(PROCESS_PRIORITY_CLASS) == 2);
+
+    C_ASSERT(sizeof(PriorityClass) == 2);
+
+    C_ASSERT(sizeof(PriorityClass1) == 2);
+    ASSERT((ULONG_PTR)&PriorityClass1 % 4 == 0);
+
+    C_ASSERT(sizeof(PriorityClass2) == 2);
+    ASSERT((ULONG_PTR)&PriorityClass2 % 2 == 0);
+
+    /* Query the kernel */
+    Status = NtQueryInformationProcess(hProcess,
+                                       ProcessPriorityClass,
+                                       &PriorityClass2,
+                                       sizeof(PriorityClass2),
+                                       NULL);
+    if (NT_SUCCESS(Status))
+    {
+        DPRINT1("2 NtQueryInformationProcess(ProcessPriorityClass) succeeded: %u\n",
+                PriorityClass2.PriorityClass);
+    }
+    else if (Status == STATUS_DATATYPE_MISALIGNMENT) // -> ERROR_NOACCESS.
+        DPRINT1("2 NtQueryInformationProcess(ProcessPriorityClass) returned STATUS_DATATYPE_MISALIGNMENT\n");
+    else
+// 0x80000002 STATUS_DATATYPE_MISALIGNMENT
+        DPRINT1("2 NtQueryInformationProcess(ProcessPriorityClass) returned 0x%08lx\n", Status);
+
+    /* Query the kernel */
+    Status = NtQueryInformationProcess(hProcess,
+                                       ProcessPriorityClass,
+                                       &PriorityClass1,
+                                       sizeof(PriorityClass1),
+                                       NULL);
+    if (NT_SUCCESS(Status))
+    {
+        DPRINT1("1 NtQueryInformationProcess(ProcessPriorityClass) succeeded: %u\n",
+                PriorityClass1.PriorityClass);
+    }
+    else if (Status == STATUS_DATATYPE_MISALIGNMENT) // -> ERROR_NOACCESS.
+        DPRINT1("1 NtQueryInformationProcess(ProcessPriorityClass) returned STATUS_DATATYPE_MISALIGNMENT\n");
+    else
+        DPRINT1("1 NtQueryInformationProcess(ProcessPriorityClass) returned 0x%08lx\n", Status);
+#endif
 
     /* Query the kernel */
     Status = NtQueryInformationProcess(hProcess,
@@ -1670,17 +1736,30 @@ GetPriorityClass(IN HANDLE hProcess)
                                        NULL);
     if (NT_SUCCESS(Status))
     {
+        DPRINT1("NtQueryInformationProcess(ProcessPriorityClass) succeeded: %u\n",
+                PriorityClass.PriorityClass);
+
         /* Handle the conversion from NT to Win32 classes */
         switch (PriorityClass.PriorityClass)
         {
+            case PROCESS_PRIORITY_CLASS_NORMAL: return NORMAL_PRIORITY_CLASS;
             case PROCESS_PRIORITY_CLASS_IDLE: return IDLE_PRIORITY_CLASS;
             case PROCESS_PRIORITY_CLASS_BELOW_NORMAL: return BELOW_NORMAL_PRIORITY_CLASS;
             case PROCESS_PRIORITY_CLASS_ABOVE_NORMAL: return ABOVE_NORMAL_PRIORITY_CLASS;
             case PROCESS_PRIORITY_CLASS_HIGH: return HIGH_PRIORITY_CLASS;
             case PROCESS_PRIORITY_CLASS_REALTIME: return REALTIME_PRIORITY_CLASS;
-            case PROCESS_PRIORITY_CLASS_NORMAL: default: return NORMAL_PRIORITY_CLASS;
+            // TODO: How can this case happen?
+            default:
+                DPRINT1("PriorityClass.PriorityClass: %u\n", PriorityClass.PriorityClass);
+                ASSERTMSG("Unknown priority class\n", FALSE);
+                return NORMAL_PRIORITY_CLASS;
         }
     }
+    else if (Status == STATUS_DATATYPE_MISALIGNMENT) // -> ERROR_NOACCESS.
+        DPRINT1("NtQueryInformationProcess(ProcessPriorityClass) returned STATUS_DATATYPE_MISALIGNMENT\n");
+    else
+// 0x80000002 STATUS_DATATYPE_MISALIGNMENT
+        DPRINT1("NtQueryInformationProcess(ProcessPriorityClass) returned 0x%08lx\n", Status);
 
     /* Failure path */
     BaseSetLastNTError(Status);
