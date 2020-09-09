@@ -70,13 +70,13 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: reactos-gcc-i386-HostT-${{github.sha}}
-          path: build/host-tools/*
-      - name: Upload sdk-tools
+          path: build/host-tools/bin/*
+      - name: Upload sdk/tools
         if: true
         uses: actions/upload-artifact@v2
         with:
           name: reactos-gcc-i386-SdkT-${{github.sha}}
-          path: build/sdk-tools/*
+          path: build/sdk/tools/*
 
   build-clang-cl-i386:
     # Useless to me, unless touching clang.
@@ -137,7 +137,7 @@ jobs:
         path: build/bootcdregtest.iso
 
   build-msvc-i386:
-    if: false
+    if: true
     name: MSVC (i386)
     runs-on: windows-latest
     steps:
@@ -187,6 +187,18 @@ jobs:
       with:
         name: reactos-msvc-i386-BcdRt-${{github.sha}}
         path: build/bootcdregtest.iso
+    - name: Upload host-tools
+      if: true
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-gcc-i386-HostT-${{github.sha}}
+        path: build/host-tools/bin/*
+    - name: Upload sdk/tools
+      if: true
+      uses: actions/upload-artifact@v2
+      with:
+        name: reactos-gcc-i386-SdkT-${{github.sha}}
+        path: build/sdk/tools/*
 
   build-msvc-amd64:
     # Useless to me, unless touching x64.
