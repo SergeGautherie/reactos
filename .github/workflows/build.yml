@@ -142,7 +142,7 @@ jobs:
         path: build/bootcdregtest.iso
 
   build-msvc-i386:
-    if: false
+    if: true
     name: MSVC (i386)
     runs-on: windows-latest
     steps:
@@ -160,7 +160,8 @@ jobs:
     - name: Add CL to PATH
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: amd64_x86
+#        # Essai x86 pour Host Tools...
+        arch: x86
     - uses: actions/checkout@v2
       with:
         path: src
@@ -197,7 +198,7 @@ jobs:
     - name: Upload host-tools
       # CabMan, Spec2Def, WIdl, ...
       # Mais x64 :-<
-      if: false
+      if: true
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msvc-i386-HostT-${{github.sha}}
