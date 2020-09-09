@@ -124,7 +124,7 @@ KiRecordDr7(OUT PULONG Dr7Ptr,
         if (Mask != NewMask)
         {
             /* Update it */
-            KeGetCurrentThread()->Header.DebugActive = (UCHAR)NewMask;
+            KeGetCurrentThread()->Header.DebugActive = (BOOLEAN)NewMask;
         }
     }
 
@@ -590,7 +590,7 @@ KeContextToTrapFrame(IN PCONTEXT Context,
         if (PreviousMode != KernelMode)
         {
             /* Save the mask */
-            KeGetCurrentThread()->Header.DebugActive = (UCHAR)DrMask;
+            KeGetCurrentThread()->Header.DebugActive = (BOOLEAN)DrMask;
         }
     }
 

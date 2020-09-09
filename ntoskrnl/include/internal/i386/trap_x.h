@@ -388,7 +388,7 @@ KiEnterInterruptTrap(IN PKTRAP_FRAME TrapFrame)
         (TrapFrame->EFlags & EFLAGS_V86_MASK))
     {
         /* Check for active debugging */
-        if (KeGetCurrentThread()->Header.DebugActive & 0xFF)
+        if (KeGetCurrentThread()->Header.DebugActive)
         {
             /* Handle debug registers */
             KiHandleDebugRegistersOnTrapEntry(TrapFrame);
@@ -421,7 +421,7 @@ KiEnterTrap(IN PKTRAP_FRAME TrapFrame)
         (TrapFrame->EFlags & EFLAGS_V86_MASK))
     {
         /* Check for active debugging */
-        if (KeGetCurrentThread()->Header.DebugActive & 0xFF)
+        if (KeGetCurrentThread()->Header.DebugActive)
         {
             /* Handle debug registers */
             KiHandleDebugRegistersOnTrapEntry(TrapFrame);
