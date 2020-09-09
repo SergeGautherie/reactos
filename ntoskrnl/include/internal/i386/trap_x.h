@@ -88,8 +88,8 @@ KiFillTrapFrameDebug(IN PKTRAP_FRAME TrapFrame)
         ULONG DrValue = __readdr(DrNumner); \
         if (DrValue != (ExpectedValue)) \
         { \
-            DbgPrint("Dr%ld: expected %.8lx, got %.8lx\n", \
-                    DrNumner, ExpectedValue, DrValue); \
+            DbgPrint("(%s:%u) Dr%d: expected %08lx, got %08lx\n", \
+                     __RELFILE__, __LINE__, DrNumner, ExpectedValue, DrValue); \
             __debugbreak(); \
         } \
     }
