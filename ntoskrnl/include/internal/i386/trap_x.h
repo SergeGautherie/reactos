@@ -81,8 +81,7 @@ KiFillTrapFrameDebug(IN PKTRAP_FRAME TrapFrame)
     TrapFrame->PreviousPreviousMode = (ULONG)-1;
 }
 
-#define DR7_RESERVED_READ_AS_1 0x400
-
+// To check DR0/DR1/DR2/DR3.
 #define CheckDr(DrNumner, ExpectedValue) \
     { \
         ULONG DrValue = __readdr(DrNumner); \
@@ -90,6 +89,18 @@ KiFillTrapFrameDebug(IN PKTRAP_FRAME TrapFrame)
         { \
             DbgPrint("(%s:%u) Dr%d: expected %08lx, got %08lx\n", \
                      __RELFILE__, __LINE__, DrNumner, ExpectedValue, DrValue); \
+            __debugbreak(); \
+        } \
+    }
+
+// To check DR6/DR7, which have reserved bits.
+#define CheckDrWithMask(DrNumner, MaskAnd, ExpectedValue) \
+    { \
+        ULONG DrValue = __readdr(DrNumner) & (MaskAnd); \
+        if (__builtin_expect(DrValue != (ExpectedValue), 0)) \
+        { \
+            DbgPrint("(%s:%u) Dr%d & %08lx: expected %08lx, got %08lx\n", \
+                     __RELFILE__, __LINE__, DrNumner, MaskAnd, ExpectedValue, DrValue); \
             __debugbreak(); \
         } \
     }
@@ -165,7 +176,10 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
             CheckDr(1, TrapFrame->Dr1);
             CheckDr(2, TrapFrame->Dr2);
             CheckDr(3, TrapFrame->Dr3);
-            CheckDr(7, TrapFrame->Dr7 | DR7_RESERVED_READ_AS_1);
+// Try it!
+            CheckDrWithMask(6, DR6_LEGAL, 0x00000000);
+// Remove '& ~DR7_RESERVED_MASK' once sanitized everywhere.
+            CheckDrWithMask(7, ~DR7_RESERVED_MASK, TrapFrame->Dr7 & ~DR7_RESERVED_MASK);
         }
     }
     else
@@ -175,7 +189,10 @@ KiExitTrapDebugChecks(IN PKTRAP_FRAME TrapFrame,
         CheckDr(1, Prcb->ProcessorState.SpecialRegisters.KernelDr1);
         CheckDr(2, Prcb->ProcessorState.SpecialRegisters.KernelDr2);
         CheckDr(3, Prcb->ProcessorState.SpecialRegisters.KernelDr3);
-        CheckDr(7, Prcb->ProcessorState.SpecialRegisters.KernelDr7);
+// Try it!
+        CheckDrWithMask(6, DR6_LEGAL, 0x00000000);
+// Remove '& ~DR7_RESERVED_MASK' once sanitized everywhere.
+        CheckDrWithMask(7, ~DR7_RESERVED_MASK, Prcb->ProcessorState.SpecialRegisters.KernelDr7 & ~DR7_RESERVED_MASK);
     }
 
     StopChecking = FALSE;
