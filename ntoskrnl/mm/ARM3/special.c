@@ -76,18 +76,40 @@ BOOLEAN
 NTAPI
 MmUseSpecialPool(SIZE_T NumberOfBytes, ULONG Tag)
 {
+    PLDR_DATA_TABLE_ENTRY LdrEntry;
+    PVOID CallersCaller;
+    UNICODE_STRING Win32k = RTL_CONSTANT_STRING(L"win32k.sys");
+
     /* Special pool is not suitable for allocations bigger than 1 page */
     if (NumberOfBytes > (PAGE_SIZE - sizeof(POOL_HEADER)))
     {
         return FALSE;
     }
 
-    if (MmSpecialPoolTag == '*')
+    if (Tag == 'enoN' || KeGetCurrentIrql() >= DISPATCH_LEVEL)
     {
         return TRUE;
     }
 
-    return Tag == MmSpecialPoolTag;
+    /* Find the first four letters of the driver name if we can */
+    RtlGetCallersAddress(NULL, &CallersCaller);
+    if (!PsLoadedModuleList.Flink)
+    {
+        return TRUE;
+    }
+
+    LdrEntry = MiLookupDataTableEntry(CallersCaller);
+    if (!LdrEntry)
+    {
+        return TRUE;
+    }
+
+    if (RtlEqualUnicodeString(&LdrEntry->BaseDllName, &Win32k, TRUE))
+    {
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 BOOLEAN
