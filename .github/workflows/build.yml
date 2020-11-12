@@ -107,6 +107,7 @@ jobs:
 
   build-clang-cl-i386:
     name: Clang-CL (i386)
+    if: false
     runs-on: windows-latest
     steps:
     - name: Install packages
@@ -259,3 +260,63 @@ jobs:
         cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
     - name: Build
       run: cmake --build ${{github.workspace}}\build --target bootcd --target livecd
+
+  build-vssolution-i386:
+    name: VSSolution (i386)
+#     if: false
+    runs-on: windows-latest
+    steps:
+      - name: Install Flex and Bison
+        run: |
+          curl -O https://svn.reactos.org/storage/vperevertkin/flexbison.7z
+          7z x flexbison.7z -O${{github.workspace}}\bin
+          echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Add CL to PATH
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_x86
+      - uses: actions/checkout@v2
+        with:
+          path: src
+      - name: Configure
+        # "The term 'call' is not recognized as a name of a cmdlet, function, script file, or executable program."
+        run: |
+          mkdir build
+          cd build
+          ${{github.workspace}}\src\configure.cmd VSSolution
+      - name: Upload sln
+#         if: false
+        uses: actions/upload-artifact@v2
+        with:
+          name: sln-vssolution-i386-${{github.sha}}
+          path: build/REACTOS.sln
+      - name: Build
+        # default: /p:Configuration=Debug /p:Platform=x86
+        # REACTOS.sln:
+        # Debug|Win32 = Debug|Win32
+        # Release|Win32 = Release|Win32
+        # MinSizeRel|Win32 = MinSizeRel|Win32
+        # RelWithDebInfo|Win32 = RelWithDebInfo|Win32
+        run: |
+          cd ${{github.workspace}}\build
+          msbuild /verbosity:quiet /p:Platform=Win32 /target:bootcd REACTOS.sln
+      - name: Generate ISOs
+        if: false # Automatically built by default/global sln target.
+        working-directory: ${{github.workspace}}\build
+        run: |
+          cmake --build . --target bootcd
+          cmake --build . --target livecd
+      - name: Upload bootcd
+#         if: false
+        uses: actions/upload-artifact@v2
+        with:
+          name: reactos-vssolution-i386-${{github.sha}}
+          path: build/bootcd.iso
+      - name: Upload livecd
+#         if: false
+        uses: actions/upload-artifact@v2
+        with:
+          name: reactos-vssolution-i386-${{github.sha}}
+          path: build/livecd.iso
