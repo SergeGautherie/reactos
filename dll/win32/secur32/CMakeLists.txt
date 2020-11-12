@@ -30,3 +30,9 @@ target_link_libraries(secur32 lsalib wine)
 add_importlibs(secur32 advapi32 netapi32 msvcrt kernel32 ntdll)
 add_pch(secur32 precomp.h SOURCE)
 add_cd_file(TARGET secur32 DESTINATION reactos/system32 FOR all)
+
+if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
+    # FIXME: To be fixed and removed
+# Does not help:    add_compile_options(-fcommon)
+    target_compile_options(secur32 PRIVATE -fcommon)
+endif()

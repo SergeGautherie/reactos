@@ -51,10 +51,12 @@ if(ARCH STREQUAL "i386")
     endif()
 endif()
 
-# CLang default to -fno-common from version 11 onward.
-if (USE_CLANG_CL)
+# if (USE_CLANG_CL)
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
     # Make sure we do not duplicate any symbol
-    add_compile_options(-fno-common)
+    # Clang 11+ has it as default
+    # Commented out, to avoid tons of 'clang-cl: warning: unknown argument ignored in clang-cl: '-fno-common' [-Wunknown-argument]'
+    # add_compile_options(-fno-common)
 endif()
 
 # VS 12+ requires /FS when used in parallel compilations

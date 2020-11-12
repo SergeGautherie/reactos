@@ -48,6 +48,7 @@ add_compile_options("$<$<NOT:$<COMPILE_LANGUAGE:CXX>>:-nostdinc>")
 add_compile_options(-mstackrealign)
 
 # Make sure we do not duplicate any symbol
+# GCC 10+ and Clang 11+ have it as default
 add_compile_options(-fno-common)
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
