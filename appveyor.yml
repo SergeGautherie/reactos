@@ -1,3 +1,9 @@
+image:
+#   - Visual Studio 2013
+#   - Visual Studio 2015
+#   - Visual Studio 2017
+  - Visual Studio 2019
+
 environment:
   matrix:
 #     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
@@ -14,17 +20,18 @@ matrix:
   fast_finish: false
 
 init:
-#   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-#   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
-# TODO...        $env:PATH="C:\RosCMakeNinja\bin;$env:PATH"
-  - ps: >-
-      If ($env:BuildType -Match "clang-cl") {
-        $env:clang_configure_option="clang"
-        (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
-        7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
-      } Else {
-        $env:clang_configure_option=""
-      }
+  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/storage/vperevertkin/flexbison.7z","C:\flexbison.7z")
+    # AppV: %APPVEYOR_BUILD_FOLDER% must remain empty at this stage :-/
+  - 7z x C:\flexbison.7z -oC:\RosCMakeNinja\bin
+# # TODO...        $env:PATH="C:\RosCMakeNinja\bin;$env:PATH"
+#   - ps: >-
+#       If ($env:BuildType -Match "clang-cl") {
+#         $env:clang_configure_option="clang"
+#         (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/clang-cl.7z","C:\clang-cl.7z")
+#         7z x C:\clang-cl.7z -oC:\RosCMakeNinja\bin
+#       } Else {
+#         $env:clang_configure_option=""
+#       }
 
 build_script:
 #   - set PATH=C:\RosCMakeNinja\bin;%PATH%
@@ -69,10 +76,12 @@ for:
       - BuildType: vssolution
 
   build_script:
-#     - set PATH=C:\RosCMakeNinja\bin;%PATH%
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+    - set PATH=;%PATH%;C:\RosCMakeNinja\bin
+    - set BISON_PKGDATADIR=C:\RosCMakeNinja\bin\share\bison
+    - set M4=C:\RosCMakeNinja\bin\m4.exe
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
     - cmake --version
     - md C:\ros_build
     - cd C:\ros_build
     - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution
-    - msbuild /verbosity:quiet /target:bootcd REACTOS.sln
+    - msbuild /verbosity:quiet /p:Platform=Win32 /target:bootcd REACTOS.sln
