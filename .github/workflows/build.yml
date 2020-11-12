@@ -5,6 +5,8 @@ jobs:
   build-msvc-i386-v141:
     name: MSVC (i386) (v141)
     runs-on: windows-2016
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - name: Install packages
       run: choco install ninja -y
@@ -34,6 +36,8 @@ jobs:
   build-msvc-i386-v142:
     name: MSVC (i386) (v142)
     runs-on: windows-2019
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - name: Install packages
       run: choco install ninja -y
@@ -63,6 +67,8 @@ jobs:
   build-msvc-amd64-v141:
     name: MSVC (amd64) (v141)
     runs-on: windows-2016
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - name: Install packages
       run: choco install ninja -y
@@ -93,6 +99,8 @@ jobs:
   build-msvc-amd64-v142:
     name: MSVC (amd64) (v142)
     runs-on: windows-2019
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - name: Install packages
       run: choco install ninja -y
