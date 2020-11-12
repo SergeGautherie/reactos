@@ -1,12 +1,12 @@
 #ifndef __NTDDK_EX__H__
 #define __NTDDK_EX__H__
 
-//#ifndef USE_REACTOS_DDK
+#ifndef USE_REACTOS_DDK
 #ifdef ASSERT
 #undef ASSERT
 #define ASSERT(x) ((void)0)
 #endif //ASSERT
-//#endif //USE_REACTOS_DDK
+#endif //USE_REACTOS_DDK
 
 
 #if !defined(FILE_CHARACTERISTIC_PNP_DEVICE) || defined(USE_REACTOS_DDK) // DDK 2003
