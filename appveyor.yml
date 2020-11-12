@@ -1,9 +1,9 @@
 image:
+  - Visual Studio 2019
+    # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
+  - Visual Studio 2017
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
   - Visual Studio 2015
-    # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
-#   - Visual Studio 2017
-#   - Visual Studio 2019
 
 environment:
   matrix:
@@ -26,20 +26,40 @@ init:
 
 build_script:
 #   - set PATH=C:\RosCMakeNinja\bin;%PATH%
-  - if "%BuildType%" == "msvc-x64" (
-        call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+    # On VS2015/VS2017 images: OK.
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2015"  if "%BuildType%" == "msvc-x64" (
+        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+      ) else (
+        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+      )
+    # On VS2017 image: Fails.
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2017"  if "%BuildType%" == "msvc-x64" (
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64 -vcvars_ver=14.0
+      ) else (
+        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+      )
+    # On VS2019 image: Fails.
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2019"  if "%BuildType%" == "msvc-x64" (
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64 -vcvars_ver=14.0
       ) else (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
       )
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
-#  -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
-  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
+  - call %APPVEYOR_BUILD_FOLDER%\configure.cmd -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
+    #  -k0
   - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-#   - ps: >-
-#       & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & ninja 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - ps: >-
+      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+  - ps: >-
+      & ninja livecd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+
+after_build:
+  - set SGVER=%APPVEYOR_BUILD_NUMBER%-%APPVEYOR_REPO_COMMIT:~0,7%-%BuildType%-%APPVEYOR_BUILD_WORKER_IMAGE:~14,4%
+  - appveyor PushArtifact bootcd.iso -FileName bootcd-%SGVER%.iso
+  - appveyor PushArtifact livecd.iso -FileName livecd-%SGVER%.iso
 
 test: off
 deploy: off
