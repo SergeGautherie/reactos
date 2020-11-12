@@ -19,6 +19,19 @@ matrix:
   fast_finish: false
 
 init:
+# FAILED: boot/freeldr/freeldr/frldr16.bin.obj
+# cmd.exe /C "cd /D C:\ros_build\boot\freeldr\freeldr && "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\\bin\HostX86\x86\ml.exe" /nologo /Cp /FoC:/ros_build/boot/freeldr/freeldr/frldr16.bin.obj /c /Ta C:/ros_build/boot/freeldr/freeldr/frldr16.bin.tmp"
+# The system cannot find the path specified.
+  - dir "C:\"
+  - dir "C:\Program Files (x86)\"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\HostX86\"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\HostX86\x86\"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\HostX86\x86\ml.exe"
+  - dir "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\\bin\HostX86\x86\ml.exe"
+  - exit
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/storage/vperevertkin/flexbison.7z","C:\flexbison.7z")
     # AppV: %APPVEYOR_BUILD_FOLDER% must remain empty at this stage :-/
   - 7z x C:\flexbison.7z -oC:\RosCMakeNinja\bin
@@ -54,12 +67,9 @@ build_script:
   - cmake --version
   - md c:\ros_build
   - cd c:\ros_build
-#  -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd
   - ps: >-
-      & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-#   - ps: >-
-#       & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+      & ninja 2>&1
 
 test: off
 deploy: off
