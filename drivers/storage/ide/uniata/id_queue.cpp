@@ -238,12 +238,12 @@ UniataQueueRequest(
         if(chan->queue_depth == 0) {
             chan->cur_req = AtaReq;
 
-/*
+/**/
             ASSERT(LunExt->LunSelectWaitCount == 0);
             if(chan->NumberLuns > 1) {
                 ASSERT(chan->lun[GET_CDEV(Srb) ^ 1]->LunSelectWaitCount == 0);
             }
-*/
+/**/
         }
 #endif
     }
