@@ -33,7 +33,7 @@ jobs:
       - name: Configure
         run: |
           mkdir build
-          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1' > commands
+          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=1' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Build
         run: |
@@ -96,7 +96,7 @@ jobs:
       - name: Configure
         run: |
           mkdir build
-          echo 'cd ${{github.workspace}}/build && cmake ${{github.workspace}}/src -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-clang.cmake -DARCH:STRING=i386 -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DCLANG_VERSION=${{env.LLVM_VERSION}}' > commands
+          echo 'cd ${{github.workspace}}/build && cmake ${{github.workspace}}/src -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-clang.cmake -DARCH:STRING=i386 -DENABLE_CCACHE=1 -DCLANG_VERSION=${{env.LLVM_VERSION}}' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Build
         run: |
@@ -149,7 +149,7 @@ jobs:
         mkdir build
         cd build
         $env:PATH = "${env:PROGRAMFILES(X86)}\llvm\bin;$env:PATH"
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DUSE_CLANG_CL:BOOL=1 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DUSE_CLANG_CL:BOOL=1 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
@@ -197,7 +197,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
@@ -242,7 +242,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: |
@@ -286,7 +286,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{github.workspace}}\src
+        cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
     - name: Upload sln
 #       if: false
       uses: actions/upload-artifact@v2
@@ -339,7 +339,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          ${{github.workspace}}\src\configure.cmd VSSolution -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
+          ${{github.workspace}}\src\configure.cmd VSSolution
       - name: Upload sln
 #         if: false
         uses: actions/upload-artifact@v2
