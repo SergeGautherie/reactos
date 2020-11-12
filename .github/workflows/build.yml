@@ -58,6 +58,7 @@ jobs:
 
   build-clang-i386:
     name: Clang (i386)
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Install RosBE
