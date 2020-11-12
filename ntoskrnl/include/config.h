@@ -3,6 +3,9 @@
 // Enable Driver Verifier checks in ObReferenceObjectByHandle(). (CORE-10207)
 #define ENABLE_DRIVER_VERIFIER_OBREFERENCEOBJECTBYHANDLE
 
+// Let Special Pool catch underruns, instead of overruns.
+// #define ENABLE_SPECIAL_POOL_CATCH_UNDERRUNS
+
 // Enable Special Pool for everything, but modules which are not win32k.sys. (CORE-10380)
 #define ENABLE_SPECIAL_POOL_DEFAULT_AND_WIN32K
 

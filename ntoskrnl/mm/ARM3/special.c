@@ -51,7 +51,11 @@ PFN_COUNT MiSpecialPagesNonPaged;
 PFN_COUNT MiSpecialPagesNonPagedPeak;
 PFN_COUNT MiSpecialPagesNonPagedMaximum;
 
+#ifdef ENABLE_SPECIAL_POOL_CATCH_UNDERRUNS
+BOOLEAN MmSpecialPoolCatchOverruns = FALSE;
+#else
 BOOLEAN MmSpecialPoolCatchOverruns = TRUE;
+#endif
 
 typedef struct _MI_FREED_SPECIAL_POOL
 {
