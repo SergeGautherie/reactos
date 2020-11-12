@@ -175,7 +175,7 @@ jobs:
 
   build-msvc-i386:
     name: MSVC (i386)
-#     if: false  # LocalOnly: WorksFine.
+    if: false  # LocalOnly: WorksFine.
     runs-on: windows-2016
     steps:
     - name: Install packages
@@ -221,7 +221,7 @@ jobs:
   build-msvc-amd64:
     name: MSVC (amd64)
 # ToDo, Investigate: Regression? Compare to old/new official builds...
-    if: false  # LocalOnly: WorksFine.
+#     if: false  # LocalOnly: WorksFine.
     runs-on: windows-2016
     steps:
     - name: Install packages
@@ -237,6 +237,7 @@ jobs:
       uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: amd64
+        toolset: '14.0'
     - uses: actions/checkout@v2
       with:
         path: src
@@ -323,7 +324,7 @@ jobs:
 
   build-msbuild-i386-141:
     name: MSBuild (i386) 141
-#     if: false
+    if: false
     runs-on: windows-2019
     steps:
     - name: Install Flex and Bison
