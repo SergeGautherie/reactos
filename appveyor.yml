@@ -4,16 +4,15 @@ image:
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
 #   - Visual Studio 2015
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
-  - Visual Studio 2017
-#   - Visual Studio 2019
+#   - Visual Studio 2017
+  - Visual Studio 2019
 
 environment:
   matrix:
 #     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
 #     - BuildType: "msvc-x64"
 #     - BuildType: "msvc"
-    - BuildType: vssolution2015
-    - BuildType: vssolution2017
+    - BuildType: vssolution
 #     - BuildType: "clang-cl"
 
 version: REACTOS_SOURCE_DIR.CORE-15991.reactos.appveyor.{build}
@@ -77,7 +76,7 @@ for:
 -
   matrix:
     only:
-      - BuildType: vssolution2015
+      - BuildType: vssolution
 
   build_script:
 # Later:    - dir "C:\Program Files (x86)\Microsoft SDKs\" /s
@@ -98,7 +97,7 @@ for:
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x86
       # VS12 (2013): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
-      # VS14 (2015). All R.sln: killed after 60+ min :-(
+      # VS14 (2015). ALL_BUILD: ERROR INIT; All R.sln: killed after 60+ min :-(
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
 # On VS2017 image:
@@ -115,10 +114,9 @@ for:
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x86
       # VS12 (2013): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
-      # VS14 (2015).
-# 
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-      # VS15 (2017).
+      # VS14 (2015). ALL_BUILD: ERROR INIT; All R.sln: killed after 60+ min :-(
+#     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+      # VS15 (2017). ALL_BUILD, All R.sln: killed after 60+ min :-(
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
 # On VS2019 image:
@@ -131,78 +129,9 @@ for:
 #²     Microsoft SDKs []
       # VS14 (2015): Broken... (Not worth investigating.)
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-      # VS16 (2019). All R.sln: 44 min.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-
-    - cmake --version
-    - md C:\ros_build
-    - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution
-#     - msbuild /help
-      # '/targets': VS2015/VS2017 N/A, VS2019 Ignored :-(
-#     - msbuild /p:Platform=Win32 /targets REACTOS.sln
-      # '/target:bootcd': 'C:\ros_build\ZERO_CHECK.vcxproj : error MSB4057: The target "bootcd" does not exist in the project.'.
-      # '/maxCpuCount' (no value, or :2): 35-36 min, then 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(240,5): warning MSB8065: Custom build for item "C:\ros_build\CMakeFiles\fa1a9b45fde421cd14b53fd8e7012a0e\reactos.inf.rule" succeeded, but specified output "c:\ros_build\__some_non_existent_file" has not been created. This may cause incremental build to work incorrectly. [C:\ros_build\reactos_cab.vcxproj]'.
-    - msbuild /verbosity:quiet /p:Platform=Win32 ALL_BUILD.vcxproj
--
-  matrix:
-    only:
-      - BuildType: vssolution2017
-
-  build_script:
-# Later:    - dir "C:\Program Files (x86)\Microsoft SDKs\" /s
-# Later:    - dir "C:\Program Files\Microsoft SDKs\" /s
-#     - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\"
-#     - cd "C:\Program Files (x86)\" && dir vcvarsall.bat /s
-#     - cd "C:\Program Files\" && dir vcvarsall.bat /s
-    - set PATH=;%PATH%;C:\RosCMakeNinja\bin
-    - set BISON_PKGDATADIR=C:\RosCMakeNinja\bin\share\bison
-    - set M4=C:\RosCMakeNinja\bin\m4.exe
-
-# On VS2015 image:
-      # VS9  (2008): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat" x86
-      # VS10 (2010): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-      # VS11 (2012): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x86
-      # VS12 (2013): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
-      # VS14 (2015). All R.sln: killed after 60+ min :-(
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-
-# On VS2017 image:
-#   C:\Program Files (x86)\
-#²     Microsoft SDKs []
-#     Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat
-#²     Microsoft Visual Studio 14.0\SDK
-#     Microsoft Visual Studio 11.0\VC\vcvarsall.bat
-#     Microsoft Visual Studio 12.0\VC\vcvarsall.bat
-#     Microsoft Visual Studio 14.0\VC\vcvarsall.bat
-#   C:\Program Files\
-#²     Microsoft SDKs []
-      # VS11 (2012): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\vcvarsall.bat" x86
-      # VS12 (2013): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
-      # VS14 (2015).
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-      # VS15 (2017).
+      # VS16 (2019). ALL_BUILD: 35 min; boot\bootcd: 36 min; All R.sln: 44 min.
 # 
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
-
-# On VS2019 image:
-#   C:\Program Files (x86)\
-#²     Microsoft SDKs []
-#     Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat
-#²     Microsoft Visual Studio 14.0\SDK
-#     Microsoft Visual Studio 14.0\VC\vcvarsall.bat
-#   C:\Program Files\
-#²     Microsoft SDKs []
-      # VS14 (2015): Broken... (Not worth investigating.)
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
-      # VS16 (2019). All R.sln: 44 min.
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
     - cmake --version
     - md C:\ros_build
@@ -211,6 +140,11 @@ for:
 #     - msbuild /help
       # '/targets': VS2015/VS2017 N/A, VS2019 Ignored :-(
 #     - msbuild /p:Platform=Win32 /targets REACTOS.sln
-      # '/target:bootcd': 'C:\ros_build\ZERO_CHECK.vcxproj : error MSB4057: The target "bootcd" does not exist in the project.'.
-      # '/maxCpuCount' (no value, or :2): 35-36 min, then 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(240,5): warning MSB8065: Custom build for item "C:\ros_build\CMakeFiles\fa1a9b45fde421cd14b53fd8e7012a0e\reactos.inf.rule" succeeded, but specified output "c:\ros_build\__some_non_existent_file" has not been created. This may cause incremental build to work incorrectly. [C:\ros_build\reactos_cab.vcxproj]'.
+      # R.sln, '/maxCpuCount' (no value, or :2): 35-36 min, then 'C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(240,5): warning MSB8065: Custom build for item "C:\ros_build\CMakeFiles\fa1a9b45fde421cd14b53fd8e7012a0e\reactos.inf.rule" succeeded, but specified output "c:\ros_build\__some_non_existent_file" has not been created. This may cause incremental build to work incorrectly. [C:\ros_build\reactos_cab.vcxproj]'.
+#     - msbuild /verbosity:quiet /p:Platform=Win32 REACTOS.sln
+      #   VS2017/VS2019: loads of 'D:\a\reactos\reactos\build\ZERO_CHECK.vcxproj : error MSB4057: The target "ALL_BUILD" does not exist in the project.'.
+    # - msbuild /verbosity:quiet /p:Platform=Win32 /target:ALL_BUILD REACTOS.sln
     - msbuild /verbosity:quiet /p:Platform=Win32 ALL_BUILD.vcxproj
+      # VS2010(!?): '/target:bootcd'. VS2015+: '/target:boot\bootcd'.
+    # - msbuild /verbosity:quiet /p:Platform=Win32 /target:boot\bootcd REACTOS.sln
+    # - msbuild /verbosity:quiet /p:Platform=Win32 /target:boot\livecd REACTOS.sln
