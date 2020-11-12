@@ -51,9 +51,10 @@ if(ARCH STREQUAL "i386")
     endif()
 endif()
 
-# CLang default to -fno-common from version 11 onward. We are not rady for this now
+# CLang default to -fno-common from version 11 onward.
 if (USE_CLANG_CL)
-    add_compile_options(-fcommon)
+    # Make sure we do not duplicate any symbol
+    add_compile_options(-fno-common)
 endif()
 
 # VS 12+ requires /FS when used in parallel compilations
