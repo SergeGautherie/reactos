@@ -14,8 +14,9 @@ matrix:
   fast_finish: false
 
 init:
-  - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
-  - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
+#   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/amine/RosCMakeNinja.zip","C:\RosCMakeNinja.zip")
+#   - 7z x C:\RosCMakeNinja.zip -oC:\RosCMakeNinja
+# TODO...        $env:PATH="C:\RosCMakeNinja\bin;$env:PATH"
   - ps: >-
       If ($env:BuildType -Match "clang-cl") {
         $env:clang_configure_option="clang"
@@ -26,7 +27,7 @@ init:
       }
 
 build_script:
-  - set PATH=C:\RosCMakeNinja\bin;%PATH%
+#   - set PATH=C:\RosCMakeNinja\bin;%PATH%
   - if "%BuildType%" == "msvc-x64" (
         call "C:\PROGRA~2\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
@@ -68,7 +69,7 @@ for:
       - BuildType: vssolution
 
   build_script:
-    - set PATH=C:\RosCMakeNinja\bin;%PATH%
+#     - set PATH=C:\RosCMakeNinja\bin;%PATH%
     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
     - cmake --version
     - md C:\ros_build
