@@ -83,5 +83,5 @@ for:
     - cmake --version
     - md C:\ros_build
     - cd C:\ros_build
-    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution
+    - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
     - msbuild /verbosity:quiet /p:Platform=Win32 REACTOS.sln
