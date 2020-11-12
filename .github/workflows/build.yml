@@ -4,7 +4,7 @@ on: [push, pull_request]
 jobs:
   build-gcc-i386:
     name: GCC (i386)
-#     if: false
+    if: false  # LocalOnly: WorksFine.
     runs-on: ubuntu-latest
     steps:
       - name: Install RosBE
@@ -58,7 +58,7 @@ jobs:
 
   build-clang-i386:
     name: Clang (i386)
-#     if: false
+    if: false  # LocalOnly: No use yet.
     runs-on: ubuntu-latest
     steps:
       - name: Install RosBE
@@ -103,19 +103,20 @@ jobs:
           echo 'cd ${{github.workspace}}/build && cmake --build .' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Generate ISOs
+        if: false  # Works, but useless for the time being.
         run: |
           echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
       - name: Print ccache statistics
         run: ccache -s
       - name: Upload bootcd
-#         if: false  # Immediate hang with CPU=100%.
+        if: false  # Immediate 'qemu: fatal: triple fault'.
         uses: actions/upload-artifact@v2
         with:
           name: reactos-clang-i386-${{github.sha}}
           path: build/bootcd.iso
       - name: Upload livecd
-#         if: false  # Immediate hang with CPU=100%.
+        if: false  # Immediate 'qemu: fatal: triple fault'.
         uses: actions/upload-artifact@v2
         with:
           name: reactos-clang-i386-${{github.sha}}
@@ -123,7 +124,7 @@ jobs:
 
   build-clang-cl-i386:
     name: Clang-CL (i386)
-#     if: false
+    if: false  # LocalOnly: WorksFine.
     runs-on: windows-2016
     steps:
     - name: Install packages
@@ -154,19 +155,19 @@ jobs:
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
     - name: Generate ISOs
-#       if: false
+      if: false  # Works, but useless for the time being.
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
     - name: Upload bootcd
-#       if: false  # Immediate hang with CPU=100%.
+      if: false  # Crash soon during boot.
       uses: actions/upload-artifact@v2
       with:
         name: reactos-clang-cl-i386-${{github.sha}}
         path: build/bootcd.iso
     - name: Upload livecd
-#       if: false  # Immediate hang with CPU=100%.
+      if: false  # Crash soon during boot.
       uses: actions/upload-artifact@v2
       with:
         name: reactos-clang-cl-i386-${{github.sha}}
@@ -174,7 +175,7 @@ jobs:
 
   build-msvc-i386:
     name: MSVC (i386)
-#     if: false
+    if: false  # LocalOnly: WorksFine.
     runs-on: windows-2016
     steps:
     - name: Install packages
@@ -219,7 +220,8 @@ jobs:
 
   build-msvc-amd64:
     name: MSVC (amd64)
-#     if: false
+# Investigate: Regression? Compare to official builds...
+    if: false  # LocalOnly: WorksFine.
     runs-on: windows-2016
     steps:
     - name: Install packages
@@ -248,16 +250,19 @@ jobs:
       run: |
         cmake --build .
     - name: Generate ISOs
+#       if: false  # Works, but useless to me for the time being.
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
     - name: Upload bootcd
+#       if: false  # QEMU 0.10.5: crash while loading drivers. Newer(!?): loops on windbg 2nd part.
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msvc-amd64-${{github.sha}}
         path: build/bootcd.iso
     - name: Upload livecd
+#       if: false  # QEMU 0.10.5: crash while loading drivers. Newer(!?): loops on windbg 2nd part.
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msvc-amd64-${{github.sha}}
@@ -288,7 +293,7 @@ jobs:
         cd build
         cmake -G "Visual Studio 15 2017" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
     - name: Upload sln
-#       if: false
+      if: false  # LocalDevOnly: WorksFine.
       uses: actions/upload-artifact@v2
       with:
         name: sln-msbuild-i386-${{github.sha}}
@@ -297,18 +302,19 @@ jobs:
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
     - name: Generate ISOs
+#       if: false  # Works, but useless for the time being.
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
     - name: Upload bootcd
-#       if: false  # Immediate hang with CPU=100%.
+#       if: false  # Immediate hang with CPU=0%.
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msbuild-i386-${{github.sha}}
         path: build/bootcd.iso
     - name: Upload livecd
-#       if: false  # Immediate hang with CPU=100%.
+#       if: false  # Immediate hang with CPU=0%.
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msbuild-i386-${{github.sha}}
@@ -341,7 +347,7 @@ jobs:
           cd build
           ${{github.workspace}}\src\configure.cmd VSSolution
       - name: Upload sln
-#         if: false
+        if: false  # LocalDevOnly: WorksFine.
         uses: actions/upload-artifact@v2
         with:
           name: sln-vssolution-i386-${{github.sha}}
@@ -363,13 +369,13 @@ jobs:
           # cmake --build . --target bootcd
           # cmake --build . --target livecd
       - name: Upload bootcd
-#         if: false  # Immediate hang with CPU=100%.
+#       if: false  # Immediate hang with CPU=0%.
         uses: actions/upload-artifact@v2
         with:
           name: reactos-vssolution-i386-${{github.sha}}
           path: build/bootcd.iso
       - name: Upload livecd
-#         if: false  # Immediate hang with CPU=100%.
+#       if: false  # Immediate hang with CPU=0%.
         uses: actions/upload-artifact@v2
         with:
           name: reactos-vssolution-i386-${{github.sha}}
