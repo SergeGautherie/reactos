@@ -2,6 +2,75 @@ name: Build
 on: [push, pull_request]
 
 jobs:
+  build-gcc-i386-norossym:
+    name: GCC (i386) NoRosSym
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install RosBE
+        run: |
+          wget https://svn.reactos.org/storage/vperevertkin/rosbe-ci.tar.zst
+          mkdir ${{github.workspace}}/rosbe
+          tar -I zstd -xvf rosbe-ci.tar.zst --directory ${{github.workspace}}/rosbe
+      - name: Install other packages
+        if: false
+        run: sudo apt install ccache
+      - name: Install Python packages
+        uses: BSFishy/pip-action@v1 # See https://github.com/marketplace/actions/pip-installer
+        with:
+          packages: pefile
+      - uses: actions/checkout@v2
+        with:
+          path: src
+      - name: Set up cache for ccache
+        if: false
+        uses: actions/cache@v2
+        with:
+          path: ccache
+          key: ccache-gcc-i386_norossym-${{github.sha}}
+          restore-keys: |
+            ccache-gcc-i386_norossym-
+      - name: Set ccache settings
+        if: false
+        run: |
+          echo "CCACHE_BASEDIR=${{github.workspace}}" >> $GITHUB_ENV
+          echo "CCACHE_DIR=${{github.workspace}}/ccache" >> $GITHUB_ENV
+          echo "CCACHE_MAXSIZE=1G" >> $GITHUB_ENV
+          echo "CCACHE_SLOPPINESS=time_macros" >> $GITHUB_ENV
+      - name: Configure
+        run: |
+          mkdir build
+          echo 'cd ${{github.workspace}}/build && ${{github.workspace}}/src/configure.sh -DENABLE_CCACHE=0 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 -DNO_ROSSYM=1' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < commands
+      - name: Build
+        run: |
+          echo 'cd ${{github.workspace}}/build && cmake --build .' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < commands
+      - name: Update baseaddress file
+        working-directory: ${{github.workspace}}/src
+        run: python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
+      - name: Generate ISOs
+        run: |
+          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
+          ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
+      - name: Print ccache statistics
+        if: false
+        run: ccache -s
+      - name: Upload bootcd
+        uses: actions/upload-artifact@v2
+        with:
+          name: reactos-gcc-i386-norossym-${{github.sha}}
+          path: build/bootcd.iso
+      - name: Upload livecd
+        uses: actions/upload-artifact@v2
+        with:
+          name: reactos-gcc-i386-norossym-${{github.sha}}
+          path: build/livecd.iso
+      - name: Upload baseaddress file
+        uses: actions/upload-artifact@v2
+        with:
+          name: baseaddress-${{github.sha}}
+          path: src/sdk/cmake/baseaddress_dwarf.cmake
+
   build-gcc-i386:
     name: GCC (i386)
     runs-on: ubuntu-latest
