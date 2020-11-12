@@ -247,8 +247,7 @@ jobs:
         cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
-      run: |
-        cmake --build .
+      run: cmake --build .
     - name: Generate ISOs
 #       if: false  # Works, but useless to me for the time being.
       working-directory: ${{github.workspace}}\build
