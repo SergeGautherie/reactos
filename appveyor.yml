@@ -2,10 +2,10 @@ image:
     # (Assumed) Too old for ROS.
 #   - Visual Studio 2013
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
-#   - Visual Studio 2015
+  - Visual Studio 2015
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
 #   - Visual Studio 2017
-  - Visual Studio 2019
+#   - Visual Studio 2019
 
 environment:
   matrix:
@@ -98,7 +98,8 @@ for:
       # VS12 (2013): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
       # VS14 (2015). ALL_BUILD: ERROR INIT; All R.sln: killed after 60+ min :-(
-#     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+# 
+    - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
 # On VS2017 image:
 #   C:\Program Files (x86)\
@@ -130,8 +131,7 @@ for:
       # VS14 (2015): Broken... (Not worth investigating.)
 #     - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
       # VS16 (2019). ALL_BUILD: 35 min; boot\bootcd: 36 min; All R.sln: 44 min.
-# 
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
+#     - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x86
 
     - cmake --version
     - md C:\ros_build
