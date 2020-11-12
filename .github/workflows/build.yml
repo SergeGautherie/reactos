@@ -295,6 +295,9 @@ jobs:
         path: build/REACTOS.sln
     - name: Build
       working-directory: ${{github.workspace}}\build
+      run: cmake --build .
+    - name: Generate ISOs
+      working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
