@@ -524,7 +524,7 @@ MsqPostMouseMove(PTHREADINFO pti, MSG* Msg, LONG_PTR ExtraInfo)
     ListHead = &MessageQueue->HardwareMessagesListHead;
 
     // Do nothing if empty.
-    if (!IsListEmpty(ListHead->Flink))
+    if (!IsListEmpty(ListHead))
     {
        // Look at the end of the list,
        Message = CONTAINING_RECORD(ListHead->Blink, USER_MESSAGE, ListEntry);
@@ -2029,7 +2029,7 @@ co_MsqPeekHardwareMessage(IN PTHREADINFO pti,
       return FALSE;
    }
 
-   while (ListHead != &MessageQueue->HardwareMessagesListHead)
+   do
    {
       CurrentMessage = CONTAINING_RECORD(ListHead, USER_MESSAGE, ListEntry);
       ListHead = ListHead->Flink;
@@ -2097,6 +2097,7 @@ co_MsqPeekHardwareMessage(IN PTHREADINFO pti,
          }
       }
    }
+   while (ListHead != &MessageQueue->HardwareMessagesListHead);
 
    MessageQueue->ptiSysLock = NULL;
    pti->pcti->CTI_flags &= ~CTI_THREADSYSLOCK;
@@ -2115,18 +2116,15 @@ MsqPeekMessage(IN PTHREADINFO pti,
                   OUT PMSG Message)
 {
    PUSER_MESSAGE CurrentMessage;
-   PLIST_ENTRY ListHead;
+   PLIST_ENTRY Entry;
    DWORD QS_Flags;
    BOOL Ret = FALSE;
 
-   ListHead = pti->PostedMessagesListHead.Flink;
-
-   if (IsListEmpty(ListHead)) return FALSE;
-
-   while(ListHead != &pti->PostedMessagesListHead)
+   for (Entry = pti->PostedMessagesListHead.Flink;
+        Entry != &pti->PostedMessagesListHead;
+        Entry = Entry->Flink)
    {
-      CurrentMessage = CONTAINING_RECORD(ListHead, USER_MESSAGE, ListEntry);
-      ListHead = ListHead->Flink;
+      CurrentMessage = CONTAINING_RECORD(Entry, USER_MESSAGE, ListEntry);
 /*
  MSDN:
  1: any window that belongs to the current thread, and any messages on the current thread's message queue whose hwnd value is NULL.
@@ -2327,8 +2325,6 @@ MsqCleanupThreadMsgs(PTHREADINFO pti)
    }
 
    // Process Trouble Message List
-   if (!IsListEmpty(&usmList))
-   {
       CurrentEntry = usmList.Flink;
       while (CurrentEntry != &usmList)
       {
@@ -2371,7 +2367,6 @@ MsqCleanupThreadMsgs(PTHREADINFO pti)
             }
          }
       }
-   }
 }
 
 VOID FASTCALL
