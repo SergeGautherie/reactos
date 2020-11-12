@@ -262,15 +262,17 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         endif()
         add_definitions(-D_AMD64_ -D__x86_64__ -D_WIN64)
     elseif(ARCH STREQUAL "arm")
-        # _M_ARM is already defined by toolchain
-        add_definitions(-D_ARM_ -D__arm__ -DWIN32)
+        # # _M_ARM is already defined by toolchain
+        # Already on MSVC: WIN32 WIN64 ²_WIN64 no, _WIN32 _M_ARM yes.
+# Lots of WIN32: need to define it too here !!?
+        # add_compile_definitions(_ARM_ __arm__ ²WIN32)
         if(SARCH STREQUAL "omap3-zoom2")
             add_definitions(-D_ZOOM2_)
         endif()
     elseif(ARCH STREQUAL "arm64")
-        message(WARNING "TODO arm64")
-        # add_compile_definitions(_ARM64_=2041 __arm64__=2042 _WIN64=2043 _M_ARM64=2044)
-        # SARCH !?
+        # Already on MSVC: WIN32 WIN64 no, _WIN32 _WIN64 _M_ARM64 yes.
+# Few WIN64: Check/Convert them to _WIN64 !!?
+        add_compile_definitions(_ARM64_ __arm64__)
     endif()
 
     # Other
