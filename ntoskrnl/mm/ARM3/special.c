@@ -74,7 +74,9 @@ typedef struct _MI_FREED_SPECIAL_POOL
 
 /* PRIVATE FUNCTIONS **********************************************************/
 
-VOID NTAPI MiTestSpecialPool(VOID);
+#ifdef ENABLE_SPECIAL_POOL_SELFTEST
+static VOID NTAPI MiTestSpecialPool(VOID);
+#endif
 
 BOOLEAN
 NTAPI
@@ -307,7 +309,9 @@ MiInitializeSpecialPool(VOID)
     DPRINT1("Special pool start %p - end %p\n", MmSpecialPoolStart, MmSpecialPoolEnd);
     ExpPoolFlags |= POOL_FLAG_SPECIAL_POOL;
 
-    //MiTestSpecialPool();
+#ifdef ENABLE_SPECIAL_POOL_SELFTEST
+    MiTestSpecialPool();
+#endif
 }
 
 NTSTATUS
@@ -351,6 +355,8 @@ MmExpandSpecialPool(VOID)
     return STATUS_SUCCESS;
 }
 
+// SpecialType: Type of errors to catch.
+//              (0 = overruns; 1 = underruns; others = depends on MmSpecialPoolCatchOverruns)
 PVOID
 NTAPI
 MmAllocateSpecialPool(SIZE_T NumberOfBytes, ULONG Tag, POOL_TYPE PoolType, ULONG SpecialType)
@@ -758,13 +764,19 @@ MmFreeSpecialPool(PVOID P)
     InterlockedDecrementUL(&MmSpecialPagesInUse);
 }
 
+#ifdef ENABLE_SPECIAL_POOL_SELFTEST
+static
 VOID
 NTAPI
 MiTestSpecialPool(VOID)
 {
+    const ULONG TAG_TEST = 'TSET';
+
     ULONG i;
     PVOID p1, p2[100];
-    //PUCHAR p3;
+#ifdef ENABLE_SPECIAL_POOL_SELFTEST_EXCEPTION
+    PUCHAR p3;
+#endif
     ULONG ByteSize;
     POOL_TYPE PoolType = PagedPool;
 
@@ -772,8 +784,15 @@ MiTestSpecialPool(VOID)
     for (i=0; i<100; i++)
     {
         ByteSize = (100 * (i+1)) % (PAGE_SIZE - sizeof(POOL_HEADER));
-        p1 = MmAllocateSpecialPool(ByteSize, 'TEST', PoolType, 0);
-        DPRINT1("p1 %p size %lu\n", p1, ByteSize);
+        p1 = MmAllocateSpecialPool(ByteSize, TAG_TEST, PoolType, 0);
+        DPRINT1("%2lu: Allocated size %4lu, p1 %p, %s\n",
+                i, ByteSize, p1, (p1 == NULL ? "FAILED" : "Succeeded"));
+        if (p1 == NULL)
+        {
+            continue;
+        }
+
+        DPRINT("%2lu: Free p1 %p\n", i, p1);
         MmFreeSpecialPool(p1);
     }
 
@@ -781,25 +800,89 @@ MiTestSpecialPool(VOID)
     for (i=0; i<100; i++)
     {
         ByteSize = (100 * (i+1)) % (PAGE_SIZE - sizeof(POOL_HEADER));
-        p2[i] = MmAllocateSpecialPool(ByteSize, 'TEST', PoolType, 0);
-        DPRINT1("p2[%lu] %p size %lu\n", i, p1, ByteSize);
+        p2[i] = MmAllocateSpecialPool(ByteSize, TAG_TEST, PoolType, 0);
+        DPRINT1("%2lu: Allocated size %4lu, p2 %p, %s\n",
+                i, ByteSize, p2[i], (p2[i] == NULL ? "FAILED" : "Succeeded"));
     }
     for (i=0; i<100; i++)
     {
-        DPRINT1("Freeing %p\n", p2[i]);
+        if (p2[i] == NULL)
+        {
+            continue;
+        }
+
+        DPRINT("%2lu: Free p2 %p\n", i, p2[i]);
         MmFreeSpecialPool(p2[i]);
     }
 
-    // Overrun the buffer to test
-    //ByteSize = 16;
-    //p3 = MmAllocateSpecialPool(ByteSize, 'TEST', NonPagedPool, 0);
-    //p3[ByteSize] = 0xF1; // This should cause an exception
+#ifdef ENABLE_SPECIAL_POOL_SELFTEST_EXCEPTION
+    ByteSize = 16;
+    p3 = MmAllocateSpecialPool(ByteSize, TAG_TEST, NonPagedPool,
+                               MmSpecialPoolCatchOverruns ? 0 : 1);
+    DPRINT1("--: Allocated size %4lu, p3 %p, %s\n",
+            ByteSize, p3, (p3 == NULL ? "FAILED" : "Succeeded"));
 
-    // Underrun the buffer to test
-    //p3 = MmAllocateSpecialPool(ByteSize, 'TEST', NonPagedPool, 1);
-    //p3--;
-    //*p3 = 0xF1; // This should cause an exception
+    if (p3 != NULL)
+    {
+        if (MmSpecialPoolCatchOverruns)
+        {
+            DPRINT1("Test underrun : should not be detected\n");
+            i = *(volatile UCHAR *)(p3 - 1);
+            DPRINT1("p3 - 1, read    : 0x%02lx\n", i);
 
+            DPRINT1("Test underflow: should not be detected\n");
+            *(p3 - 1) = ~i;
+            i = *(volatile UCHAR *)(p3 - 1);
+            DPRINT1("p3 - 1, written : 0x%02lx\n", i);
+            *(p3 - 1) = ~i;
+            i = *(volatile UCHAR *)(p3 - 1);
+            DPRINT1("p3 - 1, restored: 0x%02lx\n", i);
+
+            // 0x000000CD = PAGE_FAULT_BEYOND_END_OF_ALLOCATION.
+// Both work, but only one can be triggered at a time.
+#if TRUE
+            DPRINT1("Test overrun  : should trigger an exception\n");
+            i = *(volatile UCHAR *)&p3[ByteSize];
+
+            // Make sure 'i' is used, though this should never be reached.
+            DPRINT1("p3 + 1, read    : 0x%02lx\n", i);
+#else
+            DPRINT1("Test overflow : should trigger an exception\n");
+            p3[ByteSize] = 0xF1;
+#endif
+        }
+        else
+        {
+            DPRINT1("Test overrun  : should not be detected\n");
+            i = *(volatile UCHAR *)&p3[ByteSize];
+            DPRINT1("p3 + 1, read    : 0x%02lx\n", i);
+
+            DPRINT1("Test overflow : should not be detected\n");
+            p3[ByteSize] = ~i;
+            i = *(volatile UCHAR *)&p3[ByteSize];
+            DPRINT1("p3 + 1, written : 0x%02lx\n", i);
+            p3[ByteSize] = ~i;
+            i = *(volatile UCHAR *)&p3[ByteSize];
+            DPRINT1("p3 + 1, restored: 0x%02lx\n", i);
+
+            // 0x000000CC = PAGE_FAULT_IN_FREED_SPECIAL_POOL.
+// Both work, but only one can be triggered at a time.
+#if TRUE
+            DPRINT1("Test underrun : should trigger an exception\n");
+            i = *(volatile UCHAR *)(p3 - 1);
+
+            // Make sure 'i' is used, though this should never be reached.
+            DPRINT1("p3 - 1 read    : 0x%02lx\n", i);
+#else
+            DPRINT1("Test underflow: should trigger an exception\n");
+            *(p3 - 1) = 0xF1;
+#endif
+        }
+
+        UNREACHABLE;
+    }
+#endif
 }
+#endif // ENABLE_SPECIAL_POOL_SELFTEST
 
 /* EOF */
