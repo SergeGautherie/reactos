@@ -2911,6 +2911,30 @@ ExAllocatePoolWithTagPriority(IN POOL_TYPE PoolType,
 {
     PVOID Buffer;
 
+// See EX_POOL_PRIORITY enum.
+#define PRIORITY_SPECIAL_POOL           0x00000008
+#define PRIORITY_SPECIAL_POOL_UNDERRUN  0x00000001
+
+    // Try special pool.
+    // Low/Normal/High priority itself is irrelevant.
+    if (BooleanFlagOn(Priority, PRIORITY_SPECIAL_POOL) &&
+        NumberOfBytes <= PAGE_SIZE - sizeof(POOL_HEADER))
+    {
+        Buffer = MmAllocateSpecialPool(NumberOfBytes,
+                                       Tag,
+                                       PoolType,
+                                       BooleanFlagOn(Priority, PRIORITY_SPECIAL_POOL_UNDERRUN) ? 1 : 0);
+        if (Buffer != NULL)
+        {
+            return Buffer;
+        }
+    }
+
+#undef PRIORITY_SPECIAL_POOL_UNDERRUN
+#undef PRIORITY_SPECIAL_POOL
+
+    // FIXME: Handle Low/Normal/High priorities. (CORE-13334)
+
     //
     // Allocate the pool
     //
