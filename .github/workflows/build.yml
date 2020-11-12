@@ -220,7 +220,7 @@ jobs:
 
   build-msvc-amd64:
     name: MSVC (amd64)
-# Investigate: Regression? Compare to official builds...
+# ToDo, Investigate: Regression? Compare to old/new official builds...
     if: false  # LocalOnly: WorksFine.
     runs-on: windows-2016
     steps:
@@ -299,10 +299,12 @@ jobs:
         path: build/REACTOS.sln
     - name: Build
       working-directory: ${{github.workspace}}\build
+        # VS2017: 19-20 min.
       run: cmake --build .
     - name: Generate ISOs
 #       if: false  # Works, but useless for the time being.
       working-directory: ${{github.workspace}}\build
+        # VS2017: 4 min.
       run: |
         cmake --build . --target bootcd
         cmake --build . --target livecd
@@ -319,7 +321,7 @@ jobs:
         name: reactos-msbuild-i386-${{github.sha}}
         path: build/livecd.iso
 
-  # Same as build-msbuild-i386, except calls configure/msbuild instead of cmake/cmake.
+    # Same as build-msbuild-i386, except calls configure/msbuild instead of cmake/cmake.
   build-vssolution-i386:
     name: VSSolution (i386)
 #     if: false
@@ -340,7 +342,7 @@ jobs:
         with:
           path: src
       - name: Configure
-        # "The term 'call' is not recognized as a name of a cmdlet, function, script file, or executable program."
+          # "The term 'call' is not recognized as a name of a cmdlet, function, script file, or executable program."
         run: |
           mkdir build
           cd build
@@ -352,29 +354,41 @@ jobs:
           name: sln-vssolution-i386-${{github.sha}}
           path: build/REACTOS.sln
       - name: Build
-        # default: /p:Configuration=Debug /p:Platform=x86
-        # REACTOS.sln:
-        # Debug|Win32 = Debug|Win32
-        # Release|Win32 = Release|Win32
-        # MinSizeRel|Win32 = MinSizeRel|Win32
-        # RelWithDebInfo|Win32 = RelWithDebInfo|Win32
-        run: |
-          cd ${{github.workspace}}\build
-          msbuild /verbosity:quiet /p:Platform=Win32 REACTOS.sln
-      - name: Generate ISOs
-        if: false  # Automatically built by default/global sln target.
         working-directory: ${{github.workspace}}\build
+          # default: /p:Configuration=Debug /p:Platform=x86
+          # REACTOS.sln:
+          # Debug|Win32 = Debug|Win32
+          # Release|Win32 = Release|Win32
+          # MinSizeRel|Win32 = MinSizeRel|Win32
+          # RelWithDebInfo|Win32 = RelWithDebInfo|Win32
+          #
+          # VS2017: 19 min.
+        run: msbuild /verbosity:quiet /p:Platform=Win32 ALL_BUILD.vcxproj
+      - name: Generate ISOs (sln)
+          # Automatically built by default/global sln target.
+        if: false  # Works, but useless for the time being.  # vcxproj is much faster!
+        working-directory: ${{github.workspace}}\build
+# ToDo, re-test: to confirm slowness.
+          # VS2017: 16 min.
         run: |
-          # cmake --build . --target bootcd
-          # cmake --build . --target livecd
+          msbuild /verbosity:quiet /p:Platform=Win32 /target:boot\bootcd REACTOS.sln
+          msbuild /verbosity:quiet /p:Platform=Win32 /target:boot\livecd REACTOS.sln
+      - name: Generate ISOs (vcxproj)
+          # Automatically built by default/global sln target.
+#         if: false  # Works, but useless for the time being.
+        working-directory: ${{github.workspace}}\build
+          # VS2017: 3 min.
+        run: |
+          msbuild /verbosity:quiet /p:Platform=Win32 boot\bootcd.vcxproj
+          msbuild /verbosity:quiet /p:Platform=Win32 boot\livecd.vcxproj
       - name: Upload bootcd
-#       if: false  # Immediate hang with CPU=0%.
+#         if: false  # Immediate hang with CPU=0%.
         uses: actions/upload-artifact@v2
         with:
           name: reactos-vssolution-i386-${{github.sha}}
           path: build/bootcd.iso
       - name: Upload livecd
-#       if: false  # Immediate hang with CPU=0%.
+#         if: false  # Immediate hang with CPU=0%.
         uses: actions/upload-artifact@v2
         with:
           name: reactos-vssolution-i386-${{github.sha}}
