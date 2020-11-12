@@ -84,4 +84,4 @@ for:
     - md C:\ros_build
     - cd C:\ros_build
     - call %APPVEYOR_BUILD_FOLDER%\configure.cmd VSSolution
-    - msbuild /verbosity:quiet /p:Platform=Win32 /target:bootcd REACTOS.sln
+    - msbuild /verbosity:quiet /p:Platform=Win32 REACTOS.sln

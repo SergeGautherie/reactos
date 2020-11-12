@@ -301,7 +301,7 @@ jobs:
         # RelWithDebInfo|Win32 = RelWithDebInfo|Win32
         run: |
           cd ${{github.workspace}}\build
-          msbuild /verbosity:quiet /p:Platform=Win32 /target:bootcd REACTOS.sln
+          msbuild /verbosity:quiet /p:Platform=Win32 REACTOS.sln
       - name: Generate ISOs
         if: false # Automatically built by default/global sln target.
         working-directory: ${{github.workspace}}\build
