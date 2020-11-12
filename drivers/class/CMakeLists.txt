@@ -1,1 +1,1 @@
-# add_subdirectory(sfloppy)
+add_subdirectory(sfloppy)
