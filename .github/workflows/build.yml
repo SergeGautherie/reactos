@@ -138,6 +138,7 @@ jobs:
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
     - name: Generate ISOs
+      if: false
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build . --target bootcd
