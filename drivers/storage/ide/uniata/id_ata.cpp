@@ -6181,6 +6181,7 @@ CompleteRequest:
             } else { // srb->Cdb[0] == SCSIOP_REQUEST_SENSE)
 
                 PSENSE_DATA senseData = (PSENSE_DATA) srb->DataBuffer;
+
 #ifdef __REACTOS__
                 (void)senseData;
 #endif
