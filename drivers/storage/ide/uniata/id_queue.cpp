@@ -233,18 +233,23 @@ UniataQueueRequest(
         LunExt->last_req = AtaReq;
 #ifndef __REACTOS__ // CORE-17371.
         chan->cur_cdev = GET_CDEV(Srb);
+#else
+        // check if channel queue is empty too
+        if(chan->queue_depth == 0) {
+            chan->cur_req = AtaReq;
+            chan->cur_cdev = GET_CDEV(Srb);
+        }
 #endif
     }
     LunExt->queue_depth++;
     chan->queue_depth++;
     chan->DeviceExtension->queue_depth++;
+#ifndef __REACTOS__ // CORE-17371.
     // check if this is the 1st request in queue
     if(chan->queue_depth == 1) {
         chan->cur_req = LunExt->first_req;
-#ifdef __REACTOS__ // CORE-17371.
-        chan->cur_cdev = GET_CDEV(Srb);
-#endif
     }
+#endif
 
 #ifdef QUEUE_STATISTICS
     //ASSERT(LunExt->queue_depth);
