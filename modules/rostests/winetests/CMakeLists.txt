@@ -13,7 +13,7 @@ if(MSVC)
         add_compile_options(
             /wd4101 # C4101: 'x': unreferenced local variable
             /wd4312 # C4312: 'type cast': conversion from 'unsigned int' to 'char *' of greater size
-            /wd4334) # C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
+            /we4334) # C4334: '<<': result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
     endif()
 endif()
 
