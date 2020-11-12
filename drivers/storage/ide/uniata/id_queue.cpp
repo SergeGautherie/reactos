@@ -237,6 +237,23 @@ UniataQueueRequest(
         // check if channel queue is empty too
         if(chan->queue_depth == 0) {
             chan->cur_req = AtaReq;
+            if (chan->cur_cdev == GET_CDEV(Srb))
+            {
+// Ok
+//                DbgPrint("(%u) (CORE-17371) cdev: chan = %#x, chan %lu == Srb %lu\n",
+//                         __LINE__, chan, chan->cur_cdev, GET_CDEV(Srb));
+            }
+            else
+            {
+                // LiveCD, init: (puis tous ok sur 78:0)
+                // '(CORE-17371) cdev: chan = 0xb026a008, chan 0 != Srb 1'.
+                // '(CORE-17371) cdev: chan = 0xb02a2578, chan 0 != Srb 1'.
+                // '(CORE-17371) cdev: chan = 0xb02a2578, chan 1 != Srb 0'.
+                DbgPrint("(%u) (CORE-17371) cdev: chan = %#x, chan %lu != Srb %lu\n",
+                         __LINE__, chan, chan->cur_cdev, GET_CDEV(Srb));
+                ASSERT(chan->cur_cdev == GET_CDEV(Srb));
+                chan->cur_cdev = GET_CDEV(Srb);
+            }
 
 /**/
             ASSERT(LunExt->LunSelectWaitCount == 0);
@@ -329,9 +346,26 @@ UniataRemoveRequest(
     if(chan->NumberLuns > 1) {
         if(chan->lun[0]->queue_depth * (chan->lun[0]->LunSelectWaitCount+1) >
            chan->lun[1]->queue_depth * (chan->lun[1]->LunSelectWaitCount+1)) {
+            DbgPrint("(%u) (CORE-17371) cdev: chan = %#x, = 0\n",
+                     __LINE__, chan);
             cdev = 0;
         } else {
+#if 0
             cdev = 1;
+#else
+            if (chan->lun[1]->queue_depth)
+            {
+                DbgPrint("(%u) (CORE-17371) cdev: chan = %#x, = 1\n",
+                         __LINE__, chan);
+                cdev = 1;
+            }
+            else
+            {
+// Ok
+//                DbgPrint("(%u) (CORE-17371) cdev: chan = %#x, chan %lu, == %lu\n",
+//                         __LINE__, chan, chan->cur_cdevn cdev);
+            }
+#endif
         }
     }
 /*    // prevent too long wait for actively used device
@@ -341,6 +375,11 @@ UniataRemoveRequest(
     }*/
     // get next request for processing
     chan->cur_req = chan->lun[cdev]->first_req;
+    if (chan->cur_cdev != cdev)
+    {
+        DbgPrint("(%u) (CORE-17371) cdev: chan = %#x, NumberLuns %lu, %lu --> %lu\n",
+                 __LINE__, chan, chan->NumberLuns, chan->cur_cdev, cdev);
+    }
     chan->cur_cdev = cdev;
     if(chan->NumberLuns > 1) {
         if(!chan->lun[cdev ^ 1]->queue_depth) {
