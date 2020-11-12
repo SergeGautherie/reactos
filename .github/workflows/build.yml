@@ -4,6 +4,7 @@ on: [push, pull_request]
 jobs:
   build-msvc-i386-v141:
     name: MSVC (i386) (v141)
+    if: false
     runs-on: windows-2016
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
@@ -35,6 +36,7 @@ jobs:
 
   build-msvc-i386-v142:
     name: MSVC (i386) (v142)
+    if: false
     runs-on: windows-2019
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
