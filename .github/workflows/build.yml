@@ -42,6 +42,21 @@ jobs:
         run: |
           echo 'cd ${{github.workspace}}/build && cmake --build .' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < commands
+# RosBE == Linux.
+# '/usr/bin/python'
+#           which python
+# 'Python 2.7.17'
+#           python --version
+# 'where: command not found'
+#           where python
+#           cd ${{github.workspace}}/src
+      - name: Update baseaddress file
+        working-directory: ${{github.workspace}}/src
+        run: python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
+#       - name: Update baseaddress file (RosBE)
+#         run: |
+#           echo 'cd ${{github.workspace}}/src && python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build' > commands
+#           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Generate ISOs
         run: |
           echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
@@ -58,6 +73,11 @@ jobs:
         with:
           name: reactos-gcc-i386-${{github.sha}}
           path: build/livecd.iso
+      - name: Upload baseaddress file
+        uses: actions/upload-artifact@v2
+        with:
+          name: baseaddress-${{github.sha}}
+          path: src/sdk/cmake/baseaddress.cmake
 
   build-msvc-i386:
     name: MSVC (i386)
@@ -91,6 +111,11 @@ jobs:
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
+# 'Python 3.7.9'
+#         python --version
+    - name: Update baseaddress file
+      working-directory: ${{github.workspace}}\src
+      run: python sdk\tools\gen_baseaddress.py ${{github.workspace}}\build
     - name: Generate ISOs
       working-directory: ${{github.workspace}}\build
       run: |
@@ -106,6 +131,11 @@ jobs:
       with:
         name: reactos-msvc-i386-${{github.sha}}
         path: build/livecd.iso
+    - name: Upload baseaddress file
+      uses: actions/upload-artifact@v2
+      with:
+        name: baseaddress-${{github.sha}}
+        path: src\sdk\cmake\baseaddress_msvc.cmake
 
   build-msvc-amd64:
     name: MSVC (amd64)
@@ -140,6 +170,9 @@ jobs:
       working-directory: ${{github.workspace}}\build
       run: |
         cmake --build .
+    - name: Update baseaddress file
+      working-directory: ${{github.workspace}}\src
+      run: python sdk\tools\gen_baseaddress.py ${{github.workspace}}\build
     - name: Generate ISOs
       working-directory: ${{github.workspace}}\build
       run: |
@@ -155,3 +188,8 @@ jobs:
       with:
         name: reactos-msvc-amd64-${{github.sha}}
         path: build/livecd.iso
+    - name: Upload baseaddress file
+      uses: actions/upload-artifact@v2
+      with:
+        name: baseaddress-${{github.sha}}
+        path: src\sdk\cmake\baseaddress_msvc_x64.cmake
