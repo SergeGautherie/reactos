@@ -139,6 +139,7 @@ jobs:
 
   build-msvc-amd64:
     name: MSVC (amd64)
+    if: false
     runs-on: windows-latest
     steps:
     - name: Install packages
