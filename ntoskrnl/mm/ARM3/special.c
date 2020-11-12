@@ -85,31 +85,92 @@ MmUseSpecialPool(SIZE_T NumberOfBytes, ULONG Tag)
     /* Special pool is not suitable for allocations bigger than 1 page */
     if (NumberOfBytes > (PAGE_SIZE - sizeof(POOL_HEADER)))
     {
+#if 0 // Feature limitation.
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): Too big\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+#endif
         return FALSE;
     }
 
 #ifdef ENABLE_SPECIAL_POOL_DEFAULT_AND_WIN32K
-    // Include 2 special cases.
-    if (Tag == 'enoN' || KeGetCurrentIrql() >= DISPATCH_LEVEL)
+#if 1
+    // 'Unless specifically trying to solve an Mm issue it is best to avoid placing any Mm allocations in Special Pool.'
+// 2 "Mm  " and 'Flink == NULL', just BEFORE 'PsLoadedModuleList: initialized'.
+    if (Tag == TAG_MM)
     {
+#if 1
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): TAG_MM\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+#endif
+//        return FALSE;
+    }
+#endif
+
+    // Include 2 special cases.
+    if (Tag == TAG_NONE)
+    {
+#if 0 // Very common :-|
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): TAG_NONE\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+#endif
+// Full near end of Stage 2, so exclude these.
+        return FALSE;
+    }
+    if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
+    {
+#if 0 // Works as intended.
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): >= DISPATCH_LEVEL\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+#endif
         return TRUE;
     }
 
     // Include everything, but modules which are not Win32k.
-    if (IsListEmpty(&PsLoadedModuleList))
+// What if MSVC RUNTIME CHECKS? Not NULL !??
+    // Not initialized yet, or empty.
+    if (PsLoadedModuleList.Flink == NULL)
     {
+// 2 "Mm  " and 'Flink == NULL', just BEFORE 'PsLoadedModuleList: initialized'.
+#if 1
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): Flink NULL\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+        ASSERT(PsLoadedModuleList.Flink != NULL);
+#endif
         return TRUE;
     }
+#if 1
+    if (IsListEmpty(&PsLoadedModuleList))
+    {
+// 1 "klmo" + 1 "klws", just AFTER 'PsLoadedModuleList: initialized'.
+// Loading ntoskrnl.exe itself !??
+#if 1
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): list empty\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+        ASSERT(!IsListEmpty(&PsLoadedModuleList));
+#endif
+//        return FALSE;
+    }
+#endif
 
     RtlGetCallersAddress(NULL, &CallersCaller);
     LdrEntry = MiLookupDataTableEntry(CallersCaller);
-    if (!LdrEntry)
+    if (LdrEntry == NULL)
     {
+// Should never happen !?? (Unless list is empty.)
+#if 1
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): LdrEntry NULL\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+        ASSERT(LdrEntry != NULL);
+#endif
         return TRUE;
     }
 
     if (RtlEqualUnicodeString(&LdrEntry->BaseDllName, &Win32k, TRUE))
     {
+#if 0 // Works as intended.
+        DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): Win32k\n",
+                NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+#endif
         return TRUE;
     }
 
@@ -117,6 +178,18 @@ MmUseSpecialPool(SIZE_T NumberOfBytes, ULONG Tag)
 #else
     if (MmSpecialPoolTag == '*')
     {
+#if 1
+        // 'Unless specifically trying to solve an Mm issue it is best to avoid placing any Mm allocations in Special Pool.'
+        if (Tag == TAG_MM)
+        {
+#if 1
+            DPRINT1("MmUseSpecialPool(%Iu, \"%c%c%c%c\"): Excluding TAG_MM\n",
+                    NumberOfBytes, *((UCHAR *)&Tag), *((UCHAR *)&Tag + 1), *((UCHAR *)&Tag + 2), *((UCHAR *)&Tag + 3));
+#endif
+//          return FALSE;
+      }
+#endif
+
         return TRUE;
     }
 

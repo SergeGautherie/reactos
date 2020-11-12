@@ -2211,7 +2211,17 @@ MiInitializeLoadedModuleList(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
     /* Setup the loaded module list and locks */
     ExInitializeResourceLite(&PsLoadedModuleResource);
     KeInitializeSpinLock(&PsLoadedModuleSpinLock);
+#if 1
+    ASSERT(PsLoadedModuleList.Flink == NULL);
+    ASSERT(PsLoadedModuleList.Blink == NULL);
+#endif
     InitializeListHead(&PsLoadedModuleList);
+#if 1
+    DPRINT1("PsLoadedModuleList: initialized\n");
+#if 0
+    ASSERTMSG("PsLoadedModuleList: initialized\n", FALSE);
+#endif
+#endif
 
     /* Get loop variables and the kernel entry */
     ListHead = &LoaderBlock->LoadOrderListHead;
@@ -3350,7 +3360,8 @@ MiLookupDataTableEntry(IN PVOID Address)
 
     /* Loop entries */
     NextEntry = PsLoadedModuleList.Flink;
-    do
+    ASSERT(NextEntry != &PsLoadedModuleList);
+    while (NextEntry != &PsLoadedModuleList)
     {
         /* Get the loader entry */
         LdrEntry =  CONTAINING_RECORD(NextEntry,
@@ -3369,7 +3380,7 @@ MiLookupDataTableEntry(IN PVOID Address)
 
         /* Move on */
         NextEntry = NextEntry->Flink;
-    } while(NextEntry != &PsLoadedModuleList);
+    }
 
     /* Return the entry */
     return FoundEntry;

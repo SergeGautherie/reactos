@@ -25,6 +25,7 @@ KGUARDED_MUTEX MmPagedPoolMutex;
 MM_PAGED_POOL_INFO MmPagedPoolInfo;
 SIZE_T MmAllocatedNonPagedPool;
 #ifdef ENABLE_SPECIAL_POOL_DEFAULT_AND_WIN32K
+// (Ab)Use '*' !?
 ULONG MmSpecialPoolTag = 'K23W'; // Fake value.
 #else
 ULONG MmSpecialPoolTag;
