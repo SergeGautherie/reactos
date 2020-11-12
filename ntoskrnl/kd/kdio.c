@@ -109,6 +109,8 @@ KdpLoggerThread(PVOID Context)
     ULONG beg, end, num;
     IO_STATUS_BLOCK Iosb;
 
+    ASSERT(ExGetPreviousMode() == KernelMode);
+
     KdpLoggingEnabled = TRUE;
 
     while (TRUE)
@@ -203,6 +205,8 @@ KdpDebugLogInit(PKD_DISPATCH_TABLE DispatchTable,
     IO_STATUS_BLOCK Iosb;
     HANDLE ThreadHandle;
     KPRIORITY Priority;
+
+    ASSERT(ExGetPreviousMode() == KernelMode);
 
     if (!KdpDebugMode.File) return;
 
