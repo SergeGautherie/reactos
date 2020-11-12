@@ -237,7 +237,6 @@ UniataQueueRequest(
         // check if channel queue is empty too
         if(chan->queue_depth == 0) {
             chan->cur_req = AtaReq;
-            chan->cur_cdev = GET_CDEV(Srb);
         }
 #endif
     }
