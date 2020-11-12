@@ -4256,6 +4256,14 @@ static NTSTATUS check_mount_device(_In_ PDEVICE_OBJECT DeviceObject, _Out_ bool*
     }
 
     *pno_pnp = pnp_name.Length == 0;
+#ifdef __REACTOS__
+    // HACK: CORE-17469 workaround.
+    if (!*pno_pnp)
+    {
+        FIXME("Setting *pno_pnp for '%wZ' (l=%u)\n", &pnp_name, pnp_name.Length);
+        *pno_pnp = TRUE;
+    }
+#endif
 
     if (pnp_name.Buffer)
         ExFreePool(pnp_name.Buffer);
