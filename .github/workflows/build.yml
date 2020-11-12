@@ -79,6 +79,7 @@ jobs:
 
   build-gcc-i386-norossym:
     name: GCC (i386) NoRosSym
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Install RosBE
@@ -225,6 +226,7 @@ jobs:
 
   build-msvc-i386:
     name: MSVC (i386)
+    if: false
     runs-on: windows-latest
     steps:
     - name: Install packages
