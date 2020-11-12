@@ -124,7 +124,7 @@ jobs:
   build-clang-cl-i386:
     name: Clang-CL (i386)
 #     if: false
-    runs-on: windows-latest
+    runs-on: windows-2016
     steps:
     - name: Install packages
       run: |
@@ -175,7 +175,7 @@ jobs:
   build-msvc-i386:
     name: MSVC (i386)
 #     if: false
-    runs-on: windows-latest
+    runs-on: windows-2016
     steps:
     - name: Install packages
       run: choco install ninja -y
@@ -220,7 +220,7 @@ jobs:
   build-msvc-amd64:
     name: MSVC (amd64)
 #     if: false
-    runs-on: windows-latest
+    runs-on: windows-2016
     steps:
     - name: Install packages
       run: choco install ninja -y
@@ -266,7 +266,7 @@ jobs:
   build-msbuild-i386:
     name: MSBuild (i386)
 #     if: false
-    runs-on: windows-latest
+    runs-on: windows-2016
     steps:
     - name: Install Flex and Bison
       run: |
@@ -286,7 +286,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G "Visual Studio 16 2019" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
+        cmake -G "Visual Studio 15 2017" -A Win32 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
     - name: Upload sln
 #       if: false
       uses: actions/upload-artifact@v2
@@ -318,7 +318,7 @@ jobs:
   build-vssolution-i386:
     name: VSSolution (i386)
 #     if: false
-    runs-on: windows-latest
+    runs-on: windows-2016
     steps:
       - name: Install Flex and Bison
         run: |
