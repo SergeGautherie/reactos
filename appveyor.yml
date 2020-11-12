@@ -4,7 +4,7 @@ environment:
 #     - BuildType: "msvc-x64"
 #     - BuildType: "msvc"
     - BuildType: vssolution
-    - BuildType: "clang-cl"
+#     - BuildType: "clang-cl"
 
 version: REACTOS_SOURCE_DIR.CORE-15991.reactos.appveyor.{build}
 skip_branch_with_pr: true
