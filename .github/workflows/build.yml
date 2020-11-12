@@ -234,6 +234,7 @@ jobs:
         path: build/livecd.iso
 
   build-msbuild-i386:
+    if: false
     name: MSBuild (i386)
     runs-on: windows-latest
     steps:
