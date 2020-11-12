@@ -231,7 +231,9 @@ UniataQueueRequest(
         AtaReq->next_req = NULL;
         LunExt->first_req =
         LunExt->last_req = AtaReq;
+#ifndef __REACTOS__ // CORE-17371.
         chan->cur_cdev = GET_CDEV(Srb);
+#endif
     }
     LunExt->queue_depth++;
     chan->queue_depth++;
@@ -239,6 +241,9 @@ UniataQueueRequest(
     // check if this is the 1st request in queue
     if(chan->queue_depth == 1) {
         chan->cur_req = LunExt->first_req;
+#ifdef __REACTOS__ // CORE-17371.
+        chan->cur_cdev = GET_CDEV(Srb);
+#endif
     }
 
 #ifdef QUEUE_STATISTICS
