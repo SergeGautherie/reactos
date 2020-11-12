@@ -3,7 +3,7 @@ environment:
     - BuildType: "msvc"
     - BuildType: "msvc-x64"
 
-version: CORE-7538.reactos.appveyor.{build}
+version: C4305.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
