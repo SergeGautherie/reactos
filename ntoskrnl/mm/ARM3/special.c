@@ -392,6 +392,7 @@ MmAllocateSpecialPool(SIZE_T NumberOfBytes, ULONG Tag, POOL_TYPE PoolType, ULONG
                      0x30);
     }
 
+//
     /* Some allocations from Mm must never use special pool */
     if (Tag == 'tSmM')
     {
