@@ -28,7 +28,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
@@ -59,7 +59,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=i386 -DENABLE_ROSTESTS=1 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: cmake --build .
@@ -90,7 +90,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 -DENABLE_ROSTESTS=1 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: |
@@ -122,7 +122,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 ${{github.workspace}}\src
+        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=amd64 -DENABLE_ROSTESTS=1 ${{github.workspace}}\src
     - name: Build
       working-directory: ${{github.workspace}}\build
       run: |
