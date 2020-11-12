@@ -13,6 +13,10 @@ jobs:
           tar -I zstd -xvf rosbe-ci.tar.zst --directory ${{github.workspace}}/rosbe
       - name: Install other packages
         run: sudo apt install ccache
+      - name: Install Python packages
+        uses: BSFishy/pip-action@v1 # See https://github.com/marketplace/actions/pip-installer
+        with:
+          packages: pefile
       - uses: actions/checkout@v2
         with:
           path: src
@@ -68,6 +72,10 @@ jobs:
         echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Install Python packages
+      uses: BSFishy/pip-action@v1 # See https://github.com/marketplace/actions/pip-installer
+      with:
+        packages: pefile
     - name: Add CL to PATH
       uses: ilammy/msvc-dev-cmd@v1
       with:
@@ -112,6 +120,10 @@ jobs:
         echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Install Python packages
+      uses: BSFishy/pip-action@v1 # See https://github.com/marketplace/actions/pip-installer
+      with:
+        packages: pefile
     - name: Add CL to PATH
       uses: ilammy/msvc-dev-cmd@v1
       with:
