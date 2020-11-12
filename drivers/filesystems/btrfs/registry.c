@@ -815,7 +815,13 @@ void read_registry(PUNICODE_STRING regpath, bool refresh) {
     get_registry_value(h, L"NoRootDir", REG_DWORD, &mount_no_root_dir, sizeof(mount_no_root_dir));
 
     if (!refresh)
+#ifndef __REACTOS__
         get_registry_value(h, L"NoPNP", REG_DWORD, &no_pnp, sizeof(no_pnp));
+#else
+        // HACK: CORE-17469 workaround.
+        FIXME("Setting no_pnp = 1\n");
+        no_pnp = 1;
+#endif
 
     if (mount_flush_interval == 0)
         mount_flush_interval = 1;
