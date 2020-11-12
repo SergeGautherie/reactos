@@ -252,19 +252,28 @@ class Module(object):
         if ext in('.acm', '.drv') and self._name != 'winspool.drv':
             name = self._name
         if name == 'ntdll':
-            postfix = ' # should be above 0x%08x' % self.address
+            if is_x64():
+                postfix = ' # should be above 0x%016x' % self.address
+            else:
+                postfix = ' # should be above 0x%08x' % self.address
         elif self._reserved:
             postfix = ' # reserved'
         # Current longest name is: 'msvcrt_crt_dll_startup' (22).
         if len(name) > 22:
             print('#', name, 'is longer than current width:', len(name), '> 22')
-        output_file.write('set(baseaddress_%-22s 0x%08x)%s\n' % (name, self.address, postfix))
+        if is_x64():
+            output_file.write('set(baseaddress_%-22s 0x%016x)%s\n' % (name, self.address, postfix))
+        else:
+            output_file.write('set(baseaddress_%-22s 0x%08x)%s\n' % (name, self.address, postfix))
 
     def end(self):
         return self.address + self.size
 
     def __repr__(self):
-        return '%s (0x%08x - 0x%08x)' % (self._name, self.address, self.end())
+        if is_x64():
+            return '%s (0x%016x - 0x%016x)' % (self._name, self.address, self.end())
+        else:
+            return '%s (0x%08x - 0x%08x)' % (self._name, self.address, self.end())
 
 class MemoryLayout(object):
     def __init__(self, startaddress):
@@ -273,7 +282,10 @@ class MemoryLayout(object):
         self.reserved = {}
         self.initial = startaddress
         self.start_at = 0
-        self.module_padding = 0x2000
+        if is_x64():
+            self.module_padding = 0x4000
+        else:
+            self.module_padding = 0x2000
 
     def add_reserved(self, name, address):
         self.reserved[name] = (address, 0)
@@ -358,10 +370,15 @@ def get_target_file(ntdll_path):
 
 def run_dir(target):
     print('From build directory:', target)
-    layout = MemoryLayout(0x7c920000)
-    layout.add_reserved('user32.dll', 0x77a20000)
     IMAGE_TYPES[IMAGE_NT_OPTIONAL_HDR64_MAGIC] = 0
     IMAGE_TYPES[IMAGE_NT_OPTIONAL_HDR32_MAGIC] = 0
+    # CORE-14923, TODO: Too soon, is_x64() will always return false.
+    if is_x64():
+      layout = MemoryLayout(0x000007FFB7500000)
+      layout.add_reserved('user32.dll', 0x000007FF7F190000)
+    else:
+      layout = MemoryLayout(0x7c920000)
+      layout.add_reserved('user32.dll', 0x77a20000)
     for root, _, files in os.walk(target):
         for dll in [filename for filename in files if filename.endswith(ALL_EXTENSIONS)]:
             if not dll in EXCLUDE and not dll.startswith('api-ms-win-'):
