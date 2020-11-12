@@ -259,6 +259,7 @@ MiInitializeSpecialPool(VOID)
     /* Reserve those PTEs */
     do
     {
+//
         PointerPte = MiReserveAlignedSystemPtes(SpecialPoolPtes,
                                                 SystemPteSpace,
                                                 /*0x400000*/0); // FIXME:
@@ -729,6 +730,7 @@ MmFreeSpecialPool(PVOID P)
 
         MI_ERASE_PTE(PointerPte);
 
+//
         /* Flush the TLB */
         //FIXME: Use KeFlushSingleTb() instead
         KeFlushEntireTb(TRUE, TRUE);
