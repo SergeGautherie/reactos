@@ -65,6 +65,7 @@ add_library(msi MODULE
 
 if(MSVC)
     #  error C4133: 'function': incompatible types - from 'UINT *' to 'MSIINSTALLCONTEXT *'
+#!#
     remove_target_compile_option(msi "/we4133")
 
     # error C4312: 'type cast': conversion from 'unsigned int' to 'HANDLE' of greater size

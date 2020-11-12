@@ -10,6 +10,7 @@ set_module_type(midimap win32dll UNICODE)
 
 if(MSVC)
     # error C4133: 'function': incompatible types - from 'LPDWORD' to 'DWORD_PTR *'
+#?#
     remove_target_compile_option(midimap "/we4133")
 endif()
 
