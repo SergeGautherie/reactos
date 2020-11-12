@@ -107,8 +107,6 @@ jobs:
   build-clang-cl-i386:
     name: Clang-CL (i386)
     runs-on: windows-latest
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
     - name: Install packages
       run: |
