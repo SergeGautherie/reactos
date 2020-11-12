@@ -76,9 +76,11 @@ BOOLEAN
 NTAPI
 MmUseSpecialPool(SIZE_T NumberOfBytes, ULONG Tag)
 {
-    PLDR_DATA_TABLE_ENTRY LdrEntry;
+#ifdef ENABLE_SPECIAL_POOL_DEFAULT_AND_WIN32K
     PVOID CallersCaller;
-    UNICODE_STRING Win32k = RTL_CONSTANT_STRING(L"win32k.sys");
+    PLDR_DATA_TABLE_ENTRY LdrEntry;
+    static const UNICODE_STRING Win32k = RTL_CONSTANT_STRING(L"win32k.sys");
+#endif
 
     /* Special pool is not suitable for allocations bigger than 1 page */
     if (NumberOfBytes > (PAGE_SIZE - sizeof(POOL_HEADER)))
@@ -86,18 +88,20 @@ MmUseSpecialPool(SIZE_T NumberOfBytes, ULONG Tag)
         return FALSE;
     }
 
+#ifdef ENABLE_SPECIAL_POOL_DEFAULT_AND_WIN32K
+    // Include 2 special cases.
     if (Tag == 'enoN' || KeGetCurrentIrql() >= DISPATCH_LEVEL)
     {
         return TRUE;
     }
 
-    /* Find the first four letters of the driver name if we can */
-    RtlGetCallersAddress(NULL, &CallersCaller);
-    if (!PsLoadedModuleList.Flink)
+    // Include everything, but modules which are not Win32k.
+    if (IsListEmpty(&PsLoadedModuleList))
     {
         return TRUE;
     }
 
+    RtlGetCallersAddress(NULL, &CallersCaller);
     LdrEntry = MiLookupDataTableEntry(CallersCaller);
     if (!LdrEntry)
     {
@@ -110,6 +114,14 @@ MmUseSpecialPool(SIZE_T NumberOfBytes, ULONG Tag)
     }
 
     return FALSE;
+#else
+    if (MmSpecialPoolTag == '*')
+    {
+        return TRUE;
+    }
+
+    return Tag == MmSpecialPoolTag;
+#endif
 }
 
 BOOLEAN
