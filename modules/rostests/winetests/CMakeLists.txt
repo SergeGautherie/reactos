@@ -2,10 +2,9 @@
 add_definitions(-D__ROS_LONG64__)
 
 if(MSVC)
-    # C4133: 'function': incompatible types - from '<enum> *' to 'UINT *'
-    #ToDo# remove_target_compile_option(midimap "/we4133")
     add_compile_options(
         /wd4090 # C4090: 'function': different 'const' qualifiers
+        /wd4133 # C4133: 'function': incompatible types - from '<enum> *' to 'UINT *'
         /wd4146 # C4146: unary minus operator applied to unsigned type, result still unsigned
         /wd4189 # C4189: 'x': local variable is initialized but not referenced
         /wd4267 # C4267: '=': conversion from 'size_t' to 'int', possible loss of data

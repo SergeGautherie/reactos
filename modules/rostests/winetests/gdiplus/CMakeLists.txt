@@ -31,6 +31,5 @@ add_rostests_file(TARGET gdiplus_winetest)
 
 if(MSVC)
     # error C4133: 'function': incompatible types - from 'ImageFlags *' to 'UINT *'
-#?#
     remove_target_compile_option(gdiplus_winetest "/we4133")
 endif()

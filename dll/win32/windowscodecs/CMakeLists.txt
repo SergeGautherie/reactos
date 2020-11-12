@@ -71,10 +71,8 @@ add_library(windowscodecs MODULE
     ${CMAKE_CURRENT_BINARY_DIR}/windowscodecs.def)
 
 if(MSVC)
-    # error C4133: 'function': incompatible types - from 'WICPixelFormatNumericRepresentation *' to 'DWORD *'
-#!#
-    remove_target_compile_option(windowscodecs "/we4133")
     target_compile_options(windowscodecs PRIVATE
+        /wd4133 # error C4133: 'function': incompatible types - from 'WICPixelFormatNumericRepresentation *' to 'DWORD *'
         /FItypeof.h)
 endif()
 
