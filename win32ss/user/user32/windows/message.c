@@ -27,7 +27,7 @@ CALL_EXTERN_WNDPROC(
 #  define CALL_EXTERN_WNDPROC(proc, h, m, w, l) proc(h, m, w, l)
 #endif
 // Wanted for releases, available for custom test builds.
-// #define ENABLE_CORE_11915_WORKAROUND
+#define ENABLE_CORE_11915_WORKAROUND
 
 /* From wine: */
 /* flag for messages that contain pointers */
