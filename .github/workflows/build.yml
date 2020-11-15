@@ -40,7 +40,7 @@ jobs:
           ${{github.workspace}}/rosbe/RosBE.sh < commands
       - name: Generate ISOs
         run: |
-          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd' > commands
+          echo 'cd ${{github.workspace}}/build && cmake --build . --target bootcd && cmake --build . --target livecd' > commands
           ${{github.workspace}}/rosbe/RosBE.sh < 'commands'
       - name: Print ccache statistics
         run: ccache -s
@@ -50,7 +50,6 @@ jobs:
           name: reactos-gcc-i386-${{github.sha}}
           path: build/bootcd.iso
       - name: Upload livecd
-        if: false
         uses: actions/upload-artifact@v2
         with:
           name: reactos-gcc-i386-${{github.sha}}
