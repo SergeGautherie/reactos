@@ -11,11 +11,11 @@ environment:
   matrix:
 #     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
 #     - BuildType: "msvc-x64"
-#     - BuildType: "msvc"
-    - BuildType: vssolution
+    - BuildType: "msvc"
+#     - BuildType: vssolution
 #     - BuildType: "clang-cl"
 
-version: REACTOS_SOURCE_DIR.CORE-15991.reactos.appveyor.{build}
+version: VS2015.CORE-15991.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
@@ -26,7 +26,9 @@ init:
   - ps: (New-Object System.Net.WebClient).DownloadFile("https://svn.reactos.org/storage/vperevertkin/flexbison.7z","C:\flexbison.7z")
     # AppV: %APPVEYOR_BUILD_FOLDER% must remain empty at this stage :-/
   - 7z x C:\flexbison.7z -oC:\RosCMakeNinja\bin
-# # TODO...        $env:PATH="C:\RosCMakeNinja\bin;$env:PATH"
+  - set PATH=;%PATH%;C:\RosCMakeNinja\bin
+  - set BISON_PKGDATADIR=C:\RosCMakeNinja\bin\share\bison
+  - set M4=C:\RosCMakeNinja\bin\m4.exe
 #   - ps: >-
 #       If ($env:BuildType -Match "clang-cl") {
 #         $env:clang_configure_option="clang"
@@ -49,8 +51,8 @@ build_script:
   - call %APPVEYOR_BUILD_FOLDER%\configure.cmd %clang_configure_option%
   - ps: >-
       & ninja -k0 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
-  - ps: >-
-      & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
+#   - ps: >-
+#       & ninja bootcd 2>&1 | select-string -pattern "\[\d+\/\d+\] " -NotMatch | %{$_.Line}
 
 test: off
 deploy: off
@@ -84,9 +86,6 @@ for:
 #     - dir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\"
 #     - cd "C:\Program Files (x86)\" && dir vcvarsall.bat /s
 #     - cd "C:\Program Files\" && dir vcvarsall.bat /s
-    - set PATH=;%PATH%;C:\RosCMakeNinja\bin
-    - set BISON_PKGDATADIR=C:\RosCMakeNinja\bin\share\bison
-    - set M4=C:\RosCMakeNinja\bin\m4.exe
 
 # On VS2015 image:
       # VS9  (2008): ROS 'Error: Visual Studio version too old (before 14 (2015)) or version detection failed.'.
