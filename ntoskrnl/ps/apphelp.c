@@ -575,7 +575,7 @@ ApphelpCacheLookupEntry(
         else
         {
             DPRINT1("SHIMS: ApphelpCacheLookupEntry: file info mismatch (%lx)\n", Status);
-            Status = STATUS_NOT_FOUND;
+            Status = STATUS_INVALID_PARAMETER; // STATUS_NOT_FOUND on NT6.1+.
             /* Could not read file info, or it did not match, drop it from the cache */
             ApphelpCacheRemoveEntryNolock(Entry);
         }
