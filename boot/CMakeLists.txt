@@ -96,7 +96,6 @@ endfunction()
 
 ## BootCD
 # Create the file list
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcd.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcd.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
 add_custom_target(bootcd
@@ -111,7 +110,6 @@ add_custom_target(bootcd
 
 ## BootCDRegTest
 # Create the file list
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcdregtest.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/bootcdregtest.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
 add_custom_target(bootcdregtest
@@ -126,7 +124,6 @@ add_custom_target(bootcdregtest
 
 ## LiveCD
 # Create the file list
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
 # Create user profile directories
@@ -145,7 +142,6 @@ add_custom_target(livecd
 
 ## HybridCD
 # Create the file list
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
 # Create user profile directories
