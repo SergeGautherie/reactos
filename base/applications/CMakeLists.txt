@@ -6,7 +6,10 @@ add_subdirectory(charmap)
 add_subdirectory(clipbrd)
 add_subdirectory(cmdutils)
 add_subdirectory(control)
-add_subdirectory(drwtsn32)
+if(ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64" OR
+   ARCH STREQUAL "arm") # TODO: CORE-17605.
+    add_subdirectory(drwtsn32)
+endif()
 add_subdirectory(dxdiag)
 add_subdirectory(extrac32)
 add_subdirectory(findstr)
