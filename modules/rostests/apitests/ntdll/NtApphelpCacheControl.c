@@ -93,7 +93,15 @@ BOOLEAN InitEnv(UNICODE_STRING* PathName)
 
     if (Status == STATUS_INVALID_PARAMETER)
     {
-        /* NT6+ has a different layout for APPHELP_CACHE_SERVICE_LOOKUP */
+        trace("NtApphelpCacheControl expects a different APPHELP_CACHE_SERVICE_LOOKUP structure layout (as on NT6+)\n");
+        return FALSE;
+    }
+
+    /* TODO: How does NT6.2 behave? */
+    /* NT6.3 returns a different error than the other NT6+ */
+    if (Status == STATUS_INVALID_HANDLE)
+    {
+        trace("NtApphelpCacheControl behaves differently than expected (as on NT6.3)\n");
         return FALSE;
     }
 
@@ -198,7 +206,7 @@ static void RunApphelpCacheControlTests(SC_HANDLE service_handle)
 
     if (!InitEnv(&ntPath))
     {
-        win_skip("NtApphelpCacheControl expects a different structure layout (as on NT6+)\n");
+        win_skip("InitEnv failed (as on NT6+)\n");
         return;
     }
 
