@@ -68,6 +68,7 @@ NTSTATUS CallCacheControl(UNICODE_STRING* PathName, BOOLEAN WithMapping, APPHELP
     Status = pNtApphelpCacheControl(Service, &CacheEntry);
 #if 0
     ok(!memcmp(&CacheEntry.ImageName, PathName, sizeof(CacheEntry.ImageName)), "CacheEntry.ImageName was modified\n");
+#endif
     if (WithMapping)
     {
         ok(CacheEntry.ImageHandle != NULL, "CacheEntry.ImageHandle is NULL\n");
@@ -77,7 +78,6 @@ NTSTATUS CallCacheControl(UNICODE_STRING* PathName, BOOLEAN WithMapping, APPHELP
     {
         ok_hdl(CacheEntry.ImageHandle, INVALID_HANDLE_VALUE);;
     }
-#endif
 
     if (CacheEntry.ImageHandle != INVALID_HANDLE_VALUE)
         NtClose(CacheEntry.ImageHandle);
