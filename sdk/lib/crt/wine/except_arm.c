@@ -59,12 +59,14 @@ int CDECL __CxxExceptionFilter( PEXCEPTION_POINTERS ptrs,
 // ...\except_arm.c(58): error C2143: syntax error: missing '{' before '*'
 // ...\except_arm.c(58): error C2059: syntax error: ')'
 // ...\except_arm.c(59): error C2054: expected '(' to follow 'dispatch'
+/*
 EXCEPTION_DISPOSITION CDECL __CxxFrameHandler(EXCEPTION_RECORD *rec, DWORD frame, CONTEXT *context,
                                               DISPATCHER_CONTEXT *dispatch)
 {
     FIXME("%p %x %p %p: not implemented\n", rec, frame, context, dispatch);
     return ExceptionContinueSearch;
 }
+*/
 
 
 /*********************************************************************
