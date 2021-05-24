@@ -83,7 +83,7 @@ NTSTATUS CallCacheControl(UNICODE_STRING* PathName, BOOLEAN WithMapping, APPHELP
     return Status;
 }
 
-int InitEnv(UNICODE_STRING* PathName)
+BOOLEAN InitEnv(UNICODE_STRING* PathName)
 {
     NTSTATUS Status;
 
@@ -94,14 +94,14 @@ int InitEnv(UNICODE_STRING* PathName)
     if (Status == STATUS_INVALID_PARAMETER)
     {
         /* NT6+ has a different layout for APPHELP_CACHE_SERVICE_LOOKUP */
-        return 0;
+        return FALSE;
     }
 
     ok(Status == STATUS_SUCCESS || Status == STATUS_NOT_FOUND,
-        "Wrong value for Status, expected: SUCCESS or NOT_FOUND, got: 0x%lx\n",
-        Status);
+       "Wrong value for Status, expected: SUCCESS or NOT_FOUND, got: 0x%lx\n",
+       Status);
 
-    return 1;
+    return TRUE;
 }
 
 void CheckValidation(UNICODE_STRING* PathName)
@@ -198,7 +198,7 @@ static void RunApphelpCacheControlTests(SC_HANDLE service_handle)
 
     if (!InitEnv(&ntPath))
     {
-        skip("NtApphelpCacheControl expects a different structure layout (as on NT6+)\n");
+        win_skip("NtApphelpCacheControl expects a different structure layout (as on NT6+)\n");
         return;
     }
 
@@ -365,7 +365,7 @@ static DWORD WINAPI service_handler(DWORD ctrl, DWORD event_type, void *event_da
         }
         break;
     default:
-        DbgPrint("Unhandled: %d\n", ctrl);
+        DbgPrint("service_handler: Unhandled ctrl: %lu\n", ctrl);
         break;
     }
     status.dwCurrentState = SERVICE_RUNNING;
@@ -379,7 +379,10 @@ static void WINAPI service_main(DWORD argc, char **argv)
     service_status = RegisterServiceCtrlHandlerExA(service_name, service_handler, NULL);
 
     if (!service_status)
+    {
+        DbgPrint("service_main: RegisterServiceCtrlHandlerExA() failed\n");
         return;
+    }
 
     status.dwServiceType = SERVICE_WIN32;
     status.dwCurrentState = SERVICE_RUNNING;
@@ -429,7 +432,7 @@ static void WaitService(SC_HANDLE service_handle, DWORD Status, SERVICE_STATUS_P
         if ((GetTickCount() - dwStartTime) > 1000)
         {
             ok(0, "Timeout waiting for (%lu) from service, is: %lu.\n",
-                Status, ssp->dwCurrentState);
+               Status, ssp->dwCurrentState);
             break;
         }
     }
