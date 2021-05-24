@@ -164,6 +164,9 @@ add_custom_target(hybridcd
 
 add_cd_file(TARGET efisys FILE ${CMAKE_CURRENT_BINARY_DIR}/efisys.bin DESTINATION loader NO_CAB NOT_IN_HYBRIDCD FOR bootcd regtest livecd hybridcd)
 
+# '...\boot\freeldr\freeldr\arch\drivers\hwide.c(312): error C4013: 'StallExecutionProcessor' undefined; assuming extern returning int'
+if(NOT ARCH STREQUAL "arm" AND NOT ARCH STREQUAL "arm64") # FIXME: ...
 add_subdirectory(freeldr)
+endif()
 add_subdirectory(bootdata)
 # add_subdirectory(environ)
