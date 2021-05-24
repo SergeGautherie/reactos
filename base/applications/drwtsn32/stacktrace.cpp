@@ -65,6 +65,8 @@ void PrintStackBacktrace(FILE* output, DumpData& data, ThreadData& thread)
     StackFrame.AddrPC.Offset = thread.Context.Pc;
     StackFrame.AddrStack.Offset = thread.Context.Sp;
     StackFrame.AddrFrame.Offset = thread.Context.u.s.Fp;
+#elif defined(_M_ARM64)
+#error ARM64 architecture
 #else
 #error "Unknown architecture"
 #endif
