@@ -70,6 +70,10 @@ extern "C" {
 #define _crt_va_arg(ap,t) (*(t*)((ap += _SLOTSIZEOF(t) + _APALIGN(t,ap))  - _SLOTSIZEOF(t)))
 #define _crt_va_end(ap)      ( ap = (va_list)0 )
 #define __va_copy(d,s)	((void)((d) = (s)))
+#elif defined(_M_ARM64) // Block added by ReactOS.
+// 4 times:
+// ...\vadefs.h(74): fatal error C1189: #error:  Please implement me
+#error Please implement me (_M_ARM64)
 #else //if defined(_M_IA64) || defined(_M_CEE)
 #error Please implement me
 #endif
