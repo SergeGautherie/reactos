@@ -31,6 +31,15 @@ VidpBuildColor(
     UCHAR Red, Green, Blue;
 
     /* Extract color components */
+// .../arm.h(34): error C4013: 'GetRValue' undefined; assuming extern returning int
+// .../arm.h(34): error C2065: 'DefaultPalette': undeclared identifier
+// .../arm.h(34): error C2109: subscript requires array or pointer type
+// .../arm.h(35): error C4013: 'GetGValue' undefined; assuming extern returning int
+// .../arm.h(35): error C2065: 'DefaultPalette': undeclared identifier
+// .../arm.h(35): error C2109: subscript requires array or pointer type
+// .../arm.h(36): error C4013: 'GetBValue' undefined; assuming extern returning int
+// .../arm.h(36): error C2065: 'DefaultPalette': undeclared identifier
+// .../arm.h(36): error C2109: subscript requires array or pointer type
     Red   = GetRValue(DefaultPalette[Color]) >> 3;
     Green = GetGValue(DefaultPalette[Color]) >> 3;
     Blue  = GetBValue(DefaultPalette[Color]) >> 3;

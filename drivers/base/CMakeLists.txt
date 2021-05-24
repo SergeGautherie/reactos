@@ -1,6 +1,8 @@
 
 add_subdirectory(beep)
+if(NOT ARCH STREQUAL "arm") # FIXME: CORE-17617.
 add_subdirectory(bootvid)
+endif()
 add_subdirectory(condrv)
 
 if(_WINKD_)
