@@ -365,6 +365,7 @@ if(ARCH STREQUAL "amd64")
 elseif(ARCH STREQUAL "arm")
     set(SPEC2DEF_ARCH arm)
 elseif(ARCH STREQUAL "arm64")
+# Why add it here (too)?
     add_definitions(/D__arm64__) 
     set(SPEC2DEF_ARCH arm64)
 else()
