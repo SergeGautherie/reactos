@@ -479,17 +479,7 @@ HalpInitializePICs(IN BOOLEAN EnableInterrupts)
 {
     ULONG_PTR EFlags;
 
-    /* Check if the CPU has an APIC */
-    if (!(KeGetCurrentPrcb()->FeatureBits & KF_APIC))
-    {
-//        DPRINT1("CPU has NO APIC\n");
-        KeBugCheck(HAL_INITIALIZATION_FAILED);
-    }
-    else
-    {
-//        DPRINT1("CPU HAS APIC\n");
-        KeBugCheck(HAL_INITIALIZATION_FAILED);
-    }
+// KeBugCheck(HAL_INITIALIZATION_FAILED) here: if APIC, FSE works, if no APIC, "prevents" rebooting but hangs on black screen.
 
     /* Save EFlags and disable interrupts */
     EFlags = __readeflags();
@@ -497,6 +487,26 @@ HalpInitializePICs(IN BOOLEAN EnableInterrupts)
 
     /* Initialize and mask the PIC */
     HalpInitializeLegacyPICs();
+
+    /* Check if the CPU has an APIC */
+    if (!(KeGetCurrentPrcb()->FeatureBits & KF_APIC))
+    {
+        /* Restore interrupt state */
+        EFlags |= EFLAGS_INTERRUPT_MASK;
+        __writeeflags(EFlags);
+
+//        DPRINT1("CPU has NO APIC\n");
+        KeBugCheck(HAL_INITIALIZATION_FAILED);
+    }
+    else
+    {
+        /* Restore interrupt state */
+        EFlags |= EFLAGS_INTERRUPT_MASK;
+        __writeeflags(EFlags);
+
+//        DPRINT1("CPU HAS APIC\n");
+        KeBugCheck(HAL_INITIALIZATION_FAILED);
+    }
 
     /* Initialize the I/O APIC */
     ApicInitializeIOApic();
