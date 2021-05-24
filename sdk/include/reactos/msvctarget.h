@@ -48,5 +48,30 @@
   #define _M_PPC 1
  #endif
 #else
+
+/** /
+#if defined(WIN32)
+#error WIN32 is defined (msvctarget)
+#endif
+
+#if defined(_WIN64)
+#error _WIN64 is defined (msvctarget)
+#endif
+
+#if defined(__arm64__)
+#error __arm64__ is defined (msvctarget)
+#endif
+
+#if defined(_M_ARM64)
+#error _M_ARM64 is defined (msvctarget)
+#endif
+
+#if defined(_ARM64_)
+#error _ARM64_ is defined (msvctarget)
+#endif
+
+#error none are defined (msvctarget)
+/ **/
+
 #error Unknown architecture
 #endif

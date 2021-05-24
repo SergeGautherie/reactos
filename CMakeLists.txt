@@ -269,7 +269,7 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         endif()
     elseif(ARCH STREQUAL "arm64")
         message(WARNING "TODO arm64")
-        add_compile_definitions(_ARM64_=2041 __arm64__=2042 _WIN64=2043 _M_ARM64=2044)
+        # add_compile_definitions(_ARM64_=2041 __arm64__=2042 _WIN64=2043 _M_ARM64=2044)
         # SARCH !?
     endif()
 
