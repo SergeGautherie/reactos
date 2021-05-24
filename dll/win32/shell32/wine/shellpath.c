@@ -2542,7 +2542,7 @@ HRESULT WINAPI SHGetFolderPathAndSubDirW(
     if (ret && ret != ERROR_ALREADY_EXISTS)
     {
         ERR("Failed to create directory %s.\n", debugstr_w(szBuildPath));
-        hr = E_FAIL;
+        hr = S_OK;
         goto end;
     }
 
