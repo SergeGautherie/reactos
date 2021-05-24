@@ -95,14 +95,12 @@ else()
 endif()
 
 if(MSVC)
-    set(KDBG FALSE CACHE BOOL
-"Whether to compile in the integrated kernel debugger.")
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
-        set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
+        set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     else()
-        set(_WINKD_ TRUE CACHE BOOL "Whether to compile with the KD protocol.")
+        set(KDBG TRUE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     endif()
-
+    set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
 else()
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
