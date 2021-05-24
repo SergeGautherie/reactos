@@ -426,29 +426,29 @@ KiGetFeatureBits(VOID)
         }
     }
 
-#define print_supported(kf_value) ((FeatureBits & kf_value) ? #kf_value : "")
-    DPRINT1("Supported CPU features : %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n",
-    print_supported(KF_V86_VIS),
-    print_supported(KF_RDTSC),
-    print_supported(KF_CR4),
-    print_supported(KF_CMOV),
-    print_supported(KF_GLOBAL_PAGE),
-    print_supported(KF_LARGE_PAGE),
-    print_supported(KF_MTRR),
-    print_supported(KF_CMPXCHG8B),
-    print_supported(KF_MMX),
-    print_supported(KF_WORKING_PTE),
-    print_supported(KF_PAT),
-    print_supported(KF_FXSR),
-    print_supported(KF_FAST_SYSCALL),
-    print_supported(KF_XMMI),
-    print_supported(KF_3DNOW),
-    print_supported(KF_AMDK6MTRR),
-    print_supported(KF_XMMI64),
-    print_supported(KF_DTS),
-    print_supported(KF_NX_BIT),
-    print_supported(KF_NX_DISABLED),
-    print_supported(KF_NX_ENABLED));
+#define print_supported(kf_value) ((FeatureBits & kf_value) ? " " #kf_value : "")
+    DPRINT1("Supported CPU features :%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
+            print_supported(KF_V86_VIS),
+            print_supported(KF_RDTSC),
+            print_supported(KF_CR4),
+            print_supported(KF_CMOV),
+            print_supported(KF_GLOBAL_PAGE),
+            print_supported(KF_LARGE_PAGE),
+            print_supported(KF_MTRR),
+            print_supported(KF_CMPXCHG8B),
+            print_supported(KF_MMX),
+            print_supported(KF_WORKING_PTE),
+            print_supported(KF_PAT),
+            print_supported(KF_FXSR),
+            print_supported(KF_FAST_SYSCALL),
+            print_supported(KF_XMMI),
+            print_supported(KF_3DNOW),
+            print_supported(KF_AMDK6MTRR),
+            print_supported(KF_XMMI64),
+            print_supported(KF_DTS),
+            print_supported(KF_NX_BIT),
+            print_supported(KF_NX_DISABLED),
+            print_supported(KF_NX_ENABLED));
 #undef print_supported
 
     /* Return the Feature Bits */

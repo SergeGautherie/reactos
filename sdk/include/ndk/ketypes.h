@@ -158,6 +158,7 @@ Author:
 #define KF_AMDK6MTRR                    0x00008000
 #define KF_XMMI64                       0x00010000
 #define KF_DTS                          0x00020000
+// FIXME: KF_BRANCH == KF_DTS ??
 #define KF_BRANCH                       0x00020000 // from ksamd64.inc
 #define KF_SSE3                         0x00080000
 #define KF_CMPXCHG16B                   0x00100000
