@@ -1997,7 +1997,7 @@ LdrpCheckForLoadedDll(IN PWSTR DllPath,
     PVOID ViewBase = NULL;
     SIZE_T ViewSize = 0;
     PIMAGE_NT_HEADERS NtHeader, NtHeader2;
-    DPRINT("LdrpCheckForLoadedDll('%S' '%wZ' %u %u %p)\n", DllPath ? ((ULONG_PTR)DllPath == 1 ? L"" : DllPath) : L"", DllName, Flag, RedirectedDll, LdrEntry);
+    DPRINT1("LdrpCheckForLoadedDll('%S' '%wZ' %u %u %p)\n", DllPath ? ((ULONG_PTR)DllPath == 1 ? L"" : DllPath) : L"", DllName, Flag, RedirectedDll, LdrEntry);
 
     /* Check if a dll name was provided */
     if (!(DllName->Buffer) || !(DllName->Buffer[0])) return FALSE;
@@ -2193,6 +2193,7 @@ lookinhash:
     Status = RtlImageNtHeaderEx(0, ViewBase, ViewSize, &NtHeader);
     if (!(NT_SUCCESS(Status)) || !(NtHeader))
     {
+        DPRINT1("RtlImageNtHeaderEx() failed for %wZ\n", &FullDllName);
         /* Unmap the section and fail */
         NtUnmapViewOfSection(NtCurrentProcess(), ViewBase);
         return FALSE;
