@@ -54,6 +54,11 @@ int CDECL __CxxExceptionFilter( PEXCEPTION_POINTERS ptrs,
 /*********************************************************************
  *		__CxxFrameHandler (MSVCRT.@)
  */
+// ...\except_arm.c(58): error C2143: syntax error: missing ')' before '*'
+// ...\except_arm.c(58): error C2081: 'DISPATCHER_CONTEXT': name in formal parameter list illegal
+// ...\except_arm.c(58): error C2143: syntax error: missing '{' before '*'
+// ...\except_arm.c(58): error C2059: syntax error: ')'
+// ...\except_arm.c(59): error C2054: expected '(' to follow 'dispatch'
 EXCEPTION_DISPOSITION CDECL __CxxFrameHandler(EXCEPTION_RECORD *rec, DWORD frame, CONTEXT *context,
                                               DISPATCHER_CONTEXT *dispatch)
 {
