@@ -71,6 +71,26 @@ function(add_allusers_profile_dirs _image_filelist _rootdir)
     file(APPEND ${_image_filelist} "${_rootdir}/All Users/Start Menu/Programs/StartUp=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
     file(APPEND ${_image_filelist} "${_rootdir}/All Users/Templates=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 endfunction()
+function(add_system_profile_dirs _image_filelist _rootdir)
+    # Redundant: file(APPEND ${_image_filelist} "${_rootdir}/systemprofile=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Application Data=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Cookies=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Favorites=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Local Settings/Application Data=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Local Settings/History=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Local Settings/Temporary Internet Files=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/My Music=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/My Pictures=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/My Videos=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/NetHood=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/PrintHood=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Recent=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/SendTo=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    # Redundant: file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Start Menu/Programs=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Start Menu/Programs/Administrative Tools=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Start Menu/Programs/StartUp=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+    file(APPEND ${_image_filelist} "${_rootdir}/systemprofile/Templates=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
+endfunction()
 function(add_user_profile_dirs _image_filelist _rootdir _username)
     # Redundant: file(APPEND ${_image_filelist} "${_rootdir}/${_username}=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
     # Redundant: file(APPEND ${_image_filelist} "${_rootdir}/${_username}/Application Data=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
@@ -130,6 +150,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "${CMAKE_CURRENT_BINARY_
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "reactos/Temp=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 # Create user profile directories
 add_allusers_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "Profiles")
+add_system_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "reactos/system32/config")
 add_user_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "Profiles" "Default User")
 
 add_custom_target(livecd
@@ -149,6 +170,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "${CMAKE_CURRENT_BINAR
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/reactos/Temp=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 # Create user profile directories
 add_allusers_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/Profiles")
+add_system_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/reactos/system32/config")
 add_user_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/Profiles" "Default User")
 
 add_custom_target(hybridcd
