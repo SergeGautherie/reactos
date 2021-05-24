@@ -46,8 +46,11 @@ jobs:
       if: ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target hal -- -k0
     - name: Build ntoskrnl
-      if: ${{ matrix.arch == 'arm' }}
+      if: false # ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target ntoskrnl -- -k0
+    - name: Build
+      if: ${{ matrix.arch == 'arm' }} # false
+      run: cmake --build build -- -k0
     - name: Upload applications (as is)
       if: ${{ matrix.arch == 'arm' }}
       uses: actions/upload-artifact@v2
