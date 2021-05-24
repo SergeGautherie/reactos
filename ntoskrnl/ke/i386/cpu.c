@@ -219,7 +219,6 @@ KiGetFeatureBits(VOID)
     CPU_INFO CpuInfo, DummyCpuInfo;
     UCHAR Ccr1;
     BOOLEAN ExtendedCPUID = TRUE;
-    ULONG CpuFeatures = 0;
 
     /* Get the Vendor ID */
     Vendor = KiGetCpuVendor();
@@ -265,7 +264,7 @@ KiGetFeatureBits(VOID)
                 ((Prcb->CpuType == 6) && (Prcb->CpuStep < 0x0303)))
             {
                 /* Disable it */
-                CpuInfo.Edx &= ~0x800;
+                CpuInfo.Edx &= ~X86_FEATURE_SEP;
             }
 
             break;
@@ -289,7 +288,7 @@ KiGetFeatureBits(VOID)
                     case 0x0000:
 
                         /* Model 0 doesn't support PGE at all. */
-                        CpuInfo.Edx &= ~0x2000;
+                        CpuInfo.Edx &= ~X86_FEATURE_PGE;
                         break;
 
                     /* Model 8: K6-2 */
@@ -310,8 +309,8 @@ KiGetFeatureBits(VOID)
             }
             else if((CpuInfo.Eax & 0x0F00) < 0x0500)
             {
-                /* Families below 5 don't support PGE, PSE or CMOV at all */
-                CpuInfo.Edx &= ~(0x08 | 0x2000 | 0x8000);
+                /* Families below 5 don't support PSE, PGE or CMOV at all */
+                CpuInfo.Edx &= ~(X86_FEATURE_PSE | X86_FEATURE_PGE | X86_FEATURE_CMOV);
 
                 /* They also don't support advanced CPUID functions. */
                 ExtendedCPUID = FALSE;
@@ -361,32 +360,29 @@ KiGetFeatureBits(VOID)
             break;
     }
 
-    /* Set the current features */
-    CpuFeatures = CpuInfo.Edx;
-
     /* Convert all CPUID Feature bits into our format */
-    if (CpuFeatures & 0x00000002) FeatureBits |= KF_V86_VIS | KF_CR4;
-    if (CpuFeatures & 0x00000008) FeatureBits |= KF_LARGE_PAGE | KF_CR4;
-    if (CpuFeatures & 0x00000010) FeatureBits |= KF_RDTSC;
-    if (CpuFeatures & 0x00000100) FeatureBits |= KF_CMPXCHG8B;
-    if (CpuFeatures & 0x00000800) FeatureBits |= KF_FAST_SYSCALL;
-    if (CpuFeatures & 0x00001000) FeatureBits |= KF_MTRR;
-    if (CpuFeatures & 0x00002000) FeatureBits |= KF_GLOBAL_PAGE | KF_CR4;
-    if (CpuFeatures & 0x00008000) FeatureBits |= KF_CMOV;
-    if (CpuFeatures & 0x00010000) FeatureBits |= KF_PAT;
-    if (CpuFeatures & 0x00200000) FeatureBits |= KF_DTS;
-    if (CpuFeatures & 0x00800000) FeatureBits |= KF_MMX;
-    if (CpuFeatures & 0x01000000) FeatureBits |= KF_FXSR;
-    if (CpuFeatures & 0x02000000) FeatureBits |= KF_XMMI;
-    if (CpuFeatures & 0x04000000) FeatureBits |= KF_XMMI64;
+    if (CpuInfo.Edx & X86_FEATURE_VME) FeatureBits |= KF_V86_VIS | KF_CR4;
+    if (CpuInfo.Edx & X86_FEATURE_PSE) FeatureBits |= KF_LARGE_PAGE | KF_CR4;
+    if (CpuInfo.Edx & X86_FEATURE_TSC) FeatureBits |= KF_RDTSC;
+    if (CpuInfo.Edx & X86_FEATURE_CX8) FeatureBits |= KF_CMPXCHG8B;
+    if (CpuInfo.Edx & X86_FEATURE_SEP) FeatureBits |= KF_FAST_SYSCALL;
+    if (CpuInfo.Edx & X86_FEATURE_MTTR) FeatureBits |= KF_MTRR;
+    if (CpuInfo.Edx & X86_FEATURE_PGE) FeatureBits |= KF_GLOBAL_PAGE | KF_CR4;
+    if (CpuInfo.Edx & X86_FEATURE_CMOV) FeatureBits |= KF_CMOV;
+    if (CpuInfo.Edx & X86_FEATURE_PAT) FeatureBits |= KF_PAT;
+    if (CpuInfo.Edx & X86_FEATURE_DS) FeatureBits |= KF_DTS;
+    if (CpuInfo.Edx & X86_FEATURE_MMX) FeatureBits |= KF_MMX;
+    if (CpuInfo.Edx & X86_FEATURE_FXSR) FeatureBits |= KF_FXSR;
+    if (CpuInfo.Edx & X86_FEATURE_SSE) FeatureBits |= KF_XMMI;
+    if (CpuInfo.Edx & X86_FEATURE_SSE2) FeatureBits |= KF_XMMI64;
 
-    if (CpuFeatures & 0x00000040)
+    if (CpuInfo.Edx & X86_FEATURE_PAE)
     {
         DPRINT1("Support PAE\n");
     }
 
     /* Check if the CPU has hyper-threading */
-    if (CpuFeatures & 0x10000000)
+    if (CpuInfo.Edx & X86_FEATURE_HTT)
     {
         /* Set the number of logical CPUs */
         Prcb->LogicalProcessorsPerPhysicalProcessor = (UCHAR)(CpuInfo.Ebx >> 16);
@@ -405,7 +401,7 @@ KiGetFeatureBits(VOID)
     /* Check if CPUID 0x80000000 is supported */
     if (ExtendedCPUID)
     {
-        /* Do the call */
+        /* Check extended cpuid features */
         KiCpuId(&CpuInfo, 0x80000000);
         if ((CpuInfo.Eax & 0xffffff00) == 0x80000000)
         {
@@ -416,14 +412,14 @@ KiGetFeatureBits(VOID)
                 KiCpuId(&CpuInfo, 0x80000001);
 
                 /* Check if NX-bit is supported */
-                if (CpuInfo.Edx & 0x00100000) FeatureBits |= KF_NX_BIT;
+                if (CpuInfo.Edx & X86_EXT_FEATURE_NX) FeatureBits |= KF_NX_BIT;
 
                 /* Now handle each features for each CPU Vendor */
                 switch (Vendor)
                 {
                     case CPU_AMD:
                     case CPU_CENTAUR:
-                        if (CpuInfo.Edx & 0x80000000) FeatureBits |= KF_3DNOW;
+                        if (CpuInfo.Edx & X86_EXT_FEATURE_3DNOW) FeatureBits |= KF_3DNOW;
                         break;
                 }
             }

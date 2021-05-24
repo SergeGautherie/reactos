@@ -1,5 +1,48 @@
 #pragma once
 
+/* EAX=1: Processor Info and Feature Bits, EDX flags */
+// #define X86_FEATURE_FPU         0x00000001 /* x87 FPU is present */
+#define X86_FEATURE_VME         0x00000002 /* Virtual 8086 Extensions are present */
+// #define X86_FEATURE_DE          0x00000004 /* Debugging extensions are present */
+#define X86_FEATURE_PSE         0x00000008 /* Page Size Extension is present */
+#define X86_FEATURE_TSC         0x00000010 /* time stamp counters are present */
+// #define X86_FEATURE_MSR         0x00000020 /* Model-specific registers */
+#define X86_FEATURE_PAE         0x00000040 /* physical address extension is present */
+// #define X86_FEATURE_MCE         0x00000080 /* Machine Check Exception */
+#define X86_FEATURE_CX8         0x00000100 /* CMPXCHG8B instruction present */
+// #define X86_FEATURE_APIC        0x00000200 /* Onboard Advanced Programmable Interrupt Controller */
+// #define RESEERVED_10            0x00000400
+#define X86_FEATURE_SEP         0x00000800 /* SYSENTER/SYSEXIT support present */
+#define X86_FEATURE_MTTR        0x00001000 /* Memory type range registers are present */
+#define X86_FEATURE_PGE         0x00002000 /* Page Global Enable */
+// #define X86_FEATURE_MCA         0x00000400 /* Machine check architecture */
+#define X86_FEATURE_CMOV        0x00008000 /* "Conditional move" instruction supported */
+#define X86_FEATURE_PAT         0x00010000 /* Page Attribute Table is supported */
+// #define X86_FEATURE_PSE36       0x00020000 /* 36-bit page size extension */
+// #define X86_FEATURE_PSN         0x00040000 /* Processor Serial Number */
+// #define X86_FEATURE_CLFSH       0x00080000 /* CLFLUSH instruction (SSE2) */
+// #define RESEERVED_20            0x00100000
+#define X86_FEATURE_DS          0x00200000 /* Debug Store is present */
+// #define X86_FEATURE_ACPI        0x00400000 /* Onboard thermal control MSRs for ACPI */
+#define X86_FEATURE_MMX         0x00800000 /* MMX extension present */
+#define X86_FEATURE_FXSR        0x01000000 /* FXSAVE/FXRSTOR instructions present */
+#define X86_FEATURE_SSE         0x02000000 /* SSE extension present */
+#define X86_FEATURE_SSE2        0x04000000 /* SSE2 extension present */
+// #define X86_FEATURE_SS          0x00400000 /* CPU cache implements self-snoop */
+#define X86_FEATURE_HTT         0x10000000 /* Hyper-Threading present */
+// #define X86_FEATURE_TM          0x20000000 /* Thermal monitor automatically limits temperature */
+// #define X86_FEATURE_IA64        0x40000000 /* Reserved (IA64 processor emulating x86) */
+// #define X86_FEATURE_PBE         0x80000000 /* Pending Break Enable (PBE# pin) wakeup capability */
+
+/* EAX=80000001h: Extended Processor Info and Feature Bits, EDX flags */
+// ...
+#define X86_EXT_FEATURE_SYSCALL 0x00000800 /* SYSCALL/SYSRET available in 64-bit mode. */
+// ...
+#define X86_EXT_FEATURE_NX      0x00100000 /* NX support present */
+// ...
+// #define X86_EXT_FEATURE_3DNOWEXT 0x40000000 /* 3DNOW! extension present */
+#define X86_EXT_FEATURE_3DNOW   0x80000000 /* 3DNOW! present */
+
 #ifndef __ASM__
 
 #include "intrin_i.h"

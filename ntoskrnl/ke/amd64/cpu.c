@@ -133,7 +133,7 @@ KiGetFeatureBits(VOID)
     if (CpuInfo.Edx & X86_FEATURE_PSE) FeatureBits |= KF_LARGE_PAGE | KF_CR4;
     if (CpuInfo.Edx & X86_FEATURE_TSC) FeatureBits |= KF_RDTSC;
     if (CpuInfo.Edx & X86_FEATURE_CX8) FeatureBits |= KF_CMPXCHG8B;
-    if (CpuInfo.Edx & X86_FEATURE_SYSCALL) FeatureBits |= KF_FAST_SYSCALL;
+    if (CpuInfo.Edx & X86_FEATURE_SEP) FeatureBits |= KF_FAST_SYSCALL;
     if (CpuInfo.Edx & X86_FEATURE_MTTR) FeatureBits |= KF_MTRR;
     if (CpuInfo.Edx & X86_FEATURE_PGE) FeatureBits |= KF_GLOBAL_PAGE | KF_CR4;
     if (CpuInfo.Edx & X86_FEATURE_CMOV) FeatureBits |= KF_CMOV;
@@ -153,7 +153,7 @@ KiGetFeatureBits(VOID)
     if (CpuInfo.Ecx & X86_FEATURE_XSAVE) FeatureBits |= KF_XSTATE;
 
     /* Check if the CPU has hyper-threading */
-    if (CpuInfo.Edx & X86_FEATURE_HT)
+    if (CpuInfo.Edx & X86_FEATURE_HTT)
     {
         /* Set the number of logical CPUs */
         Prcb->LogicalProcessorsPerPhysicalProcessor = (UCHAR)(CpuInfo.Ebx >> 16);
@@ -180,13 +180,13 @@ KiGetFeatureBits(VOID)
             KiCpuId(&CpuInfo, 0x80000001);
 
             /* Check if NX-bit is supported */
-            if (CpuInfo.Edx & X86_FEATURE_NX) FeatureBits |= KF_NX_BIT;
+            if (CpuInfo.Edx & X86_EXT_FEATURE_NX) FeatureBits |= KF_NX_BIT;
 
             /* Now handle each features for each CPU Vendor */
             switch (Vendor)
             {
                 case CPU_AMD:
-                    if (CpuInfo.Edx & 0x80000000) FeatureBits |= KF_3DNOW;
+                    if (CpuInfo.Edx & X86_EXT_FEATURE_3DNOW) FeatureBits |= KF_3DNOW;
                     break;
             }
         }
