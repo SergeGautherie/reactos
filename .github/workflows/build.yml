@@ -5,11 +5,12 @@ jobs:
   build-msvc:
     strategy:
       matrix:
+        os: [windows-2016, windows-2019] # VS 2017, 2019
         toolset: ['14.0'] # VS 2015
         arch: [amd64]
         config: [Debug, Release]
       fail-fast: false
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Install ninja
       run: choco install -y ninja
@@ -30,6 +31,7 @@ jobs:
       if: ${{ matrix.arch == 'amd64' }}
       uses: ilammy/msvc-dev-cmd@v1
       with:
+         # windows-2022: amd64 or x86_amd64, '[ERROR:vcvars140.bat] VC++ 14.0 Toolset Installation was not found. Init did not complete successfully.'
         arch: amd64
         toolset: ${{matrix.toolset}}
     - name: Source checkout
