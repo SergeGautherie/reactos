@@ -3,6 +3,7 @@ on: [push, pull_request]
 
 jobs:
   build-linux:
+    if: false
     strategy:
       matrix:
         compiler: [gcc, clang]
@@ -85,15 +86,11 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        toolset: ['14','14.2'] # VS 2022, and 2019 (see below)
-        arch: [i386, amd64]
-        config: [Debug, Release]
-        dllver: ['0x502', '0x600']
-        exclude: # Build NT6 ISOs only with the latest toolset when compiled as a debug build
-          - dllver: 0x600
-            toolset: 14.2
-          - dllver: 0x600
-            config: Release
+#         toolset: ['14','14.2'] # VS 2022, and 2019 (see below)
+        toolset: ['14'] # VS 2022
+        arch: [amd64]
+        config: [Debug]
+        dllver: ['0x502']
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
@@ -123,7 +120,7 @@ jobs:
       with:
         path: src
     - name: Configure
-      run: cmake -S src -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DDLL_EXPORT_VERSION=${{matrix.dllver}} -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
+      run: cmake -S src -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DDLL_EXPORT_VERSION=${{matrix.dllver}} -DENABLE_ROSTESTS=0 -DENABLE_ROSAPPS=0
     - name: Build
       run: cmake --build build -- -k0
     - name: Generate ISOs
@@ -143,6 +140,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msvc-arm:
+    if: false
     strategy:
       matrix:
         toolset: ['14','14.2'] # VS 2022, 2019
@@ -225,6 +223,7 @@ jobs:
 
   # FIXME: Does not boot on toolset 14.1, 14.3+ is untested
   build-clang-cl:
+    if: false
     strategy:
       matrix:
         arch: [i386, amd64]
@@ -284,6 +283,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msbuild-i386:
+    if: false
     name: MSBuild (i386)
     runs-on: windows-latest
     steps:
