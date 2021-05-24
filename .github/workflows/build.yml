@@ -138,6 +138,13 @@ jobs:
         toolset: ['14.2', '14.1'] # VS 2019, 2017
         arch: [arm]
         config: [Debug, Release]
+        include:
+        - toolset: '14.0' # VS 2015
+          arch: arm
+          config: Debug
+        - toolset: '14.0' # VS 2015
+          arch: arm
+          config: Release
       fail-fast: false
     runs-on: windows-latest
     steps:
@@ -153,7 +160,7 @@ jobs:
     - name: Activate VS cmd (arm)
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: x86_arm
+        arch: amd64_arm
         toolset: ${{matrix.toolset}}
     - name: Source checkout
       uses: actions/checkout@v2
@@ -161,12 +168,15 @@ jobs:
         path: src
     - name: Configure
       run: cmake -S src -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-msvc.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1
+    - name: Build applications
+      if: false # ${{ matrix.arch == 'arm64' }}
+      run: cmake --build build --target base/applications/all -- -k0
     - name: Build base module
       run: cmake --build build --target base/all
     - name: Build control panel applets
-      run: cmake --build build --target dll/cpl/all
+      run: cmake --build build --target dll/cpl/all -- -k0
     - name: Build rosapps
-      run: cmake --build build --target modules/rosapps/all
+      run: cmake --build build --target modules/rosapps/all -- -k0
     - name: Upload compiled binaries
       uses: actions/upload-artifact@v2
       with:
