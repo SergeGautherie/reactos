@@ -115,6 +115,7 @@ elseif(ARCH STREQUAL "arm")
     list(APPEND CRT_MATH_ASM_SOURCE
         math/arm/_logb.s
     )
+elseif(ARCH STREQUAL "arm64") # TODO !?
 endif()
 
 if(NOT ARCH STREQUAL "i386")
