@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         toolset: ['14.2', '14.1'] # VS 2019, 2017
-        arch: [arm]
+        arch: [arm, arm64]
         include:
         - arch: arm
           toolset: '14.0' # VS 2015
@@ -22,10 +22,10 @@ jobs:
         echo "${{github.workspace}}\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo "BISON_PKGDATADIR=${{github.workspace}}\bin\share\bison" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         echo "M4=${{github.workspace}}\bin\m4.exe" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-    - name: Activate VS cmd (arm)
+    - name: Activate VS cmd (${{matrix.arch}})
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: amd64_arm
+        arch: amd64_${{matrix.arch}}
         toolset: ${{matrix.toolset}}
     - name: Source checkout
       uses: actions/checkout@v2
@@ -37,13 +37,16 @@ jobs:
       if: false # ${{ matrix.arch == 'arm64' }}
       run: cmake --build build --target rapps -- -k0
     - name: Build base/applications
+      if: ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target base/applications/all -- -k0
     - name: Build modules/rosapps
+      if: ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target modules/rosapps/all -- -k0
     - name: Build modules/rostests
       if: false # ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target modules/rostests/all -- -k0
     - name: Upload applications (as is)
+      if: ${{ matrix.arch == 'arm' }}
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msvc${{matrix.toolset}}-${{matrix.arch}}-${{github.sha}}
@@ -53,6 +56,7 @@ jobs:
           !**/CMakeFiles
           !**/cmake_install.cmake
     - name: Upload debug symbols
+      if: ${{ matrix.arch == 'arm' }}
       uses: actions/upload-artifact@v2
       with:
         name: reactos-syms-msvc${{matrix.toolset}}-${{matrix.arch}}-${{github.sha}}
