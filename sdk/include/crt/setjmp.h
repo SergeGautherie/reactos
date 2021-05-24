@@ -150,6 +150,12 @@ extern "C" {
     unsigned long long D[8]; // D8-D15 VFP/NEON regs
   } _JUMP_BUFFER;
 
+#elif defined(_M_ARM64) // Block added by ReactOS.
+
+// 7 times:
+// ...\setjmp.h(155): fatal error C1189: #error:  Define Setjmp for this architecture!
+#error Define Setjmp for this architecture! (_M_ARM64)
+
 #else
 
 #error Define Setjmp for this architecture!
