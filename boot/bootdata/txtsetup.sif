@@ -235,8 +235,8 @@ xbox = "Original Xbox (x86 based)"
 pc98_up = "NEC PC-98 Uniprocessor"
 
 [Computer.NTamd64]
-x64_up = "Standard x64 Uniprocessor"
-x64_mp = "Standard x64 Multiprocessor"
+x64_up = "Standard (ACPI APIC) x64 Uniprocessor"
+x64_mp = "Standard (ACPI APIC) x64 Multiprocessor"
 
 [Map.Computer.NTx86]
 ;<id> = <pnp id string>
