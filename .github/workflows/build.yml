@@ -5,18 +5,11 @@ jobs:
   build-msvc-arm:
     strategy:
       matrix:
-        toolset: ['14.2', '14.1'] # VS 2019, 2017
+        toolset: ['14.3'] # VS 2022
         arch: [arm, arm64]
         config: [Debug, Release]
-        include:
-        - toolset: '14.0' # VS 2015
-          arch: arm
-          config: Debug
-        - toolset: '14.0' # VS 2015
-          arch: arm
-          config: Release
       fail-fast: false
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
     - name: Install ninja
       run: choco install -y ninja
