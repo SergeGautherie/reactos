@@ -114,16 +114,11 @@ static BOOLEAN KdbpCmdPrintStruct(ULONG Argc, PCHAR Argv[]);
 #endif
 
 /* Portability */
-FORCEINLINE
-ULONG_PTR
-strtoulptr(const char* nptr, char** endptr, int base)
-{
-#ifdef _M_IX86
-    return strtoul(nptr, endptr, base);
+#ifdef _WIN64
+#define strtoulptr strtoull
 #else
-    return strtoull(nptr, endptr, base);
+#define strtoulptr strtoul
 #endif
-}
 
 /* GLOBALS *******************************************************************/
 
@@ -473,7 +468,7 @@ KdbpGetHexNumber(
         pszNum += 2;
 
     /* Make a number from the string (hex) */
-    *pulValue = strtoul(pszNum, &endptr, 16);
+    *pulValue = strtoulptr(pszNum, &endptr, 16);
 
     return (*endptr == '\0');
 }
@@ -1872,7 +1867,7 @@ KdbpCmdProc(
             State = ((Process->Pcb.State == ProcessInMemory) ? "In Memory" :
                     ((Process->Pcb.State == ProcessOutOfMemory) ? "Out of Memory" : "In Transition"));
 
-            KdbpPrint(" %s0x%08x  %-10s  %s%s\n",
+            KdbpPrint(" %s0x%p  %-10s  %s%s\n",
                       str1,
                       Process->UniqueProcessId,
                       State,
@@ -1932,7 +1927,7 @@ KdbpCmdProc(
         State = ((Process->Pcb.State == ProcessInMemory) ? "In Memory" :
                 ((Process->Pcb.State == ProcessOutOfMemory) ? "Out of Memory" : "In Transition"));
         KdbpPrint("%s"
-                  "  PID:             0x%08x\n"
+                  "  PID:             0x%p\n"
                   "  State:           %s (0x%x)\n"
                   "  Image Filename:  %s\n",
                   (Argc < 2) ? "Current process:\n" : "",
