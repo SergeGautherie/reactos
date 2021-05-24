@@ -34,6 +34,9 @@ jobs:
     - name: Build rapps
       if: false # ${{ matrix.arch == 'arm64' }}
       run: cmake --build build --target rapps -- -k0
+    - name: Build drwtsn32
+      if: false # ${{ matrix.arch == 'arm64' }}
+      run: cmake --build build --target drwtsn32 -- -k0
     - name: Build applications
       if: false # ${{ matrix.arch == 'arm64' }}
       run: cmake --build build --target base/applications/all -- -k0
