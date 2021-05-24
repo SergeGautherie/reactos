@@ -190,7 +190,7 @@ RtlpImageNtHeaderEx(
     {
         /* Not a valid COFF */
         DPRINT1("Invalid image DOS signature: 0x%04x\n", DosHeader->e_magic);
-        ASSERTMSG("CORE-17645\n", FALSE);
+//        ASSERTMSG("CORE-17645\n", FALSE);
         return STATUS_INVALID_IMAGE_FORMAT;
     }
 
