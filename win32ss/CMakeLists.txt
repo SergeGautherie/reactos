@@ -10,10 +10,16 @@ if(USE_DIBLIB)
     add_subdirectory(gdi/diblib)
 endif()
 
+# libgdi32_stubs.asm
+if(NOT ARCH STREQUAL "arm64") # FIXME: ...
 add_subdirectory(gdi/gdi32)
+endif()
 add_subdirectory(printing)
 add_subdirectory(reactx)
+# libuser32_stubs.asm
+if(NOT ARCH STREQUAL "arm64") # FIXME: ...
 add_subdirectory(user/user32)
+endif()
 add_subdirectory(user/winsrv)
 
 spec2def(win32k.sys win32k.spec ADD_IMPORTLIB)

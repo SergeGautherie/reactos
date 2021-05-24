@@ -15,7 +15,21 @@ add_subdirectory(directx)
 add_subdirectory(keyboard)
 add_subdirectory(nls)
 add_subdirectory(np)
+# libntdll_stubs.asm
+if(NOT ARCH STREQUAL "arm64") # FIXME: ...
 add_subdirectory(ntdll)
+endif()
 add_subdirectory(opengl)
 add_subdirectory(shellext)
+# libadvapi32_stubs.asm
+# libcomctl32_stubs.asm
+# libgdiplus_stubs.asm
+# libkernel32_stubs.asm
+# libole32_stubs.asm
+# libshell32_stubs.asm
+# libsetupapi_stubs.asm
+# libshlwapi_stubs.asm
+# libwininet_stubs.asm
+if(NOT ARCH STREQUAL "arm64") # FIXME: ...
 add_subdirectory(win32)
+endif()
