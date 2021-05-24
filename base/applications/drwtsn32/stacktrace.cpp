@@ -67,6 +67,7 @@ void PrintStackBacktrace(FILE* output, DumpData& data, ThreadData& thread)
     StackFrame.AddrFrame.Offset = thread.Context.u.s.Fp;
 #else
 #error "Unknown architecture"
+// #error Unknown architecture
 #endif
 
 #define STACKWALK_MAX_NAMELEN   512
