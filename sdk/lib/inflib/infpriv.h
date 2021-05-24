@@ -9,7 +9,11 @@
 #pragma once
 
 #ifndef FIELD_OFFSET
-#define FIELD_OFFSET(t,f) ((ptrdiff_t)&(((t*)0)->f))
+#if !defined(__GNUC__) && !defined(__clang__)
+#define FIELD_OFFSET(t, f)  ((ptrdiff_t)&(((t *)0)->f))
+#else
+#define FIELD_OFFSET(t, f)  ((ptrdiff_t)__builtin_offsetof(t, f))
+#endif
 #endif
 
 #define INF_STATUS_INSUFFICIENT_RESOURCES  ((INFSTATUS)0xC000009A)

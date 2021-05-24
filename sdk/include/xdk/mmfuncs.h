@@ -28,7 +28,11 @@ $if (_WDMDDK_)
     ALIGN_UP_POINTER_BY(ptr, sizeof(type))
 
 #ifndef FIELD_OFFSET
-#define FIELD_OFFSET(type, field) ((ULONG)&(((type *)0)->field))
+#if !defined(__GNUC__) && !defined(__clang__)
+#define FIELD_OFFSET(type, field)   ((ULONG)&(((type *)0)->field))
+#else
+#define FIELD_OFFSET(type, field)   ((ULONG)__builtin_offsetof(type, field))
+#endif
 #endif
 
 #ifndef FIELD_SIZE
