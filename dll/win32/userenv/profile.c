@@ -1802,14 +1802,18 @@ GetUserProfileDirectoryW(
     HKEY hKey;
     LONG Error;
 
+    DPRINT("GetUserProfileDirectoryW(%p, %p, %p) called\n", hToken, lpProfileDir, lpcchSize);
+
     if (!hToken)
     {
+        DPRINT("hToken is NULL\n");
         SetLastError(ERROR_INVALID_HANDLE);
         return FALSE;
     }
 
     if (!lpcchSize)
     {
+        DPRINT("lpcchSize is NULL\n");
         SetLastError(ERROR_INVALID_PARAMETER);
         return FALSE;
     }
@@ -1838,7 +1842,7 @@ GetUserProfileDirectoryW(
                           &hKey);
     if (Error != ERROR_SUCCESS)
     {
-        DPRINT1("Error: %lu\n", Error);
+        DPRINT1("KeyName: '%S', Error: %lu\n", szKeyName, Error);
         SetLastError((DWORD)Error);
         return FALSE;
     }
@@ -1852,7 +1856,7 @@ GetUserProfileDirectoryW(
                              &dwLength);
     if ((Error != ERROR_SUCCESS) || (dwType != REG_SZ && dwType != REG_EXPAND_SZ))
     {
-        DPRINT1("Error: %lu\n", Error);
+        DPRINT1("KeyName: '%S', 'ProfileImagePath', Error: %lu\n", szKeyName, Error);
         RegCloseKey(hKey);
         SetLastError((DWORD)Error);
         return FALSE;
@@ -1867,7 +1871,7 @@ GetUserProfileDirectoryW(
                                    szImagePath,
                                    ARRAYSIZE(szImagePath)))
     {
-        DPRINT1("Error: %lu\n", GetLastError());
+        DPRINT1("ExpandEnvironmentStringsW('%S') failed. Error: %lu\n", szRawImagePath, GetLastError());
         return FALSE;
     }
 
@@ -1882,6 +1886,8 @@ GetUserProfileDirectoryW(
     }
     else // if (!lpProfileDir || (*lpcchSize < dwLength))
     {
+        if (lpProfileDir)
+            DPRINT("ImagePath: '%S'. Buffer to small (%lu < %lu)\n", szImagePath, *lpcchSize, dwLength);
         *lpcchSize = dwLength;
         SetLastError(ERROR_INSUFFICIENT_BUFFER);
         return FALSE;
@@ -2192,11 +2198,11 @@ UnloadUserProfile(
     DWORD dwError;
     BOOL bRet = FALSE;
 
-    DPRINT("UnloadUserProfile() called\n");
+    DPRINT("UnloadUserProfile(%p, %p) called\n", hToken, hProfile);
 
     if (hProfile == NULL)
     {
-        DPRINT1("Invalid profile handle\n");
+        DPRINT("hProfile is NULL\n");
         SetLastError(ERROR_INVALID_PARAMETER);
         return FALSE;
     }
@@ -2321,8 +2327,7 @@ UnloadUserProfile(
         {
             if (!DeleteProfileW(SidString.Buffer, NULL, NULL))
             {
-                DPRINT1("DeleteProfile(%S, NULL, NULL) failed (Error %lu)\n",
-                        SidString.Buffer, GetLastError());
+                DPRINT1("DeleteProfileW('%wZ') failed (Error %lu)\n", &SidString, GetLastError());
                 goto cleanup;
             }
         }

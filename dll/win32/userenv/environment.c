@@ -64,7 +64,7 @@ SetUserEnvironmentVariable(PWSTR* Environment,
                                                &Length);
         if (!NT_SUCCESS(Status))
         {
-            DPRINT1("RtlExpandEnvironmentStrings_U() failed (Status %lx)\n", Status);
+            DPRINT1("RtlExpandEnvironmentStrings_U('%wZ') failed (Status %lx)\n", &SrcValue, Status);
             DPRINT1("Length %lu\n", Length);
 
             if (Buffer)
@@ -86,7 +86,7 @@ SetUserEnvironmentVariable(PWSTR* Environment,
         }
         else
         {
-            DPRINT("GetShortPathNameW() failed for %S (Error %lu)\n", DstValue.Buffer, GetLastError());
+            DPRINT1("lpName: '%S', GetShortPathNameW('%wZ') failed (Error %lu)\n", lpName, &DstValue, GetLastError());
         }
 
         DPRINT("Buffer: %S\n", ShortName);
@@ -94,7 +94,7 @@ SetUserEnvironmentVariable(PWSTR* Environment,
 
     RtlInitUnicodeString(&Name, lpName);
 
-    DPRINT("Value: %wZ\n", &DstValue);
+    DPRINT("Name: '%wZ', DstValue: '%wZ'\n", &Name, &DstValue);
 
     Status = RtlSetEnvironmentVariable(Environment,
                                        &Name,
@@ -105,7 +105,7 @@ SetUserEnvironmentVariable(PWSTR* Environment,
 
     if (!NT_SUCCESS(Status))
     {
-        DPRINT1("RtlSetEnvironmentVariable() failed (Status %lx)\n", Status);
+        DPRINT1("RtlSetEnvironmentVariable('%wZ') failed (Status %lx)\n", &Name, Status);
         return FALSE;
     }
 
@@ -518,10 +518,11 @@ CreateEnvironmentBlock(OUT LPVOID *lpEnvironment,
     WCHAR Buffer[MAX_PATH];
     WCHAR szValue[1024];
 
-    DPRINT("CreateEnvironmentBlock() called\n");
+    DPRINT("CreateEnvironmentBlock(%p, %p, %d) called\n", lpEnvironment, hToken, bInherit);
 
     if (lpEnvironment == NULL)
     {
+        DPRINT("lpEnvironment is NULL\n");
         SetLastError(ERROR_INVALID_PARAMETER);
         return FALSE;
     }
@@ -529,7 +530,7 @@ CreateEnvironmentBlock(OUT LPVOID *lpEnvironment,
     Status = RtlCreateEnvironment((BOOLEAN)bInherit, Environment);
     if (!NT_SUCCESS(Status))
     {
-        DPRINT1("RtlCreateEnvironment() failed (Status %lx)\n", Status);
+        DPRINT1("RtlCreateEnvironment() failed. Status: %lx\n", Status);
         SetLastError(RtlNtStatusToDosError(Status));
         return FALSE;
     }
@@ -556,6 +557,7 @@ CreateEnvironmentBlock(OUT LPVOID *lpEnvironment,
     /* Set variables from Session Manager */
     if (!SetSystemEnvironment(Environment))
     {
+        DPRINT1("SetSystemEnvironment() failed\n");
         RtlDestroyEnvironment(*Environment);
         return FALSE;
     }
