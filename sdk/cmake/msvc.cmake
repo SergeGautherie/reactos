@@ -416,7 +416,7 @@ if(ARCH STREQUAL "amd64")
     # It's not a problem when using the DDK/WDK because, in x64 mode,
     # both the x86 and x64 versions of ml are available.
     if(DEFINED ENV{VCToolsInstallDir})
-        set(CMAKE_ASM16_COMPILER $ENV{VCToolsInstallDir}bin/ml.exe)
+        set(CMAKE_ASM16_COMPILER $ENV{VCToolsInstallDir}bin/amd64_x86/ml.exe)
     elseif(DEFINED ENV{VCINSTALLDIR})
         set(CMAKE_ASM16_COMPILER $ENV{VCINSTALLDIR}/bin/ml.exe)
     else()
