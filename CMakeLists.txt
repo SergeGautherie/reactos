@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # check that the ARCH (target architecture) variable is defined
 if(NOT ARCH)
-    message(FATAL_ERROR "Target architecture (ARCH) is not defined. Please, choose one of: i386, amd64, arm")
+    message(FATAL_ERROR "Target architecture (ARCH) is not defined. Please, choose one of: i386, amd64, arm, arm64")
 endif()
 # Now the ARCH variable will be in lowercase.
 # It is needed because STREQUAL comparison
@@ -40,7 +40,7 @@ endif()
 string(TOLOWER ${ARCH} ARCH)
 
 # set possible values for cmake GUI
-set_property(CACHE ARCH PROPERTY STRINGS "i386" "amd64" "arm")
+set_property(CACHE ARCH PROPERTY STRINGS "i386" "amd64" "arm" "arm64")
 
 # Alternative WinNT-compatible architecture string
 if(ARCH STREQUAL "i386")
@@ -267,6 +267,10 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         if(SARCH STREQUAL "omap3-zoom2")
             add_definitions(-D_ZOOM2_)
         endif()
+    elseif(ARCH STREQUAL "arm64")
+        message(WARNING "TODO arm64")
+        add_compile_definitions(_ARM64_=2041 __arm64__=2042 _WIN64=2043 _M_ARM64=2044)
+        # SARCH !?
     endif()
 
     # Other
@@ -276,6 +280,8 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
     elseif(ARCH STREQUAL "amd64")
         add_compile_definitions(USE_COMPILER_EXCEPTIONS)
     elseif(ARCH STREQUAL "arm")
+        add_compile_definitions(USE_COMPILER_EXCEPTIONS)
+    elseif(ARCH STREQUAL "arm64")
         add_compile_definitions(USE_COMPILER_EXCEPTIONS)
     endif()
 
@@ -326,6 +332,9 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         sdk/include/reactos/libs)
 
     if(ARCH STREQUAL "arm")
+        include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/arm)
+    elseif(ARCH STREQUAL "arm64")
+        message(WARNING "TODO arm64")
         include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/arm)
     endif()
 
