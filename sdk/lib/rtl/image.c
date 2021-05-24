@@ -179,7 +179,7 @@ RtlpImageNtHeaderEx(
         /* Make sure the image size is at least big enough for the DOS header */
         if (Size < sizeof(IMAGE_DOS_HEADER))
         {
-            DPRINT1("Size too small\n");
+            DPRINT1("Size too small: %llu\n", Size);
             return STATUS_INVALID_IMAGE_FORMAT;
         }
     }
@@ -189,7 +189,7 @@ RtlpImageNtHeaderEx(
     if (DosHeader->e_magic != IMAGE_DOS_SIGNATURE)
     {
         /* Not a valid COFF */
-        DPRINT1("Invalid image DOS signature!\n");
+        DPRINT1("Invalid image DOS signature: 0x%04x\n", DosHeader->e_magic);
         return STATUS_INVALID_IMAGE_FORMAT;
     }
 
@@ -202,8 +202,7 @@ RtlpImageNtHeaderEx(
        other overflow checks would become necessary! */
     if (NtHeaderOffset >= (256 * 1024 * 1024))
     {
-        /* Fail */
-        DPRINT1("NT headers offset is larger than 256MB!\n");
+        DPRINT1("NT headers offset is larger than 256MB: %lu\n", NtHeaderOffset);
         return STATUS_INVALID_IMAGE_FORMAT;
     }
 
@@ -214,8 +213,8 @@ RtlpImageNtHeaderEx(
         if ((NtHeaderOffset +
              RTL_SIZEOF_THROUGH_FIELD(IMAGE_NT_HEADERS, FileHeader)) >= Size)
         {
-            /* Fail */
-            DPRINT1("NT headers beyond image size!\n");
+            DPRINT1("NT headers beyond image size: %Iu >= %llu\n",
+                    NtHeaderOffset + RTL_SIZEOF_THROUGH_FIELD(IMAGE_NT_HEADERS, FileHeader), Size);
             return STATUS_INVALID_IMAGE_FORMAT;
         }
     }
@@ -229,7 +228,7 @@ RtlpImageNtHeaderEx(
         /* Make sure we don't overflow into kernel space */
         if ((PVOID)(NtHeaders + 1) > MmHighestUserAddress)
         {
-            DPRINT1("Image overflows from user space into kernel space!\n");
+            DPRINT1("Image overflows from user space into kernel space: %p\n", NtHeaders + 1);
             return STATUS_INVALID_IMAGE_FORMAT;
         }
     }
@@ -237,8 +236,7 @@ RtlpImageNtHeaderEx(
     /* Verify the PE Signature */
     if (NtHeaders->Signature != IMAGE_NT_SIGNATURE)
     {
-        /* Fail */
-        DPRINT1("Invalid image NT signature!\n");
+        DPRINT1("Invalid image NT signature: 0x%08x\n", NtHeaders->Signature);
         return STATUS_INVALID_IMAGE_FORMAT;
     }
 
@@ -522,7 +520,8 @@ LdrRelocateImageWithBias(
 
         if (RelocationDir == NULL)
         {
-            DPRINT1("Error during call to LdrProcessRelocationBlockLongLong()!\n");
+            DPRINT1("Error during call to LdrProcessRelocationBlockLongLong(%Iu, %lu, %p, %lld)!\n",
+                    Address, Count, TypeOffset, Delta);
             return Invalid;
         }
     }

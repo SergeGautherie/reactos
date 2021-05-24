@@ -3909,7 +3909,7 @@ NTAPI
 RtlImageNtHeaderEx(
     _In_ ULONG Flags,
     _In_ PVOID BaseAddress,
-    _In_ ULONGLONG Size,
+    _In_ ULONG64 Size,
     _Out_ PIMAGE_NT_HEADERS *NtHeader
 );
 

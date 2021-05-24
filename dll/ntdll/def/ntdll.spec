@@ -919,7 +919,7 @@
 @ stub -version=0x600+ RtlIdnToUnicode
 @ stdcall RtlImageDirectoryEntryToData(long long long ptr)
 @ stdcall RtlImageNtHeader(long)
-@ stdcall RtlImageNtHeaderEx(long ptr double ptr)
+@ stdcall RtlImageNtHeaderEx(long ptr int64 ptr)
 @ stdcall RtlImageRvaToSection(ptr long long)
 @ stdcall RtlImageRvaToVa(ptr long long ptr)
 @ stdcall RtlImpersonateSelf(long)
