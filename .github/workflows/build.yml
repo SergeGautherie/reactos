@@ -42,6 +42,12 @@ jobs:
     - name: Build modules/rostests
       if: false # ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target modules/rostests/all -- -k0
+    - name: Build hal
+      if: ${{ matrix.arch == 'arm' }}
+      run: cmake --build build --target hal -- -k0
+    - name: Build ntoskrnl
+      if: ${{ matrix.arch == 'arm' }}
+      run: cmake --build build --target ntoskrnl -- -k0
     - name: Upload applications (as is)
       if: ${{ matrix.arch == 'arm' }}
       uses: actions/upload-artifact@v2
