@@ -5,9 +5,9 @@ jobs:
   build-linux:
     strategy:
       matrix:
-        compiler: [gcc, clang]
-        arch: [i386, amd64]
-        config: [Debug, Release]
+        compiler: [gcc]
+        arch: [i386]
+        config: [Debug]
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
@@ -59,6 +59,29 @@ jobs:
     - name: Ease ccache compiler check (GCC)
       if: ${{ matrix.compiler == 'gcc' }}
       run: echo "CCACHE_COMPILERCHECK=string:${{steps.get_rosbe_spec.outputs.git-sha}}-${{hashfiles('./build_rosbe_ci.sh')}}" >> $GITHUB_ENV
+      # '/home/runner/work/reactos/reactos/RosBE-CI/bin/cmake' + 'cmake version 3.17.2-ReactOS' -> '/usr/local/bin/cmake' + 'cmake version 3.21.3'.
+      # '/home/runner/work/reactos/reactos/RosBE-CI/bin/ninja' + '1.10.0' -> N/A.
+      #   echo 'which ninja && ninja --version && rm ${{github.workspace}}/RosBE-CI/bin/ninja && which ninja && ninja --version' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
+#         echo "CMAKE_ROOT=/usr/local/bin" >> $GITHUB_ENV
+    - name: Tweak RosBE
+      run: |
+        echo 'which cmake && cmake --version && rm ${{github.workspace}}/RosBE-CI/bin/cmake && ln -s /usr/local/bin/cmake ${{github.workspace}}/RosBE-CI/bin/cmake && which cmake && cmake --version' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
+    - name: Which gcc (GCC)
+      if: ${{ matrix.compiler == 'gcc' }}
+#        where gcc  # 'where: not found'.
+       # '/usr/bin/gcc' + 'gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0'.
+      run: |
+        which gcc
+        gcc --version
+        ls -la ${{github.workspace}}/RosBE-CI/bin/
+        ls -la ${{github.workspace}}/RosBE-CI/amd64/bin/
+        ls -la ${{github.workspace}}/RosBE-CI/i386/bin/
+# -- The C compiler identification is GNU 8.4.0
+# -- The CXX compiler identification is GNU 8.4.0
+# -- Check for working C compiler: /home/runner/work/reactos/reactos/RosBE-CI/i386/bin/i686-w64-mingw32-gcc
+# -- Check for working C compiler: /home/runner/work/reactos/reactos/RosBE-CI/i386/bin/i686-w64-mingw32-gcc - works
+# -- Check for working CXX compiler: /home/runner/work/reactos/reactos/RosBE-CI/i386/bin/i686-w64-mingw32-g++
+# -- Check for working CXX compiler: /home/runner/work/reactos/reactos/RosBE-CI/i386/bin/i686-w64-mingw32-g++ - works
     - name: Configure
       run: echo 'cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-${{matrix.compiler}}.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{env.D_CLANG_VERSION}}' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Build
