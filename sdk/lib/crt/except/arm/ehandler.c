@@ -9,7 +9,10 @@
 /* INCLUDES *****************************************************************/
 
 // .../ehandler.c(11): fatal error C1083: Cannot open include file: 'precomp.h': No such file or directory
+// Tried removing, but errors on all identifiers...
 #include <precomp.h>
+// Tried adding, but not found either...
+// #include <kxarm.h>
 
 _CRTIMP
 EXCEPTION_DISPOSITION
