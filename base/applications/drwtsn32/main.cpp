@@ -66,6 +66,10 @@ static void PrintThread(FILE* output, DumpData& data, DWORD tid, ThreadData& thr
                  ctx.Rax, ctx.Rbx, ctx.Rcx, ctx.Rdx, ctx.Rsi, ctx.Rdi);
         xfprintf(output, "r8:%p r9:%p r10:%p r11:%p r12:%p r13:%p r14:%p r15:%p" NEWLINE,
                  ctx.R8, ctx.R9, ctx.R10, ctx.R11, ctx.R12, ctx.R13, ctx.R14, ctx.R15);
+#elif defined(_M_ARM)
+#error ARM architecture
+#elif defined(_M_ARM64)
+#error ARM64 architecture
 #else
 #error Unknown architecture
 #endif
@@ -79,6 +83,10 @@ static void PrintThread(FILE* output, DumpData& data, DWORD tid, ThreadData& thr
 #elif defined(_M_AMD64)
         xfprintf(output, "rip:%p rsp:%p rbp:%p" NEWLINE,
                  ctx.Rip, ctx.Rsp, ctx.Rbp);
+#elif defined(_M_ARM)
+#error ARM architecture
+#elif defined(_M_ARM64)
+#error ARM64 architecture
 #else
 #error Unknown architecture
 #endif
@@ -89,6 +97,10 @@ static void PrintThread(FILE* output, DumpData& data, DWORD tid, ThreadData& thr
 #if defined(_M_IX86) || defined(_M_AMD64)
         xfprintf(output, "dr0:%p dr1:%p dr2:%p dr3:%p dr6:%p dr7:%p" NEWLINE,
                  ctx.Dr0, ctx.Dr1, ctx.Dr2, ctx.Dr3, ctx.Dr6, ctx.Dr7);
+#elif defined(_M_ARM)
+#error ARM architecture
+#elif defined(_M_ARM64)
+#error ARM64 architecture
 #else
 #error Unknown architecture
 #endif

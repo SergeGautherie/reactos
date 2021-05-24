@@ -54,6 +54,10 @@ void PrintStackBacktrace(FILE* output, DumpData& data, ThreadData& thread)
     StackFrame.AddrStack.Mode = AddrModeFlat;
     StackFrame.AddrFrame.Offset = thread.Context.Ebp;
     StackFrame.AddrFrame.Mode = AddrModeFlat;
+#elif defined(_M_ARM)
+#error ARM architecture
+#elif defined(_M_ARM64)
+#error ARM64 architecture
 #else
 #error Unknown architecture
 #endif
@@ -118,6 +122,10 @@ void PrintStackBacktrace(FILE* output, DumpData& data, ThreadData& thread)
     ULONG_PTR stackPointer = thread.Context.Esp;
 #elif defined(_M_AMD64)
     ULONG_PTR stackPointer = thread.Context.Rsp;
+#elif defined(_M_ARM)
+#error ARM architecture
+#elif defined(_M_ARM64)
+#error ARM64 architecture
 #else
 #error Unknown architecture
 #endif
