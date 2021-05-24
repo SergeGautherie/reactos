@@ -365,6 +365,7 @@ KiGetFeatureBits(VOID)
     if (CpuInfo.Edx & X86_FEATURE_PSE) FeatureBits |= KF_LARGE_PAGE | KF_CR4;
     if (CpuInfo.Edx & X86_FEATURE_TSC) FeatureBits |= KF_RDTSC;
     if (CpuInfo.Edx & X86_FEATURE_CX8) FeatureBits |= KF_CMPXCHG8B;
+    if (CpuInfo.Edx & X86_FEATURE_APIC) FeatureBits |= KF_APIC;
     if (CpuInfo.Edx & X86_FEATURE_SEP) FeatureBits |= KF_FAST_SYSCALL;
     if (CpuInfo.Edx & X86_FEATURE_MTTR) FeatureBits |= KF_MTRR;
     if (CpuInfo.Edx & X86_FEATURE_PGE) FeatureBits |= KF_GLOBAL_PAGE | KF_CR4;
@@ -427,7 +428,7 @@ KiGetFeatureBits(VOID)
     }
 
 #define print_supported(kf_value) ((FeatureBits & kf_value) ? " " #kf_value : "")
-    DPRINT1("Supported CPU features :%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
+    DPRINT1("Supported CPU features :%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n",
             print_supported(KF_V86_VIS),
             print_supported(KF_RDTSC),
             print_supported(KF_CR4),
@@ -436,6 +437,7 @@ KiGetFeatureBits(VOID)
             print_supported(KF_LARGE_PAGE),
             print_supported(KF_MTRR),
             print_supported(KF_CMPXCHG8B),
+            print_supported(KF_APIC),
             print_supported(KF_MMX),
             print_supported(KF_WORKING_PTE),
             print_supported(KF_PAT),

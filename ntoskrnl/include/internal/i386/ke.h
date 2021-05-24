@@ -10,7 +10,7 @@
 #define X86_FEATURE_PAE         0x00000040 /* physical address extension is present */
 // #define X86_FEATURE_MCE         0x00000080 /* Machine Check Exception */
 #define X86_FEATURE_CX8         0x00000100 /* CMPXCHG8B instruction present */
-// #define X86_FEATURE_APIC        0x00000200 /* Onboard Advanced Programmable Interrupt Controller */
+#define X86_FEATURE_APIC        0x00000200 /* Onboard Advanced Programmable Interrupt Controller is present */
 // #define RESEERVED_10            0x00000400
 #define X86_FEATURE_SEP         0x00000800 /* SYSENTER/SYSEXIT support present */
 #define X86_FEATURE_MTTR        0x00001000 /* Memory type range registers are present */

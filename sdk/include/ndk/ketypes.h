@@ -162,6 +162,7 @@ Author:
 #define KF_BRANCH                       0x00020000 // from ksamd64.inc
 #define KF_SSE3                         0x00080000
 #define KF_CMPXCHG16B                   0x00100000
+#define KF_APIC                         0x00200000
 #define KF_XSTATE                       0x00800000 // from ks386.inc, ksamd64.inc
 #define KF_NX_BIT                       0x20000000
 #define KF_NX_DISABLED                  0x40000000

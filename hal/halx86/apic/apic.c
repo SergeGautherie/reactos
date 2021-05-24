@@ -479,6 +479,13 @@ HalpInitializePICs(IN BOOLEAN EnableInterrupts)
 {
     ULONG_PTR EFlags;
 
+    /* Check if the CPU has an APIC */
+    if (!(KeGetCurrentPrcb()->FeatureBits & KF_APIC))
+    {
+        DPRINT1("CPU has no APIC\n");
+        KeBugCheck(HAL_INITIALIZATION_FAILED);
+    }
+
     /* Save EFlags and disable interrupts */
     EFlags = __readeflags();
     _disable();
