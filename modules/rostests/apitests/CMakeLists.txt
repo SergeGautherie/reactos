@@ -24,7 +24,19 @@ add_subdirectory(fontext)
 add_subdirectory(gdi32)
 add_subdirectory(gditools)
 add_subdirectory(iphlpapi)
+# ...\sdk\include\crt\xmmintrin.h(45): error C2719: 'unnamed-parameter': formal parameter with requested alignment of 16 won't be aligned
+# ...\sdk\include\crt\xmmintrin.h(46): error C2719: 'a': formal parameter with requested alignment of 16 won't be aligned
+# ...\sdk\include\crt\xmmintrin.h(46): error C2719: 'b': formal parameter with requested alignment of 16 won't be aligned
+# ...\sdk\include\crt\xmmintrin.h(47): error C2719: 'a': formal parameter with requested alignment of 16 won't be aligned
+# ...\sdk\include\crt\xmmintrin.h(47): error C2719: 'b': formal parameter with requested alignment of 16 won't be aligned
+# ...\sdk\include\crt\xmmintrin.h(51): error C4163: '_mm_getcsr': not available as an intrinsic function
+# ...\sdk\include\crt\xmmintrin.h(53): error C4163: '_mm_setcsr': not available as an intrinsic function
+# ...\sdk\include\crt\xmmintrin.h(56): error C4163: '_mm_xor_ps': not available as an intrinsic function
+# ...\sdk\include\crt\xmmintrin.h(57): error C4163: '_mm_div_ps': not available as an intrinsic function
+# ...\modules\rostests\apitests\kernel32\SetUnhandledExceptionFilter.c(62): fatal error C1189: #error:  Architecture not handled
+if(ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64") # FIXME: ...
 add_subdirectory(kernel32)
+endif()
 add_subdirectory(loadconfig)
 add_subdirectory(localspl)
 add_subdirectory(mountmgr)
