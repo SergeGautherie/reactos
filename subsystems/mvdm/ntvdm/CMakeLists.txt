@@ -1,6 +1,7 @@
 
 PROJECT(NTVDM)
 
+if(NOT MSVC OR (ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64")) # FIXME: CORE-10452
 #####################################
 # Generate the integrated COMMAND.COM
 #
@@ -9,6 +10,9 @@ add_custom_command(
     COMMAND native-bin2c $<TARGET_PROPERTY:command,BINARY_PATH> ${CMAKE_CURRENT_BINARY_DIR}/command_com.c ${CMAKE_CURRENT_BINARY_DIR}/command_com.h BIN CommandCom
     DEPENDS native-bin2c command)
 #####################################
+
+#     ${CMAKE_CURRENT_BINARY_DIR}/command_com.c
+endif()
 
 include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/libs/fast486)
 
@@ -54,7 +58,6 @@ list(APPEND SOURCE
     dos/dos32krnl/process.c
     dos/dem.c
     dos/mouse32.c
-    ${CMAKE_CURRENT_BINARY_DIR}/command_com.c
     clock.c
     emulator.c
     int32.c
