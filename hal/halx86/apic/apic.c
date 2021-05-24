@@ -482,7 +482,12 @@ HalpInitializePICs(IN BOOLEAN EnableInterrupts)
     /* Check if the CPU has an APIC */
     if (!(KeGetCurrentPrcb()->FeatureBits & KF_APIC))
     {
-        DPRINT1("CPU has no APIC\n");
+//        DPRINT1("CPU has NO APIC\n");
+        KeBugCheck(HAL_INITIALIZATION_FAILED);
+    }
+    else
+    {
+//        DPRINT1("CPU HAS APIC\n");
         KeBugCheck(HAL_INITIALIZATION_FAILED);
     }
 
