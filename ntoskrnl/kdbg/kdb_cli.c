@@ -1374,7 +1374,7 @@ KdbpCmdBreakPointList(
     BOOLEAN Global = FALSE;
     PEPROCESS Process = NULL;
     PCHAR str1, str2, ConditionExpr, GlobalOrLocal;
-    CHAR Buffer[20];
+    CHAR Buffer[8 + 2 * sizeof(ULONG_PTR) + 1];
 
     l = KdbpGetNextBreakPointNr(0);
     if (l < 0)
@@ -1410,8 +1410,10 @@ KdbpCmdBreakPointList(
         else
         {
             GlobalOrLocal = Buffer;
-            sprintf(Buffer, "  PID 0x%lx",
-                    (ULONG_PTR)(Process ? Process->UniqueProcessId : INVALID_HANDLE_VALUE));
+#define PID_NO_PROCESS ((HANDLE) -1)
+            sprintf(Buffer, "  PID 0x%Ix",
+                    (ULONG_PTR)(Process ? Process->UniqueProcessId : PID_NO_PROCESS));
+#undef PID_NO_PROCESS
         }
 
         if (Type == KdbBreakPointSoftware || Type == KdbBreakPointTemporary)
