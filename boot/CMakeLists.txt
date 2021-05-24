@@ -129,6 +129,7 @@ add_custom_target(bootcdregtest
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "reactos/Temp=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 # Create user profile directories
 add_allusers_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "Profiles")
 add_user_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/livecd.cmake.lst "Profiles" "Default User")
@@ -148,6 +149,7 @@ add_custom_target(livecd
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/reactos/Temp=${CMAKE_CURRENT_BINARY_DIR}/empty\n")
 # Create user profile directories
 add_allusers_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/Profiles")
 add_user_profile_dirs(${CMAKE_CURRENT_BINARY_DIR}/hybridcd.cmake.lst "livecd/Profiles" "Default User")
