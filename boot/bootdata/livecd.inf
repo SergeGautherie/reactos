@@ -32,7 +32,7 @@ HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList","DefaultUserProf
 HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList","ProfilesDirectory",0x00020000,"%SystemDrive%\Profiles"
 HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\S-1-5-18",,0x00000012
 HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\S-1-5-18","ProfileImagePath",0x00020000,"%systemroot%\system32\config\systemprofile"
-; HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\S-1-5-18","Sid",0x00000003,01,01,00,00,00,00,00,05,12,00,00,00
+HKLM,"SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\S-1-5-18","Sid",0x00000003,01,01,00,00,00,00,00,05,12,00,00,00
 
 ; Shell Folders
 HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders","Common Desktop",0x00020000,"%SystemDrive%\Profiles\All Users\Desktop"
