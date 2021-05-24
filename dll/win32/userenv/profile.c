@@ -11,7 +11,7 @@
 
 #include <sddl.h>
 
-#define NDEBUG
+// #define NDEBUG
 #include <debug.h>
 
 /* FUNCTIONS ***************************************************************/
