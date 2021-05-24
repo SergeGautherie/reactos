@@ -265,7 +265,9 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         endif()
     elseif(ARCH STREQUAL "arm64")
         # GNU tools refer to arm64 as aarch64
-        add_definitions(-D_ARM64_ -D__arm64__ -D__aarch64__ -D_WIN64)
+        add_compile_definitions(_ARM64_ __arm64__ __aarch64__ _WIN64)
+#         message(WARNING "TODO arm64")
+#         add_compile_definitions(_ARM64_=2041 __arm64__=2042 _WIN64=2043 _M_ARM64=2044)
     endif()
 
     # Other
@@ -275,6 +277,8 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
     elseif(ARCH STREQUAL "amd64")
         add_compile_definitions(USE_COMPILER_EXCEPTIONS)
     elseif(ARCH STREQUAL "arm")
+        add_compile_definitions(USE_COMPILER_EXCEPTIONS)
+    elseif(ARCH STREQUAL "arm64")
         add_compile_definitions(USE_COMPILER_EXCEPTIONS)
     endif()
 
@@ -325,6 +329,9 @@ Enable this if the module uses typeid or dynamic_cast. You will probably need to
         sdk/include/reactos/libs)
 
     if(ARCH STREQUAL "arm")
+        include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/arm)
+    elseif(ARCH STREQUAL "arm64")
+        message(WARNING "TODO arm64")
         include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/arm)
     endif()
 
