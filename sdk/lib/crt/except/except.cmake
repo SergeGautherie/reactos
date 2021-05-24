@@ -51,6 +51,7 @@ elseif(ARCH STREQUAL "arm")
         list(APPEND CRT_EXCEPT_ASM_SOURCE
             except/arm/cpp.s)
     endif()
+elseif(ARCH STREQUAL "arm64") # TODO !?
 endif()
 
 list(APPEND CRT_EXCEPT_SOURCE
