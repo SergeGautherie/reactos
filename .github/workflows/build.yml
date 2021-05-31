@@ -5,8 +5,11 @@ jobs:
   build-msvc-arm:
     strategy:
       matrix:
-        arch: [arm64]
+        arch: [arm, arm64]
         toolset: ['14.2', '14.1'] # VS 2019, 2017
+        include:
+        - arch: arm
+          toolset: '14.0' # VS 2015
       fail-fast: false
     runs-on: windows-latest
     steps:
