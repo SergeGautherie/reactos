@@ -4,7 +4,11 @@ add_subdirectory(browser)
 add_subdirectory(dcomlaunch)
 add_subdirectory(dhcpcsvc)
 add_subdirectory(dnsrslvr)
+# evtlib.lib(evtlib.c.obj) : error LNK2019: unresolved external symbol __imp_RtlFillMemoryUlong referenced in function ElfWriteRecord
+# base\services\eventlog\eventlog.exe : fatal error LNK1120: 1 unresolved externals
+if(ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64") # FIXME: ...
 add_subdirectory(eventlog)
+endif()
 add_subdirectory(netlogon)
 add_subdirectory(nfsd)
 add_subdirectory(rpcss)

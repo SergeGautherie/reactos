@@ -33,7 +33,12 @@ add_subdirectory(mspatcha)
 add_subdirectory(msvcrt)
 add_subdirectory(netapi32)
 add_subdirectory(netshell)
+# NtSetValueKey.c.obj : error LNK2019: unresolved external symbol __imp_RtlFillMemoryUlong referenced in function func_NtSetValueKey
+# NtUnloadDriver.c.obj : error LNK2001: unresolved external symbol __imp_RtlFillMemoryUlong
+# modules\rostests\apitests\ntdll\ntdll_apitest.exe : fatal error LNK1120: 1 unresolved externals
+if(ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64") # FIXME: ...
 add_subdirectory(ntdll)
+endif()
 add_subdirectory(ole32)
 add_subdirectory(opengl32)
 add_subdirectory(pefile)
