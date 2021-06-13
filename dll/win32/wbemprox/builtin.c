@@ -3615,7 +3615,12 @@ extern void do_cpuid( unsigned int ax, unsigned int *p );
 #if defined(_MSC_VER)
 void do_cpuid( unsigned int ax, unsigned int *p )
 {
+// ...\builtin.c(3618): error C4013: '__cpuid' undefined; assuming extern returning int
+#if !defined(__REACTOS__) || defined (__i386__) || defined(__x86_64__) // CORE-17620 workaround.
     __cpuid( p, ax );
+#else
+    FIXME("defined(__REACTOS__) && !defined (__i386__) && !defined(__x86_64__)\n");
+#endif
 }
 #elif defined(__i386__)
 __ASM_GLOBAL_FUNC( do_cpuid,
