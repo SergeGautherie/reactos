@@ -54,8 +54,10 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
     # Lots of asm failures, from ...\win32u\win32u_*\asm\sys-stubs_win32u_*_asm.asm(*), coming from sdk/include/asm/asm.inc.
     if(ARCH STREQUAL "i386" OR ARCH STREQUAL "amd64") # FIXME: ...
     add_subdirectory(win32u)
-    endif()
+    # Depends on win32u:
+    # LINK : fatal error LNK1181: cannot open input file 'libwin32u.lib'
     add_subdirectory(win32nt)
+    endif()
 endif()
 add_subdirectory(winhttp)
 add_subdirectory(wininet)
