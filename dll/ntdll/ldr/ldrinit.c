@@ -169,7 +169,7 @@ LdrOpenImageFileOptionsKey(IN PUNICODE_STRING SubKey,
                                    NULL);
 
         /* Open the setting key */
-        Status = ZwOpenKey((PHANDLE)NewKeyHandle, GENERIC_READ, &ObjectAttributes);
+        Status = ZwOpenKey(NewKeyHandle, GENERIC_READ, &ObjectAttributes);
     }
 
     /* Return to caller */
@@ -1426,7 +1426,7 @@ LdrpInitializeExecutionOptions(PUNICODE_STRING ImagePathName, PPEB Peb, PHANDLE 
     *OptionsKey = NULL;
 
     /* Open the options key */
-    Status = LdrOpenImageFileOptionsKey(ImagePathName, 0, &KeyHandle);
+    Status = LdrOpenImageFileOptionsKey(ImagePathName, FALSE, &KeyHandle);
 
     /* Save it if it was opened successfully */
     if (NT_SUCCESS(Status))
