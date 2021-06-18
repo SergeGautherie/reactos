@@ -27,6 +27,10 @@ if(STACK_PROTECTOR)
     target_sources(ntkrnlmp PRIVATE $<TARGET_OBJECTS:gcc_ssp_nt>)
 endif()
 
+if(ENABLE_SYSTEMWIDE_DPH)
+    target_compile_definitions(ntkrnlmp PRIVATE ENABLE_SYSTEMWIDE_DPH)
+endif()
+
 target_link_libraries(ntkrnlmp cportlib csq ${PSEH_LIB} arbiter cmlib ntlsalib rtl ${ROSSYM_LIB} libcntpr wdmguid ioevent)
 add_importlibs(ntkrnlmp hal kdcom bootvid)
 add_pch(ntkrnlmp ${REACTOS_SOURCE_DIR}/ntoskrnl/include/ntoskrnl.h "${NTKRNLMP_PCH_SKIP_SOURCE}")

@@ -1094,6 +1094,11 @@ ExpInitializeExecutive(IN ULONG Cpu,
     /* Add loaded CmNtGlobalFlag value */
     NtGlobalFlag |= CmNtGlobalFlag;
 
+#ifdef ENABLE_SYSTEMWIDE_DPH
+    /* Enable Debug Page Heap (DPH) system-wide */
+    NtGlobalFlag |= HEAP_FLAG_PAGE_ALLOCS;
+#endif
+
     /* Initialize the executive at phase 0 */
     if (!ExInitSystem()) KeBugCheck(PHASE0_INITIALIZATION_FAILED);
 

@@ -43,6 +43,10 @@ if(GDB AND NOT CLANG)
     target_compile_options(ntoskrnl PRIVATE -O0)
 endif()
 
+if(ENABLE_SYSTEMWIDE_DPH)
+    target_compile_definitions(ntoskrnl PRIVATE ENABLE_SYSTEMWIDE_DPH)
+endif()
+
 target_link_libraries(ntoskrnl cportlib csq ${PSEH_LIB} arbiter cmlib ntlsalib rtl ${ROSSYM_LIB} libcntpr wdmguid ioevent)
 
 if(STACK_PROTECTOR)
