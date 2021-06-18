@@ -1507,6 +1507,11 @@ LdrpInitializeExecutionOptions(PUNICODE_STRING ImagePathName, PPEB Peb, PHANDLE 
         if (NT_SUCCESS(Status))
             Peb->NtGlobalFlag = GlobalFlag;
 
+#ifdef ENABLE_SYSTEMWIDE_DPH
+        /* Enable Debug Page Heap (DPH) system-wide */
+        Peb->NtGlobalFlag |= HEAP_FLAG_PAGE_ALLOCS;
+#endif
+
         /* Call AVRF if necessary */
         if (Peb->NtGlobalFlag & (FLG_APPLICATION_VERIFIER | FLG_HEAP_PAGE_ALLOCS))
         {
@@ -1519,6 +1524,11 @@ LdrpInitializeExecutionOptions(PUNICODE_STRING ImagePathName, PPEB Peb, PHANDLE 
     }
     else
     {
+#ifdef ENABLE_SYSTEMWIDE_DPH
+        /* Enable Debug Page Heap (DPH) system-wide */
+        Peb->NtGlobalFlag |= HEAP_FLAG_PAGE_ALLOCS;
+#endif
+
         /* There are no image-specific options, so perform global initialization */
         if (Peb->NtGlobalFlag & (FLG_APPLICATION_VERIFIER | FLG_HEAP_PAGE_ALLOCS))
         {

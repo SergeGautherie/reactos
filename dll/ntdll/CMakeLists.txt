@@ -8,6 +8,10 @@ if (STACK_PROTECTOR)
     target_sources(libntdll PRIVATE $<TARGET_OBJECTS:gcc_ssp_nt>)
 endif()
 
+if(ENABLE_SYSTEMWIDE_DPH)
+    target_compile_definitions(libntdll PRIVATE ENABLE_SYSTEMWIDE_DPH)
+endif()
+
 add_definitions(
     -D__NTDLL__
     -D_NTOSKRNL_
@@ -62,6 +66,10 @@ set_subsystem(ntdll console)
 
 if(MSVC)
     add_target_link_flags(ntdll "/RELEASE")
+endif()
+
+if(ENABLE_SYSTEMWIDE_DPH)
+    target_compile_definitions(ntdll PRIVATE ENABLE_SYSTEMWIDE_DPH)
 endif()
 
 target_link_libraries(ntdll rtl ntdllsys libcntpr uuid ${PSEH_LIB})
