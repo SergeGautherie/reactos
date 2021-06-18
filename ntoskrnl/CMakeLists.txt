@@ -23,6 +23,10 @@ if (GCC AND CLANG)
     target_sources(libntoskrnl PRIVATE $<TARGET_OBJECTS:memcmp>)
 endif()
 
+if(ENABLE_SYSTEMWIDE_DPH)
+    target_compile_definitions(libntoskrnl PRIVATE ENABLE_SYSTEMWIDE_DPH)
+endif()
+
 list(APPEND PCH_SKIP_SOURCE
     guid.c)
 
