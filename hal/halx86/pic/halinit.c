@@ -27,7 +27,17 @@ HalpInitProcessor(
 VOID
 HalpInitPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
+#if defined(SARCH_PC98)
+#define SARCH_VARIANT "(PC98) "
+#else
+#define SARCH_VARIANT ""
+#endif
 
+    DPRINT1("Using HAL: %sPIC %s\n",
+            SARCH_VARIANT,
+            (HalpBuildType & PRCB_BUILD_UNIPROCESSOR) ? "UP" : "SMP");
+
+#undef SARCH_VARIANT
 }
 
 VOID

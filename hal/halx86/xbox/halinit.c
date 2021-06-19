@@ -27,6 +27,9 @@ HalpInitProcessor(
 VOID
 HalpInitPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
+    DPRINT1("Using HAL: Xbox %s\n",
+            (HalpBuildType & PRCB_BUILD_UNIPROCESSOR) ? "UP" : "SMP");
+
     /* Initialize Xbox-specific disk hacks */
     HalpXboxInitPartIo();
 }

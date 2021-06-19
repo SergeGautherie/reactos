@@ -24,6 +24,18 @@ HalpInitProcessor(
 VOID
 HalpInitPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
+#if defined(SARCH_PC98)
+#define SARCH_VARIANT "(PC98) "
+#elseif defined(SARCH_XBOX)
+#define SARCH_VARIANT "(Xbox) "
+#else
+#define SARCH_VARIANT ""
+#endif
+
+    DPRINT1("Using HAL: %sMiniHAL\n",
+            SARCH_VARIANT);
+
+#undef SARCH_VARIANT
 }
 
 VOID

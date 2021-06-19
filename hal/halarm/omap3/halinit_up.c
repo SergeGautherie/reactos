@@ -19,7 +19,7 @@
 VOID
 HalpInitPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
-
+    DPRINT1("Using HAL: OMAP3 UP\n");
 }
 
 VOID

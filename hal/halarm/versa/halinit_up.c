@@ -19,7 +19,7 @@
 VOID
 HalpInitPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
-
+    DPRINT1("Using HAL: Versatile UP\n");
 }
 
 VOID

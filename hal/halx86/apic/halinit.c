@@ -37,9 +37,8 @@ HalpInitProcessor(
 VOID
 HalpInitPhase0(IN PLOADER_PARAMETER_BLOCK LoaderBlock)
 {
-    DPRINT1("Using HAL: APIC %s %s\n",
-            (HalpBuildType & PRCB_BUILD_UNIPROCESSOR) ? "UP" : "SMP",
-            (HalpBuildType & PRCB_BUILD_DEBUG) ? "DBG" : "REL");
+    DPRINT1("Using HAL: APIC %s\n",
+            (HalpBuildType & PRCB_BUILD_UNIPROCESSOR) ? "UP" : "SMP");
 
     /* Enable clock interrupt handler */
     HalpEnableInterruptHandler(IDT_INTERNAL,
