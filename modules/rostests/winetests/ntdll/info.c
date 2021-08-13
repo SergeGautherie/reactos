@@ -505,51 +505,37 @@ static void test_query_handle(void)
     ReturnLength = 0xdeadbeef;
     status = pNtQuerySystemInformation(SystemHandleInformation, shi, 0, &ReturnLength);
     ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
+    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION) ||
+       broken(ReturnLength == 0) /* XP, S2003 */ ||
+       broken(ReturnLength == 32) /* Vista 64b, S2008 64b */,
+       "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
     ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-
-    shi->Count = 0xdeadbeef;
-    ReturnLength = 0xdeadbeef;
-    status = pNtQuerySystemInformation(SystemHandleInformation, shi, 1, &ReturnLength);
-    ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-
-    shi->Count = 0xdeadbeef;
-    ReturnLength = 0xdeadbeef;
-    status = pNtQuerySystemInformation(SystemHandleInformation, shi, FIELD_OFFSET(SYSTEM_HANDLE_INFORMATION, Handle), &ReturnLength);
-    ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-
-    shi->Count = 0xdeadbeef;
-    ReturnLength = 0xdeadbeef;
-    status = pNtQuerySystemInformation(SystemHandleInformation, shi, sizeof(SYSTEM_HANDLE_INFORMATION) - 1, &ReturnLength);
-    ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-#endif // __REACTOS__
+#endif /* __REACTOS__ */
 
     /* Request the needed length : a SystemInformationLength greater than one struct sets ReturnLength */
 #ifdef __REACTOS__
-    shi->Count = 0xdeadbeef;
-#endif // __REACTOS__
+    shi->Count = 0;
+#endif /* __REACTOS__ */
     ReturnLength = 0xdeadbeef;
     status = pNtQuerySystemInformation(SystemHandleInformation, shi, SystemInformationLength, &ReturnLength);
     ok( status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
+#ifndef __REACTOS__
     ok( ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n" );
-#ifdef __REACTOS__
-    ok(ReturnLength > sizeof(SYSTEM_HANDLE_INFORMATION), "Expected > %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-#endif // __REACTOS__
+#else
+/**/    ok(ReturnLength > sizeof(SYSTEM_HANDLE_INFORMATION), "Expected > %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION), ReturnLength);
+    ExpectedLength = FIELD_OFFSET(SYSTEM_HANDLE_INFORMATION, Handle[shi->Count]);
+    ok(ReturnLength == ExpectedLength, "Expected length %u, got %u\n", ExpectedLength, ReturnLength);
+    /* Expects 4,000+ to 40,000+... */
+    ok(shi->Count > 1000 ||
+       broken(shi->Count == 0) /* Unchanged on: Vista 64b, S2008 64b */,
+       "Expected > 1000, got %u\n", shi->Count);
+#endif /* __REACTOS__ */
 
     SystemInformationLength = ReturnLength;
     shi = HeapReAlloc(GetProcessHeap(), 0, shi , SystemInformationLength);
     memset(shi, 0x55, SystemInformationLength);
+
+// Test alignment.
 
     ReturnLength = 0xdeadbeef;
     status = pNtQuerySystemInformation(SystemHandleInformation, shi, SystemInformationLength, &ReturnLength);
@@ -624,46 +610,26 @@ static void test_query_handle_ex(void)
     ReturnLength = 0xdeadbeef;
     status = pNtQuerySystemInformation(SystemExtendedHandleInformation, shi, 0, &ReturnLength);
     ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION_EX), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION_EX), ReturnLength);
+    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION_EX) ||
+       broken(ReturnLength == 0) /* XP, S2003 */,
+       "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION_EX), ReturnLength);
     ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-
-    shi->Count = 0xdeadbeef;
-    ReturnLength = 0xdeadbeef;
-    status = pNtQuerySystemInformation(SystemExtendedHandleInformation, shi, 1, &ReturnLength);
-    ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION_EX), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION_EX), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-
-    shi->Count = 0xdeadbeef;
-    ReturnLength = 0xdeadbeef;
-    status = pNtQuerySystemInformation(SystemExtendedHandleInformation, shi, FIELD_OFFSET(SYSTEM_HANDLE_INFORMATION_EX, Handle), &ReturnLength);
-    ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION_EX), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION_EX), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-
-    shi->Count = 0xdeadbeef;
-    ReturnLength = 0xdeadbeef;
-    status = pNtQuerySystemInformation(SystemExtendedHandleInformation, shi, sizeof(SYSTEM_HANDLE_INFORMATION_EX) - 1, &ReturnLength);
-    ok(status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
-    ok(ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n");
-    ok(ReturnLength == sizeof(SYSTEM_HANDLE_INFORMATION_EX), "Expected %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION_EX), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-#endif // __REACTOS__
+#endif /* __REACTOS__ */
 
 #ifdef __REACTOS__
-    shi->Count = 0xdeadbeef;
-#endif // __REACTOS__
+    shi->Count = 0;
+#endif /* __REACTOS__ */
     ReturnLength = 0xdeadbeef;
     status = pNtQuerySystemInformation(SystemExtendedHandleInformation, shi, SystemInformationLength, &ReturnLength);
     ok( status == STATUS_INFO_LENGTH_MISMATCH, "Expected STATUS_INFO_LENGTH_MISMATCH, got %08x\n", status);
+#ifndef __REACTOS__
     ok( ReturnLength != 0xdeadbeef, "Expected valid ReturnLength\n" );
-#ifdef __REACTOS__
-    ok(ReturnLength > sizeof(SYSTEM_HANDLE_INFORMATION_EX), "Expected > %u, got %u\n", (ULONG)sizeof(SYSTEM_HANDLE_INFORMATION_EX), ReturnLength);
-    ok(shi->Count == 0xdeadbeef, "Expected 0xdeadbeef, got %u\n", shi->Count);
-#endif // __REACTOS__
+#else
+    ExpectedLength = FIELD_OFFSET(SYSTEM_HANDLE_INFORMATION_EX, Handle[shi->Count]);
+    ok(ReturnLength == ExpectedLength, "Expected length %u, got %u\n", ExpectedLength, ReturnLength);
+    /* Expects 4,000+ to 40,000+... */
+    ok(shi->Count > 1000, "Expected > 1000, got %u\n", shi->Count);
+#endif /* __REACTOS__ */
 
     SystemInformationLength = ReturnLength;
     shi = HeapReAlloc(GetProcessHeap(), 0, shi , SystemInformationLength);
