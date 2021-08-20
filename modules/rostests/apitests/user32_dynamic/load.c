@@ -25,7 +25,7 @@ START_TEST(load)
 
     if (hUser32 != NULL)
     {
-        win_skip("user32.dll is already loaded since Vista\n");
+        win_skip("user32.dll is already loaded\n");
         return;
     }
 
