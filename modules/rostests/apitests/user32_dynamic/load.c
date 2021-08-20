@@ -12,8 +12,7 @@
 
 START_TEST(load)
 {
-    HMODULE hUser32;
-    HMODULE hUser32_2;
+    HMODULE hImm32, hUser32, hUser32_2;
     BOOL Ret;
     DWORD Error;
     PPEB Peb = NtCurrentPeb();
@@ -25,6 +24,11 @@ START_TEST(load)
 
     if (hUser32 != NULL)
     {
+        /* Check imm32, which could explain why user32 would still be loaded */
+        SetLastError(0xdeadbeef);
+        hImm32 = GetModuleHandleW(L"imm32");
+        ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
+
         win_skip("user32.dll is already loaded\n");
         return;
     }
@@ -32,6 +36,13 @@ START_TEST(load)
     ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
     ok(Peb->KernelCallbackTable == NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
+
+    /* Check imm32, which could explain why user32 would already be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    Error = GetLastError();
+    ok(hImm32 == NULL, "hImm32 = %p\n", hImm32);
+    ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
 
     /* 1st load */
     SetLastError(0xdeadbeef);
@@ -45,6 +56,11 @@ START_TEST(load)
     ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
+
     /* 2nd load */
     SetLastError(0xdeadbeef);
     hUser32_2 = LoadLibraryW(L"user32");
@@ -56,6 +72,11 @@ START_TEST(load)
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
     ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
+
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
 
     /* Free to match 2nd load */
     SetLastError(0xdeadbeef);
@@ -69,6 +90,11 @@ START_TEST(load)
     ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
+
     /* Free to match 1st load */
     SetLastError(0xdeadbeef);
     Ret = FreeLibrary(hUser32);
@@ -81,10 +107,22 @@ START_TEST(load)
     ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
+
     /* Free to match extra reference */
     SetLastError(0xdeadbeef);
     Ret = FreeLibrary(hUser32);
     ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    Error = GetLastError();
+    ok(hImm32 == NULL, "hImm32 = %p\n", hImm32);
+    ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
 
     /* Uninitialized */
     SetLastError(0xdeadbeef);
@@ -101,6 +139,13 @@ START_TEST(load)
     ok(Ret == FALSE, "FreeLibrary returned %d\n", Ret);
     ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
 
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    Error = GetLastError();
+    ok(hImm32 == NULL, "hImm32 = %p\n", hImm32);
+    ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
+
     /* Single load */
     SetLastError(0xdeadbeef);
     hUser32 = LoadLibraryW(L"user32");
@@ -112,6 +157,11 @@ START_TEST(load)
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
     ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
+
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
 
     /* Free to match single load */
     SetLastError(0xdeadbeef);
@@ -125,10 +175,22 @@ START_TEST(load)
     ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    ok(hImm32 != NULL, "GetModuleHandle failed: %lu\n", GetLastError());
+
     /* Free to match extra reference again */
     SetLastError(0xdeadbeef);
     Ret = FreeLibrary(hUser32);
     ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    Error = GetLastError();
+    ok(hImm32 == NULL, "hImm32 = %p\n", hImm32);
+    ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
 
     /* Uninitialized again */
     SetLastError(0xdeadbeef);
@@ -143,5 +205,12 @@ START_TEST(load)
     Ret = FreeLibrary(hUser32);
     Error = GetLastError();
     ok(Ret == FALSE, "FreeLibrary returned %d\n", Ret);
+    ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
+
+    /* Check imm32, which could explain why user32 would still be loaded */
+    SetLastError(0xdeadbeef);
+    hImm32 = GetModuleHandleW(L"imm32");
+    Error = GetLastError();
+    ok(hImm32 == NULL, "hImm32 = %p\n", hImm32);
     ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
 }
