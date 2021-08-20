@@ -24,6 +24,8 @@ START_TEST(load)
 
     if (hUser32 != NULL)
     {
+        ok(hUser32 == NULL, "hUser32 = %p\n", hUser32);
+
         /* Check imm32, which could explain why user32 would still be loaded */
         SetLastError(0xdeadbeef);
         hImm32 = GetModuleHandleW(L"imm32");
@@ -35,13 +37,60 @@ START_TEST(load)
         ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
 
         SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(hImm32);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
+        Ret = FreeLibrary(hUser32);
+//        Ret = FreeLibrary(???);
+        ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+        SetLastError(0xdeadbeef);
         hUser32 = GetModuleHandleW(L"user32");
         Error = GetLastError();
 
-        win_skip("user32.dll is already loaded\n");
-//        return;
+        ok(hUser32 == NULL, "hUser32 = %p\n", hUser32);
 
-        ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
+        win_skip("user32.dll is already loaded\n");
+        return;
+
+//        ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     }
     else
     {
@@ -132,6 +181,28 @@ START_TEST(load)
 //    Ret = FreeLibrary(hImm32);
     ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
 
+/*
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+*/
+
     /* Check imm32, which could explain why user32 would still be loaded */
     SetLastError(0xdeadbeef);
     hImm32 = GetModuleHandleW(L"imm32");
@@ -200,6 +271,28 @@ START_TEST(load)
     Ret = FreeLibrary(hUser32);
 //    Ret = FreeLibrary(hImm32);
     ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+/*
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+
+    SetLastError(0xdeadbeef);
+    Ret = FreeLibrary(hUser32);
+//    Ret = FreeLibrary(???);
+    ok(Ret == TRUE, "FreeLibrary failed: %d, %lu\n", Ret, GetLastError());
+*/
 
     /* Check imm32, which could explain why user32 would still be loaded */
     SetLastError(0xdeadbeef);
