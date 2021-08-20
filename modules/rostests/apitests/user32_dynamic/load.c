@@ -42,7 +42,7 @@ START_TEST(load)
     SetLastError(0xdeadbeef);
     hUser32_2 = GetModuleHandleW(L"user32");
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
     /* 2nd load */
@@ -54,7 +54,7 @@ START_TEST(load)
     SetLastError(0xdeadbeef);
     hUser32_2 = GetModuleHandleW(L"user32");
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
     /* Free to match 2nd load */
@@ -66,7 +66,7 @@ START_TEST(load)
     SetLastError(0xdeadbeef);
     hUser32_2 = GetModuleHandleW(L"user32");
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
     /* Free to match 1st load */
@@ -78,7 +78,7 @@ START_TEST(load)
     SetLastError(0xdeadbeef);
     hUser32_2 = GetModuleHandleW(L"user32");
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
     /* Free to match extra reference */
@@ -92,7 +92,7 @@ START_TEST(load)
     Error = GetLastError();
     ok(hUser32_2 == NULL, "hUser32_2 = %p\n", hUser32_2);
     ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
     /* Double-check */
     SetLastError(0xdeadbeef);
@@ -110,7 +110,7 @@ START_TEST(load)
     SetLastError(0xdeadbeef);
     hUser32_2 = GetModuleHandleW(L"user32");
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
     /* Free to match single load */
@@ -122,7 +122,7 @@ START_TEST(load)
     SetLastError(0xdeadbeef);
     hUser32_2 = GetModuleHandleW(L"user32");
     ok(hUser32_2 == hUser32, "GetModuleHandle failed: %p != %p, %lu\n", hUser32_2, hUser32, GetLastError());
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
 
     /* Free to match extra reference again */
@@ -136,7 +136,7 @@ START_TEST(load)
     Error = GetLastError();
     ok(hUser32_2 == NULL, "hUser32_2 = %p\n", hUser32_2);
     ok(Error == ERROR_MOD_NOT_FOUND, "Error = %lu\n", Error);
-    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable = %p\n", Peb->KernelCallbackTable);
+    ok(Peb->KernelCallbackTable != NULL, "KernelCallbackTable is NULL\n");
     ok(Peb->PostProcessInitRoutine == NULL, "PostProcessInitRoutine = %p\n", Peb->PostProcessInitRoutine);
     /* Double-check */
     SetLastError(0xdeadbeef);
