@@ -440,8 +440,8 @@ MiSetupPfnForPageTable(
     Pfn->u2.ShareCount++;
 }
 
-CODE_SEG("INIT")
 static
+CODE_SEG("INIT")
 VOID
 MiBuildPfnDatabaseFromPageTables(VOID)
 {
@@ -541,8 +541,8 @@ MiBuildPfnDatabaseFromPageTables(VOID)
 #endif
 }
 
-CODE_SEG("INIT")
 static
+CODE_SEG("INIT")
 VOID
 MiAddDescriptorToDatabase(
     PFN_NUMBER BasePage,

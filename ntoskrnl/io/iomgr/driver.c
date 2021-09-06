@@ -788,8 +788,8 @@ IopGetDeviceObjectFromDeviceInstance(PUNICODE_STRING DeviceInstance);
  *
  * Initialize a driver that is already loaded in memory.
  */
-CODE_SEG("INIT")
 static
+CODE_SEG("INIT")
 BOOLEAN
 IopInitializeBuiltinDriver(IN PLDR_DATA_TABLE_ENTRY BootLdrEntry)
 {
