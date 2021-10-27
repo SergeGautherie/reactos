@@ -85,7 +85,8 @@ CheckBufferReadWrite(PVOID Destination, CONST VOID *Source, SIZE_T Length, NTSTA
     KmtEndSeh(ExpectedStatus);
 
     Match = CheckBufferRead(Source, Destination, Length, ExpectedStatus);
-    if (ExpectedStatus == STATUS_SUCCESS) ok_eq_int(Match, Length);
+    if (ExpectedStatus == STATUS_SUCCESS)
+        ok_eq_size(Match, Length);
 }
 
 static
@@ -266,15 +267,15 @@ CustomBaseAllocation(VOID)
     // allocate the memory
     Status = ZwAllocateVirtualMemory(NtCurrentProcess(), &Base, 0, &RegionSize, (MEM_COMMIT | MEM_RESERVE), PAGE_READWRITE);
     ok_eq_hex(Status, STATUS_SUCCESS);
+    ok_eq_pointer(Base, ActualStartingAddress);
     ok_eq_size(RegionSize, ActualSize);
-    ok_eq_ulong(Base, ActualStartingAddress);
     Test_NtQueryVirtualMemory(ActualStartingAddress, ActualSize, MEM_COMMIT, PAGE_READWRITE);
 
     // try freeing
     RegionSize = 0;
     Status = ZwFreeVirtualMemory(NtCurrentProcess(), &Base, &RegionSize, MEM_RELEASE);
     ok_eq_hex(Status, STATUS_SUCCESS);
-    ok_eq_ulong(RegionSize, ActualSize);
+    ok_eq_size(RegionSize, ActualSize);
 }
 
 static
@@ -309,7 +310,7 @@ StressTesting(ULONG AllocationType)
         }
     }
 
-    trace("Finished reserving. Error code %x. Chunks allocated: %d\n", Status, Index );
+    trace("Finished reserving. Error code %x. Chunks allocated: %lu\n", Status, Index);
 
     ReturnStatus = Status;
 
@@ -364,7 +365,7 @@ SystemProcessTestWorker(PVOID StartContext)
         Index++;
     }
 
-    trace("[SYSTEM THREAD %d]. Error code %x. Chunks allocated: %d\n", Context->ThreadId, Status, Index);
+    trace("[SYSTEM THREAD %d]. Error code %x. Chunks allocated: %lu\n", Context->ThreadId, Status, Index);
 
     //free the allocated memory so that we can continue with the tests
     Status = STATUS_SUCCESS;
@@ -380,7 +381,7 @@ SystemProcessTestWorker(PVOID StartContext)
 
 static
 VOID
-KmtInitTestContext(PTEST_CONTEXT Ctx, SHORT ThreadId, ULONG RegionSize, ULONG AllocationType, ULONG Protect)
+KmtInitTestContext(PTEST_CONTEXT Ctx, SHORT ThreadId, SIZE_T RegionSize, ULONG AllocationType, ULONG Protect)
 {
     PAGED_CODE();
 
