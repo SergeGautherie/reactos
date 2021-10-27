@@ -318,7 +318,8 @@ CustomBaseAllocation(VOID)
     ok_eq_hex(Status, STATUS_SUCCESS);
     ok_eq_pointer(Base, ActualStartingAddress);
     ok_eq_size(RegionSize, ActualSize);
-    Test_NtQueryVirtualMemory(ActualStartingAddress, ActualSize, MEM_COMMIT, PAGE_READWRITE);
+
+    Test_NtQueryVirtualMemory(Base, RegionSize, MEM_COMMIT, PAGE_READWRITE);
 
     // try freeing
     RegionSize = 0;
@@ -338,8 +339,6 @@ StressTesting(ULONG AllocationType)
     ULONG Index;
     PVOID Base;
     SIZE_T RegionSize = FIVE_MB;
-
-    RtlZeroMemory(bases, sizeof(bases));
 
     for (Index = 0; Index < RTL_NUMBER_OF(bases) && NT_SUCCESS(Status); Index++)
     {
@@ -364,18 +363,21 @@ StressTesting(ULONG AllocationType)
             }
         }
     }
+    if (Index != 0 && !NT_SUCCESS(Status))
+        Index--;
 
     trace("Finished reserving. Error code %x. Chunks allocated: %lu\n", Status, Index);
 
     ReturnStatus = Status;
 
     //free the allocated memory so that we can continue with the tests
-    Status = STATUS_SUCCESS;
-    Index = 0;
-    while (NT_SUCCESS(Status) && Index < RTL_NUMBER_OF(bases))
+    while (Index-- > 0)
     {
+        Base = bases[Index];
         RegionSize = 0;
-        Status = ZwFreeVirtualMemory(NtCurrentProcess(), &bases[Index], &RegionSize, MEM_RELEASE);
+        Status = ZwFreeVirtualMemory(NtCurrentProcess(), &Base, &RegionSize, MEM_RELEASE);
+        ok_eq_hex(Status, STATUS_SUCCESS);
+        ok_eq_pointer(Base, bases[Index]);
         ok_eq_size(RegionSize, FIVE_MB);
     }
 
@@ -391,29 +393,31 @@ SystemProcessTestWorker(PVOID StartContext)
    PTEST_CONTEXT Context = (PTEST_CONTEXT)StartContext;
    ULONG Index = 0;
     PVOID Base = NULL, BaseA;
+    SIZE_T RegionSize = Context->RegionSize;
 
    PAGED_CODE();
 
-   RtlZeroMemory(Context->Bases, sizeof(Context->Bases));
-
-   Status = ZwAllocateVirtualMemory(NtCurrentProcess(), &Base, 0, &Context->RegionSize, Context->AllocationType, Context->Protect);
+    Status = ZwAllocateVirtualMemory(NtCurrentProcess(), &Base, 0, &RegionSize, Context->AllocationType, Context->Protect);
     ok_eq_hex(Status, STATUS_SUCCESS);
     ok(Base != NULL, "Base == NULL\n");
+    ok_eq_size(RegionSize, Context->RegionSize);
     BaseA = Base;
 
-    Status = ZwFreeVirtualMemory(NtCurrentProcess(), &Base, &Context->RegionSize, MEM_RELEASE);
+    Status = ZwFreeVirtualMemory(NtCurrentProcess(), &Base, &RegionSize, MEM_RELEASE);
     ok_eq_hex(Status, STATUS_SUCCESS);
     ok_eq_pointer(Base, BaseA);
+    ok_eq_size(RegionSize, Context->RegionSize);
 
     //if the previous allocation has failed there is no need to do the loop
     while (NT_SUCCESS(Status) && Index < RTL_NUMBER_OF(Context->Bases))
     {
         Base = NULL;
-        Status = ZwAllocateVirtualMemory(NtCurrentProcess(), &Base, 0, &Context->RegionSize, Context->AllocationType, Context->Protect);
+        Status = ZwAllocateVirtualMemory(NtCurrentProcess(), &Base, 0, &RegionSize, Context->AllocationType, Context->Protect);
         if (NT_SUCCESS(Status))
             ok(Base != NULL, "Base == NULL\n");
         else
             ok_eq_pointer(Base, NULL);
+        ok_eq_size(RegionSize, Context->RegionSize);
 
         Context->Bases[Index] = Base;
         if ((Index % 10) == 0)
@@ -430,16 +434,20 @@ SystemProcessTestWorker(PVOID StartContext)
 
         Index++;
     }
+    if (Index != 0 && !NT_SUCCESS(Status))
+        Index--;
 
     trace("[SYSTEM THREAD %d]. Error code %x. Chunks allocated: %lu\n", Context->ThreadId, Status, Index);
 
     //free the allocated memory so that we can continue with the tests
-    Status = STATUS_SUCCESS;
-    Index = 0;
-    while (NT_SUCCESS(Status) && Index < RTL_NUMBER_OF(Context->Bases))
+    while (Index-- > 0)
     {
-        Context->RegionSize = 0;
-        Status = ZwFreeVirtualMemory(NtCurrentProcess(), &Context->Bases[Index], &Context->RegionSize, MEM_RELEASE);
+        Base = Context->Bases[Index];
+        RegionSize = 0;
+        Status = ZwFreeVirtualMemory(NtCurrentProcess(), &Base, &RegionSize, MEM_RELEASE);
+        ok_eq_hex(Status, STATUS_SUCCESS);
+        ok_eq_pointer(Base, Context->Bases[Index]);
+        ok_eq_size(RegionSize, Context->RegionSize);
     }
 
     PsTerminateSystemThread(Status);
