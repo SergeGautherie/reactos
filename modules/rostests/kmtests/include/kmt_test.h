@@ -79,7 +79,7 @@ VOID KmtFreeCallbackResponse(PKMT_RESPONSE Response);
         ok_eq_size(NtQueryTest->MemInfo.RegionSize, Size);                                      \
         KmtFreeCallbackResponse(NtQueryTest);                                                   \
     }                                                                                           \
-    } while (0)                                                                                 \
+    } while (0)
 
 #endif
 
