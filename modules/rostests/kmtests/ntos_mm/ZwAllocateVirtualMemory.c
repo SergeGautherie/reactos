@@ -31,7 +31,7 @@ typedef struct _TEST_CONTEXT
 #define ALLOC_MEMORY_WITH_FREE(ProcessHandle, BaseAddress, ZeroBits, RegionSize, AllocationType, Protect, RetStatus, FreeStatus)   \
     do {                                                                                                                   \
         PVOID __BaseSave = BaseAddress, __BaseA;                                                                           \
-        SIZE_T __RegionSizeA;                                                                                              \
+        SIZE_T __RegionSizeSave = RegionSize;                                                                              \
                                                                                                                            \
         Status = ZwAllocateVirtualMemory(ProcessHandle, &BaseAddress, ZeroBits, &RegionSize, AllocationType, Protect);     \
         ok_eq_hex(Status, RetStatus);                                                                                      \
@@ -41,14 +41,14 @@ typedef struct _TEST_CONTEXT
             ok(BaseAddress != NULL, "BaseAddress == NULL\n");                                                              \
         else                                                                                                               \
             ok_eq_pointer(BaseAddress, NULL);                                                                              \
+        ok_eq_size(RegionSize, NT_SUCCESS(Status) ? PAGE_SIZE : __RegionSizeSave);                                         \
         __BaseA = BaseAddress;                                                                                             \
-        __RegionSizeA = RegionSize;                                                                                        \
                                                                                                                            \
         RegionSize = 0;                                                                                                    \
         Status = ZwFreeVirtualMemory(ProcessHandle, &BaseAddress, &RegionSize, MEM_RELEASE);                               \
         ok_eq_hex(Status, FreeStatus);                                                                                     \
         ok_eq_pointer(BaseAddress, __BaseA);                                                                               \
-        ok_eq_size(RegionSize, __RegionSizeA);                                                                             \
+        ok_eq_size(RegionSize, NT_SUCCESS(Status) ? PAGE_SIZE : 0);                                                        \
                                                                                                                            \
         BaseAddress = NULL;                                                                                                \
         RegionSize = DEFAULT_ALLOC_SIZE;                                                                                   \
