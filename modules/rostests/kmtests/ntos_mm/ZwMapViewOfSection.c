@@ -12,14 +12,12 @@
 #define NEW_CONTENT_LEN sizeof(NEW_CONTENT)
 
 static UNICODE_STRING FileReadOnlyPath = RTL_CONSTANT_STRING(L"\\SystemRoot\\system32\\ntdll.dll");
-static UNICODE_STRING NtosImgPath = RTL_CONSTANT_STRING(L"\\SystemRoot\\system32\\ntoskrnl.exe");
 static UNICODE_STRING WritableFilePath = RTL_CONSTANT_STRING(L"\\SystemRoot\\kmtest-MmSection.txt");
 static UNICODE_STRING SharedSectionName = RTL_CONSTANT_STRING(L"\\BaseNamedObjects\\kmtest-SharedSection");
 extern const char TestString[];
 extern const ULONG TestStringSize;
 static OBJECT_ATTRIBUTES NtdllObject;
 static OBJECT_ATTRIBUTES KmtestFileObject;
-static OBJECT_ATTRIBUTES NtoskrnlFileObject;
 
 #define TestMapView(SectionHandle, ProcessHandle, BaseAddress2, ZeroBits, CommitSize, SectionOffset, ViewSize2, InheritDisposition, AllocationType, Win32Protect, MapStatus, UnmapStatus) do    \
     {                                                                                                                                                                                           \
@@ -32,7 +30,7 @@ static OBJECT_ATTRIBUTES NtoskrnlFileObject;
             *BaseAddress2 = NULL;                                                   \
             *ViewSize2 = 0;                                                         \
         }                                                                           \
-    } while (0)                                                                     \
+    } while (0)
 
 #define MmTestMapView(Object, ProcessHandle, BaseAddress2, ZeroBits, CommitSize, SectionOffset, ViewSize2, InheritDisposition, AllocationType, Win32Protect, MapStatus, UnmapStatus) do    \
     {                                                                                                                                                                                      \
@@ -45,7 +43,7 @@ static OBJECT_ATTRIBUTES NtoskrnlFileObject;
             *BaseAddress2 = NULL;                                                   \
             *ViewSize2 = 0;                                                         \
         }                                                                           \
-    } while (0)                                                                     \
+    } while (0)
 
 #define CheckObject(Handle, Pointers, Handles) do                   \
 {                                                                   \
@@ -55,11 +53,11 @@ static OBJECT_ATTRIBUTES NtoskrnlFileObject;
     ok_eq_hex(Status, STATUS_SUCCESS);                              \
     ok_eq_ulong(ObjectInfo.PointerCount, Pointers);                 \
     ok_eq_ulong(ObjectInfo.HandleCount, Handles);                   \
-} while (0)                                                         \
+} while (0)
 
 static
 VOID
-KmtInitTestFiles(PHANDLE ReadOnlyFile, PHANDLE WriteOnlyFile, PHANDLE ExecutableFile)
+KmtInitTestFiles(PHANDLE ReadOnlyFile, PHANDLE WriteOnlyFile)
 {
     NTSTATUS Status;
     LARGE_INTEGER FileOffset;
@@ -69,11 +67,6 @@ KmtInitTestFiles(PHANDLE ReadOnlyFile, PHANDLE WriteOnlyFile, PHANDLE Executable
     Status = ZwCreateFile(ReadOnlyFile, GENERIC_READ, &NtdllObject, &IoStatusBlock, NULL, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ, FILE_OPEN, FILE_NON_DIRECTORY_FILE, NULL, 0);
     ok_eq_hex(Status, STATUS_SUCCESS);
     ok(*ReadOnlyFile != NULL, "Couldn't acquire READONLY handle\n");
-
-    //INIT THE EXECUTABLE FILE
-    Status = ZwCreateFile(ExecutableFile, GENERIC_EXECUTE, &NtdllObject, &IoStatusBlock, NULL, FILE_ATTRIBUTE_NORMAL, FILE_SHARE_READ, FILE_OPEN, FILE_NON_DIRECTORY_FILE, NULL, 0);
-    ok_eq_hex(Status, STATUS_SUCCESS);
-    ok(*ExecutableFile != NULL, "Couldn't acquire EXECUTE handle\n");
 
     //INIT THE WRITE-ONLY FILE
     //TODO: Delete the file when the tests are all executed
@@ -94,7 +87,7 @@ KmtInitTestFiles(PHANDLE ReadOnlyFile, PHANDLE WriteOnlyFile, PHANDLE Executable
 
 static
 VOID
-SimpleErrorChecks(HANDLE FileHandleReadOnly, HANDLE FileHandleWriteOnly, HANDLE ExecutableImg)
+SimpleErrorChecks(HANDLE FileHandleReadOnly, HANDLE FileHandleWriteOnly)
 {
     NTSTATUS Status;
     HANDLE WriteSectionHandle;
@@ -227,10 +220,9 @@ SimpleErrorChecks(HANDLE FileHandleReadOnly, HANDLE FileHandleWriteOnly, HANDLE 
     ZwClose(ReadOnlySection);
 }
 
-
 static
 VOID
-AdvancedErrorChecks(HANDLE FileHandleReadOnly, HANDLE FileHandleWriteOnly)
+AdvancedErrorChecks(HANDLE FileHandleWriteOnly)
 {
     NTSTATUS Status;
     PVOID BaseAddress;
@@ -297,7 +289,6 @@ CompareFileContents(HANDLE FileHandle, ULONG BufferLength, PVOID Buffer)
     return Match;
 }
 
-
 static
 VOID
 NTAPI
@@ -345,10 +336,9 @@ SystemProcessWorker(PVOID StartContext)
     PsTerminateSystemThread(STATUS_SUCCESS);
 }
 
-
 static
 VOID
-BehaviorChecks(HANDLE FileHandleReadOnly, HANDLE FileHandleWriteOnly)
+BehaviorChecks(HANDLE FileHandleWriteOnly)
 {
     NTSTATUS Status;
     PVOID BaseAddress = NULL;
@@ -491,7 +481,6 @@ BehaviorChecks(HANDLE FileHandleReadOnly, HANDLE FileHandleWriteOnly)
     }
 }
 
-
 static
 VOID
 PageFileBehaviorChecks()
@@ -555,23 +544,25 @@ PageFileBehaviorChecks()
     }
 }
 
-
 START_TEST(ZwMapViewOfSection)
 {
     HANDLE FileHandleReadOnly = NULL;
     HANDLE FileHandleWriteOnly = NULL;
-    HANDLE ExecutableFileHandle = NULL;
 
     InitializeObjectAttributes(&NtdllObject, &FileReadOnlyPath, OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, NULL, NULL);
     InitializeObjectAttributes(&KmtestFileObject, &WritableFilePath, OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, NULL, NULL);
-    InitializeObjectAttributes(&NtoskrnlFileObject, &NtosImgPath, OBJ_CASE_INSENSITIVE | OBJ_KERNEL_HANDLE, NULL, NULL);
+    KmtInitTestFiles(&FileHandleReadOnly, &FileHandleWriteOnly);
 
-    KmtInitTestFiles(&FileHandleReadOnly, &FileHandleWriteOnly, &ExecutableFileHandle);
+    if (!skip(FileHandleWriteOnly != NULL, "FileHandleWriteOnly == NULL\n"))
+    {
+        if (!skip(FileHandleReadOnly != NULL, "FileHandleReadOnly == NULL\n"))
+        {
+            SimpleErrorChecks(FileHandleReadOnly, FileHandleWriteOnly);
+        }
 
-    SimpleErrorChecks(FileHandleReadOnly, FileHandleWriteOnly, ExecutableFileHandle);
-    AdvancedErrorChecks(FileHandleReadOnly, FileHandleWriteOnly);
-    BehaviorChecks(FileHandleReadOnly, FileHandleWriteOnly);
-    PageFileBehaviorChecks();
+        AdvancedErrorChecks(FileHandleWriteOnly);
+        BehaviorChecks(FileHandleWriteOnly);
+    }
 
     if (FileHandleReadOnly)
         ZwClose(FileHandleReadOnly);
@@ -579,6 +570,5 @@ START_TEST(ZwMapViewOfSection)
     if (FileHandleWriteOnly)
         ZwClose(FileHandleWriteOnly);
 
-    if (ExecutableFileHandle)
-        ZwClose(ExecutableFileHandle);
+    PageFileBehaviorChecks();
 }
