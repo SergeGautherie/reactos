@@ -1,15 +1,16 @@
 image:
-  - Visual Studio 2019
+  - Visual Studio 2022
+#   - Visual Studio 2019
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
-  - Visual Studio 2017
+#   - Visual Studio 2017
     # 'CMake 3.17.0 or higher is required. You are running version 3.16.2' :-(
-  - Visual Studio 2015
+#   - Visual Studio 2015
 
 environment:
   matrix:
-    - BuildType: "msvc-x64"
+    - BuildType: "msvc"
 
-version: VS2015-amd64.reactos.appveyor.{build}
+version: VS2015.reactos.appveyor.{build}
 skip_branch_with_pr: true
 clone_depth: 5
 clone_folder: c:\reactos-cov
@@ -30,19 +31,24 @@ build_script:
   - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2015"  if "%BuildType%" == "msvc-x64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
       ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64_x86
       )
     # On VS2017 image: Fails.
   - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2017"  if "%BuildType%" == "msvc-x64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64 -vcvars_ver=14.0
       ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64_x86
       )
     # On VS2019 image: Fails.
   - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2019"  if "%BuildType%" == "msvc-x64" (
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64 -vcvars_ver=14.0
       ) else (
-        call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64_x86
+      )
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2022"  if "%BuildType%" == "msvc-x64" (
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64 -vcvars_ver=14.0
+      ) else (
+        call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64_x86
       )
   - cmake --version
   - md c:\ros_build
