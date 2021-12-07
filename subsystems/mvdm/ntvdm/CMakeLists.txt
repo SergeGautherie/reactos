@@ -1,7 +1,6 @@
 
 PROJECT(NTVDM)
 
-if(ARCH STREQUAL "i386") # CORE-17585
 #####################################
 # Generate the integrated COMMAND.COM
 #
@@ -10,13 +9,11 @@ add_custom_command(
     COMMAND native-bin2c $<TARGET_PROPERTY:command,BINARY_PATH> ${CMAKE_CURRENT_BINARY_DIR}/command_com.c ${CMAKE_CURRENT_BINARY_DIR}/command_com.h BIN CommandCom
     DEPENDS native-bin2c command)
 #####################################
-endif()
 
 include_directories(${REACTOS_SOURCE_DIR}/sdk/include/reactos/libs/fast486)
 
 spec2def(ntvdm.exe ntvdm.spec ADD_IMPORTLIB)
 
-#     ${CMAKE_CURRENT_BINARY_DIR}/command_com.c
 list(APPEND SOURCE
     bios/bios32/bios32.c
     bios/bios32/dskbios32.c
@@ -57,6 +54,7 @@ list(APPEND SOURCE
     dos/dos32krnl/process.c
     dos/dem.c
     dos/mouse32.c
+    ${CMAKE_CURRENT_BINARY_DIR}/command_com.c
     clock.c
     emulator.c
     int32.c

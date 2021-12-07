@@ -43,10 +43,8 @@ jobs:
     - name: Build
       run: cmake --build build  -- -k0
     - name: Generate ISOs
-      if: false # Depends on FreeLdr!
       run: cmake --build build --target bootcd --target livecd
     - name: Upload ISOs
-      if: false # Depends on FreeLdr!
       uses: actions/upload-artifact@v2
       with:
         name: reactos-msvc${{matrix.toolset}}-${{matrix.arch}}-${{matrix.config}}-${{github.sha}}
