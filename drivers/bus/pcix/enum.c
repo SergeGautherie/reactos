@@ -682,7 +682,7 @@ PciConfigureIdeController(IN PPCI_PDO_EXTENSION PdoExtension,
     if ((MasterMode != SlaveMode) || (MasterFixed != SlaveFixed))
     {
         /* Windows does not support this configuration, fail */
-        DPRINT1("PCI: Warning unsupported IDE controller configuration for VEN_%04x&DEV_%04x!",
+        DPRINT1("PCI: Warning unsupported IDE controller configuration for VEN_%04x&DEV_%04x!\n",
                 PdoExtension->VendorId,
                 PdoExtension->DeviceId);
         return Switched;
@@ -779,7 +779,7 @@ PciConfigureIdeController(IN PPCI_PDO_EXTENSION PdoExtension,
         else
         {
             /* Settings did not work, fail */
-            DPRINT1("PCI: Warning failed switch to native mode for IDE controller VEN_%04x&DEV_%04x!",
+            DPRINT1("PCI: Warning failed switch to native mode for IDE controller VEN_%04x&DEV_%04x!\n",
                     PciData->VendorID,
                     PciData->DeviceID);
         }

@@ -324,7 +324,7 @@ DrvAssertMode(IN DHPDEV DPev,
     else
     {
         /* Go back to last known mode */
-        DPRINT( "ppdev: %x, KMDriver: %x", ppdev, ppdev->KMDriver );
+        DPRINT( "ppdev: %x, KMDriver: %x\n", ppdev, ppdev->KMDriver );
         if (EngDeviceIoControl(ppdev->KMDriver, IOCTL_VIDEO_RESET_DEVICE, NULL, 0, NULL, 0, &returnedDataLength))
         {
             /* Failed to go back to mode */

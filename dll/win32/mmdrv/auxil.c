@@ -22,49 +22,43 @@ APIENTRY DWORD auxMessage(UINT dwId,
                   DWORD dwUser,
                   DWORD dwParam1,
                   DWORD dwParam2)
-
 {
     MMRESULT Result;
     AUX_DD_VOLUME Volume;
 
     DPRINT("auxMessage\n");
 
-
 	// the following cases are documented by DDK
 	switch (uMessage)
 	{
 	case AUXDM_GETDEVCAPS:
-		DPRINT("AUXDM_GETDEVCAPS");
+		DPRINT("AUXDM_GETDEVCAPS\n");
 		return GetDeviceCapabilities(dwId, AuxDevice, (LPBYTE)dwParam1, (DWORD)dwParam2);
 
 	case AUXDM_GETNUMDEVS:
-		DPRINT("AUXDM_GETNUMDEVS");
+		DPRINT("AUXDM_GETNUMDEVS\n");
 		return GetDeviceCount(AuxDevice);
 
 	case AUXDM_GETVOLUME:
-         DPRINT("AUXDM_GETVOLUME");
+         DPRINT("AUXDM_GETVOLUME\n");
          Result = AuxGetAudio(dwId, (PBYTE) &Volume, sizeof(Volume));
-
          if (Result == MMSYSERR_NOERROR)
          {
             *(LPDWORD)dwParam1 = (DWORD)MAKELONG(HIWORD(Volume.Left), HIWORD(Volume.Right));
          }
          return Result;
 
-
 	case AUXDM_SETVOLUME:
-        DPRINT("AUXDM_SETVOLUME");
+        DPRINT("AUXDM_SETVOLUME\n");
 
         Volume.Right = HIWORD(dwParam1) << 16;
         Volume.Left = LOWORD(dwParam1) << 16;
 
         return AuxSetAudio(dwId, (PBYTE)&Volume, sizeof(Volume));
-
 	}
 
     return MMSYSERR_NOERROR;
 }
-
 
 DWORD AuxGetAudio(DWORD dwID, PBYTE pVolume, DWORD sizeVolume)
 {
@@ -76,15 +70,13 @@ DWORD AuxGetAudio(DWORD dwID, PBYTE pVolume, DWORD sizeVolume)
     if (Result != MMSYSERR_NOERROR)
          return Result;
 
-
     Result = DeviceIoControl(DeviceHandle, IOCTL_AUX_GET_VOLUME, NULL, 0, (LPVOID)pVolume, sizeVolume,
                            &BytesReturned, NULL) ? MMSYSERR_NOERROR : TranslateStatus();
-
 
     CloseHandle(DeviceHandle);
 
     return Result;
- }
+}
 
 DWORD AuxSetAudio(DWORD dwID, PBYTE pVolume, DWORD sizeVolume)
 {
@@ -99,9 +91,7 @@ DWORD AuxSetAudio(DWORD dwID, PBYTE pVolume, DWORD sizeVolume)
     Result = DeviceIoControl(DeviceHandle, IOCTL_AUX_SET_VOLUME, (LPVOID)pVolume, sizeVolume, NULL, 0,
                            &BytesReturned, NULL) ? MMSYSERR_NOERROR : TranslateStatus();
 
-
     CloseHandle(DeviceHandle);
 
     return Result;
- }
-
+}

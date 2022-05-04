@@ -126,7 +126,7 @@ PciBeginStateTransition(IN PPCI_FDO_EXTENSION DeviceExtension,
     {
         /* Invalid transition (illegal request) */
         DPRINT1("ERROR\nPCI: Illegal request to try to enter state \"%s\" "
-                "from state \"%s\", rejecting",
+                "from state \"%s\", rejecting\n",
                 PciTransitionText[NewState],
                 PciTransitionText[CurrentState]);
     }

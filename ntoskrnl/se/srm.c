@@ -1251,7 +1251,7 @@ SepRmCommandServerThread(
                                         &Message.Header);
         if (!NT_SUCCESS(Status))
         {
-            DPRINT1("Failed to get message: 0x%lx", Status);
+            DPRINT1("Failed to get message: 0x%lx\n", Status);
             ReplyMessage = NULL;
             continue;
         }

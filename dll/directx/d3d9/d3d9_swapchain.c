@@ -111,14 +111,14 @@ static HRESULT WINAPI Direct3DSwapChain9_GetDevice(LPDIRECT3DSWAPCHAIN9 iface, I
 
     if (NULL == ppDevice)
     {
-        DPRINT1("Invalid ppDevice parameter specified");
+        DPRINT1("Invalid ppDevice parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
 
     if (FAILED(D3D9BaseObject_GetDevice(&This->BaseObject, ppDevice)))
     {
-        DPRINT1("Invalid This parameter specified");
+        DPRINT1("Invalid This parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDDEVICE;
     }
@@ -152,7 +152,7 @@ static HRESULT WINAPI Direct3DSwapChain9_GetPresentParameters(LPDIRECT3DSWAPCHAI
 
     if (NULL == pPresentationParameters)
     {
-        DPRINT1("Invalid pPresentationParameters parameter specified");
+        DPRINT1("Invalid pPresentationParameters parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -185,7 +185,7 @@ Direct3DSwapChain9_INT* CreateDirect3DSwapChain9(enum REF_TYPE RefType, struct _
     Direct3DSwapChain9_INT* pThisSwapChain;
     if (FAILED(AlignedAlloc((LPVOID*)&pThisSwapChain, sizeof(Direct3DSwapChain9_INT))))
     {
-        DPRINT1("Could not create Direct3DSwapChain9_INT");
+        DPRINT1("Could not create Direct3DSwapChain9_INT\n");
         return NULL;
     }
 
@@ -225,14 +225,14 @@ HRESULT Direct3DSwapChain9_Init(Direct3DSwapChain9_INT* pThisSwapChain, D3DPRESE
 
     if (FAILED(D3D9BaseObject_GetDeviceInt(&pThisSwapChain->BaseObject, &pDevice)))
     {
-        DPRINT1("Could not get the swapchain device");
+        DPRINT1("Could not get the swapchain device\n");
         return DDERR_GENERIC;
     }
 
     pThisSwapChain->pCursor = CreateD3D9Cursor(pDevice, pThisSwapChain);
     if (NULL == pThisSwapChain->pCursor)
     {
-        DPRINT1("Could not allocate D3D9Cursor");
+        DPRINT1("Could not allocate D3D9Cursor\n");
         return DDERR_OUTOFMEMORY;
     }
 

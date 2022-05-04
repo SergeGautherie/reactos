@@ -225,7 +225,7 @@ FindAttribute(PDEVICE_EXTENSION Vcb,
                 /* Check we are not reading ourselves */
                 if (MftRecord->MFTRecordNumber == MftIndex)
                 {
-                    DPRINT1("Attribute list references missing attribute to this file entry !");
+                    DPRINT1("Attribute list references missing attribute to this file entry !\n");
                     ExFreeToNPagedLookasideList(&Vcb->FileRecLookasideList, RemoteHdr);
                     FindCloseAttribute(&Context);
                     return STATUS_OBJECT_NAME_NOT_FOUND;
@@ -3038,7 +3038,7 @@ BrowseIndexEntries(PDEVICE_EXTENSION Vcb,
         BitmapMem = ExAllocatePoolWithTag(NonPagedPool, BitmapLength + sizeof(ULONG), TAG_NTFS);
         if (!BitmapMem)
         {
-            DPRINT1("Error: failed to allocate bitmap!");
+            DPRINT1("Error: failed to allocate bitmap!\n");
             ReleaseAttributeContext(BitmapContext);
             ReleaseAttributeContext(IndexAllocationContext);
             return STATUS_INSUFFICIENT_RESOURCES;

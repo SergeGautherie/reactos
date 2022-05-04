@@ -904,7 +904,7 @@ CSR_API(BaseSrvUpdateVDMEntry)
             case VdmEntryUpdateControlCHandler:
             {
                 // TODO: NOT IMPLEMENTED
-                DPRINT1("BaseSrvUpdateVDMEntry: VdmEntryUpdateControlCHandler not implemented!");
+                DPRINT1("BaseSrvUpdateVDMEntry: VdmEntryUpdateControlCHandler not implemented!\n");
                 Status = STATUS_NOT_IMPLEMENTED;
 
                 break;

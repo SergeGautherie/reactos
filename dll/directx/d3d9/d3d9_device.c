@@ -26,7 +26,7 @@ LPDIRECT3DDEVICE9_INT IDirect3DDevice9ToImpl(LPDIRECT3DDEVICE9 iface)
 
 static HRESULT InvalidCall(LPDIRECT3DDEVICE9_INT This, LPSTR ErrorMsg)
 {
-    DPRINT1("%s",ErrorMsg);
+    DPRINT1("%s\n", ErrorMsg);
     UNLOCK_D3DDEVICE9();
     return D3DERR_INVALIDCALL;
 }
@@ -158,7 +158,7 @@ HRESULT WINAPI IDirect3DDevice9Base_GetDirect3D(LPDIRECT3DDEVICE9 iface, IDirect
 
     if (NULL == ppD3D9)
     {
-        DPRINT1("Invalid ppD3D9 parameter specified");
+        DPRINT1("Invalid ppD3D9 parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -196,7 +196,7 @@ HRESULT WINAPI IDirect3DDevice9Base_GetDeviceCaps(LPDIRECT3DDEVICE9 iface, D3DCA
 
     if (NULL == pCaps)
     {
-        DPRINT1("Invalid pCaps parameter specified");
+        DPRINT1("Invalid pCaps parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -236,14 +236,14 @@ HRESULT WINAPI IDirect3DDevice9Base_GetDisplayMode(LPDIRECT3DDEVICE9 iface, UINT
 
     if (iSwapChain >= IDirect3DDevice9_GetNumberOfSwapChains(iface))
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
 
     if (NULL == pMode)
     {
-        DPRINT1("Invalid pMode parameter specified");
+        DPRINT1("Invalid pMode parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -283,7 +283,7 @@ HRESULT WINAPI IDirect3DDevice9Base_GetCreationParameters(LPDIRECT3DDEVICE9 ifac
 
     if (NULL == pParameters)
     {
-        DPRINT1("Invalid pParameters parameter specified");
+        DPRINT1("Invalid pParameters parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -350,7 +350,7 @@ HRESULT WINAPI IDirect3DDevice9Base_CreateAdditionalSwapChain(LPDIRECT3DDEVICE9 
 
     if (NULL == ppSwapChain)
     {
-        DPRINT1("Invalid ppSwapChain parameter specified");
+        DPRINT1("Invalid ppSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -361,7 +361,7 @@ HRESULT WINAPI IDirect3DDevice9Base_CreateAdditionalSwapChain(LPDIRECT3DDEVICE9 
     pSwapChain_INT = CreateDirect3DSwapChain9(RT_EXTERNAL, This, iSwapChain);
     if (NULL == pSwapChain_INT)
     {
-        DPRINT1("Out of memory");
+        DPRINT1("Out of memory\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_OUTOFVIDEOMEMORY;
     }
@@ -406,7 +406,7 @@ HRESULT WINAPI IDirect3DDevice9Base_GetSwapChain(LPDIRECT3DDEVICE9 iface, UINT i
 
     if (NULL == ppSwapChain)
     {
-        DPRINT1("Invalid ppSwapChain parameter specified");
+        DPRINT1("Invalid ppSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -415,7 +415,7 @@ HRESULT WINAPI IDirect3DDevice9Base_GetSwapChain(LPDIRECT3DDEVICE9 iface, UINT i
 
     if (iSwapChain >= IDirect3DDevice9_GetNumberOfSwapChains(iface))
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -515,7 +515,7 @@ HRESULT WINAPI IDirect3DDevice9Base_Present(LPDIRECT3DDEVICE9 iface, CONST RECT*
     iNumSwapChains = IDirect3DDevice9Base_GetNumberOfSwapChains(iface);
     if (0 == iNumSwapChains)
     {
-        DPRINT1("Not enough swap chains, Present() fails");
+        DPRINT1("Not enough swap chains, Present() fails\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -575,14 +575,14 @@ HRESULT WINAPI IDirect3DDevice9Base_GetBackBuffer(LPDIRECT3DDEVICE9 iface, UINT 
     IDirect3DDevice9Base_GetSwapChain(iface, iSwapChain, &pSwapChain);
     if (NULL == pSwapChain)
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
 
     if (NULL == ppBackBuffer)
     {
-        DPRINT1("Invalid ppBackBuffer parameter specified");
+        DPRINT1("Invalid ppBackBuffer parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -625,14 +625,14 @@ HRESULT WINAPI IDirect3DDevice9Base_GetRasterStatus(LPDIRECT3DDEVICE9 iface, UIN
     IDirect3DDevice9Base_GetSwapChain(iface, iSwapChain, &pSwapChain);
     if (NULL == pSwapChain)
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
 
     if (NULL == pRasterStatus)
     {
-        DPRINT1("Invalid pRasterStatus parameter specified");
+        DPRINT1("Invalid pRasterStatus parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
@@ -685,14 +685,14 @@ VOID WINAPI IDirect3DDevice9Base_SetGammaRamp(LPDIRECT3DDEVICE9 iface, UINT iSwa
     IDirect3DDevice9Base_GetSwapChain(iface, iSwapChain, &pSwapChain);
     if (NULL == pSwapChain)
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return;
     }
 
     if (NULL == pRamp)
     {
-        DPRINT1("Invalid pRamp parameter specified");
+        DPRINT1("Invalid pRamp parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return;
     }
@@ -731,14 +731,14 @@ VOID WINAPI IDirect3DDevice9Base_GetGammaRamp(LPDIRECT3DDEVICE9 iface, UINT iSwa
     IDirect3DDevice9Base_GetSwapChain(iface, iSwapChain, &pSwapChain);
     if (NULL == pSwapChain)
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return;
     }
 
     if (NULL == pRamp)
     {
-        DPRINT1("Invalid pRamp parameter specified");
+        DPRINT1("Invalid pRamp parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return;
     }
@@ -811,7 +811,7 @@ HRESULT WINAPI IDirect3DDevice9Base_CreateTexture(LPDIRECT3DDEVICE9 iface, UINT 
 
     hResult = CreateD3D9MipMap(This, Width, Height, Levels, Usage, Format, Pool, ppTexture);
     if (FAILED(hResult))
-        DPRINT1("Failed to create texture");
+        DPRINT1("Failed to create texture\n");
 
     UNLOCK_D3DDEVICE9();
     return hResult;
@@ -912,14 +912,14 @@ HRESULT WINAPI IDirect3DDevice9Base_GetFrontBufferData(LPDIRECT3DDEVICE9 iface, 
     IDirect3DDevice9Base_GetSwapChain(iface, iSwapChain, &pSwapChain);
     if (NULL == pSwapChain)
     {
-        DPRINT1("Invalid iSwapChain parameter specified");
+        DPRINT1("Invalid iSwapChain parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
 
     if (NULL == pDestSurface)
     {
-        DPRINT1("Invalid pDestSurface parameter specified");
+        DPRINT1("Invalid pDestSurface parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }

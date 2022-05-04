@@ -3327,7 +3327,7 @@ InstallDirectoryPage(PINPUT_RECORD Ir)
         Status = InitDestinationPaths(&USetupData, InstallDir, InstallPartition);
         if (!NT_SUCCESS(Status))
         {
-            DPRINT1("InitDestinationPaths() failed. Status code: 0x%lx", Status);
+            DPRINT1("InitDestinationPaths() failed. Status code: 0x%lx\n", Status);
             MUIDisplayError(ERROR_NO_BUILD_PATH, Ir, POPUP_WAIT_ENTER);
             return QUIT_PAGE;
         }
@@ -3431,7 +3431,7 @@ InstallDirectoryPage(PINPUT_RECORD Ir)
             Status = InitDestinationPaths(&USetupData, InstallDir, InstallPartition);
             if (!NT_SUCCESS(Status))
             {
-                DPRINT1("InitDestinationPaths() failed. Status code: 0x%lx", Status);
+                DPRINT1("InitDestinationPaths() failed. Status code: 0x%lx\n", Status);
                 MUIDisplayError(ERROR_NO_BUILD_PATH, Ir, POPUP_WAIT_ENTER);
                 return QUIT_PAGE;
             }

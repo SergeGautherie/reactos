@@ -56,8 +56,6 @@ DWORD TranslateStatus(void)
     };
 }
 
-
-
 MMRESULT OpenDevice(UINT DeviceType, DWORD ID, PHANDLE pDeviceHandle,
                     DWORD Access)
 {
@@ -86,7 +84,7 @@ MMRESULT OpenDevice(UINT DeviceType, DWORD ID, PHANDLE pDeviceHandle,
 			 wsprintf(DeviceName, L"\\\\.%ls%d", AUX_DEVICE_NAME_U + strlen("\\Device"), ID);
 			 break;
         default :
-            DPRINT("No Auido Device Found");
+            DPRINT("No Auido Device Found\n");
             return MMSYSERR_BADDEVICEID; /* Maybe we should change error code */
     };
 
@@ -136,7 +134,6 @@ BOOL AddDeviceToList(PDEVICE_LIST* pList, DWORD DeviceType, DWORD CardIndex,
     return TRUE;
 }
 
-
 VOID FreeDeviceList()
 {
     PDEVICE_LIST pDevice;
@@ -154,7 +151,6 @@ VOID FreeDeviceList()
         HeapFree(Heap, 0, (LPSTR)pDevice);
     }
 }
-
 
 MMRESULT FindDevices()
 {
@@ -206,7 +202,6 @@ MMRESULT FindDevices()
         AddDeviceToList(&DeviceList, AuxDevice, 0, DeviceName);
     }
 
-
     // MIDI Out 0: MPU-401 UART
     // AddDeviceToList(&DeviceList, MidiOutDevice, 0, L"MidiOut0");
     // Wave Out 0: Sound Blaster 16 (ok?)
@@ -214,8 +209,6 @@ MMRESULT FindDevices()
 
     return MMSYSERR_NOERROR; // ok?
 }
-
-
 
 DWORD GetDeviceCount(UINT DeviceType)
 {

@@ -22,11 +22,11 @@ NtGdiDdDestroySurface(HANDLE hSurface, BOOL bRealDestroy)
 
     if (pfnDdDestroySurface == NULL)
     {
-        DPRINT1("Warning: no pfnDdDestroySurface");
+        DPRINT1("Warning: no pfnDdDestroySurface\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdDestroySurface");
+    DPRINT1("Calling on dxg.sys pfnDdDestroySurface\n");
     return pfnDdDestroySurface(hSurface, bRealDestroy);
 }
 
@@ -45,11 +45,11 @@ NtGdiDdFlip(HANDLE hSurfaceCurrent,
 
     if (pfnDdDdFlip == NULL)
     {
-        DPRINT1("Warning: no pfnDdDdFlip");
+        DPRINT1("Warning: no pfnDdDdFlip\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdDdFlip");
+    DPRINT1("Calling on dxg.sys pfnDdDdFlip\n");
     return pfnDdDdFlip(hSurfaceCurrent, hSurfaceTarget, hSurfaceCurrentLeft, hSurfaceTargetLeft, puFlipData);
 }
 
@@ -66,11 +66,11 @@ NtGdiDdLock(HANDLE hSurface,
 
     if (pfnDdLock == NULL)
     {
-        DPRINT1("Warning: no pfnDdLock");
+        DPRINT1("Warning: no pfnDdLock\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdLock");
+    DPRINT1("Calling on dxg.sys pfnDdLock\n");
     return pfnDdLock(hSurface, puLockData, hdcClip);
 }
 
@@ -86,11 +86,11 @@ NtGdiDdUnlock(HANDLE hSurface,
 
     if (pfnDdUnlock == NULL)
     {
-        DPRINT1("Warning: no pfnDdUnlock");
+        DPRINT1("Warning: no pfnDdUnlock\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdUnlock");
+    DPRINT1("Calling on dxg.sys pfnDdUnlock\n");
     return pfnDdUnlock(hSurface, puUnlockData);
 }
 
@@ -107,11 +107,11 @@ NtGdiDdBlt(HANDLE hSurfaceDest,
 
     if (pfnDdBlt == NULL)
     {
-        DPRINT1("Warning: no pfnDdBlt");
+        DPRINT1("Warning: no pfnDdBlt\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys DdBlt");
+    DPRINT1("Calling on dxg.sys DdBlt\n");
     return pfnDdBlt(hSurfaceDest,hSurfaceSrc,puBltData);
 }
 
@@ -127,13 +127,12 @@ NtGdiDdSetColorKey(HANDLE hSurface,
 
     if (pfnDdSetColorKey == NULL)
     {
-        DPRINT1("Warning: no pfnDdSetColorKey");
+        DPRINT1("Warning: no pfnDdSetColorKey\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdSetColorKey");
+    DPRINT1("Calling on dxg.sys pfnDdSetColorKey\n");
     return pfnDdSetColorKey(hSurface,puSetColorKeyData);
-
 }
 
 /************************************************************************/
@@ -150,11 +149,11 @@ NtGdiDdAddAttachedSurface(HANDLE hSurface,
 
     if (pfnDdAddAttachedSurface == NULL)
     {
-        DPRINT1("Warning: no pfnDdAddAttachedSurface");
+        DPRINT1("Warning: no pfnDdAddAttachedSurface\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys DdAddAttachedSurface");
+    DPRINT1("Calling on dxg.sys DdAddAttachedSurface\n");
     return pfnDdAddAttachedSurface(hSurface,hSurfaceAttached,puAddAttachedSurfaceData);
 }
 
@@ -170,11 +169,11 @@ NtGdiDdGetBltStatus(HANDLE hSurface,
 
     if (pfnDdGetBltStatus == NULL)
     {
-        DPRINT1("Warning: no pfnDdGetBltStatus");
+        DPRINT1("Warning: no pfnDdGetBltStatus\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdGetBltStatus");
+    DPRINT1("Calling on dxg.sys pfnDdGetBltStatus\n");
     return pfnDdGetBltStatus(hSurface,puGetBltStatusData);
 }
 
@@ -190,11 +189,11 @@ NtGdiDdGetFlipStatus(HANDLE hSurface,
 
     if (pfnDdGetFlipStatus == NULL)
     {
-        DPRINT1("Warning: no pfnDdGetFlipStatus");
+        DPRINT1("Warning: no pfnDdGetFlipStatus\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdGetFlipStatus");
+    DPRINT1("Calling on dxg.sys pfnDdGetFlipStatus\n");
     return pfnDdGetFlipStatus(hSurface,puGetFlipStatusData);
 }
 
@@ -211,11 +210,11 @@ NtGdiDdUpdateOverlay(HANDLE hSurfaceDestination,
 
     if (pfnDdUpdateOverlay == NULL)
     {
-        DPRINT1("Warning: no pfnDdUpdateOverlay");
+        DPRINT1("Warning: no pfnDdUpdateOverlay\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdUpdateOverlay");
+    DPRINT1("Calling on dxg.sys pfnDdUpdateOverlay\n");
     return pfnDdUpdateOverlay(hSurfaceDestination,hSurfaceSource,puUpdateOverlayData);
 }
 
@@ -233,11 +232,11 @@ NtGdiDdSetOverlayPosition(HANDLE hSurfaceSource,
 
     if (pfnDdSetOverlayPosition == NULL)
     {
-        DPRINT1("Warning: no pfnDdSetOverlayPosition");
+        DPRINT1("Warning: no pfnDdSetOverlayPosition\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdSetOverlayPosition");
+    DPRINT1("Calling on dxg.sys pfnDdSetOverlayPosition\n");
     return pfnDdSetOverlayPosition(hSurfaceSource,hSurfaceDestination,puSetOverlayPositionData);
 }
 
@@ -260,11 +259,11 @@ NtGdiDdAlphaBlt(HANDLE hSurfaceDest,
 
     if (pfnDdAlphaBlt == NULL)
     {
-        DPRINT1("Warning: no pfnDdAlphaBlt");
+        DPRINT1("Warning: no pfnDdAlphaBlt\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys DdAlphaBlt");
+    DPRINT1("Calling on dxg.sys DdAlphaBlt\n");
     return pfnDdAlphaBlt(hSurfaceDest,hSurfaceSrc,puBltData);
 }
 
@@ -281,11 +280,11 @@ NtGdiDdAttachSurface(HANDLE hSurfaceFrom,
 
     if (pfnDdAttachSurface == NULL)
     {
-        DPRINT1("Warning: no pfnDdAttachSurface");
+        DPRINT1("Warning: no pfnDdAttachSurface\n");
         return DDHAL_DRIVER_NOTHANDLED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdAttachSurface");
+    DPRINT1("Calling on dxg.sys pfnDdAttachSurface\n");
     return pfnDdAttachSurface(hSurfaceFrom,hSurfaceTo);
 }
 
@@ -304,11 +303,11 @@ NtGdiDdUnattachSurface(HANDLE hSurface,
     PGD_DXDDUNATTACHSURFACE pfnDdUnattachSurface = (PGD_DXDDUNATTACHSURFACE)gpDxFuncs[DXG_INDEX_DxDdUnattachSurface].pfn;
     if (pfnDdUnattachSurface == NULL)
     {
-        DPRINT1("Warning: no pfnDdUnattachSurface");
+        DPRINT1("Warning: no pfnDdUnattachSurface\n");
         //return DDHAL_DRIVER_NOTHANDLED;
         return STATUS_NOT_IMPLEMENTED;
     }
 
-    DPRINT1("Calling on dxg.sys pfnDdUnattachSurface");
+    DPRINT1("Calling on dxg.sys pfnDdUnattachSurface\n");
     return pfnDdUnattachSurface(hSurface,hSurfaceAttached);
 }

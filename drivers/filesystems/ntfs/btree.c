@@ -178,7 +178,7 @@ AllocateIndexNode(PDEVICE_EXTENSION DeviceExt,
     BitmapMem = ExAllocatePoolWithTag(NonPagedPool, BytesNeeded + sizeof(ULONG), TAG_NTFS);
     if (!BitmapMem)
     {
-        DPRINT1("Error: failed to allocate bitmap!");
+        DPRINT1("Error: failed to allocate bitmap!\n");
         ReleaseAttributeContext(BitmapCtx);
         return STATUS_INSUFFICIENT_RESOURCES;
     }

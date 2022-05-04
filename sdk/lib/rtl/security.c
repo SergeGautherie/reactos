@@ -650,7 +650,7 @@ RtlNewSecurityGrantedAccess(IN ACCESS_MASK DesiredAccess,
     if (DesiredAccess & ACCESS_SYSTEM_SECURITY)
     {
         /* Pretend that it's allowed FIXME: Do privilege check */
-        DPRINT1("Missing privilege check for SE_SECURITY_PRIVILEGE");
+        DPRINT1("Missing privilege check for SE_SECURITY_PRIVILEGE\n");
         Granted = TRUE;
         *RemainingDesiredAccess &= ~ACCESS_SYSTEM_SECURITY;
     }

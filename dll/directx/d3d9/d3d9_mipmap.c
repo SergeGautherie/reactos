@@ -83,14 +83,14 @@ HRESULT WINAPI D3D9MipMap_GetDevice(LPDIRECT3DTEXTURE9 iface, IDirect3DDevice9**
 
     if (NULL == ppDevice)
     {
-        DPRINT1("Invalid ppDevice parameter specified");
+        DPRINT1("Invalid ppDevice parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDCALL;
     }
 
     if (FAILED(D3D9BaseObject_GetDevice(&This->BaseTexture.BaseResource.BaseObject, ppDevice)))
     {
-        DPRINT1("Invalid This parameter specified");
+        DPRINT1("Invalid This parameter specified\n");
         UNLOCK_D3DDEVICE9();
         return D3DERR_INVALIDDEVICE;
     }
@@ -289,7 +289,7 @@ HRESULT CreateD3D9MipMap(DIRECT3DDEVICE9_INT* pDevice, UINT Width, UINT Height, 
     LPD3D9MIPMAP pThisTexture;
     if (FAILED(AlignedAlloc((LPVOID*)&pThisTexture, sizeof(D3D9MipMap))))
     {
-        DPRINT1("Could not create D3D9MipMap");
+        DPRINT1("Could not create D3D9MipMap\n");
         return E_OUTOFMEMORY;
     }
 

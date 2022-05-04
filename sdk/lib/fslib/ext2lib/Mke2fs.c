@@ -146,7 +146,7 @@ bool zero_blocks(PEXT2_FILESYS fs, ULONG blk, ULONG num,
             RtlAllocateHeap(RtlGetProcessHeap(), 0, fs->blocksize * STRIDE_LENGTH);
         if (!buf)
         {
-            DPRINT1("Mke2fs: while allocating zeroizing buffer");
+            DPRINT1("Mke2fs: while allocating zeroizing buffer\n");
             if (ret_blk)
                 *ret_blk = blk;
             return false;
@@ -370,7 +370,7 @@ bool create_root_dir(PEXT2_FILESYS fs)
 
     if (!retval)
     {
-        DPRINT1("Mke2fs: while creating root dir");
+        DPRINT1("Mke2fs: while creating root dir\n");
         return false;
     }
 
@@ -381,7 +381,7 @@ bool create_root_dir(PEXT2_FILESYS fs)
         retval = ext2_save_inode(fs, EXT2_ROOT_INO, &inode);
         if (!retval)
         {
-            DPRINT1("Mke2fs: while setting root inode ownership");
+            DPRINT1("Mke2fs: while setting root inode ownership\n");
             return false;
         }
     }
@@ -953,7 +953,7 @@ Ext2Format(
 
     if (!bRet)
     {
-        DPRINT1("Mke2fs: zeroing block %lu at end of filesystem", ret_blk);
+        DPRINT1("Mke2fs: zeroing block %lu at end of filesystem\n", ret_blk);
         goto clean_up;
     }
 

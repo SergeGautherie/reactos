@@ -2980,7 +2980,7 @@ SpiParseDeviceInfo(IN PSCSI_PORT_DEVICE_EXTENSION DeviceExtension,
                         PartialDescriptor->u.DeviceSpecificData.DataSize >
                         KeyValueInformation->DataLength)
                     {
-                        DPRINT("Resource data length is incorrect");
+                        DPRINT("Resource data length is incorrect\n");
                         break;
                     }
 

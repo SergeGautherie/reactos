@@ -259,7 +259,7 @@ HRESULT GetAdapterCaps(const LPDIRECT3D9_DISPLAYADAPTER pDisplayAdapter, D3DDEVT
         break;
 
     default:
-        DPRINT1("Unknown DeviceType argument");
+        DPRINT1("Unknown DeviceType argument\n");
         break;
     }
 
@@ -437,11 +437,11 @@ const D3DDISPLAYMODE* FindDisplayFormat(D3DFORMAT Format, UINT ModeIndex, const 
 
     if (FormatIndex == 0)
     {
-        DPRINT1("No modes with the specified format found");
+        DPRINT1("No modes with the specified format found\n");
     }
     else if (FormatIndex < ModeIndex)
     {
-        DPRINT1("Invalid mode index");
+        DPRINT1("Invalid mode index\n");
     }
 
     return NULL;

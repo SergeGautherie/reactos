@@ -33,7 +33,7 @@ LegacyAttachInterrupt(
     KIRQL IrqLevel;
     KAFFINITY Affinity;
 
-    DPRINT("Obtaining interrupt vector");
+    DPRINT("Obtaining interrupt vector\n");
 
     Vector = HalGetInterruptVector(Isa,
                                    0,
@@ -42,8 +42,8 @@ LegacyAttachInterrupt(
                                    &IrqLevel,
                                    &Affinity);
 
-    DPRINT("Vector %d", Vector);
-    DPRINT("Connecting IRQ %d", Irq);
+    DPRINT("Vector %d\n", Vector);
+    DPRINT("Connecting IRQ %d\n", Irq);
 
     Status = IoConnectInterrupt(InterruptObject,
                                 ServiceRoutine,

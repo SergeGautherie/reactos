@@ -422,7 +422,7 @@ static void pSaveImageAs(HWND hwnd)
     szFilterMask = malloc(sizeRemain);
     if (!szFilterMask)
     {
-        DPRINT1("cannot allocate memory for filter mask in pSaveImageAs()");
+        DPRINT1("cannot allocate memory for filter mask in pSaveImageAs()\n");
         free(codecInfo);
         return;
     }

@@ -640,7 +640,7 @@ NTSTATUS CMiniportDMusUART::InitializeHardware(PINTERRUPTSYNC interruptSync,PUCH
     }
     else
     {
-        DPRINT("*** InitMPU returned with ntStatus 0x%08x ***", ntStatus);
+        DPRINT("*** InitMPU returned with ntStatus 0x%08x ***\n", ntStatus);
     }
 
     m_fMPUInitialized = NT_SUCCESS(ntStatus);
@@ -665,7 +665,7 @@ InitMPU
     IN      PVOID           DynamicContext
 )
 {
-    DPRINT("InitMPU");
+    DPRINT("InitMPU\n");
     if (!DynamicContext)
     {
         return STATUS_INVALID_PARAMETER_2;
@@ -733,7 +733,7 @@ InitMPU
     if ((0xFE != dataByte) || !success)   // Did we succeed? If no second ACK, something is hosed
     {
         DPRINT("Second attempt to reset the MPU didn't get ACKed.\n");
-        DPRINT("Init Reset failure error. Ack = %X", ULONG(dataByte));
+        DPRINT("Init Reset failure error. Ack = %X\n", ULONG(dataByte));
 
         ntStatus = STATUS_IO_DEVICE_ERROR;
     }
@@ -865,7 +865,7 @@ SynchronizedDMusMPUWrite
         }
         else
         {
-            DPRINT("SynchronizedDMusMPUWrite failed (0x%08x)",ntStatus);
+            DPRINT("SynchronizedDMusMPUWrite failed (0x%08x)\n", ntStatus);
             break;
         }
     }
@@ -894,7 +894,7 @@ TryMPU
     USHORT  numPolls;
     UCHAR   status;
 
-    DPRINT("TryMPU");
+    DPRINT("TryMPU\n");
     numPolls = 0;
 
     while (numPolls < kMPUPollTimeout)
@@ -910,7 +910,7 @@ TryMPU
     if (numPolls >= kMPUPollTimeout)
     {
         success = FALSE;
-        DPRINT("TryMPU failed");
+        DPRINT("TryMPU failed\n");
     }
     else
     {
@@ -937,7 +937,7 @@ WriteMPU
     IN      UCHAR       Value
 )
 {
-    DPRINT("WriteMPU");
+    DPRINT("WriteMPU\n");
     NTSTATUS ntStatus = STATUS_IO_DEVICE_ERROR;
 
     if (!PortBase)
@@ -962,7 +962,7 @@ WriteMPU
         if (UartFifoOkForWrite(status)) // Is this a good time to write data?
         {                               // yep (Jon comment)
             WRITE_PORT_UCHAR(deviceAddr,Value);
-            DPRINT("WriteMPU emitted 0x%02x",Value);
+            DPRINT("WriteMPU emitted 0x%02x\n", Value);
             ntStatus = STATUS_SUCCESS;
             break;
         }
@@ -1014,7 +1014,7 @@ CMiniportDMusUARTStream::SourceEvtsToPort()
     NTSTATUS    ntStatus;
 
     ASSERT(KeGetCurrentIrql() == DISPATCH_LEVEL);
-    DPRINT("SourceEvtsToPort");
+    DPRINT("SourceEvtsToPort\n");
 
     if (m_fCapture)
     {
@@ -1028,7 +1028,7 @@ CMiniportDMusUARTStream::SourceEvtsToPort()
                 (void) m_AllocatorMXF->GetMessage(&aDMKEvt);
                 if (!aDMKEvt)
                 {
-                    DPRINT("SourceEvtsToPort can't allocate DMKEvt");
+                    DPRINT("SourceEvtsToPort can't allocate DMKEvt\n");
                     return STATUS_INSUFFICIENT_RESOURCES;
                 }
 
@@ -1084,7 +1084,7 @@ CMiniportDMusUARTStream::SourceEvtsToPort()
     }
     else    //  render stream
     {
-        DPRINT("SourceEvtsToPort called on render stream");
+        DPRINT("SourceEvtsToPort called on render stream\n");
         ntStatus = STATUS_INVALID_DEVICE_REQUEST;
     }
     return ntStatus;
@@ -1107,7 +1107,7 @@ DMusMPUInterruptServiceRoutine
     IN      PVOID           DynamicContext
 )
 {
-    DPRINT("DMusMPUInterruptServiceRoutine");
+    DPRINT("DMusMPUInterruptServiceRoutine\n");
     ULONGLONG   startTime;
 
     ASSERT(DynamicContext);
@@ -1150,7 +1150,7 @@ DMusMPUInterruptServiceRoutine
                     if (   (that->m_MPUInputBufferTail + 1 == buffHead)
                         || (that->m_MPUInputBufferTail + 1 - kMPUInputBufferSize == buffHead))
                     {
-                        DPRINT("*****MPU Input Buffer Overflow*****");
+                        DPRINT("*****MPU Input Buffer Overflow*****\n");
                     }
                     else
                     {
@@ -1159,7 +1159,7 @@ DMusMPUInterruptServiceRoutine
                             clockStatus = that->m_MasterClock->GetTime(&that->m_InputTimeStamp);
                             if (STATUS_SUCCESS != clockStatus)
                             {
-                                DPRINT("GetTime failed for clock 0x%08x",that->m_MasterClock);
+                                DPRINT("GetTime failed for clock 0x%08x\n", that->m_MasterClock);
                             }
                         }
                         newBytesAvailable = TRUE;
@@ -1210,7 +1210,7 @@ GetDescription
 
     ASSERT(OutFilterDescriptor);
 
-    DPRINT("GetDescription");
+    DPRINT("GetDescription\n");
 
     *OutFilterDescriptor = &MiniportFilterDescriptor;
 
@@ -1263,7 +1263,7 @@ ProcessResources
 {
     PAGED_CODE();
 
-    DPRINT("ProcessResources");
+    DPRINT("ProcessResources\n");
 
     ASSERT(ResourceList);
     if (!ResourceList)
@@ -1279,7 +1279,7 @@ ProcessResources
     ULONG   lengthIO    = ResourceList->FindTranslatedPort(0)->u.Port.Length;
 
 #if DBG
-    DPRINT("Starting MPU401 Port 0x%lx", ResourceList->FindTranslatedPort(0)->u.Port.Start.LowPart);
+    DPRINT("Starting MPU401 Port 0x%lx\n", ResourceList->FindTranslatedPort(0)->u.Port.Start.LowPart);
 #endif
 
     NTSTATUS ntStatus = STATUS_SUCCESS;
@@ -1293,7 +1293,7 @@ ProcessResources
         ||  (lengthIO == 0)
         )
     {
-        DPRINT("Unknown ResourceList configuration");
+        DPRINT("Unknown ResourceList configuration\n");
         ntStatus = STATUS_DEVICE_CONFIGURATION_ERROR;
     }
 
@@ -1329,7 +1329,7 @@ CMiniportDMusUART::QueryInterface
 {
     PAGED_CODE();
 
-    DPRINT("Miniport::NonDelegatingQueryInterface");
+    DPRINT("Miniport::NonDelegatingQueryInterface\n");
     ASSERT(Object);
 
     if (IsEqualGUIDAligned(Interface,IID_IUnknown))
@@ -1385,7 +1385,7 @@ CMiniportDMusUART::~CMiniportDMusUART(void)
 {
     PAGED_CODE();
 
-    DPRINT("~CMiniportDMusUART");
+    DPRINT("~CMiniportDMusUART\n");
 
     ASSERT(0 == m_NumCaptureStreams);
     ASSERT(0 == m_NumRenderStreams);
@@ -1446,7 +1446,7 @@ Init
     ASSERT(Port_);
     ASSERT(ServiceGroup);
 
-    DPRINT("Init");
+    DPRINT("Init\n");
 
     *ServiceGroup = NULL;
     m_pPortBase = 0;
@@ -1644,7 +1644,7 @@ NewStream
 {
     PAGED_CODE();
 
-    DPRINT("NewStream");
+    DPRINT("NewStream\n");
     NTSTATUS ntStatus = STATUS_SUCCESS;
 
     // In 100 ns, we want stuff as soon as it comes in
@@ -1657,7 +1657,7 @@ NewStream
         ntStatus = ResetHardware(m_pPortBase);
         if (!NT_SUCCESS(ntStatus))
         {
-            DPRINT("CMiniportDMusUART::NewStream ResetHardware failed");
+            DPRINT("CMiniportDMusUART::NewStream ResetHardware failed\n");
             return ntStatus;
         }
     }
@@ -1708,15 +1708,15 @@ NewStream
         ntStatus = STATUS_INVALID_DEVICE_REQUEST;
         if (StreamType == DMUS_STREAM_MIDI_CAPTURE)
         {
-            DPRINT("NewStream failed, too many capture streams");
+            DPRINT("NewStream failed, too many capture streams\n");
         }
         else if (StreamType == DMUS_STREAM_MIDI_RENDER)
         {
-            DPRINT("NewStream failed, too many render streams");
+            DPRINT("NewStream failed, too many render streams\n");
         }
         else
         {
-            DPRINT("NewStream invalid stream type");
+            DPRINT("NewStream invalid stream type\n");
         }
     }
 
@@ -1771,7 +1771,7 @@ PowerChangeNotify
 {
     PAGED_CODE();
 
-    DPRINT("CMiniportDMusUART::PoweChangeNotify D%d", PowerState.DeviceState);
+    DPRINT("CMiniportDMusUART::PoweChangeNotify D%d\n", PowerState.DeviceState);
 
     switch (PowerState.DeviceState)
     {
@@ -1780,7 +1780,7 @@ PowerChangeNotify
             {
                 if (!NT_SUCCESS(InitializeHardware(m_pInterruptSync,m_pPortBase)))
                 {
-                    DPRINT("InitializeHardware failed when resuming");
+                    DPRINT("InitializeHardware failed when resuming\n");
                 }
             }
             break;
@@ -1812,7 +1812,7 @@ CMiniportDMusUARTStream::QueryInterface
 {
     PAGED_CODE();
 
-    DPRINT("Stream::NonDelegatingQueryInterface");
+    DPRINT("Stream::NonDelegatingQueryInterface\n");
     ASSERT(Object);
 
     if (IsEqualGUIDAligned(Interface,IID_IUnknown))
@@ -1853,7 +1853,7 @@ CMiniportDMusUARTStream::~CMiniportDMusUARTStream(void)
 {
     PAGED_CODE();
 
-    DPRINT("~CMiniportDMusUARTStream");
+    DPRINT("~CMiniportDMusUARTStream\n");
 
     KeCancelTimer(&m_TimerEvent);
 
@@ -1865,7 +1865,7 @@ CMiniportDMusUARTStream::~CMiniportDMusUARTStream(void)
         }
         else
         {
-            DPRINT("~CMiniportDMusUARTStream, no allocator, can't flush DMKEvts");
+            DPRINT("~CMiniportDMusUARTStream, no allocator, can't flush DMKEvts\n");
         }
         m_DMKEvtQueue = NULL;
     }
@@ -1914,7 +1914,7 @@ Init
     ASSERT(pMiniport);
     ASSERT(pPortBase);
 
-    DPRINT("Init");
+    DPRINT("Init\n");
 
     m_NumFailedMPUTries = 0;
     m_TimerQueued = FALSE;
@@ -1972,7 +1972,7 @@ SetState
 {
     PAGED_CODE();
 
-    DPRINT("SetState %d",NewState);
+    DPRINT("SetState %d\n", NewState);
 
     if (NewState == KSSTATE_RUN)
     {
@@ -1984,7 +1984,7 @@ SetState
         }
         else
         {
-            DPRINT("CMiniportDMusUARTStream::SetState KSSTATE_RUN failed due to uninitialized MPU");
+            DPRINT("CMiniportDMusUARTStream::SetState KSSTATE_RUN failed due to uninitialized MPU\n");
             return STATUS_INVALID_DEVICE_STATE;
         }
     }
@@ -2017,7 +2017,7 @@ Service
 (   void
 )
 {
-    DPRINT("Service");
+    DPRINT("Service\n");
     if (!m_NumCaptureStreams)
     {
         //  we should never get here....
@@ -2046,18 +2046,18 @@ ConnectOutput(PMXF sinkMXF)
     {
         if ((sinkMXF) && (m_sinkMXF == m_AllocatorMXF))
         {
-            DPRINT("ConnectOutput");
+            DPRINT("ConnectOutput\n");
             m_sinkMXF = sinkMXF;
             return STATUS_SUCCESS;
         }
         else
         {
-            DPRINT("ConnectOutput failed");
+            DPRINT("ConnectOutput failed\n");
         }
     }
     else
     {
-        DPRINT("ConnectOutput called on renderer; failed");
+        DPRINT("ConnectOutput called on renderer; failed\n");
     }
     return STATUS_UNSUCCESSFUL;
 }
@@ -2081,18 +2081,18 @@ DisconnectOutput(PMXF sinkMXF)
     {
         if ((m_sinkMXF == sinkMXF) || (!sinkMXF))
         {
-            DPRINT("DisconnectOutput");
+            DPRINT("DisconnectOutput\n");
             m_sinkMXF = m_AllocatorMXF;
             return STATUS_SUCCESS;
         }
         else
         {
-            DPRINT("DisconnectOutput failed");
+            DPRINT("DisconnectOutput failed\n");
         }
     }
     else
     {
-        DPRINT("DisconnectOutput called on renderer; failed");
+        DPRINT("DisconnectOutput called on renderer; failed\n");
     }
     return STATUS_UNSUCCESSFUL;
 }
@@ -2121,7 +2121,7 @@ NTSTATUS CMiniportDMusUARTStream::PutMessageLocked(PDMUS_KERNEL_EVENT pDMKEvt)
 
     if (!m_fCapture)
     {
-        DPRINT("PutMessage to render stream");
+        DPRINT("PutMessage to render stream\n");
         if (pDMKEvt)
         {
             // m_DpcSpinLock already held
@@ -2141,7 +2141,7 @@ NTSTATUS CMiniportDMusUARTStream::PutMessageLocked(PDMUS_KERNEL_EVENT pDMKEvt)
                 m_DMKEvtQueue = pDMKEvt;
                 if (m_DMKEvtOffset)
                 {
-                    DPRINT("PutMessage  Nothing in the queue, but m_DMKEvtOffset == %d",m_DMKEvtOffset);
+                    DPRINT("PutMessage  Nothing in the queue, but m_DMKEvtOffset == %d\n", m_DMKEvtOffset);
                     m_DMKEvtOffset = 0;
                 }
             }
@@ -2155,7 +2155,7 @@ NTSTATUS CMiniportDMusUARTStream::PutMessageLocked(PDMUS_KERNEL_EVENT pDMKEvt)
     }
     else    //  capture
     {
-        DPRINT("PutMessage to capture stream");
+        DPRINT("PutMessage to capture stream\n");
         ASSERT(NULL == pDMKEvt);
 
         SourceEvtsToPort();
@@ -2184,7 +2184,7 @@ NTSTATUS CMiniportDMusUARTStream::PutMessage(PDMUS_KERNEL_EVENT pDMKEvt)
 
     if (!m_fCapture)
     {
-        DPRINT("PutMessage to render stream");
+        DPRINT("PutMessage to render stream\n");
         if (pDMKEvt)
         {
             KeAcquireSpinLockAtDpcLevel(&m_DpcSpinLock);
@@ -2204,7 +2204,7 @@ NTSTATUS CMiniportDMusUARTStream::PutMessage(PDMUS_KERNEL_EVENT pDMKEvt)
                 m_DMKEvtQueue = pDMKEvt;
                 if (m_DMKEvtOffset)
                 {
-                    DPRINT("PutMessage  Nothing in the queue, but m_DMKEvtOffset == %d", m_DMKEvtOffset);
+                    DPRINT("PutMessage  Nothing in the queue, but m_DMKEvtOffset == %d\n", m_DMKEvtOffset);
                     m_DMKEvtOffset = 0;
                 }
             }
@@ -2218,7 +2218,7 @@ NTSTATUS CMiniportDMusUARTStream::PutMessage(PDMUS_KERNEL_EVENT pDMKEvt)
     }
     else    //  capture
     {
-        DPRINT("PutMessage to capture stream");
+        DPRINT("PutMessage to capture stream\n");
         ASSERT(NULL == pDMKEvt);
 
         SourceEvtsToPort();
@@ -2268,14 +2268,14 @@ NTSTATUS CMiniportDMusUARTStream::ConsumeEvents(void)
 
             if (aDMKEvt->cbEvent <= sizeof(PBYTE))                //  short message
             {
-                DPRINT("ConsumeEvents(%02x%02x%02x%02x)", aDMKEvt->uData.abData[0], aDMKEvt->uData.abData[1], aDMKEvt->uData.abData[2], aDMKEvt->uData.abData[3]);
+                DPRINT("ConsumeEvents(%02x%02x%02x%02x)\n", aDMKEvt->uData.abData[0], aDMKEvt->uData.abData[1], aDMKEvt->uData.abData[2], aDMKEvt->uData.abData[3]);
                 ntStatus = Write(aDMKEvt->uData.abData + m_DMKEvtOffset,bytesRemaining,&bytesWritten);
             }
             else if (PACKAGE_EVT(aDMKEvt))
             {
                 ASSERT(m_DMKEvtOffset == 0);
                 m_DMKEvtOffset = 0;
-                DPRINT("ConsumeEvents(Package)");
+                DPRINT("ConsumeEvents(Package)\n");
 
                 ntStatus = PutMessageLocked(aDMKEvt->uData.pPackageEvt);  // we already own the spinlock
 
@@ -2286,7 +2286,7 @@ NTSTATUS CMiniportDMusUARTStream::ConsumeEvents(void)
             }
             else                //  SysEx message
             {
-                DPRINT("ConsumeEvents(%02x%02x%02x%02x)", aDMKEvt->uData.pbData[0], aDMKEvt->uData.pbData[1], aDMKEvt->uData.pbData[2], aDMKEvt->uData.pbData[3]);
+                DPRINT("ConsumeEvents(%02x%02x%02x%02x)\n", aDMKEvt->uData.pbData[0], aDMKEvt->uData.pbData[1], aDMKEvt->uData.pbData[2], aDMKEvt->uData.pbData[3]);
 
                 ntStatus = Write(aDMKEvt->uData.pbData + m_DMKEvtOffset,bytesRemaining,&bytesWritten);
             }
@@ -2313,7 +2313,7 @@ NTSTATUS CMiniportDMusUARTStream::ConsumeEvents(void)
             m_DMKEvtOffset += bytesWritten;
             ASSERT(m_DMKEvtOffset < aDMKEvt->cbEvent);
 
-            DPRINT("ConsumeEvents tried %d, wrote %d, at offset %d", bytesRemaining,bytesWritten,m_DMKEvtOffset);
+            DPRINT("ConsumeEvents tried %d, wrote %d, at offset %d\n", bytesRemaining, bytesWritten, m_DMKEvtOffset);
             aMillisecIn100ns.QuadPart = -(kOneMillisec);    //  set timer, come back later
             m_TimerQueued = TRUE;
             m_NumberOfRetries++;
@@ -2404,7 +2404,7 @@ DMusUARTTimerDPC
     aStream = (CMiniportDMusUARTStream *) DeferredContext;
     if (aStream)
     {
-        DPRINT("DMusUARTTimerDPC");
+        DPRINT("DMusUARTTimerDPC\n");
         if (false == aStream->m_fCapture)
         {
             (void) aStream->ConsumeEvents();
@@ -2482,7 +2482,7 @@ PropertyHandler_Synth
         switch(pRequest->PropertyItem->Id)
         {
             case KSPROPERTY_SYNTH_CAPS:
-                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_CAPS");
+                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_CAPS\n");
 
                 if (pRequest->Verb & KSPROPERTY_TYPE_SET)
                 {
@@ -2541,7 +2541,7 @@ PropertyHandler_Synth
                 break;
 
              case KSPROPERTY_SYNTH_PORTPARAMETERS:
-                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_PORTPARAMETERS");
+                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_PORTPARAMETERS\n");
     {
                 CMiniportDMusUARTStream *aStream;
 
@@ -2558,7 +2558,7 @@ PropertyHandler_Synth
                break;
 
             case KSPROPERTY_SYNTH_CHANNELGROUPS:
-                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_CHANNELGROUPS");
+                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_CHANNELGROUPS\n");
 
                 ntStatus = ValidatePropertyRequest(pRequest, sizeof(ULONG), TRUE);
                 if (NT_SUCCESS(ntStatus))
@@ -2569,7 +2569,7 @@ PropertyHandler_Synth
                 break;
 
             case KSPROPERTY_SYNTH_LATENCYCLOCK:
-                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_LATENCYCLOCK");
+                DPRINT("PropertyHandler_Synth:KSPROPERTY_SYNTH_LATENCYCLOCK\n");
 
                 if(pRequest->Verb & KSPROPERTY_TYPE_SET)
                 {
@@ -2599,7 +2599,7 @@ PropertyHandler_Synth
                 break;
 
             default:
-                DPRINT("Unhandled property in PropertyHandler_Synth");
+                DPRINT("Unhandled property in PropertyHandler_Synth\n");
                 break;
         }
     }
@@ -2660,5 +2660,3 @@ NTSTATUS ValidatePropertyRequest
 #ifdef _MSC_VER
 #pragma code_seg()
 #endif
-
-

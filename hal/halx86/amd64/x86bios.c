@@ -271,7 +271,7 @@ x86MemRead(
     else
     {
         RtlFillMemory(Buffer, Size, 0xCC);
-        DPRINT1("x86MemRead: invalid read at 0x%lx (size 0x%lx)", Address, Size);
+        DPRINT1("x86MemRead: invalid read at 0x%lx (size 0x%lx)\n", Address, Size);
     }
 }
 
@@ -291,7 +291,7 @@ x86MemWrite(
     }
     else
     {
-        DPRINT1("x86MemWrite: invalid write at 0x%lx (size 0x%lx)", Address, Size);
+        DPRINT1("x86MemWrite: invalid write at 0x%lx (size 0x%lx)\n", Address, Size);
     }
 }
 

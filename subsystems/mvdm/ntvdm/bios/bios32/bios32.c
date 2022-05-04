@@ -409,7 +409,7 @@ static VOID WINAPI BiosMiscService(LPWORD Stack)
         /* Switch to Protected Mode */
         case 0x89:
         {
-            DPRINT1("BIOS INT 15h, AH=89h \"Switch to Protected Mode\" is UNIMPLEMENTED");
+            DPRINT1("BIOS INT 15h, AH=89h \"Switch to Protected Mode\" is UNIMPLEMENTED\n");
 
             Stack[STACK_FLAGS] |= EMULATOR_FLAG_CF;
             goto Default;

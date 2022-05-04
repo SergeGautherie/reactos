@@ -569,7 +569,7 @@ REGION_Complexity(PREGION prgn)
     if (prgn == NULL)
         return NULLREGION;
 
-    DPRINT("Region Complexity -> %lu", prgn->rdh.nCount);
+    DPRINT("Region Complexity -> %lu\n", prgn->rdh.nCount);
     switch (prgn->rdh.nCount)
     {
         case 0:

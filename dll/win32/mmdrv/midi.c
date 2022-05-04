@@ -27,13 +27,10 @@ typedef struct _LOCALMIDIHDR {
     PVOID               pClient;
   //  MIDI_DD_INPUT_DATA  MidiData;
     BYTE                ExtraData[LOCAL_DATA_SIZE - sizeof(ULONG)];
-
 } LOCALMIDIHDR, *PLOCALMIDIHDR;
 
 #define LOCAL_MIDI_BUFFERS 8
-
 typedef struct {
-
     BOOL                fMidiInStarted;
     DWORD               dwMsg;
     DWORD               dwCurData;
@@ -44,16 +41,10 @@ typedef struct {
     BYTE                bBytePos;
     DWORD               dwCurTime;
     DWORD               dwMsgTime;
-
-
     PLOCALMIDIHDR       DeviceQueue;
-
     LOCALMIDIHDR
     Bufs[LOCAL_MIDI_BUFFERS];
-
-
 } LOCALMIDIDATA, *PLOCALMIDIDATA;
-
 
 typedef struct tag_MIDIALLOC {
     struct tag_MIDIALLOC *Next;         // Chain of devices
@@ -83,7 +74,6 @@ typedef struct tag_MIDIALLOC {
             PBYTE       pData;          // Data to set or get
             ULONG       DataLen;        // Length of data
         } GetSetData;
-
     } AuxParam;
                                         // 0 means terminate task.
     HANDLE              ThreadHandle;   // Handle for termination ONLY
@@ -93,11 +83,9 @@ typedef struct tag_MIDIALLOC {
     DWORD               dwFlags;        // Open flags
     PLOCALMIDIDATA      Mid;            // Extra midi input structures
     int                 l;              // Helper global for modMidiLength
-
 } MIDIALLOC, *PMIDIALLOC;
 
 PMIDIALLOC MidiHandleList;              // Our chain of wave handles
-
 
 
 static DWORD OpenMidiDevice(UINT DeviceType, DWORD ID, DWORD User, DWORD Param1, DWORD Param2)
@@ -158,7 +146,6 @@ static DWORD OpenMidiDevice(UINT DeviceType, DWORD ID, DWORD User, DWORD Param1,
 
 	if (DeviceType == MidiInDevice)
 	{
-
         pClient->AuxEvent1 = CreateEvent(NULL, FALSE, FALSE, NULL);
         if (pClient->AuxEvent1 == NULL)
 		{
@@ -173,9 +160,7 @@ static DWORD OpenMidiDevice(UINT DeviceType, DWORD ID, DWORD User, DWORD Param1,
             return MMSYSERR_NOMEM;
         }
 
-
         // TaskCreate
-
 
        WaitForSingleObject(pClient->AuxEvent2, INFINITE);
     }
@@ -189,8 +174,6 @@ static DWORD OpenMidiDevice(UINT DeviceType, DWORD ID, DWORD User, DWORD Param1,
     return MMSYSERR_NOERROR;
 }
 
-
-
 static DWORD WriteMidi(PBYTE pData, ULONG Length, PMIDIALLOC pClient)
 {
     DWORD BytesReturned;
@@ -203,7 +186,6 @@ static DWORD WriteMidi(PBYTE pData, ULONG Length, PMIDIALLOC pClient)
 
     return MMSYSERR_NOERROR;
 }
-
 
 static int GetMidiLength(PMIDIALLOC pClient, BYTE b)
 {
@@ -243,7 +225,6 @@ static int GetMidiLength(PMIDIALLOC pClient, BYTE b)
 }
 
 
-
 /* ----------------------------------------------------------------------------
     Exported functions
 ----------------------------------------------------------------------------- */
@@ -255,35 +236,35 @@ APIENTRY DWORD midMessage(DWORD dwId, DWORD dwMessage, DWORD dwUser, DWORD dwPar
 
     switch (dwMessage) {
         case MIDM_GETNUMDEVS:
-            DPRINT("MIDM_GETNUMDEVS");
+            DPRINT("MIDM_GETNUMDEVS\n");
             return GetDeviceCount(MidiInDevice);
 
         case MIDM_GETDEVCAPS:
-            DPRINT("MIDM_GETDEVCAPS");
+            DPRINT("MIDM_GETDEVCAPS\n");
             return GetDeviceCapabilities(dwId, MidiInDevice, (LPBYTE)dwParam1, (DWORD)dwParam2);
 
         case MIDM_OPEN:
-            DPRINT("MIDM_OPEN");
+            DPRINT("MIDM_OPEN\n");
             return MMSYSERR_NOERROR;
 
         case MIDM_CLOSE:
-            DPRINT("MIDM_CLOSE");
+            DPRINT("MIDM_CLOSE\n");
             return MMSYSERR_NOERROR;
 
         case MIDM_ADDBUFFER:
-            DPRINT("MIDM_ADDBUFFER");
+            DPRINT("MIDM_ADDBUFFER\n");
             return MMSYSERR_NOERROR;
 
         case MIDM_STOP:
-            DPRINT("MIDM_PAUSE");
+            DPRINT("MIDM_PAUSE\n");
             return MMSYSERR_NOERROR;
 
         case MIDM_START:
-            DPRINT("MIDM_RESTART");
+            DPRINT("MIDM_RESTART\n");
             return MMSYSERR_NOERROR;
 
         case MIDM_RESET:
-            DPRINT("MIDM_RESET");
+            DPRINT("MIDM_RESET\n");
             return MMSYSERR_NOERROR;
 
         default:
@@ -306,18 +287,18 @@ APIENTRY DWORD modMessage(DWORD ID, DWORD Message, DWORD User, DWORD Param1, DWO
             return GetDeviceCount(MidiOutDevice);
 
         case MODM_GETDEVCAPS:
-            DPRINT("MODM_GETDEVCAPS");
+            DPRINT("MODM_GETDEVCAPS\n");
             return GetDeviceCapabilities(ID, MidiOutDevice, (LPBYTE)Param1, (DWORD)Param2);
 
         case MODM_OPEN :
             return OpenMidiDevice(MidiOutDevice, ID, User, Param1, Param2);
 
         case MODM_CLOSE:
-            DPRINT("MODM_CLOSE");
+            DPRINT("MODM_CLOSE\n");
             return MMSYSERR_NOTSUPPORTED;
 
         case MODM_DATA:
-            DPRINT("MODM_DATA");
+            DPRINT("MODM_DATA\n");
 
             int i;
             BYTE b[4];
@@ -329,29 +310,28 @@ APIENTRY DWORD modMessage(DWORD ID, DWORD Message, DWORD User, DWORD Param1, DWO
                                 (PMIDIALLOC)User);
 
         case MODM_LONGDATA:
-            DPRINT("MODM_LONGDATA");
+            DPRINT("MODM_LONGDATA\n");
             return MMSYSERR_NOTSUPPORTED;
 
         case MODM_RESET:
-            DPRINT("MODM_RESET");
+            DPRINT("MODM_RESET\n");
             return MMSYSERR_NOTSUPPORTED;
 
         case MODM_SETVOLUME:
-            DPRINT("MODM_SETVOLUME");
+            DPRINT("MODM_SETVOLUME\n");
             return MMSYSERR_NOTSUPPORTED;
 
         case MODM_GETVOLUME:
-            DPRINT("MODM_GETVOLUME");
+            DPRINT("MODM_GETVOLUME\n");
             return MMSYSERR_NOTSUPPORTED;
 
         case MODM_CACHEPATCHES:
-            DPRINT("MODM_CACHEPATCHES");
+            DPRINT("MODM_CACHEPATCHES\n");
             return MMSYSERR_NOTSUPPORTED;
 
         case MODM_CACHEDRUMPATCHES:
-            DPRINT("MODM_CACHEDRUMPATCHES");
+            DPRINT("MODM_CACHEDRUMPATCHES\n");
             return MMSYSERR_NOTSUPPORTED;
-
     };
 
     return MMSYSERR_NOTSUPPORTED;

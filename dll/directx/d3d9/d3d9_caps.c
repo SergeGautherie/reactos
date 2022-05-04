@@ -85,7 +85,7 @@ static void CreateInternalDeviceData(HDC hDC, LPCSTR lpszDeviceName, D3D9_Unknow
     pUnknown6BC = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(D3D9_Unknown6BC));
     if (NULL == pUnknown6BC)
     {
-        DPRINT1("Out of memory");
+        DPRINT1("Out of memory\n");
         return;
     }
 
@@ -149,7 +149,7 @@ BOOL GetDeviceData(LPD3D9_DEVICEDATA pDeviceData)
 
         if (NULL == pDeviceData->pUnknown6BC)
         {
-            DPRINT1("Failed to create DirectDrawObject for Direct3D9");
+            DPRINT1("Failed to create DirectDrawObject for Direct3D9\n");
             return FALSE;
         }
     }
@@ -160,7 +160,7 @@ BOOL GetDeviceData(LPD3D9_DEVICEDATA pDeviceData)
 
         if (FALSE == CanReenableDirectDrawObject(pDeviceData->pUnknown6BC))
         {
-            DPRINT1("Failed to re-enable DirectDrawObject");
+            DPRINT1("Failed to re-enable DirectDrawObject\n");
             return FALSE;
         }
 
@@ -213,7 +213,7 @@ BOOL GetDeviceData(LPD3D9_DEVICEDATA pDeviceData)
 
     if (FALSE == CanReenableDirectDrawObject(pDeviceData->pUnknown6BC))
     {
-        DPRINT1("Failed to re-enable DirectDrawObject");
+        DPRINT1("Failed to re-enable DirectDrawObject\n");
         ReleaseInternalDeviceData(pDeviceData);
         return FALSE;
     }
@@ -238,7 +238,7 @@ BOOL GetDeviceData(LPD3D9_DEVICEDATA pDeviceData)
 
     if (FALSE == bRet)
     {
-        DPRINT1("Could not query DirectDrawObject, aborting");
+        DPRINT1("Could not query DirectDrawObject, aborting\n");
         ReleaseInternalDeviceData(pDeviceData);
         return FALSE;
     }
@@ -268,7 +268,7 @@ BOOL GetDeviceData(LPD3D9_DEVICEDATA pDeviceData)
 
     if (FALSE == bRet)
     {
-        DPRINT1("Could not query DirectDrawObject, aborting");
+        DPRINT1("Could not query DirectDrawObject, aborting\n");
         HeapFree(GetProcessHeap(), 0, puD3dTextureFormats);
         HeapFree(GetProcessHeap(), 0, pD3dZStencilFormatList);
         HeapFree(GetProcessHeap(), 0, pD3dDisplayModeList);
@@ -477,11 +477,11 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
 
             if (DdiVersion.dwDDIVersion == 0)
             {
-                DPRINT1("Driver claims to be DX9 driver, but didn't report DX9 DDI version - reverting to DX8 mode");
+                DPRINT1("Driver claims to be DX9 driver, but didn't report DX9 DDI version - reverting to DX8 mode\n");
             }
             else
             {
-                DPRINT1("Driver claims to be DX9 driver, but was built with an old DDI version - reverting to DX8 mode");
+                DPRINT1("Driver claims to be DX9 driver, but was built with an old DDI version - reverting to DX8 mode\n");
             }
 
             /* GUID_GetDriverInfo2 - Get D3DCAPS8 */
@@ -495,7 +495,7 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
                     S_OK != DrvInfo.ddRVal ||
                     DrvInfo.dwActualSize != sizeof(D3DCAPS8))
                 {
-                    DPRINT1("Driver returned an invalid D3DCAPS8 structure - aborting");
+                    DPRINT1("Driver returned an invalid D3DCAPS8 structure - aborting\n");
                     return FALSE;
                 }
 
@@ -518,7 +518,7 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
                 S_OK != DrvInfo.ddRVal ||
                 DrvInfo.dwActualSize != sizeof(D3DCAPS9))
             {
-                DPRINT1("Driver returned an invalid D3DCAPS9 structure - aborting");
+                DPRINT1("Driver returned an invalid D3DCAPS9 structure - aborting\n");
                 return FALSE;
             }
 
@@ -539,17 +539,17 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
             {
                 if (DrvInfo.ddRVal != S_OK)
                 {
-                    DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI_TYPE_GETFORMATCOUNT in GetDriverInfo call");
+                    DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI_TYPE_GETFORMATCOUNT in GetDriverInfo call\n");
                     return FALSE;
                 }
                 else if (DrvInfo.dwActualSize != sizeof(DD_GETFORMATCOUNTDATA))
                 {
-                    DPRINT1("Driver returned an invalid DD_GETFORMATCOUNTDATA structure - aborting");
+                    DPRINT1("Driver returned an invalid DD_GETFORMATCOUNTDATA structure - aborting\n");
                     return FALSE;
                 }
                 else if (FormatCountData.dwFormatCount == UINT_MAX)
                 {
-                    DPRINT1("Driver didn't set DD_GETFORMATCOUNTDATA.dwFormatCount - aborting");
+                    DPRINT1("Driver didn't set DD_GETFORMATCOUNTDATA.dwFormatCount - aborting"\n);
                     return FALSE;
                 }
 
@@ -573,17 +573,17 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
                 {
                     if (DrvInfo.ddRVal != S_OK)
                     {
-                        DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI_TYPE_GETFORMAT in GetDriverInfo call");
+                        DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI_TYPE_GETFORMAT in GetDriverInfo call\n");
                         return FALSE;
                     }
                     else if (DrvInfo.dwActualSize != sizeof(DD_GETFORMATDATA))
                     {
-                        DPRINT1("Driver returned an invalid DD_GETFORMATDATA structure - aborting");
+                        DPRINT1("Driver returned an invalid DD_GETFORMATDATA structure - aborting\n");
                         return FALSE;
                     }
                     else if (FormatData.format.dwSize != sizeof(DDPIXELFORMAT))
                     {
-                        DPRINT1("Driver didn't set DD_GETFORMATDATA.format - aborting");
+                        DPRINT1("Driver didn't set DD_GETFORMATDATA.format - aborting\n");
                         return FALSE;
                     }
 
@@ -617,12 +617,12 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
                 {
                     if (DrvInfo.dwActualSize != sizeof(DD_GETEXTENDEDMODECOUNTDATA))
                     {
-                        DPRINT1("Driver returned an invalid DD_GETEXTENDEDFORMATCOUNTDATA structure - aborting");
+                        DPRINT1("Driver returned an invalid DD_GETEXTENDEDFORMATCOUNTDATA structure - aborting\n");
                         return FALSE;
                     }
                     else if (ExModeCountData.dwModeCount == UINT_MAX)
                     {
-                        DPRINT1("Driver didn't set DD_GETEXTENDEDMODECOUNTDATA.dwModeCount - aborting");
+                        DPRINT1("Driver didn't set DD_GETEXTENDEDMODECOUNTDATA.dwModeCount - aborting\n");
                         return FALSE;
                     }
 
@@ -652,17 +652,17 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
                 {
                     if (DrvInfo.ddRVal != S_OK)
                     {
-                        DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETEXTENDEDMODE in GetDriverInfo call");
+                        DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETEXTENDEDMODE in GetDriverInfo call\n");
                         return FALSE;
                     }
                     else if (DrvInfo.dwActualSize != sizeof(DD_GETEXTENDEDMODEDATA))
                     {
-                        DPRINT1("Driver returned an invalid DD_GETEXTENDEDMODEDATA structure - aborting");
+                        DPRINT1("Driver returned an invalid DD_GETEXTENDEDMODEDATA structure - aborting\n");
                         return FALSE;
                     }
                     else if (ExModeData.mode.Width != UINT_MAX)
                     {
-                        DPRINT1("Driver didn't set DD_GETEXTENDEDMODEDATA.mode - aborting");
+                        DPRINT1("Driver didn't set DD_GETEXTENDEDMODEDATA.mode - aborting\n");
                         return FALSE;
                     }
 
@@ -683,17 +683,17 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
             {
                 if (DrvInfo.ddRVal != S_OK)
                 {
-                    DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETADAPTERGROUP in GetDriverInfo call");
+                    DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETADAPTERGROUP in GetDriverInfo call\n");
                     return FALSE;
                 }
                 else if (DrvInfo.dwActualSize != sizeof(DD_GETADAPTERGROUPDATA))
                 {
-                    DPRINT1("Driver returned an invalid DD_GETADAPTERGROUPDATA structure - aborting");
+                    DPRINT1("Driver returned an invalid DD_GETADAPTERGROUPDATA structure - aborting\n");
                     return FALSE;
                 }
                 else if (AdapterGroupData.ulUniqueAdapterGroupId == UINT_MAX)
                 {
-                    DPRINT1("Driver didn't set DD_GETADAPTERGROUPDATA.ulUniqueAdapterGroupId - aborting");
+                    DPRINT1("Driver didn't set DD_GETADAPTERGROUPDATA.ulUniqueAdapterGroupId - aborting\n");
                     return FALSE;
                 }
 
@@ -711,17 +711,17 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
             {
                 if (DrvInfo.ddRVal != S_OK)
                 {
-                    DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETD3DQUERYCOUNT in GetDriverInfo call");
+                    DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETD3DQUERYCOUNT in GetDriverInfo call\n");
                     return FALSE;
                 }
                 else if (DrvInfo.dwActualSize != sizeof(DD_GETD3DQUERYCOUNTDATA))
                 {
-                    DPRINT1("Driver returned an invalid DD_GETD3DQUERYCOUNTDATA structure - aborting");
+                    DPRINT1("Driver returned an invalid DD_GETD3DQUERYCOUNTDATA structure - aborting\n");
                     return FALSE;
                 }
                 else if (D3dQueryCountData.dwNumQueries == UINT_MAX)
                 {
-                    DPRINT1("Driver didn't set DD_GETD3DQUERYCOUNTDATA.dwNumQueries - aborting");
+                    DPRINT1("Driver didn't set DD_GETD3DQUERYCOUNTDATA.dwNumQueries - aborting\n");
                     return FALSE;
                 }
 
@@ -745,12 +745,12 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
                 {
                     if (DrvInfo.ddRVal != S_OK)
                     {
-                        DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETD3DQUERY in GetDriverInfo call");
+                        DPRINT1("Driver claimed to be DX9 driver, but didn't support D3DGDI2_TYPE_GETD3DQUERY in GetDriverInfo call\n");
                         return FALSE;
                     }
                     else if (DrvInfo.dwActualSize != sizeof(DD_GETD3DQUERYDATA))
                     {
-                        DPRINT1("Driver returned an invalid DD_GETD3DQUERYDATA structure - aborting");
+                        DPRINT1("Driver returned an invalid DD_GETD3DQUERYDATA structure - aborting\n");
                         return FALSE;
                     }
 
@@ -776,7 +776,7 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
 
         if (TRUE != bRet || DrvInfo.ddRVal != S_OK)
         {
-            DPRINT1("Driver failed call to GetDriverInfo() with: GUID_D3DExtendedCaps");
+            DPRINT1("Driver failed call to GetDriverInfo() with: GUID_D3DExtendedCaps\n");
             return FALSE;
         }
     }
@@ -793,7 +793,7 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
 
         if (TRUE != bRet || DrvInfo.ddRVal != S_OK)
         {
-            DPRINT1("Driver failed call to GetDriverInfo() with: GUID_ZPixelFormats");
+            DPRINT1("Driver failed call to GetDriverInfo() with: GUID_ZPixelFormats\n");
             HeapFree(GetProcessHeap(), 0, pZPixelFormats);
             return FALSE;
         }
@@ -850,7 +850,7 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
         }
         else
         {
-            DPRINT1("Could not get monitor information");
+            DPRINT1("Could not get monitor information\n");
         }
     }
 
@@ -863,7 +863,7 @@ BOOL GetD3D9DriverInfo( D3D9_Unknown6BC* pUnknown6BC,
 
         if (0 != (pDriverCaps->DriverCaps9.VertexProcessingCaps & D3DVTXPCAPS_NO_VSDT_UBYTE4))
         {
-            DPRINT1("Driver claimed to be DX9 driver, but used depricated D3DCAPS9.VertexProcessingCaps: D3DVTXPCAPS_NO_VSDT_UBYTE4 instead of not setting D3DCAPS9.DeclTypes: D3DDTCAPS_UBYTE4.");
+            DPRINT1("Driver claimed to be DX9 driver, but used deprecated D3DCAPS9.VertexProcessingCaps: D3DVTXPCAPS_NO_VSDT_UBYTE4 instead of not setting D3DCAPS9.DeclTypes: D3DDTCAPS_UBYTE4.\n");
             return FALSE;
         }
     }

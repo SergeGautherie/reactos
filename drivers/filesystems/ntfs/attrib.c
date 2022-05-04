@@ -1130,7 +1130,7 @@ FreeClusters(PNTFS_VCB Vcb,
         if (!FsRtlLookupLastLargeMcbEntry(&AttrContext->DataRunsMCB, &LargeVbn, &LargeLbn))
         {
             Status = STATUS_INVALID_PARAMETER;
-            DPRINT1("DRIVER ERROR: FreeClusters called to free %lu clusters, which is %lu more clusters than are assigned to attribute!",
+            DPRINT1("DRIVER ERROR: FreeClusters called to free %lu clusters, which is %lu more clusters than are assigned to attribute!\n",
                     ClustersToFree,
                     ClustersLeftToFree);
             break;
@@ -1281,7 +1281,7 @@ InternalGetNextAttributeListItem(PFIND_ATTR_CONTXT Context)
 
     if (Context->NonResidentCur->Length == 0)
     {
-        DPRINT1("Broken length list entry length !");
+        DPRINT1("Broken length list entry length!\n");
         Context->NonResidentCur = (PVOID)-1;
         return NULL;
     }

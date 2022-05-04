@@ -270,7 +270,7 @@ IntSetDIBits(
     else
     {
         /* Compressed format without a size. This is invalid. */
-        DPRINT1("Compressed format without a size!");
+        DPRINT1("Compressed format without a size!\n");
         return 0;
     }
 

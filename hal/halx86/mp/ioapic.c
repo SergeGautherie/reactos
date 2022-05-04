@@ -254,7 +254,7 @@ AssignIrqVector(ULONG irq)
    }
    else if (current_vector == FIRST_SYSTEM_VECTOR)
    {
-      DPRINT1("Ran out of interrupt sources!");
+      DPRINT1("Ran out of interrupt sources!\n");
       ASSERT(FALSE);
    }
 

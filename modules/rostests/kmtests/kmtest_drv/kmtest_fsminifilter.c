@@ -364,7 +364,7 @@ FilterInstanceSetup(
         }
         else
         {
-            DPRINT1("Failed to get the volume properties : 0x%X", Status);
+            DPRINT1("Failed to get the volume properties : 0x%X\n", Status);
             return Status;
         }
 #endif
@@ -376,7 +376,7 @@ FilterInstanceSetup(
             Status = IoVolumeDeviceToDosName(DeviceObject, &VolumeName);
             if (NT_SUCCESS(Status))
             {
-                DPRINT("VolumeDeviceType %lu, VolumeFilesystemType %lu, Real SectSize=0x%04x, Reported SectSize=0x%04x, Name=\"%wZ\"",
+                DPRINT("VolumeDeviceType %lu, VolumeFilesystemType %lu, Real SectSize=0x%04x, Reported SectSize=0x%04x, Name=\"%wZ\"\n",
                        VolumeDeviceType,
                        VolumeFilesystemType,
                        SectorSize,

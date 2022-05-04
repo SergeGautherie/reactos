@@ -119,7 +119,7 @@ BOOL CreateD3D9DeviceData(IN LPDIRECT3D9_DISPLAYADAPTER pDisplayAdapter, IN LPD3
     /* Test DC creation for the display device */
     if (NULL == (hDC = CreateDCA(NULL, pDisplayAdapter->szDeviceName, NULL, NULL)))
     {
-        DPRINT1("Could not create dc for display adapter: %s", pDisplayAdapter->szDeviceName);
+        DPRINT1("Could not create dc for display adapter: %s\n", pDisplayAdapter->szDeviceName);
         return FALSE;
     }
 
@@ -140,7 +140,7 @@ BOOL CreateD3D9DeviceData(IN LPDIRECT3D9_DISPLAYADAPTER pDisplayAdapter, IN LPD3
 
     if (FALSE == GetDeviceData(pDeviceData))
     {
-        DPRINT1("Could not get device data for display adapter: %s", pDisplayAdapter->szDeviceName);
+        DPRINT1("Could not get device data for display adapter: %s\n", pDisplayAdapter->szDeviceName);
         return FALSE;
     }
 
@@ -160,13 +160,13 @@ static BOOL GetDirect3D9AdapterInfo(IN OUT LPDIRECT3D9_DISPLAYADAPTER pDisplayAd
     pDeviceData = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(D3D9_DEVICEDATA));
     if (NULL == pDeviceData)
     {
-        DPRINT1("Out of memory, could not initialize Direct3D adapter");
+        DPRINT1("Out of memory, could not initialize Direct3D adapter\n");
         return FALSE;
     }
 
     if (FALSE == CreateD3D9DeviceData(&pDisplayAdapters[AdapterIndex], pDeviceData))
     {
-        DPRINT1("Could not create device data for adapter: %d", AdapterIndex);
+        DPRINT1("Could not create device data for adapter: %d\n", AdapterIndex);
         return FALSE;
     }
 
@@ -260,7 +260,7 @@ HRESULT CreateD3D9(OUT LPDIRECT3D9 *ppDirect3D9, UINT SDKVersion)
 
     if (FALSE == GetDisplayDeviceInfo(pDirect3D9))
     {
-        DPRINT1("Could not create Direct3D9 object");
+        DPRINT1("Could not create Direct3D9 object\n");
         AlignedFree(pDirect3D9);
         return DDERR_GENERIC;
     }
@@ -269,4 +269,3 @@ HRESULT CreateD3D9(OUT LPDIRECT3D9 *ppDirect3D9, UINT SDKVersion)
 
     return D3D_OK;
 }
-

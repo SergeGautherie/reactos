@@ -800,7 +800,7 @@ LdrpRunInitializeRoutines(IN PCONTEXT Context OPTIONAL)
             /* Check if we should show a message */
             if (ShowSnaps)
             {
-                DPRINT1("LDR: %wZ loaded.", &LdrEntry->BaseDllName);
+                DPRINT1("LDR: %wZ loaded.\n", &LdrEntry->BaseDllName);
                 DPRINT1(" - About to call init routine at %p\n", EntryPoint);
             }
 
@@ -2377,7 +2377,7 @@ LdrpInitializeProcess(IN PCONTEXT Context,
         /* Check if a start context was provided */
         if (Context)
         {
-            DPRINT1("WARNING: Relocated EXE Context");
+            DPRINT1("WARNING: Relocated EXE Context\n");
             UNIMPLEMENTED; // We should support this
             return STATUS_INVALID_IMAGE_FORMAT;
         }

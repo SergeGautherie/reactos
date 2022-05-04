@@ -1020,7 +1020,7 @@ PinRenderProcess(
     if (!Irp)
     {
         /* no irps available */
-        DPRINT1("No irps available");
+        DPRINT1("No irps available\n");
         KsStreamPointerUnlock(LeadingStreamPointer, TRUE);
         return STATUS_SUCCESS;
     }

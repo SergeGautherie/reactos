@@ -3857,7 +3857,7 @@ KdbpCliInit(VOID)
                         FILE_NO_INTERMEDIATE_BUFFERING);
     if (!NT_SUCCESS(Status))
     {
-        DPRINT("Could not open \\SystemRoot\\System32\\drivers\\etc\\KDBinit (Status 0x%x)", Status);
+        DPRINT("Could not open \\SystemRoot\\System32\\drivers\\etc\\KDBinit (Status 0x%x)\n", Status);
         return;
     }
 
@@ -3867,7 +3867,7 @@ KdbpCliInit(VOID)
     if (!NT_SUCCESS(Status))
     {
         ZwClose(hFile);
-        DPRINT("Could not query size of \\SystemRoot\\System32\\drivers\\etc\\KDBinit (Status 0x%x)", Status);
+        DPRINT("Could not query size of \\SystemRoot\\System32\\drivers\\etc\\KDBinit (Status 0x%x)\n", Status);
         return;
     }
     FileSize = FileStdInfo.EndOfFile.u.LowPart;

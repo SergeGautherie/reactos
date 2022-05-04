@@ -518,7 +518,7 @@ MMixerCountMixerControls(
 
         if (NodesCount != 1)
         {
-            DPRINT("PinId %lu bInputMixer %lu bUpStream %lu NodeIndex %lu is not connected", PinId, bInputMixer, bUpStream, NodeIndex);
+            DPRINT("PinId %lu bInputMixer %lu bUpStream %lu NodeIndex %lu is not connected\n", PinId, bInputMixer, bUpStream, NodeIndex);
             break;
         }
 

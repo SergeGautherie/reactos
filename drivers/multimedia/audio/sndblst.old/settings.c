@@ -182,7 +182,7 @@ NTSTATUS NTAPI EnumDeviceKeys(
 
         if (Name == NULL)
         {
-            DPRINT("INSUFFICIENT RESOURCES!");
+            DPRINT("INSUFFICIENT RESOURCES!\n");
             ExFreePool((PVOID) pInfo);
             return STATUS_INSUFFICIENT_RESOURCES;
         }

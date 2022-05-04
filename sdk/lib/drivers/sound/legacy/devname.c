@@ -84,14 +84,14 @@ ConstructDeviceName(
     /* Check for NULL parameters */
     if ( ( ! Path ) || ( ! DeviceName ) )
     {
-        DPRINT("Unexpected NULL parameter");
+        DPRINT("Unexpected NULL parameter\n");
         return STATUS_INVALID_PARAMETER;
     }
 
     /* Range-check */
     if ( Index >= SOUND_MAX_DEVICES )
     {
-        DPRINT("Device index %d out of range", Index);
+        DPRINT("Device index %d out of range\n", Index);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -109,7 +109,7 @@ ConstructDeviceName(
 
     if ( ! DeviceName->Buffer )
     {
-        DPRINT("Couldn't allocate memory for device name string");
+        DPRINT("Couldn't allocate memory for device name string\n");
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
@@ -171,7 +171,7 @@ GetDefaultSoundDeviceNameBodies(
 {
     if ( ! IS_VALID_SOUND_DEVICE_TYPE(DeviceType) )
     {
-        DPRINT("Invalid device type");
+        DPRINT("Invalid device type\n");
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -217,14 +217,14 @@ ConstructSoundDeviceNames(
     if ( ( ! DeviceNameBody ) || ( ! DosDeviceNameBody ) ||
          ( ! FullDeviceName ) || ( ! FullDosDeviceName ) )
     {
-        DPRINT("Unexpected NULL parameter");
+        DPRINT("Unexpected NULL parameter\n");
         return STATUS_INVALID_PARAMETER;
     }
 
     /* Range-check */
     if ( Index >= SOUND_MAX_DEVICES )
     {
-        DPRINT("Device %d exceeds maximum", Index);
+        DPRINT("Device %d exceeds maximum\n", Index);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -275,14 +275,14 @@ CreateSoundDevice(
     if ( ( ! DriverObject ) || ( ! DeviceObject ) ||
          ( ! WideDeviceName ) || ( ! WideDosDeviceName ) )
     {
-        DPRINT("Unexpected NULL parameter");
+        DPRINT("Unexpected NULL parameter\n");
         return STATUS_INVALID_PARAMETER;
     }
 
     /* Range-check */
     if ( Index >= SOUND_MAX_DEVICES )
     {
-        DPRINT("Device index %d exceeds maximum", Index);
+        DPRINT("Device index %d exceeds maximum\n", Index);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -360,14 +360,14 @@ CreateSoundDeviceWithDefaultName(
     /* Check for NULL parameters */
     if ( ( ! DriverObject ) || ( ! DeviceObject ) )
     {
-        DPRINT("Unexpected NULL parameter");
+        DPRINT("Unexpected NULL parameter\n");
         return STATUS_INVALID_PARAMETER;
     }
 
     /* Range-check */
     if ( Index >= SOUND_MAX_DEVICES )
     {
-        DPRINT("Device index %d exceeds maximum", Index);
+        DPRINT("Device index %d exceeds maximum\n", Index);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -410,14 +410,14 @@ DestroySoundDevice(
     /* Check for NULL parameters */
     if ( ( ! WideDosDeviceName ) || ( ! DeviceObject ) )
     {
-        DPRINT("Unexpected NULL parameter");
+        DPRINT("Unexpected NULL parameter\n");
         return STATUS_INVALID_PARAMETER;
     }
 
     /* Range-check */
     if ( Index >= SOUND_MAX_DEVICES )
     {
-        DPRINT("Device %d exceeds maximum", Index);
+        DPRINT("Device %d exceeds maximum\n", Index);
         return STATUS_INVALID_PARAMETER;
     }
 
@@ -453,14 +453,14 @@ DestroySoundDeviceWithDefaultName(
     /* Check for NULL parameters */
     if ( ( ! DeviceObject ) )
     {
-        DPRINT("Unexpected NULL parameter");
+        DPRINT("Unexpected NULL parameter\n");
         return STATUS_INVALID_PARAMETER;
     }
 
     /* Range-check */
     if ( Index >= SOUND_MAX_DEVICES )
     {
-        DPRINT("Device index %d exceeds maximum", Index);
+        DPRINT("Device index %d exceeds maximum\n", Index);
         return STATUS_INVALID_PARAMETER;
     }
 

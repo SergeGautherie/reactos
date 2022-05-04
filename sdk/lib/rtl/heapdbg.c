@@ -99,7 +99,7 @@ RtlDebugDestroyHeap(HANDLE HeapPtr)
 
     if (Heap == RtlGetCurrentPeb()->ProcessHeap)
     {
-        DPRINT1("HEAP: It's forbidden delete process heap!");
+        DPRINT1("HEAP: It's forbidden delete process heap!\n");
         return FALSE;
     }
 

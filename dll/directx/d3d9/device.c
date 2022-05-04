@@ -19,7 +19,7 @@ static HRESULT InitD3D9ResourceManager(D3D9ResourceManager* pThisResourceManager
 
     if (FAILED(AlignedAlloc((LPVOID *)&pThisResourceManager->pTextureHeap, sizeof(DWORD) + MaxSimultaneousTextures * sizeof(int) * 3)))
     {
-        DPRINT1("Could not allocate texture heap");
+        DPRINT1("Could not allocate texture heap\n");
         return DDERR_OUTOFMEMORY;
     }
 
@@ -43,7 +43,7 @@ HRESULT InitD3D9BaseDevice(LPDIRECT3DDEVICE9_INT pThisBaseDevice, LPDIRECT3D9_IN
     if (FAILED(AlignedAlloc((LPVOID *)&pResourceManager, sizeof(D3D9ResourceManager))) ||
         FAILED(InitD3D9ResourceManager(pResourceManager, pThisBaseDevice)))
     {
-        DPRINT1("Could not create resource manager");
+        DPRINT1("Could not create resource manager\n");
         return DDERR_OUTOFMEMORY;
     }
 
@@ -69,7 +69,7 @@ HRESULT InitD3D9BaseDevice(LPDIRECT3DDEVICE9_INT pThisBaseDevice, LPDIRECT3D9_IN
     {
         if (FALSE == CreateD3D9DeviceData(&pDirect3D9->DisplayAdapters[i], &pThisBaseDevice->DeviceData[i]))
         {
-            DPRINT1("Failed to get device data for adapter: %d", i);
+            DPRINT1("Failed to get device data for adapter: %d\n", i);
             return DDERR_GENERIC;
         }
 
@@ -84,7 +84,7 @@ HRESULT InitD3D9BaseDevice(LPDIRECT3DDEVICE9_INT pThisBaseDevice, LPDIRECT3D9_IN
 
         if (FAILED(Direct3DSwapChain9_Init(pThisBaseDevice->pSwapChains[i], pPresentationParameters)))
         {
-            DPRINT1("Failed to init swap chain: %d", i);
+            DPRINT1("Failed to init swap chain: %d\n", i);
             return DDERR_GENERIC;
         }
     }
@@ -102,7 +102,7 @@ HRESULT CreateD3D9HalDevice(LPDIRECT3D9_INT pDirect3D9, UINT Adapter,
 
     if (FAILED(AlignedAlloc((LPVOID *)ppReturnedDeviceInterface, sizeof(D3D9HALDEVICE))))
     {
-        DPRINT1("Not enough memory to create HAL device");
+        DPRINT1("Not enough memory to create HAL device\n");
         return DDERR_OUTOFMEMORY;
     }
 

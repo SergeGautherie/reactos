@@ -87,7 +87,7 @@ NtProcessStartup(PPEB Peb)
     ArgumentList = RtlAllocateHeap(RtlGetProcessHeap(), 0, 512 * sizeof(PCHAR));
     if (!ArgumentList)
     {
-        DPRINT1("ERR: no mem!");
+        DPRINT1("ERR: no mem!\n");
         Status = STATUS_NO_MEMORY;
         goto fail;
     }
@@ -128,7 +128,7 @@ NtProcessStartup(PPEB Peb)
         Destination = RtlAllocateHeap(RtlGetProcessHeap(), 0, Length + sizeof(WCHAR));
         if (!Destination)
         {
-            DPRINT1("ERR: no mem!");
+            DPRINT1("ERR: no mem!\n");
             Status = STATUS_NO_MEMORY;
             goto fail;
         }

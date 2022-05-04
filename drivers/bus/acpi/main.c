@@ -139,8 +139,7 @@ Bus_AddDevice(
                          &nameLength);
 
     if (!NT_SUCCESS (status)) {
-
-        DPRINT1("AddDevice:IoGDP(2) failed (0x%x)", status);
+        DPRINT1("AddDevice:IoGDP(2) failed (0x%x)\n", status);
         goto End;
     }
 

@@ -582,7 +582,7 @@ NtfsSetEndOfFile(PNTFS_FCB Fcb,
     FileRecord = ExAllocateFromNPagedLookasideList(&DeviceExt->FileRecLookasideList);
     if (FileRecord == NULL)
     {
-        DPRINT1("Couldn't allocate memory for file record!");
+        DPRINT1("Couldn't allocate memory for file record!\n");
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
