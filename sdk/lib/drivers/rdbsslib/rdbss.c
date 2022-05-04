@@ -1694,7 +1694,7 @@ RxCloseAssociatedSrvOpen(
 
     /* Inform mini-rdr about closing */
     MINIRDR_CALL(Status, LocalContext, Fcb->MRxDispatch, MRxCloseSrvOpen, (LocalContext));
-    DPRINT("MRxCloseSrvOpen returned: %lx, called with RX_CONTEXT %p for FOBX %p (FCB %p, SRV_OPEN %p)\n ",
+    DPRINT("MRxCloseSrvOpen returned: %lx, called with RX_CONTEXT %p for FOBX %p (FCB %p, SRV_OPEN %p)\n",
            Status, RxContext, Fobx, Fcb, SrvOpen);
 
     /* And mark as such */

@@ -143,7 +143,7 @@ Bus_AddDevice(
         goto End;
     }
 
-    DPRINT("AddDevice: %p to %p->%p (%ws) \n",
+    DPRINT("AddDevice: %p to %p->%p (%ws)\n",
                    deviceObject,
                    deviceData->NextLowerDriver,
                    PhysicalDeviceObject,

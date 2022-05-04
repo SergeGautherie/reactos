@@ -276,10 +276,11 @@ BlasterWrite(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 
             for (ByteCount = 0; ByteCount < Stack->Parameters.Write.Length; ByteCount ++)
             {
-//                DPRINT("0x%x ", Data[ByteCount]);
+//                DbgPrint("0x%x ", Data[ByteCount]);
 
 //                MPU401_WRITE_BYTE(DeviceExtension->Port, Data[ByteCount]);
             }
+//    DbgPrint("\n");
 
   Irp->IoStatus.Status = STATUS_SUCCESS;
   Irp->IoStatus.Information = 0;
@@ -320,12 +321,13 @@ BlasterDeviceControl(PDEVICE_OBJECT DeviceObject,
 
             for (ByteCount = 0; ByteCount < Stack->Parameters.DeviceIoControl.InputBufferLength; ByteCount ++)
             {
-                DPRINT("0x%x ", Data[ByteCount]);
+                DbgPrint("0x%x ", Data[ByteCount]);
 
                 MPU401_WRITE_BYTE(DeviceExtension->Port, Data[ByteCount]);
 //                if (WaitToSend(MPU401_PORT))
 //                    MPU401_WRITE_DATA(MPU401_PORT, Data[ByteCount]);
             }
+            DbgPrint("\n");
 
             Irp->IoStatus.Status = STATUS_SUCCESS;
             IoCompleteRequest(Irp, IO_NO_INCREMENT);

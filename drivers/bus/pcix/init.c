@@ -649,8 +649,8 @@ PciBuildHackTable(IN HANDLE KeyHandle)
                 DbgPrint("SybSys:0x%04x SubVendor:0x%04x ",
                          Entry->SubSystemID, Entry->SubVendorID);
             if (Entry->Flags & PCI_HACK_HAS_REVISION_INFO)
-                DbgPrint("Revision:0x%02x", Entry->RevisionID);
-            DbgPrint(" = 0x%I64x\n", Entry->HackFlags);
+                DbgPrint("Revision:0x%02x ", Entry->RevisionID);
+            DbgPrint("= 0x%I64x\n", Entry->HackFlags);
 #endif
         }
 

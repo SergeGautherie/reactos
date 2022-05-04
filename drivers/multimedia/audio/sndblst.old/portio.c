@@ -26,11 +26,11 @@ BOOLEAN WaitToSend(ULONG BasePort)
     // If a time-out occurs, we report failure
     if (! TimeOut)
     {
-        DPRINT("FAILED\n");
+        DbgPrint("FAILED\n");
         return FALSE;
     }
 
-    DPRINT("SUCCEEDED\n");
+    DbgPrint("SUCCEEDED\n");
 
     return TRUE;
 }
@@ -49,11 +49,11 @@ BOOLEAN WaitToReceive(ULONG BasePort)
     // If a time-out occurs, we report failure
     if (! TimeOut)
     {
-        DPRINT("FAILED\n");
+        DbgPrint("FAILED\n");
         return FALSE;
     }
 
-    DPRINT("SUCCEEDED\n");
+    DbgPrint("SUCCEEDED\n");
 
     return TRUE;
 }

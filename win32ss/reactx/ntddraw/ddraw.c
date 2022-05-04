@@ -84,23 +84,24 @@ intEnableReactXDriver(HDC hdc)
             }
             else
             {
-                DPRINT1(" call to pfnDdEnableDirectDraw \n ");
+                DPRINT1("call to pfnDdEnableDirectDraw\n");
 
                 /* Note: it is the hdev struct it wants, not the drv hPDev aka pdc->PDev */
                 success = pfnDdEnableDirectDraw(pDC->ppdev, TRUE);
+
+                DPRINT1("end call to pfnDdEnableDirectDraw\n");
             }
         }
         else
         {
-            DPRINT1(" The dxg.sys and graphic card driver interface is enabled \n ");
+            DPRINT1("The dxg.sys and graphic card driver interface is enabled\n");
             success = TRUE;
         }
     }
 
-
-    DPRINT1("Return value : 0x%08x\n",success);
     DC_UnlockDc(pDC);
-    DPRINT1(" end call to pfnDdEnableDirectDraw \n ");
+
+    DPRINT1("Return value : 0x%08x\n", success);
     return success;
 }
 
@@ -435,7 +436,6 @@ NtGdiDdQueryDirectDrawObject(HANDLE hDirectDrawLocal,
 
     return pfnDdQueryDirectDrawObject(hDirectDrawLocal, pHalInfo, pCallBackFlags, puD3dCallbacks, puD3dDriverData,
                                       puD3dBufferCallbacks, puD3dTextureFormats, puNumHeaps, puvmList, puNumFourCC, puFourCC);
-
 }
 
 
@@ -533,7 +533,6 @@ NtGdiDdSetExclusiveMode(HANDLE hDirectDraw,
 
     DPRINT1("Calling dxg.sys pfnDdSetExclusiveMode\n");
     return pfnDdSetExclusiveMode(hDirectDraw, puSetExclusiveModeData);
-
 }
 
 
@@ -555,7 +554,6 @@ NtGdiDdFlipToGDISurface(HANDLE hDirectDraw,
 
     DPRINT1("Calling dxg.sys pfnDdFlipToGDISurface\n");
     return pfnDdFlipToGDISurface(hDirectDraw, puFlipToGDISurfaceData);
-
 }
 
 /************************************************************************/

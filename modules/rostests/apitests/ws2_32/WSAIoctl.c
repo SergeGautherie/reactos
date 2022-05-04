@@ -161,7 +161,7 @@ void Test_WSAIoctl_GetInterfaceList()
     if (winetest_debug >= 2)
     {
         trace("WSAIoctl\n");
-        trace("  BytesReturned %ld - InfoCount %ld\n ", BytesReturned, infoCount);
+        trace("  BytesReturned %ld - InfoCount %ld\n", BytesReturned, infoCount);
         ifInfo = (LPINTERFACE_INFO)buf;
         for (i1 = 0; i1 < infoCount; i1++)
         {

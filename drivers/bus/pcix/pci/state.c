@@ -99,7 +99,7 @@ PciBeginStateTransition(IN PPCI_FDO_EXTENSION DeviceExtension,
 {
     PCI_STATE CurrentState;
     NTSTATUS Status;
-    DPRINT1("PCI Request to begin transition of Extension %p to %s ->",
+    DPRINT1("PCI Request to begin transition of Extension %p to %s -> ",
             DeviceExtension,
             PciTransitionText[NewState]);
 
@@ -146,7 +146,7 @@ PciCancelStateTransition(IN PPCI_FDO_EXTENSION DeviceExtension,
                          IN PCI_STATE StateNotEntered)
 {
     NTSTATUS Status;
-    DPRINT1("PCI Request to cancel transition of Extension %p to %s ->",
+    DPRINT1("PCI Request to cancel transition of Extension %p to %s -> ",
             DeviceExtension,
             PciTransitionText[StateNotEntered]);
 
@@ -159,7 +159,6 @@ PciCancelStateTransition(IN PPCI_FDO_EXTENSION DeviceExtension,
 
         /* Return failure */
         Status = STATUS_INVALID_DEVICE_STATE;
-        DbgPrint("%x\n", Status);
     }
     else
     {
@@ -169,8 +168,9 @@ PciCancelStateTransition(IN PPCI_FDO_EXTENSION DeviceExtension,
 
         /* Return success */
         Status = STATUS_SUCCESS;
-        DbgPrint("%x\n", Status);
     }
+
+    DbgPrint("%x\n", Status);
 
     /* Return the cancel state */
     return Status;
