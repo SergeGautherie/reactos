@@ -637,6 +637,7 @@ VOID
 HaliReconfigurePciInterrupts(VOID)
 {
    ULONG i;
+   ULONG Size;
 
    for (i = 0; i < IRQCount; i++)
    {
@@ -647,13 +648,14 @@ HaliReconfigurePciInterrupts(VOID)
 	        i, IRQMap[i].IrqType, IRQMap[i].IrqFlag, IRQMap[i].SrcBusId,
 	        IRQMap[i].SrcBusIrq, IRQMap[i].DstApicId, IRQMap[i].DstApicInt);
 
-	 HalSetBusDataByOffset(PCIConfiguration,
-	                               IRQMap[i].SrcBusId,
-				       (IRQMap[i].SrcBusIrq >> 2) & 0x1f,
-				       &IRQMap[i].DstApicInt,
-				       0x3c /*PCI_INTERRUPT_LINE*/,
-				       1);
-
+         Size = HalSetBusDataByOffset(PCIConfiguration,
+                                      IRQMap[i].SrcBusId,
+                                      (IRQMap[i].SrcBusIrq >> 2) & 0x1f,
+                                      &IRQMap[i].DstApicInt,
+                                      0x3c /* PCI_INTERRUPT_LINE */,
+                                      1);
+         if (Size == 0)
+            DPRINT1("HalSetBusDataByOffset() failed\n");
       }
    }
 }

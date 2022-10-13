@@ -1328,6 +1328,7 @@ PdoStartDevice(
     ULONG i, ii;
     PPDO_DEVICE_EXTENSION DeviceExtension = DeviceObject->DeviceExtension;
     UCHAR Irq;
+    ULONG Size;
     USHORT Command;
 
     UNREFERENCED_PARAMETER(Irp);
@@ -1354,12 +1355,14 @@ PdoStartDevice(
                         DeviceExtension->PciDevice->BusNumber);
 
                 Irq = (UCHAR)RawPartialDesc->u.Interrupt.Vector;
-                HalSetBusDataByOffset(PCIConfiguration,
-                                      DeviceExtension->PciDevice->BusNumber,
-                                      DeviceExtension->PciDevice->SlotNumber.u.AsULONG,
-                                      &Irq,
-                                      0x3c /* PCI_INTERRUPT_LINE */,
-                                      sizeof(UCHAR));
+                Size = HalSetBusDataByOffset(PCIConfiguration,
+                                             DeviceExtension->PciDevice->BusNumber,
+                                             DeviceExtension->PciDevice->SlotNumber.u.AsULONG,
+                                             &Irq,
+                                             0x3c /* PCI_INTERRUPT_LINE */,
+                                             sizeof(UCHAR));
+                if (Size == 0)
+                    DPRINT1("HalSetBusDataByOffset() failed\n");
             }
         }
     }
@@ -1394,12 +1397,14 @@ PdoStartDevice(
         /* OR with the previous value */
         Command |= DeviceExtension->PciDevice->PciConfig.Command;
 
-        HalSetBusDataByOffset(PCIConfiguration,
-                              DeviceExtension->PciDevice->BusNumber,
-                              DeviceExtension->PciDevice->SlotNumber.u.AsULONG,
-                              &Command,
-                              FIELD_OFFSET(PCI_COMMON_CONFIG, Command),
-                              sizeof(USHORT));
+        Size = HalSetBusDataByOffset(PCIConfiguration,
+                                     DeviceExtension->PciDevice->BusNumber,
+                                     DeviceExtension->PciDevice->SlotNumber.u.AsULONG,
+                                     &Command,
+                                     FIELD_OFFSET(PCI_COMMON_CONFIG, Command),
+                                     sizeof(USHORT));
+        if (Size == 0)
+            DPRINT1("HalSetBusDataByOffset() failed\n");
     }
     else
     {
