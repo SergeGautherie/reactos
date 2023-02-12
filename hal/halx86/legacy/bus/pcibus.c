@@ -18,7 +18,7 @@ extern BOOLEAN HalpPciLockSettings;
 ULONG HalpBusType;
 
 BOOLEAN HalpPCIConfigInitialized;
-ULONG HalpMinPciBus, HalpMaxPciBus;
+ULONG HalpMaxPciBus;
 KSPIN_LOCK HalpPCIConfigLock;
 PCI_CONFIG_HANDLER PCIConfigHandler;
 

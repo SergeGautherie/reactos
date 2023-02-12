@@ -637,7 +637,7 @@ HalpGetSystemInterruptVector(
 extern ULONG HalpBusType;
 extern BOOLEAN HalpPCIConfigInitialized;
 extern BUS_HANDLER HalpFakePciBusHandler;
-extern ULONG HalpMinPciBus, HalpMaxPciBus;
+extern ULONG HalpMaxPciBus;
 extern LIST_ENTRY HalpAllBusHandlers;
 
 /* EOF */
