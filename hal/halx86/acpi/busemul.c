@@ -289,14 +289,30 @@ HalSetBusDataByOffset(IN BUS_DATA_TYPE BusDataType,
 {
     BUS_HANDLER BusHandler;
 
-    /* Look as the bus type */
+    /* Look at the bus data type */
     if (BusDataType == Cmos)
     {
         /* Call CMOS Function */
         return HalpSetCmosData(0, SlotNumber, Buffer, Length);
     }
-    else if ((BusDataType == PCIConfiguration) && (HalpPCIConfigInitialized))
+
+    if (BusDataType == EisaConfiguration)
     {
+        /* EISA has 1 bus only */
+        if (BusNumber != 0)
+            return 0;
+
+        DPRINT1("HalSetBusDataByOffset(EisaConfiguration, 0, %lu) is UNIMPLEMENTED\n",
+                SlotNumber);
+        return 0;
+    }
+
+    if (BusDataType == PCIConfiguration)
+    {
+        /* Check max bus number */
+        if (!HalpPCIConfigInitialized || BusNumber > HalpMaxPciBus)
+            return 0;
+
         /* Setup fake PCI Bus handler */
         RtlCopyMemory(&BusHandler, &HalpFakePciBusHandler, sizeof(BUS_HANDLER));
         BusHandler.BusNumber = BusNumber;
@@ -310,7 +326,7 @@ HalSetBusDataByOffset(IN BUS_DATA_TYPE BusDataType,
                               Length);
     }
 
-    /* Invalid bus */
+    /* Invalid bus data type */
     return 0;
 }
 
