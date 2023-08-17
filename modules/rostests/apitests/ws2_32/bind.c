@@ -62,6 +62,7 @@ TestBind(IN_ADDR Address)
             skip("Failed to create socket with error %d for test %d, skipping\n", WSAGetLastError(), i);
             continue;
         }
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, (const struct sockaddr *) &Tests[i].Addr, sizeof(Tests[i].Addr));
         ok(Error == Tests[i].ExpectedResult, "Error %d differs from expected %d for test %d\n", Error, Tests[i].ExpectedResult, i);
         if (Error)
@@ -90,6 +91,7 @@ TestBind(IN_ADDR Address)
     /* Check double bind */
     Socket = socket(AF_INET, Tests[0].Type, Tests[0].Proto);
     ok(Socket != INVALID_SOCKET, "Failed to create socket with error %d for double bind test, next tests might be wrong\n", WSAGetLastError());
+    WSASetLastError(0xdeadbeef);
     Error = bind(Socket, (const struct sockaddr *) &Tests[0].Addr, sizeof(Tests[0].Addr));
     ok(Error == Tests[0].ExpectedResult, "Error %d differs from expected %d for double bind test\n", Error, Tests[0].ExpectedResult);
     if (Error)
@@ -111,8 +113,10 @@ TestBind(IN_ADDR Address)
         {
             ok(Addr.sin_port != 0, "Port remained zero for double bind test\n");
         }
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, (const struct sockaddr *) &Tests[2].Addr, sizeof(Tests[2].Addr));
-        ok(Error == SOCKET_ERROR && WSAGetLastError() == WSAEINVAL, "Unexpected result %d expected %d and wsa result %d expected %ld for double bind test\n", Error, SOCKET_ERROR, WSAGetLastError(), WSAEINVAL);
+        ok_dec(Error, SOCKET_ERROR);
+        ok_dec(WSAGetLastError(), WSAEINVAL);
     }
     Error = closesocket(Socket);
     ok(Error == 0, "Unexpected error %d %d on closesocket for double bind test\n", Error, WSAGetLastError());
@@ -153,7 +157,6 @@ START_TEST(bind)
     /* initialize LocalAddress for tests */
     Error = gethostname(LocalHostName, sizeof(LocalHostName));
     ok_dec(Error, 0);
-    ok_dec(WSAGetLastError(), 0);
     trace("Local host name is '%s'\n", LocalHostName);
     Hostent = gethostbyname(LocalHostName);
     ok(Hostent != NULL, "gethostbyname failed with %d\n", WSAGetLastError());
@@ -168,17 +171,20 @@ START_TEST(bind)
 
     /* parameter tests */
     StartSeh()
+        WSASetLastError(0xdeadbeef);
         Error = bind(INVALID_SOCKET, NULL, 0);
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAENOTSOCK);
     EndSeh(STATUS_SUCCESS);
     StartSeh()
+        WSASetLastError(0xdeadbeef);
         Error = bind(INVALID_SOCKET, InvalidPointer, 0);
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAENOTSOCK);
     EndSeh(STATUS_SUCCESS);
     StartSeh()
         Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, NULL, 0);
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAEFAULT);
@@ -186,6 +192,7 @@ START_TEST(bind)
     EndSeh(STATUS_SUCCESS);
     StartSeh()
         Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, InvalidPointer, 0);
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAEFAULT);
@@ -193,6 +200,7 @@ START_TEST(bind)
     EndSeh(STATUS_SUCCESS);
     StartSeh()
         Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, NULL, sizeof(Addr));
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAEFAULT);
@@ -200,6 +208,7 @@ START_TEST(bind)
     EndSeh(STATUS_SUCCESS);
     StartSeh()
         Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, InvalidPointer, sizeof(Addr));
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAEFAULT);
@@ -207,6 +216,7 @@ START_TEST(bind)
     EndSeh(STATUS_SUCCESS);
     StartSeh()
         Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, (const struct sockaddr *) &Addr, 0);
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAEFAULT);
@@ -214,6 +224,7 @@ START_TEST(bind)
     EndSeh(STATUS_SUCCESS);
     StartSeh()
         Socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        WSASetLastError(0xdeadbeef);
         Error = bind(Socket, (const struct sockaddr *) &Addr, sizeof(Addr)-1);
         ok_dec(Error, SOCKET_ERROR);
         ok_dec(WSAGetLastError(), WSAEFAULT);
