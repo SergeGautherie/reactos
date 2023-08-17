@@ -7,7 +7,6 @@
 
 #include "ws2_32.h"
 
-static CHAR LocalAddress[sizeof("255.255.255.255")];
 #define PORT 58888
 
 static
@@ -135,7 +134,7 @@ START_TEST(bind)
 {
     WSADATA WsaData;
     int Error;
-    CHAR LocalHostName[128];
+    CHAR LocalHostName[256];
     struct hostent *Hostent;
     IN_ADDR Address = { 0 };
     SOCKET Socket;
@@ -152,22 +151,31 @@ START_TEST(bind)
     EndSeh(STATUS_SUCCESS);
 
     Error = WSAStartup(MAKEWORD(2, 2), &WsaData);
-    ok_dec(Error, 0);
-
-    /* initialize LocalAddress for tests */
-    Error = gethostname(LocalHostName, sizeof(LocalHostName));
-    ok_dec(Error, 0);
-    trace("Local host name is '%s'\n", LocalHostName);
-    Hostent = gethostbyname(LocalHostName);
-    ok(Hostent != NULL, "gethostbyname failed with %d\n", WSAGetLastError());
-    if (Hostent && Hostent->h_addr_list[0] && Hostent->h_length == sizeof(IN_ADDR))
+    ok(Error == 0, "WSAStartup() failed, error %d\n", Error);
+    if (Error != 0)
     {
-        memcpy(&Address, Hostent->h_addr_list[0], sizeof(Address));
-        strcpy(LocalAddress, inet_ntoa(Address));
+        skip("No Winsock\n");
+        return;
     }
-    trace("Local address is '%s'\n", LocalAddress);
-    ok(LocalAddress[0] != '\0',
-       "Could not determine local address. Following test results may be wrong.\n");
+
+    /* initialize Address for tests */
+    Error = gethostname(LocalHostName, sizeof(LocalHostName));
+    ok(Error == 0, "gethostname() failed, error %d. Following test results may be wrong\n", WSAGetLastError());
+    if (Error == 0)
+    {
+        trace("Local host name is '%s'\n", LocalHostName);
+        Hostent = gethostbyname(LocalHostName);
+        ok(Hostent != NULL, "gethostbyname() failed, error %d\n", WSAGetLastError());
+        if (Hostent && Hostent->h_addr_list[0] && Hostent->h_length == sizeof(IN_ADDR))
+        {
+            memcpy(&Address, Hostent->h_addr_list[0], sizeof(Address));
+            trace("Local address: '%s'\n", inet_ntoa(Address));
+        }
+        else
+        {
+            ok(FALSE, "Could not determine Address. Following test results may be wrong\n");
+        }
+    }
 
     /* parameter tests */
     StartSeh()
@@ -235,5 +243,5 @@ START_TEST(bind)
     /* TODO: test IPv6 */
 
     Error = WSACleanup();
-    ok_dec(Error, 0);
+    ok(Error == 0, "WSACleanup() failed, error %d\n", WSAGetLastError());
 }
