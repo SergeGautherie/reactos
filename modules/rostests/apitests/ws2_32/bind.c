@@ -50,6 +50,8 @@ TestBind(IN_ADDR Address)
     INT i, AddrSize;
     SOCKET Socket;
     struct sockaddr_in Addr;
+    // 49152-65535 is IANA dynamic port range, for both UDP and TCP.
+    USHORT min_port = 65535, max_port = 0;
     BOOL Broadcast = TRUE;
 
     for (i = 0; i < TestCount; i++)
@@ -82,11 +84,24 @@ TestBind(IN_ADDR Address)
             else
             {
                 ok(Addr.sin_port != 0, "Port remained zero for test %d\n", i);
+                if (Addr.sin_port != 0)
+                {
+                    trace("Returned port: %d\n", Addr.sin_port);
+                    ok(Addr.sin_port >= 49152, "Unexpected port: %d\n", Addr.sin_port);
+                    if (Addr.sin_port < min_port)
+                        min_port = Addr.sin_port;
+                    if (Addr.sin_port > max_port)
+                        max_port = Addr.sin_port;
+                }
             }
         }
         Error = closesocket(Socket);
         ok(Error == 0, "Unexpected error %d %d on closesocket for test %d\n", Error, WSAGetLastError(), i);
     }
+    trace("Dynamic port range seen: %d-%d\n", min_port, max_port);
+    ok(min_port >= 49152, "Unexpected min_port: %d\n", min_port);
+    ok(max_port >= 49152, "Unexpected max_port: %d\n", max_port);
+
     /* Check double bind */
     Socket = socket(AF_INET, Tests[0].Type, Tests[0].Proto);
     ok(Socket != INVALID_SOCKET, "Failed to create socket with error %d for double bind test, next tests might be wrong\n", WSAGetLastError());
@@ -119,6 +134,7 @@ TestBind(IN_ADDR Address)
     }
     Error = closesocket(Socket);
     ok(Error == 0, "Unexpected error %d %d on closesocket for double bind test\n", Error, WSAGetLastError());
+
     /* Check SO_BROADCAST and bind to broadcast address */
     Socket = socket(AF_INET, Tests[10].Type, Tests[10].Proto);
     ok(Socket != INVALID_SOCKET, "Failed to create socket with error %d for broadcast test, next tests might be wrong\n", WSAGetLastError());
@@ -129,6 +145,31 @@ TestBind(IN_ADDR Address)
     Error = closesocket(Socket);
     ok(Error == 0, "Unexpected error %d %d on closesocket for broadcast test\n", Error, WSAGetLastError());
 }
+
+/*
+static
+VOID
+TestDynamicRange(IN_ADDR Address)
+{
+    // 49152-65535 is IANA dynamic port range.
+    USHORT min_port = 65535, max_port = 49152;
+    INT i;
+    struct sockaddr_in Addr;
+
+    for (i = 0; i < 10; i++)
+    {
+        bind(socket, localhost, port=0);
+        getsockname(socket, &sockname);
+        if (sockname.port < min_port)
+            min_port = sockname.port;
+        if (sockname.port > max_port)
+            max_port = sockname.port;
+    }
+    trace("%d %d\n", i, min_port, max_port);
+    ok(min_port >= 49152);
+    ok(max_port <= 65535);
+}
+*/
 
 START_TEST(bind)
 {
