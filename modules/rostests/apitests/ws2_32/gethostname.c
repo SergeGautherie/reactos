@@ -73,6 +73,7 @@ Cleanup:
 
 START_TEST(gethostname)
 {
+    BOOL bResult;
     INT pos;
     HKEY hKeyHN;
     DWORD cbData;
@@ -81,10 +82,10 @@ START_TEST(gethostname)
     INT iResult;
     WSADATA wsaData;
     DWORD uApiHostNameSize;
-    CHAR szApiHostName[256] = "";
-    CHAR szHostNameOld[256] = "";
-    CHAR szHostNameNew[256] = "";
-    CHAR hostbuffer[256] = "";
+    CHAR szApiHostName[256];
+    CHAR szHostNameOld[256];
+    const CHAR szHostNameNew[13] = "ROSHOSTNAME1";
+    CHAR hostbuffer[256];
 
 /*
  * Notes about the retrieval of the computer name on Windows.
@@ -103,81 +104,75 @@ START_TEST(gethostname)
 
     /* Retrieve the current host name using API */
     uApiHostNameSize = _countof(szApiHostName);
-    if (!GetComputerNameExA(ComputerNameDnsHostname, szApiHostName, &uApiHostNameSize))
+    bResult = GetComputerNameExA(ComputerNameDnsHostname, szApiHostName, &uApiHostNameSize);
+    ok(bResult, "GetComputerNameExA(ComputerNameDnsHostname) failed, error %lu\n", GetLastError());
+    if (!bResult)
     {
-        /* Fail in case of error */
-        skip("GetComputerNameExA(ComputerNameDnsHostname) failed, error %lu\n", GetLastError());
+        skip("No szApiHostName\n");
         return;
     }
-    printf("The Hostname from API is '%s'.\n", szApiHostName);
+    trace("Hostname from API: '%s'\n", szApiHostName);
 
     /* Retrieve the current host name using the 'hostname' command */
-    if (!GetHostnameFromCommand(hostbuffer, _countof(hostbuffer)))
+    bResult = GetHostnameFromCommand(hostbuffer, _countof(hostbuffer));
+    ok(bResult, "GetHostnameFromCommand() failed\n");
+    if (bResult)
     {
-        /* Fail in case of error */
-        skip("Error while retrieving the host name using the 'hostname' command!\n");
-        return;
+        // trace("Hostname from command: '%s'\n", hostbuffer);
+        ok(strcmp(szApiHostName, hostbuffer) == 0,
+           "hostbuffer '%s' should be szApiHostName '%s'\n", hostbuffer, szApiHostName);
     }
-    printf("The Hostname from command is '%s'.\n", hostbuffer);
-
-    pos = strcmp(szApiHostName, hostbuffer);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
-    ok(pos == 0, "hostbuffer '%s' should have been szApiHostName '%s'.\n", hostbuffer, szApiHostName);
 
     hKeyHN = OpenRegKey(HKEY_LOCAL_MACHINE, REG_HOSTNAME_KEY, KEY_ALL_ACCESS);
     ok(hKeyHN != NULL, "Error while opening hostname registry key.\n");
     if (hKeyHN == NULL)
+    {
+        skip("No hKeyHN\n");
         return;
+    }
 
     /* Get Old Hostname */
-    szHostNameOld[0] = ANSI_NULL;
     cbData = sizeof(szHostNameOld);
     Error = RegQueryValueExA(hKeyHN, "Hostname", NULL, NULL, (LPBYTE)szHostNameOld, &cbData);
+    ok_dec(Error, ERROR_SUCCESS);
+    if (Error != ERROR_SUCCESS)
+    {
+        skip("No szHostNameOld\n");
+        goto Cleanup;
+    }
 
-    printf("Hostname from Registry is '%s'.\n", szHostNameOld);
-
+    //trace("Hostname from Registry: '%s'\n", szHostNameOld);
     pos = strcmp(szHostNameOld, szApiHostName);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
     ok(pos == 0, "szApiHostName '%s' should have been szHostNameOld '%s'.\n", szApiHostName, szHostNameOld);
 
     /* Change Hostname in the Registry */
-    szHostNameNew[0] = ANSI_NULL;
-    strcat(szHostNameNew, "ROSHOSTNAME1");
-    cbData = lstrlenA(szHostNameNew) + 1;
-
+    cbData = sizeof(szHostNameNew);
     Error = RegSetValueExA(hKeyHN, "Hostname", 0, REG_SZ, (LPBYTE)szHostNameNew, cbData);
     ok(Error == ERROR_SUCCESS, "Error setting new registry value (%ld).\n", GetLastError());
 
     /* Retrieve the current host name using API */
     uApiHostNameSize = _countof(szApiHostName);
-    if (!GetComputerNameExA(ComputerNameDnsHostname, szApiHostName, &uApiHostNameSize))
+    bResult = GetComputerNameExA(ComputerNameDnsHostname, szApiHostName, &uApiHostNameSize);
+    ok(bResult, "GetComputerNameExA(ComputerNameDnsHostname) failed, error %lu\n", GetLastError());
+    if (bResult)
     {
-        /* Fail in case of error */
-        skip("GetComputerNameExA(ComputerNameDnsHostname) failed, error %lu\n", GetLastError());
-        goto Cleanup;
+        // trace("Hostname from API: '%s'\n", szApiHostName);
+        ok(strcmp(szHostNameNew, szApiHostName) == 0,
+           "szApiHostName '%s' should be szHostNameNew '%s'\n", szApiHostName, szHostNameNew);
     }
-    printf("The Hostname from API is '%s'.\n", szApiHostName);
 
     /* Retrieve the current host name using the 'hostname' command */
-    if (!GetHostnameFromCommand(hostbuffer, _countof(hostbuffer)))
+    bResult = GetHostnameFromCommand(hostbuffer, _countof(hostbuffer));
+    ok(bResult, "GetHostnameFromCommand() failed\n");
+    if (bResult)
     {
-        /* Fail in case of error */
-        skip("Error while retrieving the host name using the 'hostname' command!\n");
-        goto Cleanup;
+        // trace("Hostname from command: '%s'\n", hostbuffer);
+        ok(strcmp(szHostNameNew, hostbuffer) == 0,
+           "hostbuffer '%s' should be szHostNameNew '%s'\n", hostbuffer, szHostNameNew);
     }
-    printf("The Hostname from command is '%s'.\n", hostbuffer);
-
-    pos = strcmp(szHostNameNew, szApiHostName);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
-    ok(pos == 0, "szApiHostName '%s' should be szHostNameNew '%s'.\n", szApiHostName, szHostNameNew);
-
-    pos = strcmp(szHostNameNew, hostbuffer);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
-    ok(pos == 0, "hostbuffer '%s' should have been szHostNameNew '%s'.\n", hostbuffer, szHostNameNew);
 
     /* Reset the original registry entry */
     cbData = lstrlenA(szHostNameOld) + 1;
-
     Error = RegSetValueExA(hKeyHN, "Hostname", 0, REG_SZ, (LPBYTE)szHostNameOld, cbData);
     ok(Error == ERROR_SUCCESS, "Error resetting new registry value back (%ld).\n", GetLastError());
 
@@ -185,66 +180,57 @@ START_TEST(gethostname)
 
     /* Start up Winsock to use gethostname() */
     iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    ok(iResult == 0, "Error occurred starting Winsock");
+    ok(iResult == 0, "WSAStartup() failed, error %d\n", iResult);
     if (iResult != 0)
+    {
+        skip("No Winsock\n");
         goto Cleanup;
+    }
 
     /* Retrieve gethostname() */
     hnError = gethostname(hostbuffer, sizeof(hostbuffer));
     ok(!hnError, "Winsock gethostname() Error is '%d'.\n", WSAGetLastError());
-
-    /* Display results */
     if (!hnError)
-        printf("Winsock gethostname() is '%s'.\n", hostbuffer);
-
-    pos = strcmp(szHostNameOld, hostbuffer);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
-    ok(pos == 0, "szHostNameOld '%s' should be hostbuffer '%s'.\n", szHostNameOld, hostbuffer);
+    {
+        // trace("Winsock gethostname() is '%s'\n", hostbuffer);
+        ok(strcmp(szHostNameOld, hostbuffer) == 0,
+           "szHostNameOld '%s' should be hostbuffer '%s'\n", szHostNameOld, hostbuffer);
+    }
 
     /* Change Hostname in the Registry */
-    szHostNameNew[0] = ANSI_NULL;
-    strcat(szHostNameNew, "ROSHOSTNAME1");
-    cbData = lstrlenA(szHostNameNew) + 1;
-
+    cbData = sizeof(szHostNameNew);
     Error = RegSetValueExA(hKeyHN, "Hostname", 0, REG_SZ, (LPBYTE)szHostNameNew, cbData);
     ok(Error == ERROR_SUCCESS, "Error setting new registry value (%ld).\n", GetLastError());
 
     /* Retrieve gethostname() */
     hnError = gethostname(hostbuffer, sizeof(hostbuffer));
     ok(!hnError, "Winsock gethostname() Error is '%d'.\n", WSAGetLastError());
-
-    /* Display results */
     if (!hnError)
-        printf("Winsock gethostname() is '%s'.\n", hostbuffer);
-
-    pos = strcmp(szHostNameNew, hostbuffer);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
-    ok(pos == 0, "szHostNameNew '%s' should be hostbuffer '%s'.\n", szHostNameNew, hostbuffer);
+    {
+        // trace("Winsock gethostname() is '%s'\n", hostbuffer);
+        ok(strcmp(szHostNameNew, hostbuffer) == 0,
+           "szHostNameNew '%s' should be hostbuffer '%s'\n", szHostNameNew, hostbuffer);
+    }
 
     /* Reset the original registry entry */
     cbData = lstrlenA(szHostNameOld) + 1;
-
     Error = RegSetValueExA(hKeyHN, "Hostname", 0, REG_SZ, (LPBYTE)szHostNameOld, cbData);
     ok(Error == ERROR_SUCCESS, "Error resetting new registry value back (%ld).\n", GetLastError());
 
     /* Retrieve gethostname() */
     hnError = gethostname(hostbuffer, sizeof(hostbuffer));
     ok(!hnError, "Winsock gethostname() Error is '%d'.\n", WSAGetLastError());
-
-    /* Display results */
     if (!hnError)
-        printf("Winsock gethostname() is '%s'.\n", hostbuffer);
+    {
+        // trace("Winsock gethostname() is '%s'\n", hostbuffer);
+        ok(strcmp(szHostNameOld, hostbuffer) == 0,
+           "szHostNameOld '%s' should be hostbuffer '%s'\n", szHostNameOld, hostbuffer);
+    }
 
-    pos = strcmp(szHostNameOld, hostbuffer);
-    printf("The test results were '%s'.\n", pos==0 ? "good" : "bad");
-    ok(pos == 0, "szHostNameOld '%s' should be hostbuffer '%s'.\n", szHostNameOld, hostbuffer);
+    iResult = WSACleanup();
+    ok(iResult == 0, "WSACleanup() failed, error %d\n", WSAGetLastError());
 
 Cleanup:
-    iResult = WSACleanup();
-    ok(iResult == 0, "WSACleanup error occurred ending Winsock");
-
     Error = RegCloseKey(hKeyHN);
     ok(Error == ERROR_SUCCESS, "Error closing registry key (%ld).\n", GetLastError());
-
-    return;
 }
