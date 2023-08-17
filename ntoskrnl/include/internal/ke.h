@@ -1081,8 +1081,8 @@ class KiQueuedSpinLockGuard
 {
 private:
     KIRQL m_OldIrql;
-public:
 
+public:
     _Requires_lock_not_held_(n)
     _Acquires_lock_(n)
     _IRQL_raises_(DISPATCH_LEVEL)
@@ -1091,16 +1091,15 @@ public:
         m_OldIrql = KeAcquireQueuedSpinLock(n);
     }
 
+    KiQueuedSpinLockGuard(const KiQueuedSpinLockGuard&) = delete;
+    KiQueuedSpinLockGuard& operator=(const KiQueuedSpinLockGuard&) = delete;
+
     _Requires_lock_held_(n)
     _Releases_lock_(n)
     ~KiQueuedSpinLockGuard()
     {
         KeReleaseQueuedSpinLock(n, m_OldIrql);
     }
-
-private:
-    KiQueuedSpinLockGuard(KiQueuedSpinLockGuard const&) = delete;
-    KiQueuedSpinLockGuard& operator=(KiQueuedSpinLockGuard const&) = delete;
 };
 
 }

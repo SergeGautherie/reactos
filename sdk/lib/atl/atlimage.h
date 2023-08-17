@@ -58,6 +58,9 @@ public:
         s_gdiplus.IncreaseCImageCount();
     }
 
+    CImage(const CImage&) = delete;
+    CImage& operator=(const CImage&) = delete;
+
     virtual ~CImage() throw()
     {
         Destroy();
@@ -1205,10 +1208,6 @@ private:
 
         return hbm != NULL;
     }
-
-private:
-    CImage(const CImage&) = delete;
-    CImage& operator=(const CImage&) = delete;
 };
 
 DECLSPEC_SELECTANY CImage::CInitGDIPlus CImage::s_gdiplus;
