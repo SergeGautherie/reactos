@@ -3294,7 +3294,7 @@ NtMapViewOfSection(
     if ((InheritDisposition < ViewShare) || (InheritDisposition > ViewUnmap))
     {
         DPRINT1("Invalid inherit disposition: %d\n", InheritDisposition);
-        // For local use only: ASSERT((InheritDisposition >= ViewShare) && (InheritDisposition <= ViewUnmap));
+        ASSERT((InheritDisposition >= ViewShare) && (InheritDisposition <= ViewUnmap));
         return STATUS_INVALID_PARAMETER_8;
     }
 
