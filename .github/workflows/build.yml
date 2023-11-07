@@ -94,11 +94,19 @@ jobs:
     - name: Update baseaddress file (i386)
       if: ${{ matrix.arch == 'i386' }}
       working-directory: ${{github.workspace}}/src
-      run: python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
+      run: |
+        ls -la ${{github.workspace}}/build/modules
+        # Remove source files, to be sure about new content and simplify artifact.
+        rm sdk/cmake/baseaddress*.cmake
+        python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
     - name: Update baseaddress file (amd64)
       if: ${{ matrix.arch == 'amd64' }}
       working-directory: ${{github.workspace}}/src
-      run: python sdk/tools/gen_baseaddress.py -64 ${{github.workspace}}/build
+      run: |
+        ls -la ${{github.workspace}}/build/modules
+        # Remove source files, to be sure about new content and simplify artifact.
+        rm sdk/cmake/baseaddress*.cmake
+        python sdk/tools/gen_baseaddress.py -64 ${{github.workspace}}/build
     - name: Upload baseaddress file
       uses: actions/upload-artifact@v3
       with:
@@ -179,11 +187,21 @@ jobs:
     - name: Update baseaddress file (i386)
       if: ${{ matrix.arch == 'i386' }}
       working-directory: ${{github.workspace}}/src
-      run: python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
+      run: |
+        # '-la' ou '-l -a' provoquent une erreur... (Need to "escape" for GA syntax?)
+        ls -l ${{github.workspace}}/build/modules
+        # Remove source files, to be sure about new content and simplify artifact.
+        rm sdk/cmake/baseaddress*.cmake
+        python sdk/tools/gen_baseaddress.py ${{github.workspace}}/build
     - name: Update baseaddress file (amd64)
       if: ${{ matrix.arch == 'amd64' }}
       working-directory: ${{github.workspace}}/src
-      run: python sdk/tools/gen_baseaddress.py -64 ${{github.workspace}}/build
+      run: |
+        # '-la' ou '-l -a' provoquent une erreur... (Need to "escape" for GA syntax?)
+        ls -l ${{github.workspace}}/build/modules
+        # Remove source files, to be sure about new content and simplify artifact.
+        rm sdk/cmake/baseaddress*.cmake
+        python sdk/tools/gen_baseaddress.py -64 ${{github.workspace}}/build
     - name: Upload baseaddress file
       uses: actions/upload-artifact@v3
       with:
