@@ -398,6 +398,7 @@ def run_dir(target):
     IMAGE_TYPES[IMAGE_NT_OPTIONAL_HDR32_MAGIC] = 0
     for root, _, files in os.walk(target):
         for dll in [filename for filename in files if filename.endswith(ALL_EXTENSIONS)]:
+# To update, if 'api-ms-win-' are dropped... (PR6314)
             if not dll in EXCLUDE and not dll.startswith('api-ms-win-'):
                 layout.add(os.path.join(root, dll), dll)
     ntdll_path = layout.found['ntdll.dll'].filename
