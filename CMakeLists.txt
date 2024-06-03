@@ -144,6 +144,14 @@ if(NOT CMAKE_CROSSCOMPILING)
         if(MSVC_VERSION GREATER 1699)
             add_definitions(/D_ALLOW_KEYWORD_MACROS)
         endif()
+
+        # Enable all compiler warnings. Treat compiler and linker warnings as errors.
+        add_compile_options(/Wall /WX)
+        add_link_options(/WX)
+    else()
+        # Enable all (and extra) compiler warnings. Treat compiler and linker warnings as errors.
+        add_compile_options(-Wall -Werror -Wextra)
+        add_link_options(-Wl,--fatal-warnings)
     endif()
     add_subdirectory(sdk/include/host)
 
