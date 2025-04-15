@@ -609,6 +609,15 @@ KdSendPacket(
 
     if (PacketType != PACKET_TYPE_KD_DEBUG_IO)
     {
+#ifndef KDBG
+        if (/* PacketType == PACKET_TYPE_KD_STATE_MANIPULATE || */
+            PacketType == PACKET_TYPE_KD_STATE_CHANGE64)
+        {
+            KdIoPrintf("%s: PacketType %d is ignored without KDBG\n", __FUNCTION__, PacketType);
+            return;
+        }
+#endif
+
         KdIoPrintf("%s: PacketType %d is UNIMPLEMENTED\n", __FUNCTION__, PacketType);
         return;
     }
@@ -654,6 +663,26 @@ KdReceivePacket(
 
     if (PacketType != PACKET_TYPE_KD_DEBUG_IO)
     {
+#ifndef KDBG
+        if (PacketType == PACKET_TYPE_KD_POLL_BREAKIN)
+        {
+            // FIXME TODO: Implement break-in for the debugger
+            // and return KdPacketReceived when handled properly.
+            return KdPacketTimedOut;
+        }
+
+        if (PacketType == PACKET_TYPE_KD_STATE_MANIPULATE /* ||
+            PacketType == PACKET_TYPE_KD_POLL_BREAKIN */)
+        {
+            PDBGKD_MANIPULATE_STATE64 ManipulateState = (PDBGKD_MANIPULATE_STATE64)MessageHeader->Buffer;
+
+            KdIoPrintf("%s: PacketType %d is ignored without KDBG\n", __FUNCTION__, PacketType);
+            ManipulateState->ApiNumber = DbgKdContinueApi;
+            ManipulateState->u.Continue.ContinueStatus = STATUS_SUCCESS;
+            return KdPacketReceived;
+        }
+#endif
+
         KdIoPrintf("%s: PacketType %d is UNIMPLEMENTED\n", __FUNCTION__, PacketType);
         return KdPacketTimedOut;
     }
