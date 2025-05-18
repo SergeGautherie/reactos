@@ -33,11 +33,18 @@ WSPAsyncSelect(IN  SOCKET Handle,
     }
 
     /* Allocate the Async Data Structure to pass on to the Thread later */
-    AsyncData = HeapAlloc(GetProcessHeap(), 0, sizeof(*AsyncData));
-    if (!AsyncData)
+    if (lEvent == 0)
     {
-        MsafdReturnWithErrno( STATUS_INSUFFICIENT_RESOURCES, lpErrno, 0, NULL );
-        return INVALID_SOCKET;
+        AsyncData = NULL;
+    }
+    else
+    {
+        AsyncData = HeapAlloc(GetProcessHeap(), 0, sizeof(*AsyncData));
+        if (!AsyncData)
+        {
+            MsafdReturnWithErrno( STATUS_INSUFFICIENT_RESOURCES, lpErrno, 0, NULL );
+            return INVALID_SOCKET;
+        }
     }
 
     /* Change the Socket to Non Blocking */
@@ -50,7 +57,8 @@ WSPAsyncSelect(IN  SOCKET Handle,
     {
         if (WSPEventSelect(Handle, NULL, 0, lpErrno) == SOCKET_ERROR)
         {
-            HeapFree(GetProcessHeap(), 0, AsyncData);
+            if (AsyncData)
+                HeapFree(GetProcessHeap(), 0, AsyncData);
             return SOCKET_ERROR;
         }
     }
@@ -70,10 +78,7 @@ WSPAsyncSelect(IN  SOCKET Handle,
 
     /* Return if there are no more Events */
     if (lEvent == 0)
-    {
-        HeapFree(GetProcessHeap(), 0, AsyncData);
         return 0;
-    }
 
     /* Set up the Async Data */
     AsyncData->ParentSocket = Socket;
@@ -89,7 +94,6 @@ WSPAsyncSelect(IN  SOCKET Handle,
     /* Return */
     return ERROR_SUCCESS;
 }
-
 
 BOOL
 WSPAPI
@@ -569,7 +573,6 @@ WSPRecvFrom(SOCKET Handle,
     return MsafdReturnWithErrno ( Status, lpErrno, IOSB->Information, lpNumberOfBytesRead );
 }
 
-
 int
 WSPAPI
 WSPSend(SOCKET Handle,
@@ -930,8 +933,6 @@ WSPRecvDisconnect(IN  SOCKET s,
     UNIMPLEMENTED;
     return 0;
 }
-
-
 
 INT
 WSPAPI
