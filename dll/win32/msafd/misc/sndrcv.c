@@ -46,7 +46,7 @@ WSPAsyncSelect(IN  SOCKET Handle,
     Socket->SharedData->NonBlocking = TRUE;
 
     /* Deactivate WSPEventSelect */
-    if (Socket->SharedData->AsyncEvents)
+    if (Socket->NetworkEvents)
     {
         if (WSPEventSelect(Handle, NULL, 0, lpErrno) == SOCKET_ERROR)
         {
