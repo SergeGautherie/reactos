@@ -52,15 +52,11 @@ WSPAsyncSelect(IN  SOCKET Handle,
     SetSocketInformation(Socket, AFD_INFO_BLOCKING_MODE, &BlockMode, NULL, NULL, NULL, NULL);
     Socket->SharedData->NonBlocking = TRUE;
 
-    /* Deactivate WSPEventSelect */
+    /* Deactivate network events */
     if (Socket->NetworkEvents)
     {
-        if (WSPEventSelect(Handle, NULL, 0, lpErrno) == SOCKET_ERROR)
-        {
-            if (AsyncData)
-                HeapFree(GetProcessHeap(), 0, AsyncData);
-            return SOCKET_ERROR;
-        }
+        // See WSPEventSelect().
+        Socket->NetworkEvents = 0;
     }
 
     /* Create the Asynch Thread if Needed */
