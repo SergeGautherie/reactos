@@ -37,9 +37,13 @@ WSPEventSelect(
         return SOCKET_ERROR;
     }
 
-    Status = NtCreateEvent(&SockEvent, EVENT_ALL_ACCESS,
-                           NULL, SynchronizationEvent, FALSE);
-    if (!NT_SUCCESS(Status)) return SOCKET_ERROR;
+    if (lNetworkEvents != 0)
+    {
+        Status = NtCreateEvent(&SockEvent, EVENT_ALL_ACCESS,
+                               NULL, SynchronizationEvent, FALSE);
+        if (!NT_SUCCESS(Status))
+            return SOCKET_ERROR;
+    }
 
     /* Set Socket to Non-Blocking */
     BlockMode = TRUE;
@@ -52,6 +56,9 @@ WSPEventSelect(
         Socket->SharedData->AsyncEvents = 0;
         Socket->SharedData->SequenceNumber++; // This will kill Async Select after the next completion
     }
+
+    if (lNetworkEvents == 0)
+        goto Canceling;
 
     /* Set Structure Info */
     EventSelectInfo.EventObject = hEventObject;
@@ -116,6 +123,7 @@ WSPEventSelect(
         return MsafdReturnWithErrno(Status, lpErrno, 0, NULL);
     }
 
+Canceling:
     /* Set Socket Data*/
     Socket->EventObject = hEventObject;
     Socket->NetworkEvents = lNetworkEvents;
