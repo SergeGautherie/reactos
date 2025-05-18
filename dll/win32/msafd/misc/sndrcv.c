@@ -69,7 +69,7 @@ WSPAsyncSelect(IN  SOCKET Handle,
     Socket->SharedData->SequenceNumber++;
 
     /* Return if there are no more Events */
-    if ((Socket->SharedData->AsyncEvents & (~Socket->SharedData->AsyncDisabledEvents)) == 0)
+    if (lEvent == 0)
     {
         HeapFree(GetProcessHeap(), 0, AsyncData);
         return 0;
