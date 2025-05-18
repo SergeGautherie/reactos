@@ -39,7 +39,6 @@ WSPEventSelect(
 
     Status = NtCreateEvent(&SockEvent, EVENT_ALL_ACCESS,
                            NULL, SynchronizationEvent, FALSE);
-
     if (!NT_SUCCESS(Status)) return SOCKET_ERROR;
 
     /* Set Socket to Non-Blocking */
@@ -48,9 +47,8 @@ WSPEventSelect(
     Socket->SharedData->NonBlocking = TRUE;
 
     /* Deactivate Async Select if there is one */
-    if (Socket->EventObject) {
-        Socket->SharedData->hWnd = NULL;
-        Socket->SharedData->wMsg = 0;
+    if (Socket->SharedData->AsyncEvents) {
+        // See WSPAsyncSelect().
         Socket->SharedData->AsyncEvents = 0;
         Socket->SharedData->SequenceNumber++; // This will kill Async Select after the next completion
     }
@@ -126,7 +124,6 @@ WSPEventSelect(
 
     return 0;
 }
-
 
 INT
 WSPAPI
