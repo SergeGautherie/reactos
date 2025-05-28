@@ -215,7 +215,7 @@ jobs:
       continue-on-error: true
       run: cmake --build build --target dll/all -- -k0
     - name: Build rostests (FAILED) # CORE-20263, ...
-      if: false # ${{ matrix.arch == 'arm' }}
+#      if: false # ${{ matrix.arch == 'arm' }}
       continue-on-error: true
       run: cmake --build build --target modules/rostests/all -- -k0
     - name: Build some applications (arm64)
