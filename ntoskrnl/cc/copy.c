@@ -400,15 +400,13 @@ CcCanIWrite (
         return FALSE;
     }
 
-    /* Otherwise, if there are no deferred writes yet, start the lazy writer */
-    if (IsListEmpty(&CcDeferredWrites))
+    /* If need be, start the lazy writer to run without delay */
+    OldIrql = KeAcquireQueuedSpinLock(LockQueueMasterLock);
+    if (!LazyWriter.ScanActive)
     {
-        KIRQL OldIrql;
-
-        OldIrql = KeAcquireQueuedSpinLock(LockQueueMasterLock);
         CcScheduleLazyWriteScan(TRUE);
-        KeReleaseQueuedSpinLock(LockQueueMasterLock, OldIrql);
     }
+    KeReleaseQueuedSpinLock(LockQueueMasterLock, OldIrql);
 
     /* Initialize our wait event */
     KeInitializeEvent(&WaitEvent, NotificationEvent, FALSE);
