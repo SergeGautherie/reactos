@@ -26,6 +26,9 @@ jobs:
           # future 0x600: only Debug.
           - dllver: 0x600
             config: Release
+# "local" dev only.
+          - os: ubuntu-latest
+            compiler: gcc
         include:
           # wip clang 17: only 1 i386 build.
           - os: ubuntu-24.04
