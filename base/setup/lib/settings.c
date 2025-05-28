@@ -976,6 +976,10 @@ ProcessLocaleRegistry(
     NTSTATUS Status;
 
     DPRINT("LanguageId: %S\n", LanguageId);
+// Stage 1 interactive: valeur correcte.
+    // FIXME: UpdateRegistry() is sending LanguageId(4) instead of LocaleID(8).
+    DPRINT1("CORE-15848, S1, to Reg: LanguageId: %S\n", LanguageId);
+    ASSERT(wcslen(LanguageId) == 8);
 
     /* Open the default users locale key */
     RtlInitUnicodeString(&KeyName,
