@@ -183,6 +183,7 @@ add_compile_options(
     -Wno-unused-const-variable
     -Wno-unused-local-typedefs
     -Wno-deprecated
+    -Wunused-result # Re-enabled, as warning only, to check CORE-17637 status.
     -Wno-maybe-uninitialized
 )
 
