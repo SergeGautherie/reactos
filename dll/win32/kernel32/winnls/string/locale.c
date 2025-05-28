@@ -23,7 +23,7 @@
 
 #include <k32.h>
 
-#define NDEBUG
+// #define NDEBUG
 #include <debug.h>
 DEBUG_CHANNEL(nls);
 
