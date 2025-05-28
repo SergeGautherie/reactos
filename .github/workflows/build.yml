@@ -54,7 +54,7 @@ jobs:
         ./build_rosbe_ci.sh ${{github.workspace}}/RosBE-CI
     - name: Install ccache
       run: sudo apt install ccache
-    - name: Install LLVM 15.0.7 # ubuntu-22.04 has llvm 13+. (13.0.1, 14.0.6, 15.0.7, ...)
+    - name: Install LLVM for ubuntu-22.04 # Available: 13.0.1, 14.0.6, 15.0.7, 16.0.6, ...
       if: ${{ matrix.os == 'ubuntu-22.04' && matrix.compiler == 'clang' }}
       run: |
         export LLVM_VERSION=15
@@ -62,7 +62,7 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh $LLVM_VERSION
         echo "D_CLANG_VERSION=-DCLANG_VERSION=$LLVM_VERSION" >> $GITHUB_ENV
-    - name: Install LLVM 17.0.6 # ubuntu-24.04 has llvm 17+. (17.0.6, 18.1.8, 19.1.7, ...)
+    - name: Install LLVM for ubuntu-24.04 # Available: 17.0.6, 18.1.8, 19.1.7, 20.1.8, ...
       if: ${{ matrix.os == 'ubuntu-24.04' && matrix.compiler == 'clang' }}
       run: |
         export LLVM_VERSION=17
