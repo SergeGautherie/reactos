@@ -163,7 +163,7 @@ extern PCSTR KmtMajorFunctionNames[];
 extern PDRIVER_OBJECT KmtDriverObject;
 
 VOID KmtSetIrql(IN KIRQL NewIrql);
-BOOL KmtAreInterruptsEnabled(VOID);
+BOOLEAN KmtAreInterruptsEnabled(VOID);
 ULONG KmtGetPoolTag(PVOID Memory);
 USHORT KmtGetPoolType(PVOID Memory);
 PVOID KmtGetSystemRoutineAddress(IN PCWSTR RoutineName);

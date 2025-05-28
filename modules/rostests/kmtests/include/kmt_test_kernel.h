@@ -56,7 +56,7 @@ VOID KmtSetIrql(IN KIRQL NewIrql)
         KeRaiseIrql(NewIrql, &Irql);
 }
 
-BOOL KmtAreInterruptsEnabled(VOID)
+BOOLEAN KmtAreInterruptsEnabled(VOID)
 {
 #if defined(_M_IX86) || defined(_M_AMD64)
     return (__readeflags() & EFLAGS_INTERRUPT_MASK) != 0;
