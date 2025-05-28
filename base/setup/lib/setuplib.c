@@ -188,7 +188,7 @@ CheckUnattendedSetup(
                                 ARRAYSIZE(pSetupData->LocaleID),
                                 L"%08lx", Id);
 // Stage 1 unattended: valeur correcte!
-            DPRINT1("CORE-15848, from Unattend: Value='%S' -> Id=0x%lx -> pSD->LocaleID='%S'\n",
+            DPRINT1("CORE-15848, from Unattend: Value = '%S' -> Id = 0x%lx -> pSD->LocaleID = '%S'\n",
                     Value, Id, pSetupData->LocaleID);
             INF_FreeData(Value);
         }
