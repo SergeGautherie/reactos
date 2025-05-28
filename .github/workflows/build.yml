@@ -5,17 +5,32 @@ jobs:
   build-linux:
     strategy:
       matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
         compiler: [gcc, clang]
         arch: [i386, amd64]
         config: [Debug, Release]
         dllver: ['0x502', '0x600']
         exclude:
+          # (RosBE) gcc: (newest) ubuntu-24.04 is enough/fine.
+          - os: ubuntu-22.04
+            compiler: gcc
+          # clang 13+: only available on ubuntu-22.04.
+          - os: ubuntu-24.04
+            compiler: clang
+          # future 0x600: only gcc, only Debug.
           - dllver: 0x600
             compiler: clang
           - dllver: 0x600
             config: Release
+        include:
+          # future clang 17+: only 1 build.
+          - os: ubuntu-24.04
+            compiler: clang
+            arch: i386
+            config: Debug
+            dllver: '0x502'
       fail-fast: false
-    runs-on: ubuntu-22.04
+    runs-on: ${{matrix.os}}
     steps:
     - name: Get RosBE build specifics
       id: get_rosbe_spec
@@ -37,10 +52,18 @@ jobs:
         ./build_rosbe_ci.sh ${{github.workspace}}/RosBE-CI
     - name: Install ccache
       run: sudo apt install ccache
-    - name: Install LLVM
-      if: ${{ matrix.compiler == 'clang' }}
+    - name: Install LLVM 13.0.1 # ubuntu-22.04 has llvm 13+.
+      if: ${{ matrix.os == 'ubuntu-22.04' && matrix.compiler == 'clang' }}
       run: |
         export LLVM_VERSION=13
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh $LLVM_VERSION
+        echo "D_CLANG_VERSION=-DCLANG_VERSION=$LLVM_VERSION" >> $GITHUB_ENV
+    - name: Install LLVM 17.0.6 # ubuntu-24.04 has llvm 17+.
+      if: ${{ matrix.os == 'ubuntu-24.04' && matrix.compiler == 'clang' }}
+      run: |
+        export LLVM_VERSION=17
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh $LLVM_VERSION
