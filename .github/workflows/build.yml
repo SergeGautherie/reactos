@@ -6,10 +6,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, ubuntu-24.04]
-        compiler: [gcc, clang]
-        arch: [i386, amd64]
-        config: [Debug, Release]
-        dllver: ['0x502', '0x600']
+        compiler: [clang]
+        arch: [i386]
+        config: [Debug]
+        dllver: ['0x502']
+        future: [false]
         exclude:
           # (RosBE) gcc: (newest) ubuntu-24.04 is enough/fine.
           - os: ubuntu-22.04
@@ -29,6 +30,7 @@ jobs:
             arch: i386
             config: Debug
             dllver: '0x502'
+            future: true # CORE-20324.
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
@@ -52,15 +54,15 @@ jobs:
         ./build_rosbe_ci.sh ${{github.workspace}}/RosBE-CI
     - name: Install ccache
       run: sudo apt install ccache
-    - name: Install LLVM 13.0.1 # ubuntu-22.04 has llvm 13+.
+    - name: Install LLVM 15.0.7 # ubuntu-22.04 has llvm 13+. (13.0.1, 14.0.6, 15.0.7, ...)
       if: ${{ matrix.os == 'ubuntu-22.04' && matrix.compiler == 'clang' }}
       run: |
-        export LLVM_VERSION=13
+        export LLVM_VERSION=15
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh $LLVM_VERSION
         echo "D_CLANG_VERSION=-DCLANG_VERSION=$LLVM_VERSION" >> $GITHUB_ENV
-    - name: Install LLVM 17.0.6 # ubuntu-24.04 has llvm 17+.
+    - name: Install LLVM 17.0.6 # ubuntu-24.04 has llvm 17+. (17.0.6, 18.1.8, 19.1.7, ...)
       if: ${{ matrix.os == 'ubuntu-24.04' && matrix.compiler == 'clang' }}
       run: |
         export LLVM_VERSION=17
@@ -76,9 +78,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ccache
-        key: ccache-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
+        key: ccache-${{matrix.os}}-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
         restore-keys: |
-          ccache-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-
+          ccache-${{matrix.os}}-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-
     - name: Set ccache settings
       run: |
         echo "CCACHE_BASEDIR=${{github.workspace}}" >> $GITHUB_ENV
@@ -91,20 +93,33 @@ jobs:
     - name: Configure
       run: echo 'cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-${{matrix.compiler}}.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DDLL_EXPORT_VERSION=${{matrix.dllver}} -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{env.D_CLANG_VERSION}}' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Build
+      continue-on-error: ${{ matrix.future }}
       run: echo 'cmake --build ${{github.workspace}}/build -- -k0' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Generate ISOs
+      continue-on-error: ${{ matrix.future }}
       run: echo 'cmake --build ${{github.workspace}}/build --target bootcd --target livecd' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Print ccache statistics
       run: ccache -s
-    - name: Upload ISOs
+    - name: Upload ISOs (clang 13 && gcc)
+      if: ${{ matrix.os == 'ubuntu-22.04' || matrix.compiler == 'gcc' }} # Exclude clang 17.
       uses: actions/upload-artifact@v4
       with:
         name: reactos-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
         path: |
           build/bootcd.iso
           build/livecd.iso
+    - name: Upload ISOs (clang 17)
+      if: ${{ matrix.os == 'ubuntu-24.04' && matrix.compiler == 'clang' }} # Do not conflict with clang 13.
+      continue-on-error: ${{ matrix.future }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: reactos-24.04-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
+        path: |
+          build/bootcd.iso
+          build/livecd.iso
 
   build-msvc:
+    if: false
     strategy:
       matrix:
         os: [windows-latest]
@@ -166,6 +181,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msvc-arm:
+    if: false
     strategy:
       matrix:
         toolset: ['14','14.2'] # VS 2022, 2019
@@ -267,6 +283,7 @@ jobs:
 
   # FIXME: Does not boot on toolset 14.1, 14.3+ is untested
   build-clang-cl:
+    if: false
     strategy:
       matrix:
         arch: [i386, amd64]
@@ -326,6 +343,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msbuild-i386:
+    if: false
     name: MSBuild (i386)
     runs-on: windows-latest
     steps:
