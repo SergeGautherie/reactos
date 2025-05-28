@@ -37,7 +37,15 @@ jobs:
     - name: Get RosBE build specifics
       id: get_rosbe_spec
       run: |
+        echo 1
+        gcc -march=native -Q --help=target | grep "\-march= "
+        echo 2
+        gcc -march=native -Q --help=target | grep "\-march=\s+[^\s]+"
+        echo 3
+        gcc -march=native -Q --help=target | grep "\-march=\s+[^\s]+" | awk '{print $NF}'
+        echo 4
         gcc -march=native -Q --help=target | grep "\-march= " | awk '{print $NF}'
+        echo 5
         echo march-sha=$(gcc -march=native -Q --help=target | sha1sum | awk '{print $1}') >> $GITHUB_OUTPUT
         echo git-sha=$(git ls-remote https://github.com/zefklop/RosBE.git | grep unix_amd64 | awk '{print $1}') >> $GITHUB_OUTPUT
         wget https://gist.githubusercontent.com/zefklop/b2d6a0b470c70183e93d5285a03f5899/raw/build_rosbe_ci.sh
@@ -57,7 +65,7 @@ jobs:
     - name: Install LLVM for ubuntu-22.04 # Available: 13.0.1, 14.0.6, 15.0.7, 16.0.6, ...
       if: ${{ matrix.os == 'ubuntu-22.04' && matrix.compiler == 'clang' }}
       run: |
-        export LLVM_VERSION=15
+        export LLVM_VERSION=17
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh $LLVM_VERSION
@@ -65,7 +73,7 @@ jobs:
     - name: Install LLVM for ubuntu-24.04 # Available: 17.0.6, 18.1.8, 19.1.7, 20.1.8, ...
       if: ${{ matrix.os == 'ubuntu-24.04' && matrix.compiler == 'clang' }}
       run: |
-        export LLVM_VERSION=17
+        export LLVM_VERSION=19
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh $LLVM_VERSION
