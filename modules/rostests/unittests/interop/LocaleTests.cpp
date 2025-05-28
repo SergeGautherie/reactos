@@ -8,6 +8,8 @@
 
 #include "interop.h"
 
+#include <versionhelpers.h>
+
 #include <winnls.h>
 #include <strsafe.h>
 #include <shlwapi.h>
