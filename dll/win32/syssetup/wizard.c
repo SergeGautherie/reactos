@@ -2859,7 +2859,7 @@ ProcessUnattendSection(
         }
         else if (!_wcsicmp(szName, L"TimeZoneIndex"))
         {
-            pSetupData->TimeZoneIndex = _wtoi(szValue);
+            pSetupData->TimeZoneIndex = _wtol(szValue);
             DPRINT1("CORE-15848: pSD->TimeZoneIndex = %lu\n", pSetupData->TimeZoneIndex);
         }
         else if (!_wcsicmp(szName, L"DisableAutoDaylightTimeSet"))
