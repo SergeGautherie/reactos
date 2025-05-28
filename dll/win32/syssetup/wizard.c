@@ -1466,7 +1466,7 @@ WriteUserLocale(VOID)
                             KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS)
         {
 // Stage 2 interactive: que 0409 !
-            DPRINT1("CORE-15848, S2, to Reg: Locale='%S'\n", Locale);
+            DPRINT1("CORE-15848, S2, to Reg: Locale = '%S'\n", Locale);
             ASSERT(wcslen(Locale) == 8);
             RegSetValueExW(hKey, L"Locale", 0, REG_SZ, (LPBYTE)Locale, (wcslen(Locale) + 1) * sizeof(WCHAR));
             RegCloseKey(hKey);
