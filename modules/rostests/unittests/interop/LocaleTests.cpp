@@ -350,6 +350,7 @@ static void TEST_LocaleTests(void)
     for (auto& lang : langs)
     {
         SetLocale(MAKELCID(lang, SORT_DEFAULT));
+        SetConsoleOutputCP(CP_UTF8);
 
         TEST_NumParts();
         TEST_PartMatches();
