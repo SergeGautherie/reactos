@@ -315,9 +315,13 @@ WinLdrGetNLSNames(
     if (rc != ERROR_SUCCESS)
     {
         //TRACE("ACP NLS Setting exists, but isn't readable\n");
-        //goto Quit;
+#if 0
         AnsiFileName->Length = 0;
         RtlAppendUnicodeToString(AnsiFileName, L"c_1252.nls"); // HACK: ReactOS bug CORE-6105
+#else
+        ASSERTMSG("RegQueryValue(AnsiFileName) failed\n", FALSE);
+        goto Quit;
+#endif
     }
     else
     {
@@ -339,9 +343,13 @@ WinLdrGetNLSNames(
     if (rc != ERROR_SUCCESS)
     {
         //TRACE("OEMCP NLS setting exists, but isn't readable\n");
-        //goto Quit;
+#if 0
         OemFileName->Length = 0;
         RtlAppendUnicodeToString(OemFileName, L"c_437.nls"); // HACK: ReactOS bug CORE-6105
+#else
+        ASSERTMSG("RegQueryValue(OemFileName) failed\n", FALSE);
+        goto Quit;
+#endif
     }
     else
     {
@@ -355,8 +363,13 @@ WinLdrGetNLSNames(
     if (rc != ERROR_SUCCESS)
     {
         //TRACE("Couldn't get OEMHAL NLS setting\n");
-        //goto Quit;
+#if 1
+        // TODO: Is this a HACK or a feature? (See CORE-6105)
         RtlInitEmptyUnicodeString(OemHalFileName, NULL, 0);
+#else
+        ASSERTMSG("RegQueryValue(OemHalFileName) failed\n", FALSE);
+        goto Quit;
+#endif
     }
     else
     {
@@ -388,9 +401,14 @@ WinLdrGetNLSNames(
     if (rc != ERROR_SUCCESS)
     {
         //TRACE("Language Default setting exists, but isn't readable\n");
-        //goto Quit;
+#if 1
+        // TODO: Is this a HACK or a feature? (See CORE-6105)
         LangFileName->Length = 0;
         RtlAppendUnicodeToString(LangFileName, L"l_intl.nls");
+#else
+        ASSERTMSG("RegQueryValue(LangFileName) failed\n", FALSE);
+        goto Quit;
+#endif
     }
     else
     {
