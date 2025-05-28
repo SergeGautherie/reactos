@@ -1692,7 +1692,9 @@ ShowTimeZoneList(HWND hwnd, PSETUPDATA SetupData, DWORD dwEntryIndex)
     DWORD dwIndex = 0;
     DWORD dwCount;
 
+    DPRINT1("CORE-15848, GTZLI() before: dwEntryIndex = %lu\n", dwEntryIndex);
     GetTimeZoneListIndex(&dwEntryIndex);
+    DPRINT1("CORE-15848, GTZLI() after: dwEntryIndex = %lu\n", dwEntryIndex);
 
     Entry = SetupData->TimeZoneListHead;
     while (Entry != NULL)
@@ -1707,6 +1709,7 @@ ShowTimeZoneList(HWND hwnd, PSETUPDATA SetupData, DWORD dwEntryIndex)
 
         Entry = Entry->Next;
     }
+    DPRINT1("CORE-15848: dwIndex = %lu\n", dwIndex);
 
     SendMessage(hwnd,
                 CB_SETCURSEL,
@@ -1866,6 +1869,7 @@ DateTimePageDlgProc(HWND hwndDlg,
 
             if (SetupData->UnattendSetup)
             {
+                DPRINT1("CORE-15848: ShowTimeZoneList(SD->TimeZoneIndex = %lu)\n", SetupData->TimeZoneIndex);
                 ShowTimeZoneList(GetDlgItem(hwndDlg, IDC_TIMEZONELIST),
                                  SetupData, SetupData->TimeZoneIndex);
 
@@ -1876,6 +1880,7 @@ DateTimePageDlgProc(HWND hwndDlg,
             }
             else
             {
+                DPRINT1("CORE-15848: ShowTimeZoneList(-1)\n");
                 ShowTimeZoneList(GetDlgItem(hwndDlg, IDC_TIMEZONELIST),
                                  SetupData, -1);
 
@@ -1909,8 +1914,10 @@ DateTimePageDlgProc(HWND hwndDlg,
                     /* Enable the Back and Next buttons */
                     PropSheet_SetWizButtons(GetParent(hwndDlg), PSWIZB_BACK | PSWIZB_NEXT);
 
+                    DPRINT1("CORE-15848, PSN_SETACTIVE: SD->UnattendSetup = %u\n", SetupData->UnattendSetup);
                     if (SetupData->UnattendSetup && WriteDateTimeSettings(hwndDlg, SetupData))
                     {
+                        DPRINT1("CORE-15848, PSN_SETACTIVE: US && WDTS()\n");
                         SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, SetupData->uFirstNetworkWizardPage);
                         return TRUE;
                     }
@@ -1926,6 +1933,7 @@ DateTimePageDlgProc(HWND hwndDlg,
                     break;
 
                 case PSN_WIZNEXT:
+                    DPRINT1("CORE-15848, PSN_WIZNEXT: WDTS()\n");
                     WriteDateTimeSettings(hwndDlg, SetupData);
                     break;
 
