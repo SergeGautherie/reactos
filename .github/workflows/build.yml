@@ -87,13 +87,15 @@ jobs:
     strategy:
       matrix:
         os: [windows-2025-vs2026]
-        toolset: ['14','14.2'] # VS 2022, and 2019 (see below)
+        toolset: ['14', '14.29'] # VS 2022+ (ongoing), 2019 (last).
         arch: [i386, amd64]
         config: [Debug, Release]
         dllver: ['0x502', '0x600']
-        exclude: # Build NT6 ISOs only with the latest toolset when compiled as a debug build
+        exclude:
+          # Build NT6 DLLs only with the latest toolset.
           - dllver: 0x600
-            toolset: 14.2
+            toolset: 14.29
+          # Build NT6 DLLs only as Debug.
           - dllver: 0x600
             config: Release
       fail-fast: false
@@ -147,7 +149,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-2025-vs2026]
-        toolset: ['14', '14.29'] # VS 2022 (ongoing), 2019 (last)
+        toolset: ['14', '14.29'] # VS 2022+ (ongoing), 2019 (last).
         arch: [arm, arm64]
         config: [Debug, Release]
         exclude:
