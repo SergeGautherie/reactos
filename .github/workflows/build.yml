@@ -93,10 +93,10 @@ jobs:
     - name: Configure
       run: echo 'cmake -S ${{github.workspace}}/src -B ${{github.workspace}}/build -G Ninja -DCMAKE_TOOLCHAIN_FILE:FILEPATH=toolchain-${{matrix.compiler}}.cmake -DARCH:STRING=${{matrix.arch}} -DCMAKE_BUILD_TYPE=${{matrix.config}} -DDLL_EXPORT_VERSION=${{matrix.dllver}} -DENABLE_CCACHE=1 -DENABLE_ROSTESTS=1 -DENABLE_ROSAPPS=1 ${{env.D_CLANG_VERSION}}' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Build
-      continue-on-error: ${{ matrix.future }}
+      continue-on-error: false # ${{ matrix.future }}
       run: echo 'cmake --build ${{github.workspace}}/build -- -k0' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Generate ISOs
-      continue-on-error: ${{ matrix.future }}
+      continue-on-error: false # ${{ matrix.future }}
       run: echo 'cmake --build ${{github.workspace}}/build --target bootcd --target livecd' | ${{github.workspace}}/RosBE-CI/RosBE.sh . 0 ${{matrix.arch}}
     - name: Print ccache statistics
       run: ccache -s
@@ -110,7 +110,7 @@ jobs:
           build/livecd.iso
     - name: Upload ISOs (clang 17)
       if: ${{ matrix.os == 'ubuntu-24.04' && matrix.compiler == 'clang' }} # Do not conflict with clang 13.
-      continue-on-error: ${{ matrix.future }}
+      continue-on-error: false # ${{ matrix.future }}
       uses: actions/upload-artifact@v4
       with:
         name: reactos-24.04-${{matrix.compiler}}-${{matrix.arch}}-${{matrix.config}}-${{matrix.dllver}}-${{github.sha}}
