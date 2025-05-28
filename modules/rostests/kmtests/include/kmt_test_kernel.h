@@ -59,6 +59,7 @@ VOID KmtSetIrql(IN KIRQL NewIrql)
 BOOLEAN KmtAreInterruptsEnabled(VOID)
 {
 #if defined(_M_IX86) || defined(_M_AMD64)
+#pragma message(__FILE__ ": warning : 'KmtAreInterruptsEnabled()' is implemented for this architecture")
     return (__readeflags() & EFLAGS_INTERRUPT_MASK) != 0;
 #else
 #pragma message(__FILE__ ": warning : 'KmtAreInterruptsEnabled()' is UNIMPLEMENTED for this architecture")

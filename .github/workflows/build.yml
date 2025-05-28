@@ -3,13 +3,13 @@ on: [push, pull_request]
 
 jobs:
   build-linux:
-    if: false
+    if: true
     strategy:
       matrix:
         compiler: [gcc, clang]
-        arch: [i386, amd64]
-        config: [Debug, Release]
-        dllver: ['0x502', '0x600']
+        arch: [i386]
+        config: [Debug]
+        dllver: ['0x502']
         exclude:
           - dllver: 0x600
             compiler: clang
@@ -145,7 +145,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msvc-arm:
-    if: true
+    if: false
     strategy:
       matrix:
         toolset: ['14.2'] # VS 2019
