@@ -4,7 +4,7 @@ Signature = "$ReactOS$"
 ; Set UnattendSetupEnabled to yes in order to get unattended setup working
 ; yes - unattend setup enabled
 ; no - unattend setup disabled
-UnattendSetupEnabled = yes
+UnattendSetupEnabled = no
 
 ; Install to \Device\Harddisk0\Partition1\ReactOS
 DestinationDiskNumber = 0
@@ -47,7 +47,7 @@ FsType = 0
 ; enable this setting to disable Gecko install
 ; yes - disabled
 ; no  - enabled
-DisableGeckoInst = yes
+DisableGeckoInst = no
 
 ; set this option to automatically
 ; specify language in 2nd mode setup
