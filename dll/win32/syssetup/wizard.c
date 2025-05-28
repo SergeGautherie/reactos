@@ -195,6 +195,8 @@ WelcomeDlgProc(HWND hwndDlg,
 {
     PSETUPDATA pSetupData;
 
+    DPRINT("CORE-15848, WelcomePDP: uMsg = %u\n", uMsg);
+
     pSetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, DWLP_USER);
 
     switch (uMsg)
@@ -282,6 +284,8 @@ AckPageDlgProc(HWND hwndDlg,
     PWCHAR End, CurrentProject;
     INT ProjectsSize, ProjectsCount;
     PSETUPDATA pSetupData;
+
+    DPRINT("CORE-15848, AckPDP: uMsg = %u\n", uMsg);
 
     pSetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, DWLP_USER);
 
@@ -663,6 +667,8 @@ ProductPageDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
     WCHAR szText[64], szDefault[64];
     HICON hIcon;
 
+    DPRINT("CORE-15848, ProductPDP: uMsg = %u\n", uMsg);
+
     pSetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, DWLP_USER);
 
     switch (uMsg)
@@ -802,6 +808,8 @@ OwnerPageDlgProc(HWND hwndDlg,
     WCHAR ErrorName[256];
     LPNMHDR lpnm;
     PSETUPDATA pSetupData;
+
+    DPRINT("CORE-15848, OwnerPDP: uMsg = %u\n", uMsg);
 
     pSetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, DWLP_USER);
 
@@ -1055,6 +1063,8 @@ ComputerPageDlgProc(HWND hwndDlg,
     LPNMHDR lpnm;
     PSETUPDATA pSetupData;
 
+    DPRINT1("CORE-15848, ComputerPDP: uMsg = %u\n", uMsg);
+
     pSetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, DWLP_USER);
 
     if (0 == LoadStringW(hDllInstance, IDS_REACTOS_SETUP, Title, ARRAYSIZE(Title)))
@@ -1065,6 +1075,8 @@ ComputerPageDlgProc(HWND hwndDlg,
     switch (uMsg)
     {
         case WM_INITDIALOG:
+            DPRINT1("CORE-15848, ComputerPDP: WM_INITDIALOG\n");
+
             pSetupData = (PSETUPDATA)((LPPROPSHEETPAGE)lParam)->lParam;
             SetWindowLongPtr(hwndDlg, DWLP_USER, (LONG_PTR)pSetupData);
 
@@ -1097,11 +1109,15 @@ ComputerPageDlgProc(HWND hwndDlg,
 
         case WM_NOTIFY:
         {
+            DPRINT1("CORE-15848, ComputerPDP: WM_NOTIFY\n");
+
             lpnm = (LPNMHDR)lParam;
 
             switch (lpnm->code)
             {
                 case PSN_SETACTIVE:
+                    DPRINT1("CORE-15848, ComputerPDP: WM_NOTIFY > PSN_SETACTIVE\n");
+
                     /* Enable the Back and Next buttons */
                     PropSheet_SetWizButtons(GetParent(hwndDlg), PSWIZB_BACK | PSWIZB_NEXT);
                     if (pSetupData->UnattendSetup && WriteComputerSettings(pSetupData->ComputerName, hwndDlg))
@@ -1112,6 +1128,8 @@ ComputerPageDlgProc(HWND hwndDlg,
                     break;
 
                 case PSN_WIZNEXT:
+                    DPRINT1("CORE-15848, ComputerPDP: WM_NOTIFY > PSN_WIZNEXT\n");
+
                     if (0 == GetDlgItemTextW(hwndDlg, IDC_COMPUTERNAME, ComputerName, MAX_COMPUTERNAME_LENGTH + 1))
                     {
                         if (0 == LoadStringW(hDllInstance, IDS_WZD_COMPUTERNAME, EmptyComputerName,
@@ -1189,6 +1207,8 @@ ComputerPageDlgProc(HWND hwndDlg,
                     break;
 
                 case PSN_WIZBACK:
+                    DPRINT1("CORE-15848, ComputerPDP: WM_NOTIFY > PSN_WIZBACK\n");
+
                     pSetupData->UnattendSetup = FALSE;
                     break;
 
@@ -1481,6 +1501,8 @@ LocalePageDlgProc(HWND hwndDlg,
                   LPARAM lParam)
 {
     PSETUPDATA SetupData;
+
+    DPRINT("CORE-15848, LocalePDP: uMsg = %u\n", uMsg);
 
     /* Retrieve pointer to the global setup data */
     SetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
@@ -1854,6 +1876,8 @@ DateTimePageDlgProc(HWND hwndDlg,
 {
     PSETUPDATA SetupData;
 
+    DPRINT1("CORE-15848, DateTimePDP: uMsg = %u\n", uMsg);
+
     /* Retrieve pointer to the global setup data */
     SetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
@@ -1861,6 +1885,8 @@ DateTimePageDlgProc(HWND hwndDlg,
     {
         case WM_INITDIALOG:
         {
+            DPRINT1("CORE-15848, DTPDP: WM_INITDIALOG\n");
+
             /* Save pointer to the global setup data */
             SetupData = (PSETUPDATA)((LPPROPSHEETPAGE)lParam)->lParam;
             SetWindowLongPtr(hwndDlg, GWLP_USERDATA, (DWORD_PTR)SetupData);
@@ -1893,6 +1919,8 @@ DateTimePageDlgProc(HWND hwndDlg,
         {
             SYSTEMTIME LocalTime;
 
+            DPRINT1("CORE-15848, DTPDP: WM_TIMER\n");
+
             GetLocalTime(&LocalTime);
             UpdateLocalSystemTime(hwndDlg, LocalTime);
 
@@ -1902,6 +1930,8 @@ DateTimePageDlgProc(HWND hwndDlg,
         }
 
         case WM_NOTIFY:
+            DPRINT1("CORE-15848, DTPDP: WM_NOTIFY\n");
+
             switch (((LPNMHDR)lParam)->code)
             {
                 case PSN_SETACTIVE:
@@ -1947,6 +1977,8 @@ DateTimePageDlgProc(HWND hwndDlg,
             break;
 
         case WM_DESTROY:
+            DPRINT1("CORE-15848, DTPDP: WM_DESTROY\n");
+
             DestroyTimeZoneList(SetupData);
             break;
 
@@ -1978,6 +2010,8 @@ ThemePageDlgProc(HWND hwndDlg,
 {
     PSETUPDATA SetupData;
     LPNMLISTVIEW pnmv;
+
+    DPRINT1("CORE-15848, ThemePDP: uMsg = %u\n", uMsg);
 
     /* Retrieve pointer to the global setup data */
     SetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
@@ -2452,6 +2486,8 @@ ProcessPageDlgProc(HWND hwndDlg,
     PSETUPDATA SetupData;
     PREGISTRATIONNOTIFY RegistrationNotify;
 
+    DPRINT("CORE-15848, ProcessPDP: uMsg = %u\n", uMsg);
+
     /* Retrieve pointer to the global setup data */
     SetupData = (PSETUPDATA)GetWindowLongPtr(hwndDlg, GWLP_USERDATA);
 
@@ -2574,6 +2610,7 @@ FinishDlgProc(HWND hwndDlg,
               WPARAM wParam,
               LPARAM lParam)
 {
+    DPRINT("CORE-15848, FinishPDP: uMsg = %u\n", uMsg);
 
     switch (uMsg)
     {
@@ -2823,6 +2860,7 @@ ProcessUnattendSection(
         else if (!_wcsicmp(szName, L"TimeZoneIndex"))
         {
             pSetupData->TimeZoneIndex = _wtoi(szValue);
+            DPRINT1("CORE-15848: pSD->TimeZoneIndex = %lu\n", pSetupData->TimeZoneIndex);
         }
         else if (!_wcsicmp(szName, L"DisableAutoDaylightTimeSet"))
         {
@@ -3386,6 +3424,8 @@ InstallWizard(VOID)
     {
         pfn(&dwNetworkPageCount, &phpage[nPages], pSetupData);
         nPages += dwNetworkPageCount;
+
+        DPRINT("CORE-15848, IW: Added %lu Network pages\n", dwNetworkPageCount);
     }
 
     /* Create the Process page */
