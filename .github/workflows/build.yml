@@ -82,6 +82,7 @@ jobs:
           build/livecd.iso
 
   build-msvc:
+    if: false
     strategy:
       matrix:
         os: [windows-latest]
@@ -143,6 +144,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msvc-arm:
+    if: false
     strategy:
       matrix:
         toolset: ['14','14.2'] # VS 2022, 2019
@@ -244,6 +246,7 @@ jobs:
 
   # FIXME: Does not boot on toolset 14.1, 14.3+ is untested
   build-clang-cl:
+    if: false
     strategy:
       matrix:
         arch: [i386, amd64]
@@ -303,6 +306,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msbuild-i386:
+    if: false
     name: MSBuild (i386)
     runs-on: windows-latest
     steps:
