@@ -61,7 +61,7 @@ BOOLEAN KmtAreInterruptsEnabled(VOID)
 #if defined(_M_IX86) || defined(_M_AMD64)
     return (__readeflags() & EFLAGS_INTERRUPT_MASK) != 0;
 #else
-#pragma message("Warning: KmtAreInterruptsEnabled() is UNIMPLEMENTED for this architecture")
+#pragma message(__FILE__ ": warning : 'KmtAreInterruptsEnabled()' is UNIMPLEMENTED for this architecture")
     // HACK: trivial stub. Used by ok_bool_true(KmtAreInterruptsEnabled(), ...).
     return FALSE;
 #endif
