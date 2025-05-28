@@ -146,14 +146,11 @@ jobs:
   build-msvc-arm:
     strategy:
       matrix:
-        os: [windows-2022, windows-2025-vs2026]
+        os: [windows-2025-vs2026]
         toolset: ['14', '14.29'] # VS 2022 (ongoing), 2019 (last)
         arch: [arm, arm64]
         config: [Debug, Release]
         exclude:
-          # arm64: windows-2025-vs2026 is enough/fine.
-          - os: windows-2022
-            arch: arm64
           # arm (sdk): only available on windows-2022.
           - os: windows-2025-vs2026
             arch: arm
