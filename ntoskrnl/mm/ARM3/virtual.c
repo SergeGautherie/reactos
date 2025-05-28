@@ -1348,6 +1348,8 @@ MmFlushVirtualMemory(IN PEPROCESS Process,
 
     UNIMPLEMENTED;
 
+    IoStatusBlock->Status = STATUS_NOT_IMPLEMENTED;
+    IoStatusBlock->Information = 0;
     return STATUS_NOT_IMPLEMENTED;
 }
 
