@@ -1566,7 +1566,10 @@ ExpKdbgExtFileCache(ULONG Argc, PCHAR Argv[])
         }
 
         /* And print */
-        KdbpPrint("%p\t%d\t%d\t%wZ%S\n", SharedCacheMap, Mapped, Dirty, FileName, Extra);
+        KdbpPrint("%p\t%lu\t%lu\t_wZ_S (L.1569-noCrash)\n", SharedCacheMap, Mapped, Dirty);
+// Crash!        KdbpPrint("%p\t%lu\t%lu\t%wZ_S (L.1570)\n", SharedCacheMap, Mapped, Dirty, FileName);
+// Crash!        KdbpPrint("%p\t%lu\t%lu\t_wZ%S (L.1571)\n", SharedCacheMap, Mapped, Dirty, Extra);
+//        KdbpPrint("%p\t%lu\t%lu\t%wZ%S\n", SharedCacheMap, Mapped, Dirty, FileName, Extra);
     }
 
     return TRUE;

@@ -1399,8 +1399,9 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
 
         KdbpPrint("Handle table at %p with %d entries in use\n", HandleTable, HandleTable->HandleCount);
 
-        ExHandle.Value = 0;
-        while ((TableEntry = ExpLookupHandleTableEntry(HandleTable, ExHandle)))
+        for (ExHandle.Value = 0;
+             (TableEntry = ExpLookupHandleTableEntry(HandleTable, ExHandle)) != NULL;
+             ExHandle.Value += INDEX_TO_HANDLE_VALUE(1))
         {
             if ((TableEntry->Object) &&
                 (TableEntry->NextFreeTableEntry != -2))
@@ -1408,7 +1409,8 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                 ObjectHeader = ObpGetHandleObject(TableEntry);
 
                 KdbpPrint("%p: Object: %p GrantedAccess: %x Entry: %p\n", ExHandle.Value, &ObjectHeader->Body, TableEntry->GrantedAccess, TableEntry);
-                KdbpPrint("Object: %p Type: (%x) %wZ\n", &ObjectHeader->Body, ObjectHeader->Type, &ObjectHeader->Type->Name);
+                KdbpPrint("Object: %p Type: (%x) _wZ (L.1412-noCrash)\n", &ObjectHeader->Body, ObjectHeader->Type);
+// Crash!                KdbpPrint("Object: %p Type: (%x) %wZ\n", &ObjectHeader->Body, ObjectHeader->Type, &ObjectHeader->Type->Name);
                 KdbpPrint("\tObjectHeader: %p\n", ObjectHeader);
                 KdbpPrint("\t\tHandleCount: %u PointerCount: %u\n", ObjectHeader->HandleCount, ObjectHeader->PointerCount);
 
@@ -1419,7 +1421,8 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                 {
                     FileObject = (PFILE_OBJECT)&ObjectHeader->Body;
 
-                    KdbpPrint("\t\t\tName: %wZ\n", &FileObject->FileName);
+                    KdbpPrint("\t\t\tName: _wZ (L.1424-noCrash)\n");
+// Crash!                    KdbpPrint("\t\t\tName: %wZ\n", &FileObject->FileName);
                 }
 
                 /* For directory, and win32k objects, display object name */
@@ -1431,7 +1434,8 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                     ObjectNameInfo = OBJECT_HEADER_TO_NAME_INFO(ObjectHeader);
                     if (ObjectNameInfo != NULL && ObjectNameInfo->Name.Buffer != NULL)
                     {
-                        KdbpPrint("\t\t\tName: %wZ\n", &ObjectNameInfo->Name);
+                        KdbpPrint("\t\t\tName: _wZ (L.1437-noCrash)\n");
+// Crash!                        KdbpPrint("\t\t\tName: %wZ\n", &ObjectNameInfo->Name);
                     }
                 }
 
@@ -1487,12 +1491,11 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                             }
                         }
 
-                        KdbpPrint("\t\t\tName: %S\n", KeyPath);
+                        KdbpPrint("\t\t\tName: _S (L.1494-noCrash)\n");
+// Crash!                        KdbpPrint("\t\t\tName: %S\n", KeyPath);
                     }
                 }
             }
-
-            ExHandle.Value += INDEX_TO_HANDLE_VALUE(1);
         }
     }
 

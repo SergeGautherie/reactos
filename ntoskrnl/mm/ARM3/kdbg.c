@@ -423,10 +423,22 @@ ExpKdbgExtPoolFindNonPagedPool(
                 else
                 {
                     /* Print the line */
-                    KdbpPrint("%p size: %4d previous size: %4d  %s  %.4s\n",
+#if 0
+                    KdbpPrint("%p size: %4d previous size: %4d  _s  _.4s (L.427-ok)\n",
+                              Entry, Entry->BlockSize, Entry->PreviousSize);
+#endif
+#if 0
+                    KdbpPrint("%p size: %4d previous size: %4d  _s  %.4s (L.431)\n",
+                              Entry, Entry->BlockSize, Entry->PreviousSize,
+                              (PCHAR)&Entry->PoolTag);
+#endif
+#if 1 // A essayer...
+//                    KdbpPrint("%p size: %4d previous size: %4d  %s  %.4s\n",
+                    KdbpPrint("%p size: %4d previous size: %4d  %s  %.4s (L.437-orig)\n",
                               Entry, Entry->BlockSize, Entry->PreviousSize,
                               Entry->PoolType ? "(Allocated)" : "(Free)     ",
                               (PCHAR)&Entry->PoolTag);
+#endif
                 }
             }
         }
@@ -534,7 +546,8 @@ ExpKdbgExtIrpFindPrint(
     {
         if (!IsComplete)
         {
-            KdbpPrint("%p Thread %p current stack (%x, %x) belongs to %wZ\n", Irp, Irp->Tail.Overlay.Thread, IoStack->MajorFunction, IoStack->MinorFunction, DriverName);
+            KdbpPrint("%p Thread %p current stack (%x, %x) belongs to _wZ (CB L.549-noCrash)\n", Irp, Irp->Tail.Overlay.Thread, IoStack->MajorFunction, IoStack->MinorFunction);
+// Crash!            KdbpPrint("%p Thread %p current stack (%x, %x) belongs to %wZ\n", Irp, Irp->Tail.Overlay.Thread, IoStack->MajorFunction, IoStack->MinorFunction, DriverName);
         }
         else
         {
