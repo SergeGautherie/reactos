@@ -1384,9 +1384,9 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
     }
 
     OldIrql = KeGetCurrentIrql();
-    KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL.
-    if (OldIrql > PASSIVE_LEVEL)
-        KeLowerIrql(PASSIVE_LEVEL);
+    KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL. (Will Crash.)
+    if (OldIrql > APC_LEVEL)
+        KeLowerIrql(APC_LEVEL);
 
     for (Entry = HandleTableListHead.Flink;
          Entry != &HandleTableListHead;
@@ -1509,7 +1509,7 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
         }
     }
 
-    if (OldIrql > PASSIVE_LEVEL)
+    if (OldIrql > APC_LEVEL)
         KeRaiseIrql(OldIrql, &OldIrql);
 
     return TRUE;

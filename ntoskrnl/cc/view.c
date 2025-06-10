@@ -1524,9 +1524,9 @@ ExpKdbgExtFileCache(ULONG Argc, PCHAR Argv[])
     KdbpPrint("Shared\t\tMapped\tDirty\tName\n");
 
     OldIrql = KeGetCurrentIrql();
-    KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL.
-    if (OldIrql > PASSIVE_LEVEL)
-        KeLowerIrql(PASSIVE_LEVEL);
+    KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL. (Fixes it.)
+    if (OldIrql > APC_LEVEL)
+        KeLowerIrql(APC_LEVEL);
 
     /* No need to lock the spin lock here, we're in DBG */
     for (ListEntry = CcCleanSharedCacheMapList.Flink;
@@ -1579,7 +1579,7 @@ ExpKdbgExtFileCache(ULONG Argc, PCHAR Argv[])
         KdbpPrint("%p\t%lu\t%lu\t%wZ%S\n", SharedCacheMap, Mapped, Dirty, FileName, Extra);
     }
 
-    if (OldIrql > PASSIVE_LEVEL)
+    if (OldIrql > APC_LEVEL)
         KeRaiseIrql(OldIrql, &OldIrql);
 
     return TRUE;

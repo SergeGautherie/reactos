@@ -549,15 +549,15 @@ ExpKdbgExtIrpFindPrint(
             KIRQL OldIrql;
 
             OldIrql = KeGetCurrentIrql();
-            KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL.
-            if (OldIrql > PASSIVE_LEVEL)
-                KeLowerIrql(PASSIVE_LEVEL);
+            KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL. (Will Crash.)
+            if (OldIrql > APC_LEVEL)
+                KeLowerIrql(APC_LEVEL);
 
 //            KdbpPrint("%p Thread %p current stack (%x, %x) belongs to _wZ (CB L.549-noCrash)\n", Irp, Irp->Tail.Overlay.Thread, IoStack->MajorFunction, IoStack->MinorFunction);
 // Crash!
             KdbpPrint("%p Thread %p current stack (%x, %x) belongs to %wZ\n", Irp, Irp->Tail.Overlay.Thread, IoStack->MajorFunction, IoStack->MinorFunction, DriverName);
 
-            if (OldIrql > PASSIVE_LEVEL)
+            if (OldIrql > APC_LEVEL)
                 KeRaiseIrql(OldIrql, &OldIrql);
         }
         else
