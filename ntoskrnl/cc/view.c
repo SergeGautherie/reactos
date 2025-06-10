@@ -1518,9 +1518,16 @@ ExpKdbgExtFileCache(ULONG Argc, PCHAR Argv[])
 {
     PLIST_ENTRY ListEntry;
     UNICODE_STRING NoName = RTL_CONSTANT_STRING(L"No name for File");
+    KIRQL OldIrql;
 
     KdbpPrint("  Usage Summary (in kb)\n");
     KdbpPrint("Shared\t\tMapped\tDirty\tName\n");
+
+    OldIrql = KeGetCurrentIrql();
+    KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL.
+    if (OldIrql > PASSIVE_LEVEL)
+        KeLowerIrql(PASSIVE_LEVEL);
+
     /* No need to lock the spin lock here, we're in DBG */
     for (ListEntry = CcCleanSharedCacheMapList.Flink;
          ListEntry != &CcCleanSharedCacheMapList;
@@ -1566,11 +1573,14 @@ ExpKdbgExtFileCache(ULONG Argc, PCHAR Argv[])
         }
 
         /* And print */
-        KdbpPrint("%p\t%lu\t%lu\t_wZ_S (L.1569-noCrash)\n", SharedCacheMap, Mapped, Dirty);
+//        KdbpPrint("%p\t%lu\t%lu\t_wZ_S (L.1569-noCrash)\n", SharedCacheMap, Mapped, Dirty);
 // Crash!        KdbpPrint("%p\t%lu\t%lu\t%wZ_S (L.1570)\n", SharedCacheMap, Mapped, Dirty, FileName);
 // Crash!        KdbpPrint("%p\t%lu\t%lu\t_wZ%S (L.1571)\n", SharedCacheMap, Mapped, Dirty, Extra);
-//        KdbpPrint("%p\t%lu\t%lu\t%wZ%S\n", SharedCacheMap, Mapped, Dirty, FileName, Extra);
+        KdbpPrint("%p\t%lu\t%lu\t%wZ%S\n", SharedCacheMap, Mapped, Dirty, FileName, Extra);
     }
+
+    if (OldIrql > PASSIVE_LEVEL)
+        KeRaiseIrql(OldIrql, &OldIrql);
 
     return TRUE;
 }

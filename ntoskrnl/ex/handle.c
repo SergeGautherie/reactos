@@ -1340,6 +1340,7 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
     ULONG NameLength;
     PCM_KEY_CONTROL_BLOCK Kcb, CurrentKcb;
     POBJECT_HEADER_NAME_INFO ObjectNameInfo;
+    KIRQL OldIrql;
 
     if (Argc > 1)
     {
@@ -1382,6 +1383,11 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
         ProcessId = PsGetCurrentProcessId();
     }
 
+    OldIrql = KeGetCurrentIrql();
+    KdbpPrint("OldIrql %u\n", OldIrql); // 2 = DISPATCH_LEVEL.
+    if (OldIrql > PASSIVE_LEVEL)
+        KeLowerIrql(PASSIVE_LEVEL);
+
     for (Entry = HandleTableListHead.Flink;
          Entry != &HandleTableListHead;
          Entry = Entry->Flink)
@@ -1409,8 +1415,9 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                 ObjectHeader = ObpGetHandleObject(TableEntry);
 
                 KdbpPrint("%p: Object: %p GrantedAccess: %x Entry: %p\n", ExHandle.Value, &ObjectHeader->Body, TableEntry->GrantedAccess, TableEntry);
-                KdbpPrint("Object: %p Type: (%x) _wZ (L.1412-noCrash)\n", &ObjectHeader->Body, ObjectHeader->Type);
-// Crash!                KdbpPrint("Object: %p Type: (%x) %wZ\n", &ObjectHeader->Body, ObjectHeader->Type, &ObjectHeader->Type->Name);
+//                KdbpPrint("Object: %p Type: (%x) _wZ (L.1412-noCrash)\n", &ObjectHeader->Body, ObjectHeader->Type);
+// Crash!
+                KdbpPrint("Object: %p Type: (%x) %wZ\n", &ObjectHeader->Body, ObjectHeader->Type, &ObjectHeader->Type->Name);
                 KdbpPrint("\tObjectHeader: %p\n", ObjectHeader);
                 KdbpPrint("\t\tHandleCount: %u PointerCount: %u\n", ObjectHeader->HandleCount, ObjectHeader->PointerCount);
 
@@ -1421,8 +1428,9 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                 {
                     FileObject = (PFILE_OBJECT)&ObjectHeader->Body;
 
-                    KdbpPrint("\t\t\tName: _wZ (L.1424-noCrash)\n");
-// Crash!                    KdbpPrint("\t\t\tName: %wZ\n", &FileObject->FileName);
+//                    KdbpPrint("\t\t\tName: _wZ (L.1424-noCrash)\n");
+// Crash!
+                    KdbpPrint("\t\t\tName: %wZ\n", &FileObject->FileName);
                 }
 
                 /* For directory, and win32k objects, display object name */
@@ -1434,8 +1442,9 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                     ObjectNameInfo = OBJECT_HEADER_TO_NAME_INFO(ObjectHeader);
                     if (ObjectNameInfo != NULL && ObjectNameInfo->Name.Buffer != NULL)
                     {
-                        KdbpPrint("\t\t\tName: _wZ (L.1437-noCrash)\n");
-// Crash!                        KdbpPrint("\t\t\tName: %wZ\n", &ObjectNameInfo->Name);
+//                        KdbpPrint("\t\t\tName: _wZ (L.1437-noCrash)\n");
+// Crash!
+                        KdbpPrint("\t\t\tName: %wZ\n", &ObjectNameInfo->Name);
                     }
                 }
 
@@ -1491,13 +1500,17 @@ BOOLEAN ExpKdbgExtHandle(ULONG Argc, PCHAR Argv[])
                             }
                         }
 
-                        KdbpPrint("\t\t\tName: _S (L.1494-noCrash)\n");
-// Crash!                        KdbpPrint("\t\t\tName: %S\n", KeyPath);
+//                        KdbpPrint("\t\t\tName: _S (L.1494-noCrash)\n");
+// Crash!
+                        KdbpPrint("\t\t\tName: %S\n", KeyPath);
                     }
                 }
             }
         }
     }
+
+    if (OldIrql > PASSIVE_LEVEL)
+        KeRaiseIrql(OldIrql, &OldIrql);
 
     return TRUE;
 }
