@@ -213,7 +213,13 @@ typedef struct _IDE_AHCI_REGISTERS {
     struct {
         ULONG HR:1;    // HBA Reset
         ULONG IE:1;    // interrupt enable
+#ifndef __REACTOS__
         ULONG Reserved2_30:1;
+#else
+        // TODO: Should bit 2 be MSI Revert to Single Message (MRSM)?
+        // Note: This fix is for documentation only, as AE field is accessed through AHCI_GHC_AE value only.
+        ULONG Reserved2_30:29;
+#endif
         ULONG AE:1;    // AHCI enable
     } GHC;
 
