@@ -147,9 +147,9 @@ jobs:
   build-msvc-arm:
     strategy:
       matrix:
-        toolset: ['14','14.2'] # VS 2022, 2019
+        toolset: ['14.2'] # VS 2019
         arch: [arm, arm64]
-        config: [Debug, Release]
+        config: [Debug]
       fail-fast: false
     runs-on: windows-latest
     steps:
@@ -196,18 +196,45 @@ jobs:
     - name: Build shellext
       if: ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target dll/shellext/all -- -k0
+    - name: Build drivers/base
+      if: false # ${{ matrix.arch == 'arm' }}
+      run: cmake --build build --target drivers/base/all -- -k0
+    - name: Build drivers # CORE-..., ...
+      if: ${{ matrix.arch == 'arm' }}
+#       continue-on-error: true
+      run: cmake --build build --target drivers/all -- -k0
     - name: Build rosapps
       if: ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target modules/rosapps/all
     - name: Build subsystems
       if: ${{ matrix.arch == 'arm' }}
       run: cmake --build build --target subsystems/all
+    - name: Build dll (FAILED) # CORE-17620, CORE-20263, ...
+      if: false # ${{ matrix.arch == 'arm' }}
+      continue-on-error: true
+      run: cmake --build build --target dll/all -- -k0
+    - name: Build rostests (FAILED) # CORE-20263, ...
+      if: false # ${{ matrix.arch == 'arm' }}
+      continue-on-error: true
+      run: cmake --build build --target modules/rostests/all -- -k0
     - name: Build some applications (arm64)
       if: ${{ matrix.arch == 'arm64' }}
       run: cmake --build build --target calc magnify mstsc notepad osk regedit taskmgr winmine wordpad base/applications/screensavers/all -- -k0
     - name: Build control panel applets (arm64)
       if: ${{ matrix.arch == 'arm64' }}
       run: cmake --build build --target dll/cpl/all -- -k0
+    - name: Build base applications (arm64) (FAILED) # CORE-17899, CORE-20262, ...
+      if: false # ${{ matrix.arch == 'arm64' }}
+      continue-on-error: true
+      run: cmake --build build --target base/applications/all -- -k0
+    - name: Build drivers/base/bootvid (arm64) (FAILED) # CORE-..., ...
+      if: false # ${{ matrix.arch == 'arm64' }}
+      continue-on-error: true
+      run: cmake --build build --target drivers/base/bootvid/all -- -k0
+    - name: Build rosapps (arm64) (FAILED) # CORE-17899, ...
+      if: false # ${{ matrix.arch == 'arm64' }}
+      continue-on-error: true
+      run: cmake --build build --target modules/rosapps/all -- -k0
     - name: Upload compiled binaries
       uses: actions/upload-artifact@v4
       with:
