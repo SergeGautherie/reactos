@@ -658,7 +658,15 @@ for_ugly_chips:
             }
             break;
         default:
+            KdPrint2((PRINT_PREFIX "CORE-13346 UniataChipDetect(), CF AHCI: ABAR, HighP=0x%lx LowP=0x%lx\n",
+                      (*ConfigInfo->AccessRanges)[5].RangeStart.HighPart,
+                      (*ConfigInfo->AccessRanges)[5].RangeStart.LowPart));
+            ASSERT(FALSE);
+#ifndef __REACTOS__
             if(!ScsiPortConvertPhysicalAddressToUlong((*ConfigInfo->AccessRanges)[5].RangeStart)) {
+#else
+            if(FALSE) {
+#endif
                 KdPrint2((PRINT_PREFIX "No BAR5, try BM\n"));
                 ChipFlags &= ~UNIATA_AHCI;
                 deviceExtension->HwFlags &= ~UNIATA_AHCI;
@@ -1190,7 +1198,15 @@ for_ugly_chips:
                     //KdPrint2((PRINT_PREFIX "AHCI not supported yet\n"));
                     //return FALSE;
                     KdPrint2((PRINT_PREFIX "try run AHCI\n"));
+                    KdPrint2((PRINT_PREFIX "CORE-13346 UniataChipDetect(), INTEL SATA: ABAR, HighP=0x%lx LowP=0x%lx\n",
+                              (*ConfigInfo->AccessRanges)[5].RangeStart.HighPart,
+                              (*ConfigInfo->AccessRanges)[5].RangeStart.LowPart));
+                    ASSERT(FALSE);
+#ifndef __REACTOS__
                     if(ScsiPortConvertPhysicalAddressToUlong((*ConfigInfo->AccessRanges)[5].RangeStart)) {
+#else
+                    if(TRUE) {
+#endif
                         break;
                     }
                     KdPrint2((PRINT_PREFIX "No BAR5, try BM\n"));
