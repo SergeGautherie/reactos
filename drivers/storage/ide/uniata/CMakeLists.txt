@@ -4,7 +4,7 @@ include_directories(
     BEFORE ${CMAKE_CURRENT_SOURCE_DIR}
     inc)
 
-#add_definitions(-D_DEBUG)
+add_definitions(-D_DEBUG)
 
 list(APPEND SOURCE
     atacmd_map.cpp
