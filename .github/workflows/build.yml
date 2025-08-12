@@ -3,17 +3,13 @@ on: [push, pull_request]
 
 jobs:
   build-linux:
+    if: true
     strategy:
       matrix:
         compiler: [gcc]
         arch: [i386]
-        config: [Debug]
+        config: [Debug, Release]
         dllver: ['0x502']
-        exclude:
-          - dllver: 0x600
-            compiler: clang
-          - dllver: 0x600
-            config: Release
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
@@ -306,7 +302,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msbuild-i386:
-    if: false
+    if: true
     name: MSBuild (i386)
     runs-on: windows-latest
     steps:
