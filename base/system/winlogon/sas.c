@@ -771,6 +771,9 @@ LogoffShutdownThread(
     if (UserToken)
         RevertToSelf();
 
+    // Success here.
+    CloseAllConnections(LSData->Session);
+
     return ret;
 }
 
@@ -1040,6 +1043,9 @@ HandleLogoff(
         return Status;
     }
 
+    // Crash here.
+    // CloseAllConnections(Session);
+
     /* Invoke Logoff notifications on the application desktop */
     SwitchDesktop(Session->ApplicationDesktop);
     DisplayStatusMessage(Session, Session->ApplicationDesktop, IDS_LOGGINGOFF);
@@ -1053,7 +1059,8 @@ HandleLogoff(
 
     /* Close all user network connections */
     DisplayStatusMessage(Session, Session->WinlogonDesktop, IDS_CLOSINGNETWORKCONNECTIONS);
-    CloseAllConnections(Session);
+    // Crash here.
+    // CloseAllConnections(Session);
     // TODO: Do any other user-specific network-related cleaning:
     // user-added NetAPI message aliases; user cached credentials (remote login)...
 
