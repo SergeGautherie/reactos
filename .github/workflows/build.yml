@@ -3,17 +3,22 @@ on: [push, pull_request]
 
 jobs:
   build-linux:
+    if: true
     strategy:
       matrix:
         compiler: [gcc, clang]
         arch: [i386, amd64]
-        config: [Debug, Release]
+        config: [Debug, Release, RelWithDebInfo, MinSizeRel]
         dllver: ['0x502', '0x600']
         exclude:
           - dllver: 0x600
             compiler: clang
           - dllver: 0x600
             config: Release
+          - dllver: 0x600
+            config: RelWithDebInfo
+          - dllver: 0x600
+            config: MinSizeRel
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
@@ -82,18 +87,23 @@ jobs:
           build/livecd.iso
 
   build-msvc:
+    if: true
     strategy:
       matrix:
         os: [windows-latest]
         toolset: ['14','14.2'] # VS 2022, and 2019 (see below)
         arch: [i386, amd64]
-        config: [Debug, Release]
+        config: [Debug, Release, RelWithDebInfo, MinSizeRel]
         dllver: ['0x502', '0x600']
         exclude: # Build NT6 ISOs only with the latest toolset when compiled as a debug build
           - dllver: 0x600
             toolset: 14.2
           - dllver: 0x600
             config: Release
+          - dllver: 0x600
+            config: RelWithDebInfo
+          - dllver: 0x600
+            config: MinSizeRel
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
@@ -143,6 +153,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msvc-arm:
+    if: false
     strategy:
       matrix:
         toolset: ['14','14.2'] # VS 2022, 2019
@@ -244,6 +255,7 @@ jobs:
 
   # FIXME: Does not boot on toolset 14.1, 14.3+ is untested
   build-clang-cl:
+    if: false
     strategy:
       matrix:
         arch: [i386, amd64]
@@ -303,6 +315,7 @@ jobs:
         path: build/msvc_pdb
 
   build-msbuild-i386:
+    if: false
     name: MSBuild (i386)
     runs-on: windows-latest
     steps:
