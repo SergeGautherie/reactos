@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   build-linux:
-    if: true
+    if: false
     strategy:
       matrix:
         compiler: [gcc]
@@ -78,23 +78,14 @@ jobs:
           build/livecd.iso
 
   build-msvc:
-    if: false
+    if: true
     strategy:
       matrix:
         os: [windows-latest]
-        toolset: ['14','14.2'] # VS 2022, and 2019 (see below)
-        arch: [i386, amd64]
-        config: [Debug, Release, RelWithDebInfo, MinSizeRel]
-        dllver: ['0x502', '0x600']
-        exclude: # Build NT6 ISOs only with the latest toolset when compiled as a debug build
-          - dllver: 0x600
-            toolset: 14.2
-          - dllver: 0x600
-            config: Release
-          - dllver: 0x600
-            config: RelWithDebInfo
-          - dllver: 0x600
-            config: MinSizeRel
+        toolset: ['14.2'] # VS 2022, and 2019 (see below)
+        arch: [i386]
+        config: [Debug]
+        dllver: ['0x502']
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
