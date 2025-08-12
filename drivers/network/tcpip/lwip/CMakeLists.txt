@@ -1,6 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
-
-set (CMAKE_CONFIGURATION_TYPES "Debug;Release")
+# TODO: Document why we want to support 3.10+ for this project.
+cmake_minimum_required(VERSION 3.10...3.17)
 
 project(lwIP)
 
