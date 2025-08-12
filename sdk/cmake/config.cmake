@@ -73,10 +73,10 @@ cmake_dependent_option(DBG "Whether to compile for debugging." TRUE
 if(MSVC)
     set(KDBG FALSE CACHE BOOL "Whether to compile in the integrated kernel debugger.")
     cmake_dependent_option(_WINKD_ "Whether to compile with the KD protocol." TRUE
-                           "CMAKE_BUILD_TYPE STREQUAL Debug" FALSE)
+                           "DBG" FALSE)
 else()
     cmake_dependent_option(KDBG "Whether to compile in the integrated kernel debugger." TRUE
-                           "CMAKE_BUILD_TYPE STREQUAL Debug" FALSE)
+                           "DBG" FALSE)
     set(_WINKD_ FALSE CACHE BOOL "Whether to compile with the KD protocol.")
 endif()
 
@@ -91,7 +91,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
     option(_VS_ANALYZE_ "Whether to enable static analysis while compiling." OFF)
     # RTC are incompatible with compiler optimizations.
     cmake_dependent_option(RUNTIME_CHECKS "Whether to enable runtime checks on MSVC" ON
-                           "CMAKE_BUILD_TYPE STREQUAL Debug" OFF)
+                           "DBG" OFF)
 endif()
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
